@@ -1,7 +1,7 @@
 {
   "title": "Rejoin terms DOB + welcome alignment",
   "summary": "Replaced overflowing native date input with year/month/day scroll pickers on signup/rejoin terms; centered rejoin welcome block and clipped horizontal overflow.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "18161db4" },
   "changedFiles": [
     "frontend/src/pages/auth/terms/TermsAgreementPage.tsx",
     "frontend/src/pages/auth/terms/SignupBirthDateField.tsx",
