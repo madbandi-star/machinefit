@@ -80,7 +80,8 @@ async function sendViaResend(input: SendEmailInput): Promise<boolean> {
 }
 
 async function sendViaFormSubmit(input: SendEmailInput): Promise<boolean> {
-  if (process.env.FORMSUBMIT_FALLBACK === 'false') return false;
+  // Opt-in only — do not send personal email content to FormSubmit unless explicitly enabled.
+  if (process.env.FORMSUBMIT_FALLBACK !== 'true') return false;
 
   const origin = getFormSubmitOrigin();
   const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(input.to)}`, {

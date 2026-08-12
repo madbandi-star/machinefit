@@ -1,13 +1,14 @@
 import { createHash } from 'node:crypto';
 import { getPool } from '../config/database.js';
-import type {
-  OpsApiRouteStat,
-  OpsErrorGroupRow,
-  OpsFeatureStat,
-  OpsLogKind,
-  OpsPageStat,
-  OpsRange,
-  OpsSeverity,
+import {
+  DATA_RETENTION,
+  type OpsApiRouteStat,
+  type OpsErrorGroupRow,
+  type OpsFeatureStat,
+  type OpsLogKind,
+  type OpsPageStat,
+  type OpsRange,
+  type OpsSeverity,
 } from '@machinefit/shared';
 import { percentile, sanitizeOpsMeta, speedColor } from '../ops/ops-runtime.js';
 
@@ -858,8 +859,29 @@ export const opsRepository = {
   async pruneRetention(): Promise<void> {
     const db = pool();
     if (!db) return;
-    await db.query(`DELETE FROM ops_error_events WHERE occurred_at < NOW() - INTERVAL '365 days'`);
-    await db.query(`DELETE FROM ops_app_logs WHERE logged_at < NOW() - INTERVAL '180 days'`);
+    const errDays = DATA_RETENTION.opsErrorEventsDays;
+    const logDays = DATA_RETENTION.opsAppLogsDays;
+    const statsDays = DATA_RETENTION.opsStatsDays;
+    await db.query(
+      `DELETE FROM ops_error_events WHERE occurred_at < NOW() - ($1::text || ' days')::interval`,
+      [String(errDays)]
+    );
+    await db.query(
+      `DELETE FROM ops_app_logs WHERE logged_at < NOW() - ($1::text || ' days')::interval`,
+      [String(logDays)]
+    );
+    await db.query(
+      `DELETE FROM ops_user_activity_daily WHERE day < CURRENT_DATE - ($1::text || ' days')::interval`,
+      [String(statsDays)]
+    );
+    await db.query(
+      `DELETE FROM ops_page_stats_daily WHERE day < CURRENT_DATE - ($1::text || ' days')::interval`,
+      [String(statsDays)]
+    );
+    await db.query(
+      `DELETE FROM ops_feature_stats_daily WHERE day < CURRENT_DATE - ($1::text || ' days')::interval`,
+      [String(statsDays)]
+    );
     await db.query(
       `DELETE FROM ops_api_latency_samples WHERE occurred_at < NOW() - INTERVAL '30 days'`
     );

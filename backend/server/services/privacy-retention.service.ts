@@ -27,7 +27,10 @@ async function deleteForUser(table: string, userId: string, column = 'user_id'):
   }
 }
 
-/** Legal-hold / rejoin-prevention tables — never hard-deleted here. */
+/**
+ * Legal-hold / rejoin / audit tables — never hard-deleted by the purge job.
+ * Disclosed in privacy policy as longer retention without auto-expiry.
+ */
 const PURGE_KEEP_TABLES = new Set([
   'payment_history',
   'subscriptions',
@@ -39,8 +42,8 @@ const PURGE_KEEP_TABLES = new Set([
 
 /**
  * Hard-purge non-legal-hold data for accounts past the deactivate grace period.
- * Keeps: anonymized users row, payment_history, subscriptions, user_consents,
- * trial_identity_ledger, auth_provider_withdrawals.
+ * Keeps: anonymized users row + PURGE_KEEP_TABLES.
+ * Also deletes usage counters and ops rows linked by user_id (users row remains).
  */
 async function purgeDeactivatedUserData(userId: string): Promise<number> {
   const pool = getPool();
@@ -59,6 +62,23 @@ async function purgeDeactivatedUserData(userId: string): Promise<number> {
   rowsAffected += await deleteForUser('user_motivation_tracks', userId);
   rowsAffected += await deleteForUser('user_lifted_badges', userId);
   rowsAffected += await deleteForUser('machine_recommendations', userId);
+
+  // Usage / ops identity-linked rows (users row is kept, so ON DELETE CASCADE does not run)
+  rowsAffected += await deleteForUser('user_usage_daily', userId);
+  rowsAffected += await deleteForUser('user_usage_monthly', userId);
+  rowsAffected += await deleteForUser('ops_user_activity_daily', userId);
+  if (await tableExists('ops_app_logs')) {
+    const r = await pool.query(`DELETE FROM ops_app_logs WHERE user_id = $1`, [userId]);
+    rowsAffected += r.rowCount ?? 0;
+  }
+  if (await tableExists('ops_error_events')) {
+    const r = await pool.query(`DELETE FROM ops_error_events WHERE user_id = $1`, [userId]);
+    rowsAffected += r.rowCount ?? 0;
+  }
+  if (await tableExists('ops_active_sessions')) {
+    const r = await pool.query(`DELETE FROM ops_active_sessions WHERE user_id = $1`, [userId]);
+    rowsAffected += r.rowCount ?? 0;
+  }
 
   // Friends / social graph
   if (await tableExists('friendships')) {

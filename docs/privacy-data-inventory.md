@@ -1,7 +1,7 @@
 # MachineFit 개인정보 처리 현황 인벤토리
 
 > 코드·DB 기준 엔지니어링 인벤토리입니다. 법률 자문이 아닙니다.  
-> 기준일: 2026-08-10 · 문서 버전과 동기화: `LEGAL_DOC_VERSIONS.privacy`
+> 기준일: 2026-08-17 · `LEGAL_DOC_VERSIONS.privacy`
 
 ## 1. 수집·처리 개요
 
@@ -11,74 +11,57 @@
 | 주요 처리자 | 운영사(사업자 확정 전) |
 | 가입 방식 | 소셜 로그인만 (Kakao / Google / Apple) |
 | 유료 | Polar 기반 Premium 구독 + 무료체험 가능 |
-| 위치 | 선택 동의 시 GPS 좌표 저장 가능 / 수동 시군구 선택 |
+| 위치 | **회원 GPS 비수집**. 이용자가 선택한 시군구 등 행정구역만 저장 |
 
 ## 2. 데이터 항목 ↔ 저장소
 
-| 데이터 | 목적 | 수집 경로 | 저장 | 보유·삭제 | 접근 | 국외·위탁 |
-|--------|------|-----------|------|-----------|------|-----------|
-| 소셜 식별자·이메일 | 계정 인증 | OAuth | `auth_providers`, `users.email` | 탈퇴 시 계정 비활성·이메일 익명화, provider_email 제거(링크 유지로 재로그인 차단) | 본인·관리자 | Kakao/Google/Apple |
-| 표시명·아바타 URL | 프로필 표시 | OAuth/입력 | `users` | 탈퇴 시 익명화·NULL | 본인·공개 범위 | 호스팅/DB |
-| 성별·키·몸무게·나이 | 추천·기록 | 프로필 입력 | `users` | 탈퇴 시 NULL; 플랫폼 `age` ≥ 14 | 본인 | Supabase 등 |
-| 생년월일·출생시간 | 운세 등 | 프로필 입력 | `users.birth_*` | 탈퇴 시 NULL; 만 14세 미만 거부 | 본인 | 동일 |
-| 운동 목표·경험 | 추천 | 입력 | `users` | 탈퇴 시 NULL | 본인 | 동일 |
-| 위치(시군구·GPS) | 주변 헬스장·랭킹 | GPS/수동 | `user_locations` | 동의철회·탈퇴 시 DELETE | 본인 | 동일 |
-| 운동 기록 | 기록·분석 | 앱 이용 | `workout_logs` 등 | 탈퇴 후 일정 기간 운영·분쟁용 보관 가능 [법률전문가 확인 필요] | 본인·권한자 | 동일 |
-| 커뮤니티 UGC | 게시·거래 | 작성 | posts/photos/trades | 작성자 삭제·관리자 숨김; 탈퇴 후 ~30일 hard purge | 공개·관리자 | 동일 |
-| 친구·차단·신고 | 소셜 | 앱 | `friend_*` | 계정 비활성과 연동; hard purge 후속 | 당사자·관리자 | 동일 |
-| 결제·구독 메타 | 유료 제공·정산 | Polar 웹훅 | `subscriptions`, `payment_history` | 전자상거래·세무 법정 보관 [법률전문가 확인 필요] | 본인·관리자 | Polar(국외 가능) |
-| 동의 기록 | 증빙 | 가입/설정 | `user_consents` (+IP/UA) | 분쟁·감사 기간 보관 [법률전문가 확인 필요] | 관리자 | 호스팅 |
-| 접속·로그인 로그 | 보안 | 인증 | `auth_login_events` | 보안·감사 기간 [법률전문가 확인 필요] | 관리자 | 호스팅 |
-| 헬스장 회원(오너) | 회원관리 | 오너 입력 | `gym_members` | 시설 회원(만 14세 미만 가능, 계정 아님). 오너 탈퇴 후 ~30일 퍼지 시 오너 명부 삭제 | 해당 헬스장 권한 | 동일 |
-| 고객문의 | 지원 | 문의하기 | `support_tickets*` | 처리 후 운영 정책 | 본인·관리자 | 동일 |
+| 데이터 | 목적 | 수집 경로 | 저장 | 보유·삭제 |
+|--------|------|-----------|------|-----------|
+| 소셜 식별자·이메일 | 계정 인증 | OAuth | `auth_providers`, `users.email` | 탈퇴 시 live 링크 삭제; `auth_provider_withdrawals`에 아카이브 장기 보관 |
+| 표시명·아바타 URL | 프로필 | OAuth/입력 | `users` | 탈퇴 시 익명화·NULL |
+| 성별·키·몸무게·나이·경력·목표 | 추천·기록 | 프로필 | `users` | 탈퇴 시 NULL; 기능 동의 `body_metrics` |
+| 생년월일·출생시간 | 연령·운세 | 가입/설정 | `users.birth_*` | 탈퇴 시 NULL; 기능 동의 `birth_profile` |
+| 지역(시군구)·홈헬스장 | 랭킹·검색 | 설정 | `user_locations`, `users.home_gym_*` | 탈퇴/삭제 시 제거; GPS lat/lng는 upsert 시 항상 NULL |
+| 운동·템플릿·업적 | 기록·분석 | 앱 | `workout_*`, `user_achievements` 등 | 탈퇴 후 ~30일 hard purge |
+| 기능 사용량 | 한도·품질 | 앱/API | `user_usage_daily/monthly` | 탈퇴 후 ~30일 purge |
+| 운영 텔레메트리 | 장애·보안·품질 | `/ops/ingest` | `ops_*` | 활동일·집계 ~1년; 앱로그 ~180일; 회원 연결분은 탈퇴 purge |
+| 동의·로그인 로그 | 증빙·보안 | 인증/동의 | `user_consents`, `auth_login_events` | IP/UA ~1년 scrub; login events ~1년 delete; 동의 사실 장기 |
+| 배너 이벤트 | 운영 | 배너 API | `banner_events` | session id만, user_id null; ~90일 |
+| 결제·구독 메타 | 유료 | Polar | `subscriptions`, `payment_history`, `users.polar_*` | 탈퇴 후에도 장기 보관(자동만료 잡 없음) |
+| trial identity | 체험 남용 방지 | 탈퇴/체험 | `trial_identity_ledger` | 장기 보관 |
+| 브라우저 저장 | UX | FE | sessionStorage / localStorage / HttpOnly cookie | 기기 로컬; 서버 미전송(토큰 제외) |
 
-## 3. 처리 위탁·국외 이전 (확인 가능한 범위)
+## 3. 처리 위탁·국외 이전
 
-| 업체 | 역할 | 개인정보 | 비고 |
-|------|------|----------|------|
-| Supabase | DB·스토리지 | 계정·기록·이미지 | 리전은 운영 설정에 따름 — 배포 전 확인 [REVIEW] |
-| Render | API 호스팅 | 요청 처리·로그 | 동일 |
-| GitHub Pages / Cloudflare | 프론트 배포·CDN | 접속 로그(가능) | 정적 FE |
-| Kakao / Google / Apple | 소셜 로그인 | 식별자·이메일(제공 시) | 각사 약관 |
-| Polar | 결제·구독 | 결제 메타·고객 ID | 카드번호는 결제사 보관 |
-| Sentry (선택) | 오류 모니터링 | 오류 컨텍스트 | DSN 설정 시에만 |
-| YouTube | 영상 임베드 | 시청 시 제3자 쿠키 가능 | 클릭 재생 권장 [권장] |
-| SMTP/Resend 등 | 이메일(설정 시) | 수신 이메일·내용 | 환경변수 설정 시에만 |
-
-※ 실제 미사용 업체는 방침에 기재하지 않음. GA/GTM 픽셀은 코드베이스에 없음.
+| 업체 | 역할 | 비고 |
+|------|------|------|
+| Supabase | DB·스토리지 | |
+| Render | API 호스팅 | |
+| GitHub Pages | 정적 FE | |
+| Cloudflare | 커스텀 도메인 CDN(사용 시) | |
+| Kakao / Google / Apple | 소셜 로그인 | |
+| Polar | 결제·구독 | |
+| Sentry | 오류(설정 시) | `sendDefaultPii: false` |
+| SMTP / Resend | 이메일(설정 시) | |
+| FormSubmit | 이메일 폴백 | **`FORMSUBMIT_FALLBACK=true`일 때만** |
+| YouTube | 임베드 | |
 
 ## 4. 동의
 
-| 유형 | 필수/선택 | UI | 저장 |
-|------|-----------|-----|------|
-| 이용약관 | 필수 | `/auth/terms` | `user_consents` + users 버전 |
-| 개인정보처리방침 | 필수 | 동일 | 동일 |
-| 만 14세 이상 확인 | 필수(가입) | 체크박스 + 프로필 생년월일/나이 서버 검증 | `user_consents` age14 + `users.age`/`birth_date` ≥ 14 |
-| 위치 | 선택 | 동일 | 동의 시에만 GPS 저장 |
-| 마케팅 | 선택 | 동일 | `marketing_opt_in` |
+| 유형 | 필수/선택 | UI |
+|------|-----------|-----|
+| 이용약관·개인정보·만14세 | 필수 | `/auth/terms` |
+| 마케팅 | 선택 | 가입·권리센터 (인앱 알림 중심) |
+| 신체정보 / 생년월일·탄생시 / 지역·헬스장 | 해당 필드 저장 시 필수 | 설정 섹션 기능 동의 |
+| 위치(GPS) | **없음** (GPS 미사용) | — |
 
-## 5. 파기·탈퇴 (구현)
+## 5. 파기·탈퇴
 
-`user.repository.deactivateAccount` (즉시, WITHDRAWN):
+즉시 (`user.repository.deactivateAccount`): 비활성·익명화·지역/프로필 NULL·`auth_providers` 아카이브 후 삭제·토큰 삭제.
 
-- 로그인 불가(`is_active=false`, `account_status=WITHDRAWN`), 리프레시 토큰 삭제
-- 이메일·표시명 익명화(`탈퇴회원`), 생체·프로필·출생정보·위치동의 해제
-- `user_locations` 삭제
-- `auth_providers` → `auth_provider_withdrawals` 아카이브 후 **즉시 삭제** (동일 소셜로 **신규** 재가입 가능; 기존 계정 복구 아님)
-- 상세: `docs/WITHDRAWAL_REJOIN_DATA_FLOW.md`
+~30일 (`privacyRetentionService.purgeDeactivatedUserData`): 운동/UGC/친구/사용량/`ops_user_activity_daily` 등 + FK sweep.
 
-`privacyRetentionService` (일일 잡, `DATA_RETENTION` 운영 기본값):
+장기 보관(자동 만료 잡 없음): `payment_history`, `subscriptions`, `user_consents`, `trial_identity_ledger`, `auth_provider_withdrawals`, `admin_audit_logs`.
 
-- GPS 좌표 ~30일 후 NULL (시군구 유지)
-- 동의 IP/UA ~1년 후 NULL
-- `auth_login_events` ~1년 후 DELETE
-- 탈퇴 후 ~30일: workout/favorites/friends/UGC/trades/PT/support/templates, 오너 `gym_members`/`user_gyms`, Storage·백업 파일 hard purge, 잔여 `auth_providers` 삭제, `data_purged_at` 기록
-- 결제·동의 증빙·users 행·`auth_provider_withdrawals`는 유지 (법정 기간 [법률전문가 확인 필요])
-- `trial_identity_ledger`: 무료체험 악용 방지용 OAuth/이메일 키. 탈퇴·purge 후에도 유지(방침에 명시).
-- 공개 아이디(`users.display_name`): 소셜 provider 실명/닉네임과 분리. 신규·재가입 시 머신핏 랜덤 생성. 상세: `docs/USERNAME_PRIVACY_DATA_FLOW.md`
-
-## 6. 문서 정합
-
-- 방침·약관 UI: `/privacy`, `/terms`, `/refund`, `/location-policy`, `/community-policy`, `/copyright`, `/security`
-- 버전: `shared/src/constants/legal.ts` → `LEGAL_DOC_VERSIONS`
-- 상세 감사: `docs/LEGAL_AUDIT_REPORT.md`
+일일 잡: GPS 잔존 scrub, consent IP scrub, login delete, banner delete, withdrawn purge.  
+Ops prune: app logs / error / page·feature·activity stats per `DATA_RETENTION`.
