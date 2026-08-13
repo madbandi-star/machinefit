@@ -1,17 +1,17 @@
 {
-  "title": "Fortune share card locked to 4:5 1080×1350",
-  "summary": "Helchang fortune share export explicitly uses Instagram 4:5 at 1080×1350; background asset resized to match.",
-  "git": { "branch": "main", "commit": "pending" },
+  "title": "Fortune share card locked to 4:5 1080?350",
+  "summary": "Helchang fortune share export explicitly uses Instagram 4:5 at 1080?350; background asset resized to match.",
+  "git": { "branch": "main", "commit": "65127920" },
   "changedFiles": [
     "frontend/src/utils/fortuneShareCard.ts",
     "frontend/public/assets/share/fortune-share-bg.png"
   ],
-  "testFocus": ["Downloaded PNG is 1080×1350 (4:5)"],
+  "testFocus": ["Downloaded PNG is 1080?350 (4:5)"],
   "fastChecks": [
     "rg -n \"FORTUNE_SHARE_WIDTH|1080|1350\" frontend/src/utils/fortuneShareCard.ts"
   ],
   "productionChecks": ["Pages deploy"],
   "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "Canvas was 1080×1350 but BG was 2:3",
-  "toBe": "Explicit 4:5 1080×1350 canvas + matching BG"
+  "asIs": "Canvas was 1080?350 but BG was 2:3",
+  "toBe": "Explicit 4:5 1080?350 canvas + matching BG"
 }
