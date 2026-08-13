@@ -524,6 +524,47 @@
   flex-shrink: 0;
 }
 
+.voice-count-mode-help {
+  list-style: none;
+  margin: 0.55rem 0 0;
+  padding: 0.55rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-radius: 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+
+.voice-count-mode-help__item {
+  display: grid;
+  grid-template-columns: minmax(0, 7.25rem) minmax(0, 1fr);
+  gap: 0.35rem 0.65rem;
+  align-items: baseline;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.voice-count-mode-help__item--active {
+  color: var(--color-text);
+}
+
+.voice-count-mode-help__name {
+  font-weight: 650;
+  color: inherit;
+  word-break: keep-all;
+}
+
+.voice-count-mode-help__item--active .voice-count-mode-help__name {
+  color: var(--color-primary);
+}
+
+.voice-count-mode-help__text {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .settings-voice-coach__row {
   display: flex;
   align-items: center;

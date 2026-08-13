@@ -872,6 +872,25 @@ export function SettingsPage() {
                   }}
                   ariaLabel={t('settings.voiceCountMode')}
                 />
+                <ul className="voice-count-mode-help" aria-label={t('settings.voiceCountMode')}>
+                  {VOICE_COUNT_MODES.map((mode) => (
+                    <li
+                      key={mode}
+                      className={
+                        mode === voiceCountMode
+                          ? 'voice-count-mode-help__item voice-count-mode-help__item--active'
+                          : 'voice-count-mode-help__item'
+                      }
+                    >
+                      <span className="voice-count-mode-help__name">
+                        {t(`settings.voiceCountMode_${mode}`).replace(/\n/g, ' ')}
+                      </span>
+                      <span className="voice-count-mode-help__text">
+                        {t(`settings.voiceCountModeHelp_${mode}`)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : null}
 

@@ -1,26 +1,25 @@
 {
-  "title": "Future complete?incomplete must not create today card",
-  "summary": "Future/past workout-log upserts never stamp recent_history to NOW; if a prior bump left a today history row, reanchor it to logDate when there is no today log. FE also omits recommendationId on non-today upserts for older BE safety.",
-  "git": { "branch": "main", "commit": "a81cad31" },
+  "title": "Count mode help text under settings selector",
+  "summary": "My Page settings count-mode segmented control now shows a short plain-language description for each mode (normal / turbo / AI accel) underneath, with the active mode highlighted.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/services/workout-log.service.ts",
-    "backend/server/repositories/history.repository.ts",
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/styles/components.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Future card: complete ? incomplete ? no new today card",
-    "Future card: incomplete ? complete ? no new today card",
-    "If a today ghost card existed from earlier bump, toggling future set removes/moves it when no today log",
-    "Today card set toggle still works"
+    "Settings ? voice coach ? count mode: four help lines under selector",
+    "Selecting a mode highlights that help row",
+    "KO copy is easy to read; hold-only flow hides the block"
   ],
   "fastChecks": [
-    "rg -n \"reanchorFromTodayIfNoTodayLog|logDate === todayDateKey\" backend/server",
-    "rg -n \"recommendationId && isTodayLog\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
+    "rg -n \"voiceCountModeHelp_|voice-count-mode-help\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json frontend/src/styles/components.css"
   ],
-  "productionChecks": [
-    "Pages FE + Render BE: future complete?incomplete no today duplicate"
-  ],
-  "deploy": { "expected": "Pages FE + Render BE" },
-  "asIs": "Toggling complete?incomplete on a future card can leave/create a today Records card",
-  "toBe": "Future/past set toggles do not bucket history under today; prior today ghosts reanchor when safe"
+  "productionChecks": ["Pages /settings ? count mode help under selector"],
+  "deploy": { "expected": "Pages FE" },
+  "asIs": "Count mode selector with labels only",
+  "toBe": "Selector plus concise per-mode explanations below"
 }
