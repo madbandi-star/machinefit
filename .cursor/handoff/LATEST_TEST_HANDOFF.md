@@ -6,7 +6,7 @@
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `50c69335`
 
 ## Migration
 `129_power_box_daily_claim.sql` — policy `power_box_claim` + unique `(user_id, reference_id)` for daily claim  

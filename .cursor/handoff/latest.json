@@ -1,7 +1,7 @@
 {
   "title": "My Page Power Box daily 1?100 claim",
   "summary": "Adds a gift Power Box beside Hellchang Power on My Page. Server awards random 1?100 Power once per Seoul day via points ledger with idempotency + unique daily index.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "50c69335" },
   "changedFiles": [
     "database/migrations/129_power_box_daily_claim.sql",
     "shared/src/constants/points.ts",
@@ -10,7 +10,6 @@
     "backend/server/repositories/points.repository.ts",
     "backend/server/controllers/points.controller.ts",
     "backend/server/routes/points.routes.ts",
-    "backend/server/services/template-share.service.ts",
     "frontend/src/components/my-page/PowerBox/PowerBox.tsx",
     "frontend/src/pages/my-page/MyPage.tsx",
     "frontend/src/api/points.api.ts",
@@ -22,7 +21,7 @@
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "My Page: Power Box ?? right of Hellchang Power",
+    "My Page: Power Box gift right of Hellchang Power",
     "First click awards 1?100 and balance increases",
     "Same-day reclick / double-click / refresh: no second award",
     "Claimed state shows already-claimed + countdown",
