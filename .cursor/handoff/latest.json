@@ -1,17 +1,27 @@
 {
-  "title": "Fortune share card locked to 4:5 1080?350",
-  "summary": "Helchang fortune share export explicitly uses Instagram 4:5 at 1080?350; background asset resized to match.",
-  "git": { "branch": "main", "commit": "65127920" },
+  "title": "Fortune share cards per keyword theme",
+  "summary": "Each Helchang fortune keyword (PR/DUMBBELL/FREE WEIGHT/DROP SET/VOLUME/RECOVERY/CARDIO/CONTROL/LEG/CHEST/BACK + SUPER SET) now uses its own 4:5 background and accent palette on the Instagram share card.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/utils/fortuneShareCard.ts",
-    "frontend/public/assets/share/fortune-share-bg.png"
+    "frontend/src/utils/fortuneShareThemes.ts",
+    "frontend/public/assets/share/fortune/"
   ],
-  "testFocus": ["Downloaded PNG is 1080?350 (4:5)"],
+  "testFocus": [
+    "Share card background/colors differ by keyword (PR purple, DROP SET red, LEG green, etc.)",
+    "SUPER SET DAY still uses yellow lightning style",
+    "Export still 1080×1350"
+  ],
   "fastChecks": [
-    "rg -n \"FORTUNE_SHARE_WIDTH|1080|1350\" frontend/src/utils/fortuneShareCard.ts"
+    "rg -n \"getFortuneShareTheme|FORTUNE_SHARE_THEMES\" frontend/src/utils/fortuneShareCard.ts frontend/src/utils/fortuneShareThemes.ts",
+    "Test-Path frontend/public/assets/share/fortune/pr-day.png",
+    "Test-Path frontend/public/assets/share/fortune/super-set-day.png",
+    "(Get-ChildItem frontend/public/assets/share/fortune/*.png).Count -eq 12"
   ],
-  "productionChecks": ["Pages deploy"],
-  "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "Canvas was 1080?350 but BG was 2:3",
-  "toBe": "Explicit 4:5 1080?350 canvas + matching BG"
+  "productionChecks": [
+    "After Pages deploy: open /fortune/today or home fortune, share for a few keywords if possible, confirm distinct looks"
+  ],
+  "deploy": { "expected": "GitHub Pages FE success" },
+  "asIs": "All keywords shared the same SUPER SET yellow background and gold/cyan accents",
+  "toBe": "Keyword-specific BG + accent palette matching the 11-card mock (plus SUPER SET)"
 }

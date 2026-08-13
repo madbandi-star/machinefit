@@ -1,5 +1,6 @@
 import type { FortuneScores, FortuneSection } from '@machinefit/shared';
 import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
+import { getFortuneShareTheme } from '@/utils/fortuneShareThemes';
 
 export interface FortuneShareCardLabels {
   title: string;
@@ -30,10 +31,6 @@ export const FORTUNE_SHARE_HEIGHT = 1350;
 const W = FORTUNE_SHARE_WIDTH;
 const H = FORTUNE_SHARE_HEIGHT;
 
-const GOLD = '#ffd24a';
-const GOLD_SOFT = '#f6c453';
-const ORANGE = '#ff7a3d';
-const CYAN = '#45e0c8';
 const GREEN = '#4ade80';
 const WHITE = '#f8fafc';
 
@@ -98,10 +95,10 @@ function starsFilled(n: number): string {
   return '★'.repeat(Math.max(0, Math.min(5, Math.round(n))));
 }
 
-function resolveShareBgUrl(): string {
+function resolveShareBgUrl(bgFile: string): string {
   const base = String(import.meta.env.BASE_URL ?? '/');
   const normalized = base.endsWith('/') ? base : `${base}/`;
-  return `${normalized}assets/share/fortune-share-bg.png`;
+  return `${normalized}assets/share/fortune/${bgFile}`;
 }
 
 async function loadImage(url: string): Promise<HTMLImageElement | null> {
@@ -140,7 +137,7 @@ function drawImageCover(
   ctx.drawImage(img, dx, dy, dw, dh);
 }
 
-function drawFallbackAtmosphere(ctx: CanvasRenderingContext2D) {
+function drawFallbackAtmosphere(ctx: CanvasRenderingContext2D, glow = 'rgba(255, 190, 50, 0.42)') {
   const bg = ctx.createLinearGradient(0, 0, W * 0.2, H);
   bg.addColorStop(0, '#07090f');
   bg.addColorStop(0.5, '#0c121a');
@@ -148,11 +145,11 @@ function drawFallbackAtmosphere(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  const glow = ctx.createRadialGradient(W / 2, H * 0.32, 40, W / 2, H * 0.32, 460);
-  glow.addColorStop(0, 'rgba(255, 190, 50, 0.42)');
-  glow.addColorStop(0.4, 'rgba(255, 110, 20, 0.14)');
-  glow.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = glow;
+  const g = ctx.createRadialGradient(W / 2, H * 0.32, 40, W / 2, H * 0.32, 460);
+  g.addColorStop(0, glow);
+  g.addColorStop(0.4, 'rgba(255, 110, 20, 0.10)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
   ctx.beginPath();
   ctx.arc(W / 2, H * 0.32, 460, 0, Math.PI * 2);
   ctx.fill();
@@ -304,11 +301,12 @@ function drawHashtagPills(
 }
 
 /**
- * Instagram-ready Helchang fortune share card (restored 22:27 KST / 9ca0d00d).
- * Photo background + premium typography + neon glass score cards.
+ * Instagram-ready Helchang fortune share card.
+ * Keyword-specific background + accent palette (PR / DROP SET / LEG …).
  */
 export async function buildFortuneShareCard(input: FortuneShareCardInput): Promise<Blob> {
   const { fortune, scores, emoji, themeLabel, dateLabel, labels } = input;
+  const theme = getFortuneShareTheme(fortune.keyword);
   const canvas = document.createElement('canvas');
   // Export pixel size: Instagram 4:5 = 1080 × 1350
   canvas.width = FORTUNE_SHARE_WIDTH;
@@ -316,9 +314,9 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
 
-  const bg = await loadImage(resolveShareBgUrl());
+  const bg = await loadImage(resolveShareBgUrl(theme.bgFile));
   if (bg) drawImageCover(ctx, bg, W, H);
-  else drawFallbackAtmosphere(ctx);
+  else drawFallbackAtmosphere(ctx, theme.glow);
   drawReadabilityVeils(ctx);
 
   const cx = W / 2;
@@ -328,7 +326,7 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
   // Header
   ctx.textAlign = 'center';
   ctx.font = `800 32px ${FONT}`;
-  drawTextShadow(ctx, `⚡  ${labels.title}  ⚡`, cx, 72, WHITE, 10);
+  drawTextShadow(ctx, `⚡  ${labels.title}  ⚡`, cx, 72, theme.eyebrow, 10);
 
   ctx.font = `600 24px ${FONT}`;
   ctx.fillStyle = 'rgba(210, 216, 224, 0.88)';
@@ -337,8 +335,8 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
   // Hero emoji (behind title stack)
   const emojiY = 360;
   const eg = ctx.createRadialGradient(cx, emojiY, 20, cx, emojiY, 220);
-  eg.addColorStop(0, 'rgba(255, 210, 80, 0.35)');
-  eg.addColorStop(0.55, 'rgba(255, 140, 30, 0.08)');
+  eg.addColorStop(0, theme.glow);
+  eg.addColorStop(0.55, 'rgba(0,0,0,0.05)');
   eg.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = eg;
   ctx.beginPath();
@@ -360,21 +358,28 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
       : bottom
     : null;
 
-  ctx.font = `900 100px ${FONT}`;
-  drawTextShadow(ctx, topDisplay, cx, 250, '#f5f7fa', 16);
-
   if (bottomDisplay) {
+    ctx.font = `900 100px ${FONT}`;
+    drawTextShadow(ctx, topDisplay, cx, 250, '#f5f7fa', 16);
     ctx.save();
-    ctx.shadowColor = 'rgba(255, 180, 20, 0.55)';
+    ctx.shadowColor = theme.accent;
     ctx.shadowBlur = 28;
     ctx.font = `900 italic 86px ${FONT}`;
-    ctx.fillStyle = GOLD;
+    ctx.fillStyle = theme.accent;
     ctx.fillText(bottomDisplay, cx, 340);
+    ctx.restore();
+  } else {
+    ctx.save();
+    ctx.shadowColor = theme.accent;
+    ctx.shadowBlur = 24;
+    ctx.font = `900 92px ${FONT}`;
+    ctx.fillStyle = theme.accentSoft;
+    ctx.fillText(topDisplay, cx, 290);
     ctx.restore();
   }
 
-  // Theme ribbon
-  const star = starsFilled(fortune.scoreStars);
+  // Theme ribbon + stars (mock shows ★★★★★ under hero)
+  const star = starsFilled(fortune.scoreStars || 5);
   const themeText = star ? `${star}   ${themeLabel}   ${star}` : themeLabel;
   ctx.font = `800 30px ${FONT}`;
   const themeW = Math.min(contentW - 40, ctx.measureText(themeText).width + 64);
@@ -384,15 +389,17 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
   roundRect(ctx, themeX, themeY, themeW, themeH, 999);
   ctx.fillStyle = 'rgba(0,0,0,0.45)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 210, 74, 0.45)';
+  ctx.strokeStyle = theme.accent;
+  ctx.globalAlpha = 0.55;
   ctx.lineWidth = 1.5;
   ctx.stroke();
-  ctx.fillStyle = GOLD_SOFT;
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = theme.accentSoft;
   ctx.textBaseline = 'middle';
   ctx.fillText(themeText, cx, themeY + themeH / 2 + 1);
   ctx.textBaseline = 'alphabetic';
 
-  // Score cards
+  // Score cards — accents follow keyword palette
   const cardGap = 16;
   const cardW = (contentW - cardGap * 2) / 3;
   const cardH = 176;
@@ -403,7 +410,7 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
     cardY,
     cardW,
     cardH,
-    GOLD,
+    theme.metricHealthman,
     '💪',
     labels.healthman,
     String(scores.healthmanIndex),
@@ -415,7 +422,7 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
     cardY,
     cardW,
     cardH,
-    ORANGE,
+    theme.metricPr,
     '🔥',
     labels.prLuck,
     `${scores.prLuck}%`
@@ -426,7 +433,7 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
     cardY,
     cardW,
     cardH,
-    CYAN,
+    theme.metricRecovery,
     '💚',
     labels.recoveryLuck,
     `${scores.recoveryLuck}%`
@@ -450,7 +457,7 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
   qGlass.addColorStop(1, 'rgba(4, 10, 12, 0.72)');
   ctx.fillStyle = qGlass;
   ctx.fill();
-  ctx.strokeStyle = 'rgba(69, 224, 200, 0.55)';
+  ctx.strokeStyle = theme.quoteBorder;
   ctx.lineWidth = 1.8;
   ctx.stroke();
 
@@ -484,7 +491,7 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
   const tags = labels.hashtags.split(/\s+/).filter(Boolean);
   drawHashtagPills(ctx, tags, W - padX - 4, footerY + 6);
 
-  // Subtle film grain (deterministic-ish light noise via sparse pixels)
+  // Subtle film grain
   ctx.save();
   ctx.globalAlpha = 0.035;
   for (let i = 0; i < 1800; i += 1) {
