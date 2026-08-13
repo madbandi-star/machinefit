@@ -271,6 +271,7 @@
     "deleteMessage": "이 추천 기록을 삭제할까요? 연결된 운동 기록도 함께 삭제되며, 복구할 수 없습니다.",
     "deleteConfirm": "삭제하기",
     "menuAria": "이 날짜 관리 메뉴",
+    "moreLabel": "더보기",
     "dayActionsTitle": "이 날짜 관리",
     "dayActionsEmpty": "지금 할 수 있는 작업이 없어요.",
     "dayActionsAddPlanHint": "기구를 골라 이 날짜 계획에 추가해요",

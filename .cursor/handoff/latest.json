@@ -1,18 +1,26 @@
 {
-  "title": "Today template apply starts incomplete",
-  "summary": "Applying a workout template on today's date now creates PLANNED cards with all sets incomplete (same as future dates), instead of auto-COMPLETED.",
+  "title": "Records more menus use 더보기 text",
+  "summary": "Replace ellipsis icons on records date menu and machine card plan menu with explicit '더보기' / More text labels.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["backend/server/services/workout-card.service.ts"],
+  "changedFiles": [
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/records.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
+  ],
   "testFocus": [
-    "Apply template for today → all sets incomplete",
-    "Apply template for future → incomplete",
-    "Past date default still COMPLETED"
+    "Date filter row shows 더보기",
+    "Machine card shows 더보기",
+    "Menus still open"
   ],
   "fastChecks": [
-    "rg -n \"scheduledDate >= today\" backend/server/services/workout-card.service.ts"
+    "rg -n \"moreLabel|more-trigger\" frontend/src/components/records frontend/src/i18n/locales/ko/machines.json"
   ],
-  "productionChecks": ["Apply template on today after Render BE"],
-  "deploy": { "expected": "Render BE" },
-  "asIs": "Today template import marks all sets completed",
-  "toBe": "Today template import marks all sets incomplete"
+  "productionChecks": ["Pages /records"],
+  "deploy": { "expected": "Pages FE" },
+  "asIs": "Ellipsis icons for date and card menus",
+  "toBe": "Text label 더보기"
 }

@@ -271,6 +271,7 @@
     "deleteMessage": "Delete this recommendation record? Linked workout logs will also be removed and cannot be restored.",
     "deleteConfirm": "Delete",
     "menuAria": "Manage this date",
+    "moreLabel": "More",
     "dayActionsTitle": "Manage this date",
     "dayActionsEmpty": "No actions available right now.",
     "dayActionsAddPlanHint": "Pick machines to add to this day’s plan",

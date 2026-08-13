@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Clock3,
   Heart,
-  MoreHorizontal,
   Target,
   X,
 } from 'lucide-react';
@@ -378,14 +377,14 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                 {showPlanMenu ? (
                   <button
                     type="button"
-                    className="history-record-card__order-trigger"
+                    className="history-record-card__more-trigger"
                     aria-label={t('machines:history.planCardMenuAria')}
                     aria-haspopup="dialog"
                     aria-expanded={planActionsOpen}
                     disabled={planActionsDisabled}
                     onClick={() => setPlanActionsOpen(true)}
                   >
-                    <MoreHorizontal size={16} strokeWidth={2.25} aria-hidden />
+                    {t('machines:history.moreLabel')}
                   </button>
                 ) : null}
                 <button

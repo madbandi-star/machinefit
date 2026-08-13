@@ -1163,13 +1163,13 @@ export function HistoryListPanel() {
           {isAuthenticated && canUseWorkoutPlans ? (
             <button
               type="button"
-              className="records-list__day-menu-trigger icon-btn"
+              className="records-list__day-menu-trigger"
               aria-label={t('machines:history.menuAria')}
               aria-haspopup="dialog"
               aria-expanded={dayMenuOpen}
               onClick={() => setDayMenuOpen(true)}
             >
-              <Icon name="moreHorizontal" size={20} />
+              {t('machines:history.moreLabel')}
             </button>
           ) : null}
         </div>

@@ -1,17 +1,14 @@
-﻿# Test handoff — Today template apply starts incomplete
+﻿# Test handoff — Records “…” → “더보기”
 
 ## Summary
-당일 날짜에 템플릿 가져오기 시 카드/수행세트가 COMPLETED(전부 완료)로 생성되던 것을 PLANNED(미완료)로 변경. 미래와 동일. 과거 날짜만 기본 COMPLETED 유지.
+기록 페이지 일자조회 우측 메뉴와 개별 기구카드 메뉴의 `…` 아이콘을 텍스트 「더보기」로 교체.
 
 ## Test focus
-1. 오늘 날짜에 템플릿 적용 → 세트 전부 미완료
-2. 미래 날짜 템플릿 적용 → 미완료 유지
-3. (선택) 과거 날짜 적용 → 기존처럼 완료 가능
+1. 기록 > 일자조회 오른쪽: 「더보기」 표시·탭 시 날짜 관리 시트
+2. 개별 기구카드: 「더보기」 표시·탭 시 카드 메뉴
+3. 순서 변경(화살표) 아이콘은 유지
 
 ## Fast checks
 ```
-rg -n "scheduledDate >= today|defaultStatusForDate" backend/server/services/workout-card.service.ts
+rg -n "moreLabel|day-menu-trigger|more-trigger" frontend/src/components/records frontend/src/styles/records.css frontend/src/i18n/locales/ko/machines.json
 ```
-
-## Deploy note
-backend 변경 → Render 재배포 필요
