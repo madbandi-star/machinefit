@@ -1826,7 +1826,21 @@
         "auth_provider_withdrawals": "소셜 연동 탈퇴 아카이브",
         "admin_audit_logs": "관리자 감사 로그",
         "legal_holds": "기타 법령상 보존 의무 데이터"
-      }
+      },
+      "navView": "열람",
+      "navPurpose": "목적",
+      "navConsent": "동의",
+      "navExercise": "권리행사",
+      "navRequests": "요청현황",
+      "navAccount": "탈퇴·문의",
+      "exerciseTitle": "권리 행사",
+      "exerciseDesc": "정정·삭제·처리정지는 필요할 때만 펼쳐 요청하세요. 삭제 요청과 회원탈퇴는 다릅니다.",
+      "optionalTag": "선택",
+      "deletionDeletableTitle": "삭제·조치 가능 항목",
+      "processedAt": "처리일",
+      "exitSupportHint": "문의·결과 확인",
+      "exitPrivacyHint": "처리방침 보기",
+      "exitWithdrawHint": "이용계약 종료"
     },
     "report": {
       "cta": "Report",
