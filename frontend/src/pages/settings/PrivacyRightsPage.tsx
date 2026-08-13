@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { PrivacyRightsRequest } from '@machinefit/shared';
+import {
+  PRIVACY_RIGHTS_USER_CANCELLABLE_TYPES,
+  type PrivacyRightsRequest,
+} from '@machinefit/shared';
 import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -19,6 +22,18 @@ function statusLabel(t: (k: string) => string, status: string): string {
 
 function typeLabel(t: (k: string) => string, type: string): string {
   return t(`compliance.rights.requestType.${type}`);
+}
+
+function canCancelRequest(r: PrivacyRightsRequest): boolean {
+  if (
+    !(PRIVACY_RIGHTS_USER_CANCELLABLE_TYPES as readonly string[]).includes(r.requestType)
+  ) {
+    return false;
+  }
+  if (r.requestType === 'processing_stop') {
+    return r.status === 'completed';
+  }
+  return r.status === 'received' || r.status === 'reviewing';
 }
 
 function ConsentToggle({
@@ -132,6 +147,19 @@ export function PrivacyRightsPage() {
       } else {
         showToast(t('compliance.rights.requestSubmitted'), 'success');
       }
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (requestId: string) => complianceApi.cancelRightsRequest(requestId),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['privacy-rights-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['privacy-summary'] });
+      showToast(
+        res.data.data.resultMessage || t('compliance.rights.requestCancelled'),
+        'success'
+      );
     },
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
@@ -608,6 +636,24 @@ export function PrivacyRightsPage() {
                       {r.resultMessage}
                       {r.rejectionReason ? ` (${r.rejectionReason})` : ''}
                     </p>
+                  ) : null}
+                  {canCancelRequest(r) ? (
+                    <div className="pr-request__actions">
+                      <button
+                        type="button"
+                        className="btn btn--secondary pr-request__cancel"
+                        disabled={cancelMutation.isPending}
+                        onClick={() => {
+                          const ok = window.confirm(
+                            t('compliance.rights.cancelConfirm')
+                          );
+                          if (!ok) return;
+                          cancelMutation.mutate(r.id);
+                        }}
+                      >
+                        {t('compliance.rights.cancelRequest')}
+                      </button>
+                    </div>
                   ) : null}
                 </li>
               ))}

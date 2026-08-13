@@ -200,6 +200,11 @@
   color: #ff5252;
 }
 
+.apr-status--cancelled {
+  background: color-mix(in srgb, #8a94a6 16%, transparent);
+  color: #8a94a6;
+}
+
 .apr-flag {
   display: inline-flex;
   margin-top: 0.25rem;

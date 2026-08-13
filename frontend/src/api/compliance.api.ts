@@ -54,6 +54,11 @@ export const complianceApi = {
       input
     ),
 
+  cancelRightsRequest: (requestId: string) =>
+    apiClient.post<ApiResponse<PrivacyRightsRequest>>(
+      `/privacy/me/rights-requests/${requestId}/cancel`
+    ),
+
   adminListRightsRequests: (params?: { status?: string; requestType?: string }) =>
     apiClient.get<ApiResponse<PrivacyRightsRequest[]>>(
       '/admin/privacy-rights/requests',

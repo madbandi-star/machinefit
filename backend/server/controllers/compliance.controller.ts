@@ -99,6 +99,18 @@ export async function createMyPrivacyRightsRequest(
   res.status(201).json({ success: true, data });
 }
 
+export async function cancelMyPrivacyRightsRequest(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const data = await complianceService.cancelPrivacyRightsRequest(
+    user.userId,
+    String(req.params.requestId)
+  );
+  res.json({ success: true, data });
+}
+
 export async function adminListPrivacyRightsRequests(
   req: Request,
   res: Response

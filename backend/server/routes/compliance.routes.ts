@@ -37,6 +37,11 @@ complianceRouter.post(
   authMiddleware,
   complianceController.createMyPrivacyRightsRequest
 );
+complianceRouter.post(
+  '/privacy/me/rights-requests/:requestId/cancel',
+  authMiddleware,
+  complianceController.cancelMyPrivacyRightsRequest
+);
 
 /** Support / inquiry */
 complianceRouter.post('/support/tickets', authMiddleware, complianceController.createTicket);

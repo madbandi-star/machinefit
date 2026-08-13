@@ -2,6 +2,7 @@ import {
   LEGAL_DOC_VERSION,
   DEFAULT_LEGAL_REGION,
   PRIVACY_DELETION_INVENTORY,
+  PRIVACY_RIGHTS_USER_CANCELLABLE_TYPES,
   type AdminPrivacyRightsBulkDeleteInput,
   type AdminPrivacyRightsBulkUpdateInput,
   type AdminPrivacyRightsUpdateInput,
@@ -270,6 +271,67 @@ export const complianceService = {
     }
 
     throw new AppError(400, 'VALIDATION_ERROR', 'Unsupported request type');
+  },
+
+  async cancelPrivacyRightsRequest(userId: string, requestId: string) {
+    const existing = await privacyRightsRepository.getForUser(requestId, userId);
+    if (!existing) throw new AppError(404, 'NOT_FOUND', 'Rights request not found');
+
+    const cancellableType = (
+      PRIVACY_RIGHTS_USER_CANCELLABLE_TYPES as readonly string[]
+    ).includes(existing.requestType);
+    if (!cancellableType) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'This request type cannot be cancelled');
+    }
+
+    if (existing.status === 'cancelled') {
+      return existing;
+    }
+
+    if (existing.requestType === 'processing_stop') {
+      if (existing.status !== 'completed') {
+        throw new AppError(
+          400,
+          'VALIDATION_ERROR',
+          'Only an applied processing-stop request can be cancelled'
+        );
+      }
+      await privacyRightsRepository.setProcessingSuspended(userId, false);
+      const updated = await privacyRightsRepository.cancelForUser(
+        requestId,
+        userId,
+        '사용자가 처리정지 요청을 취소했습니다. 선택적 개인정보 처리 정지를 해제했습니다.'
+      );
+      await complianceRepository.writeAuditLog({
+        actorId: userId,
+        action: 'privacy.rights.processing_stop.cancelled',
+        targetType: 'privacy_rights_request',
+        targetId: requestId,
+      });
+      return updated;
+    }
+
+    if (existing.status !== 'received' && existing.status !== 'reviewing') {
+      throw new AppError(
+        400,
+        'VALIDATION_ERROR',
+        'Only pending correction/deletion requests can be cancelled'
+      );
+    }
+
+    const updated = await privacyRightsRepository.cancelForUser(
+      requestId,
+      userId,
+      '사용자가 권리행사 요청을 취소했습니다.'
+    );
+    await complianceRepository.writeAuditLog({
+      actorId: userId,
+      action: 'privacy.rights.user.cancel',
+      targetType: 'privacy_rights_request',
+      targetId: requestId,
+      meta: { requestType: existing.requestType },
+    });
+    return updated;
   },
 
   listAdminPrivacyRightsRequests(filters?: {

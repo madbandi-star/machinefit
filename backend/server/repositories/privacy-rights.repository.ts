@@ -304,6 +304,28 @@ export const privacyRightsRepository = {
     return rowCount ?? 0;
   },
 
+  async cancelForUser(
+    requestId: string,
+    userId: string,
+    resultMessage: string
+  ): Promise<PrivacyRightsRequest | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const { rows } = await pool.query(
+      `UPDATE privacy_rights_requests
+       SET status = 'cancelled',
+           result_message = $3,
+           processed_at = NOW(),
+           updated_at = NOW()
+       WHERE id = $1
+         AND user_id = $2
+       RETURNING id`,
+      [requestId, userId, resultMessage]
+    );
+    if (!rows[0]) return null;
+    return this.getForUser(requestId, userId);
+  },
+
   async setProcessingSuspended(
     userId: string,
     suspended: boolean,

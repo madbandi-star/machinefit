@@ -1,30 +1,29 @@
 {
-  "title": "Admin privacy rights process + bulk delete",
-  "summary": "Admin privacy-rights queue now supports single/multi select, bulk status processing, single/bulk delete, and optional correction/processing-stop fulfillment on complete.",
+  "title": "User cancel privacy rights requests",
+  "summary": "Members can cancel pending correction/deletion requests and undo applied processing-stop from Privacy Rights Center; adds cancelled status + migration 127.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "database/migrations/127_privacy_rights_cancelled_status.sql",
+    "shared/src/constants/privacy-rights.ts",
     "shared/src/validators/compliance.schema.ts",
     "backend/server/repositories/privacy-rights.repository.ts",
     "backend/server/services/compliance.service.ts",
     "backend/server/controllers/compliance.controller.ts",
     "backend/server/routes/compliance.routes.ts",
     "frontend/src/api/compliance.api.ts",
-    "frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx",
-    "frontend/src/styles/admin-privacy-rights.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
+    "frontend/src/styles/privacy-rights.css"
   ],
   "testFocus": [
-    "Admin select single/multi",
-    "Bulk reviewing/complete/reject",
-    "Single and bulk delete",
-    "Complete applies correction/stop options"
+    "Cancel pending correction/deletion",
+    "Cancel processing-stop and clear suspend",
+    "No cancel on completed correction/deletion"
   ],
   "fastChecks": [
-    "rg -n \"adminBulkUpdate|adminDeleteRights|deleteByIds\" frontend/src/api backend/server"
+    "rg -n \"cancelRightsRequest|/cancel|cancelled\" frontend/src/api/compliance.api.ts backend/server/routes/compliance.routes.ts"
   ],
-  "productionChecks": ["Admin /admin/privacy-rights after Render BE + Pages FE"],
-  "deploy": { "expected": "Pages FE + Render BE" },
-  "asIs": "Single status update only",
-  "toBe": "Select, bulk process, delete, fulfill options"
+  "productionChecks": ["Pages privacy-rights cancel after migration + Render"],
+  "deploy": { "expected": "Pages FE + Render BE + migration 127" },
+  "asIs": "No user cancel for rights requests",
+  "toBe": "User cancel for correction/deletion/processing_stop"
 }

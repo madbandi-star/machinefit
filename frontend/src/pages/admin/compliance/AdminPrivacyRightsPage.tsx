@@ -208,6 +208,9 @@ export function AdminPrivacyRightsPage() {
               <option value="rejected">
                 {t('compliance.rights.status.rejected')}
               </option>
+              <option value="cancelled">
+                {t('compliance.rights.status.cancelled')}
+              </option>
             </select>
           </label>
           <label className="apr-field">

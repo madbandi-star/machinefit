@@ -25,5 +25,9 @@ assert.equal(
   privacyRightsDueState(due.toISOString(), 'completed', new Date('2026-08-12T00:00:00.000Z')),
   'done'
 );
+assert.equal(
+  privacyRightsDueState(due.toISOString(), 'cancelled', new Date('2026-08-12T00:00:00.000Z')),
+  'done'
+);
 
 console.log('privacy-rights.test.ts: ok');

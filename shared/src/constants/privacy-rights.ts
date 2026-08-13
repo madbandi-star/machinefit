@@ -13,8 +13,16 @@ export const PRIVACY_RIGHTS_REQUEST_STATUSES = [
   'reviewing',
   'completed',
   'rejected',
+  'cancelled',
 ] as const;
 export type PrivacyRightsRequestStatus = (typeof PRIVACY_RIGHTS_REQUEST_STATUSES)[number];
+
+/** Request types a member may cancel from Privacy Rights Center. */
+export const PRIVACY_RIGHTS_USER_CANCELLABLE_TYPES = [
+  'correction',
+  'deletion',
+  'processing_stop',
+] as const;
 
 /** Calendar days to complete correction/deletion etc. (privacy commission guideline). */
 export const PRIVACY_RIGHTS_DUE_DAYS = 10;
@@ -36,7 +44,7 @@ export function privacyRightsDueState(
   status: PrivacyRightsRequestStatus,
   now: Date = new Date()
 ): 'ok' | 'soon' | 'overdue' | 'done' {
-  if (status === 'completed' || status === 'rejected') return 'done';
+  if (status === 'completed' || status === 'rejected' || status === 'cancelled') return 'done';
   const due = new Date(dueAtIso).getTime();
   const ms = due - now.getTime();
   if (ms < 0) return 'overdue';

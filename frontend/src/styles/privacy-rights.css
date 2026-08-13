@@ -661,9 +661,26 @@
   color: var(--color-error, #ff5252);
 }
 
+.pr-status--cancelled {
+  background: color-mix(in srgb, var(--color-text-muted, #8a94a6) 16%, transparent);
+  color: var(--color-text-muted, #8a94a6);
+}
+
 .pr-request__meta {
   color: var(--color-text-muted, #8a94a6);
   font-size: 0.78rem;
+}
+
+.pr-request__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pr-request__cancel {
+  min-height: 2.25rem;
+  padding-inline: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .pr-request__result {

@@ -1792,7 +1792,8 @@
         "received": "Received",
         "reviewing": "Reviewing",
         "completed": "Completed",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
       },
       "requestType": {
         "access": "Access",
@@ -1889,7 +1890,10 @@
       "deletionLead": "Different from full account withdrawal",
       "stopLead": "Pause optional processing only",
       "marketingOptInHint": "Product news, offers, and general promo. Separate from time-limited event campaigns.",
-      "eventOptInHint": "Time-limited event and campaign alerts only. Separate from general marketing."
+      "eventOptInHint": "Time-limited event and campaign alerts only. Separate from general marketing.",
+      "requestCancelled": "Request cancelled.",
+      "cancelRequest": "Cancel request",
+      "cancelConfirm": "Cancel this privacy rights request?"
     },
     "report": {
       "cta": "Report",

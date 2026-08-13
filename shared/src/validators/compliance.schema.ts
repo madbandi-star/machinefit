@@ -9,7 +9,6 @@ import {
   SUPPORT_TICKET_STATUSES,
 } from '../constants/legal.js';
 import {
-  PRIVACY_RIGHTS_REQUEST_STATUSES,
   PRIVACY_RIGHTS_REQUEST_TYPES,
 } from '../constants/privacy-rights.js';
 
@@ -40,7 +39,7 @@ export const createPrivacyRightsRequestSchema = z.object({
 });
 
 export const adminPrivacyRightsUpdateSchema = z.object({
-  status: z.enum(PRIVACY_RIGHTS_REQUEST_STATUSES),
+  status: z.enum(['received', 'reviewing', 'completed', 'rejected']),
   resultMessage: z.string().max(5000).optional(),
   rejectionReason: z.string().max(5000).optional(),
   /** When completing processing_stop — apply suspend flag */
@@ -53,7 +52,7 @@ export const adminPrivacyRightsUpdateSchema = z.object({
 
 export const adminPrivacyRightsBulkUpdateSchema = z.object({
   ids: z.array(z.string().uuid()).min(1).max(100),
-  status: z.enum(PRIVACY_RIGHTS_REQUEST_STATUSES),
+  status: z.enum(['received', 'reviewing', 'completed', 'rejected']),
   resultMessage: z.string().max(5000).optional(),
   rejectionReason: z.string().max(5000).optional(),
   applyProcessingStop: z.boolean().optional(),

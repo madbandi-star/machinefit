@@ -1799,10 +1799,13 @@
       "exportDone": "다운로드를 시작했어요.",
       "exportIncludes": "포함: 프로필, 동의, 연동 로그인, 운동기록(최대 500), 즐겨찾기, 결제 이력, 최근 로그인, 문의",
       "requestsTitle": "권리행사 처리 현황",
-      "requestsDesc": "요청일·유형·처리상태·결과를 확인할 수 있습니다.",
+      "requestsDesc": "요청일·유형·처리상태·결과를 확인할 수 있습니다. 접수·확인중 정정/삭제 요청과 적용된 처리정지는 직접 취소할 수 있습니다.",
       "requestsEmpty": "접수된 권리행사 요청이 없습니다.",
       "requestSubmitted": "권리행사 요청을 접수·반영했어요.",
       "requestRejected": "요청을 처리할 수 없습니다. 안내를 확인해 주세요.",
+      "requestCancelled": "요청을 취소했어요.",
+      "cancelRequest": "요청 취소",
+      "cancelConfirm": "이 권리행사 요청을 취소할까요?",
       "moreTitle": "회원탈퇴·문의",
       "withdrawSeparate": "이용계약 종료(권리행사 삭제 요청과 별개)",
       "saved": "동의 설정을 저장했어요.",
@@ -1812,7 +1815,8 @@
         "received": "접수",
         "reviewing": "확인중",
         "completed": "처리완료",
-        "rejected": "처리불가"
+        "rejected": "처리불가",
+        "cancelled": "취소됨"
       },
       "requestType": {
         "access": "열람",
