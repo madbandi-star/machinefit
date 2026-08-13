@@ -1,19 +1,24 @@
-﻿# Test handoff — Privacy rights exercise cards UI
+﻿# Test handoff — Admin privacy rights process + bulk delete
 
 ## Summary
-개인정보 권리센터의 정정·삭제·처리정지 UI를 native details에서 카드형 아코디언으로 교체. 폼 오버플로/깨짐 방지, 인벤토리 2열(좁으면 1열), 체크박스·CTA 정리.
+관리자 「개인정보 권리행사 관리」에 단건/다건 선택, 검토중·완료·반려 일괄 처리, 단건/다건 삭제 추가. 완료 시 정정(닉네임) 반영·처리정지 플래그 적용 옵션. API: PATCH bulk, DELETE requests.
 
 ## Test focus
-1. `/settings/privacy-rights` → 권리 행사: 정정/삭제/정지 카드 펼침 (한 번에 하나)
-2. 정정 폼 input/select/textarea 가로 깨짐 없음
-3. 삭제: 삭제가능/보존 목록 + 체크 후 CTA
-4. 처리정지: 체크 후 CTA
+1. `/admin/privacy-rights` 목록 체크박스 단건/전체 선택
+2. 선택 후 검토중/완료/반려 (결과·반려 사유 입력)
+3. 완료 시 정정 반영·처리정지 적용 체크 동작
+4. 단건 삭제 / 선택 삭제 (confirm)
+5. 유형·상태 필터
 
 ## Fast checks
 ```
-rg -n "pr-card|pr-field|openExercise|correctionBadge" frontend/src/pages/settings/PrivacyRightsPage.tsx frontend/src/styles/privacy-rights.css frontend/src/i18n/locales/ko/common.json
+rg -n "adminBulkUpdate|adminDeleteRights|deleteByIds|applyCorrection" frontend/src/api/compliance.api.ts backend/server/services/compliance.service.ts backend/server/routes/compliance.routes.ts
+rg -n "selectedIds|bulkDelete|apr-table" frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx
 ```
 
 ## As-is → To-be
-- as-is: details 패널, 깨지는 form-field
-- to-be: 배지+리드 카드 아코디언, 전용 pr-field 스타일
+- as-is: 단건 상태 변경만, 삭제/다건 없음
+- to-be: 선택·일괄 처리·삭제 + 완료 시 업무 반영 옵션
+
+## Deploy note
+backend/shared 변경 → Render 백엔드 재배포 필요

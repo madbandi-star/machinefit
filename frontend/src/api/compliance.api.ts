@@ -69,6 +69,29 @@ export const complianceApi = {
       body
     ),
 
+  adminBulkUpdateRightsRequests: (body: {
+    ids: string[];
+    status: AdminPrivacyRightsUpdateInput['status'];
+    resultMessage?: string;
+    rejectionReason?: string;
+    applyProcessingStop?: boolean;
+    applyCorrection?: boolean;
+    noteLegalRetention?: boolean;
+  }) =>
+    apiClient.patch<
+      ApiResponse<{
+        updated: PrivacyRightsRequest[];
+        missing: string[];
+        count: number;
+      }>
+    >('/admin/privacy-rights/requests/bulk', body),
+
+  adminDeleteRightsRequests: (ids: string[]) =>
+    apiClient.delete<ApiResponse<{ deleted: number }>>(
+      '/admin/privacy-rights/requests',
+      { data: { ids } }
+    ),
+
   createTicket: (input: CreateSupportTicketInput) =>
     apiClient.post<ApiResponse<SupportTicketDetail>>('/support/tickets', input),
 

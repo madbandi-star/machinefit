@@ -45,8 +45,24 @@ export const adminPrivacyRightsUpdateSchema = z.object({
   rejectionReason: z.string().max(5000).optional(),
   /** When completing processing_stop — apply suspend flag */
   applyProcessingStop: z.boolean().optional(),
+  /** When completing correction — apply profile field change from payload when possible */
+  applyCorrection: z.boolean().optional(),
   /** When completing deletion — note only; actual purge stays withdraw/retention pipeline */
   noteLegalRetention: z.boolean().optional(),
+});
+
+export const adminPrivacyRightsBulkUpdateSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1).max(100),
+  status: z.enum(PRIVACY_RIGHTS_REQUEST_STATUSES),
+  resultMessage: z.string().max(5000).optional(),
+  rejectionReason: z.string().max(5000).optional(),
+  applyProcessingStop: z.boolean().optional(),
+  applyCorrection: z.boolean().optional(),
+  noteLegalRetention: z.boolean().optional(),
+});
+
+export const adminPrivacyRightsBulkDeleteSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1).max(100),
 });
 
 /** Record feature-scoped profile data processing consent (body / birth / location-gym). */
@@ -105,5 +121,11 @@ export type CreatePrivacyRightsRequestInput = z.infer<
 >;
 export type AdminPrivacyRightsUpdateInput = z.infer<
   typeof adminPrivacyRightsUpdateSchema
+>;
+export type AdminPrivacyRightsBulkUpdateInput = z.infer<
+  typeof adminPrivacyRightsBulkUpdateSchema
+>;
+export type AdminPrivacyRightsBulkDeleteInput = z.infer<
+  typeof adminPrivacyRightsBulkDeleteSchema
 >;
 export type CreateSupportTicketInput = z.infer<typeof createSupportTicketSchema>;

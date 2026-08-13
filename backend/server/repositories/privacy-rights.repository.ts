@@ -294,6 +294,16 @@ export const privacyRightsRepository = {
     return this.getById(requestId);
   },
 
+  async deleteByIds(ids: string[]): Promise<number> {
+    const pool = getPool();
+    if (!pool || ids.length === 0) return 0;
+    const { rowCount } = await pool.query(
+      `DELETE FROM privacy_rights_requests WHERE id = ANY($1::uuid[])`,
+      [ids]
+    );
+    return rowCount ?? 0;
+  },
+
   async setProcessingSuspended(
     userId: string,
     suspended: boolean,

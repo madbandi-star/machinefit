@@ -2,6 +2,8 @@ import type { Request, Response } from 'express';
 import {
   Role,
   adminLegalDocumentSchema,
+  adminPrivacyRightsBulkDeleteSchema,
+  adminPrivacyRightsBulkUpdateSchema,
   adminPrivacyRightsUpdateSchema,
   adminSanctionSchema,
   adminSupportTicketUpdateSchema,
@@ -119,6 +121,32 @@ export async function adminUpdatePrivacyRightsRequest(
   const input = adminPrivacyRightsUpdateSchema.parse(req.body);
   const data = await complianceService.adminUpdatePrivacyRightsRequest(
     String(req.params.requestId),
+    user.userId,
+    input
+  );
+  res.json({ success: true, data });
+}
+
+export async function adminBulkUpdatePrivacyRightsRequests(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const input = adminPrivacyRightsBulkUpdateSchema.parse(req.body);
+  const data = await complianceService.adminBulkUpdatePrivacyRightsRequests(
+    user.userId,
+    input
+  );
+  res.json({ success: true, data });
+}
+
+export async function adminDeletePrivacyRightsRequests(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const input = adminPrivacyRightsBulkDeleteSchema.parse(req.body);
+  const data = await complianceService.adminDeletePrivacyRightsRequests(
     user.userId,
     input
   );

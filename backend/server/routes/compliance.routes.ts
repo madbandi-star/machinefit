@@ -102,6 +102,18 @@ complianceRouter.get(
   complianceController.adminListPrivacyRightsRequests
 );
 complianceRouter.patch(
+  '/admin/privacy-rights/requests/bulk',
+  authMiddleware,
+  requireMinRole(Role.ADMIN),
+  complianceController.adminBulkUpdatePrivacyRightsRequests
+);
+complianceRouter.delete(
+  '/admin/privacy-rights/requests',
+  authMiddleware,
+  requireMinRole(Role.ADMIN),
+  complianceController.adminDeletePrivacyRightsRequests
+);
+complianceRouter.patch(
   '/admin/privacy-rights/requests/:requestId',
   authMiddleware,
   requireMinRole(Role.ADMIN),

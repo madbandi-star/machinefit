@@ -2,6 +2,8 @@ import {
   LEGAL_DOC_VERSION,
   DEFAULT_LEGAL_REGION,
   PRIVACY_DELETION_INVENTORY,
+  type AdminPrivacyRightsBulkDeleteInput,
+  type AdminPrivacyRightsBulkUpdateInput,
   type AdminPrivacyRightsUpdateInput,
   type ConsentUpdateInput,
   type CreatePrivacyRightsRequestInput,
@@ -11,6 +13,37 @@ import { complianceRepository } from '../repositories/compliance.repository.js';
 import { privacyRightsRepository } from '../repositories/privacy-rights.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+
+async function applyRightsFulfillment(
+  existing: Awaited<ReturnType<typeof privacyRightsRepository.getById>>,
+  input: AdminPrivacyRightsUpdateInput
+) {
+  if (!existing || input.status !== 'completed') return;
+
+  const shouldApplyStop =
+    input.applyProcessingStop === true ||
+    (input.applyProcessingStop !== false && existing.requestType === 'processing_stop');
+  if (shouldApplyStop && existing.requestType === 'processing_stop') {
+    await privacyRightsRepository.setProcessingSuspended(
+      existing.userId,
+      true,
+      input.resultMessage ?? 'Admin completed processing stop'
+    );
+  }
+
+  const shouldApplyCorrection =
+    input.applyCorrection === true ||
+    (input.applyCorrection !== false && existing.requestType === 'correction');
+  if (shouldApplyCorrection && existing.requestType === 'correction') {
+    const fieldKey = String(existing.payload?.fieldKey ?? '');
+    const requestedValue = String(existing.payload?.requestedValue ?? '').trim();
+    if (fieldKey === 'displayName' && requestedValue) {
+      await userRepository.updateProfile(existing.userId, {
+        displayName: requestedValue.slice(0, 80),
+      });
+    }
+  }
+}
 
 export const complianceService = {
   listLegalDocuments(regionCode = DEFAULT_LEGAL_REGION, docType?: string) {
@@ -258,13 +291,7 @@ export const complianceService = {
       throw new AppError(400, 'VALIDATION_ERROR', 'Rejection reason is required');
     }
 
-    if (input.applyProcessingStop && input.status === 'completed') {
-      await privacyRightsRepository.setProcessingSuspended(
-        existing.userId,
-        true,
-        input.resultMessage ?? 'Admin completed processing stop'
-      );
-    }
+    await applyRightsFulfillment(existing, input);
 
     const updated = await privacyRightsRepository.updateAdmin(requestId, adminId, {
       status: input.status,
@@ -281,9 +308,71 @@ export const complianceService = {
         status: input.status,
         requestType: existing.requestType,
         noteLegalRetention: input.noteLegalRetention,
+        applyCorrection: input.applyCorrection,
+        applyProcessingStop: input.applyProcessingStop,
       },
     });
     return updated;
+  },
+
+  async adminBulkUpdatePrivacyRightsRequests(
+    adminId: string,
+    input: AdminPrivacyRightsBulkUpdateInput
+  ) {
+    if (input.status === 'rejected' && !input.rejectionReason && !input.resultMessage) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Rejection reason is required');
+    }
+
+    const updated: NonNullable<
+      Awaited<ReturnType<typeof privacyRightsRepository.getById>>
+    >[] = [];
+    const missing: string[] = [];
+
+    for (const id of input.ids) {
+      const existing = await privacyRightsRepository.getById(id);
+      if (!existing) {
+        missing.push(id);
+        continue;
+      }
+      await applyRightsFulfillment(existing, input);
+      const row = await privacyRightsRepository.updateAdmin(id, adminId, {
+        status: input.status,
+        resultMessage: input.resultMessage,
+        rejectionReason: input.rejectionReason,
+      });
+      if (row) updated.push(row);
+    }
+
+    await complianceRepository.writeAuditLog({
+      actorId: adminId,
+      action: 'privacy.rights.admin.bulk_update',
+      targetType: 'privacy_rights_request',
+      targetId: input.ids[0],
+      meta: {
+        status: input.status,
+        count: updated.length,
+        missingCount: missing.length,
+        ids: input.ids,
+        noteLegalRetention: input.noteLegalRetention,
+      },
+    });
+
+    return { updated, missing, count: updated.length };
+  },
+
+  async adminDeletePrivacyRightsRequests(
+    adminId: string,
+    input: AdminPrivacyRightsBulkDeleteInput
+  ) {
+    const deleted = await privacyRightsRepository.deleteByIds(input.ids);
+    await complianceRepository.writeAuditLog({
+      actorId: adminId,
+      action: 'privacy.rights.admin.delete',
+      targetType: 'privacy_rights_request',
+      targetId: input.ids[0],
+      meta: { ids: input.ids, deleted },
+    });
+    return { deleted };
   },
 
   createTicket(userId: string, input: CreateSupportTicketInput) {

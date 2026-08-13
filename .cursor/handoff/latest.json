@@ -1,24 +1,30 @@
 {
-  "title": "Privacy rights exercise cards UI",
-  "summary": "Rebuild correction/deletion/processing-stop as controlled card accordions with overflow-safe form and inventory layout.",
+  "title": "Admin privacy rights process + bulk delete",
+  "summary": "Admin privacy-rights queue now supports single/multi select, bulk status processing, single/bulk delete, and optional correction/processing-stop fulfillment on complete.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
-    "frontend/src/styles/privacy-rights.css",
+    "shared/src/validators/compliance.schema.ts",
+    "backend/server/repositories/privacy-rights.repository.ts",
+    "backend/server/services/compliance.service.ts",
+    "backend/server/controllers/compliance.controller.ts",
+    "backend/server/routes/compliance.routes.ts",
+    "frontend/src/api/compliance.api.ts",
+    "frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx",
+    "frontend/src/styles/admin-privacy-rights.css",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Exercise cards open one at a time",
-    "Correction form no horizontal overflow",
-    "Deletion inventory + checks + CTA",
-    "Processing stop check + CTA"
+    "Admin select single/multi",
+    "Bulk reviewing/complete/reject",
+    "Single and bulk delete",
+    "Complete applies correction/stop options"
   ],
   "fastChecks": [
-    "rg -n \"pr-card|pr-field|openExercise|correctionBadge\" frontend/src/pages/settings/PrivacyRightsPage.tsx frontend/src/styles/privacy-rights.css"
+    "rg -n \"adminBulkUpdate|adminDeleteRights|deleteByIds\" frontend/src/api backend/server"
   ],
-  "productionChecks": ["Pages /settings/privacy-rights exercise section"],
-  "deploy": { "expected": "Pages FE" },
-  "asIs": "Broken details panels / form-field",
-  "toBe": "Stable card accordion UI for correction/deletion/stop"
+  "productionChecks": ["Admin /admin/privacy-rights after Render BE + Pages FE"],
+  "deploy": { "expected": "Pages FE + Render BE" },
+  "asIs": "Single status update only",
+  "toBe": "Select, bulk process, delete, fulfill options"
 }
