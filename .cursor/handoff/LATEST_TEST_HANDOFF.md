@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: `2ef6bccd`
 
 ## Changed files
 - `frontend/src/utils/workoutCompleteShareThemes.ts`

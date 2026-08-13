@@ -1,7 +1,7 @@
 {
   "title": "TODAY'S WORKOUT share: 10 random visual themes",
   "summary": "Workout complete share card now randomly picks one of 10 mock-matched visual themes at export time. Report data, caption, and share flow are unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "2ef6bccd" },
   "changedFiles": [
     "frontend/src/utils/workoutCompleteShareCard.ts",
     "frontend/src/utils/workoutCompleteShareThemes.ts",
