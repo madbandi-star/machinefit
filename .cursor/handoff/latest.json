@@ -1,29 +1,18 @@
 {
-  "title": "User cancel privacy rights requests",
-  "summary": "Members can cancel pending correction/deletion requests and undo applied processing-stop from Privacy Rights Center; adds cancelled status + migration 127.",
+  "title": "Today template apply starts incomplete",
+  "summary": "Applying a workout template on today's date now creates PLANNED cards with all sets incomplete (same as future dates), instead of auto-COMPLETED.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "database/migrations/127_privacy_rights_cancelled_status.sql",
-    "shared/src/constants/privacy-rights.ts",
-    "shared/src/validators/compliance.schema.ts",
-    "backend/server/repositories/privacy-rights.repository.ts",
-    "backend/server/services/compliance.service.ts",
-    "backend/server/controllers/compliance.controller.ts",
-    "backend/server/routes/compliance.routes.ts",
-    "frontend/src/api/compliance.api.ts",
-    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
-    "frontend/src/styles/privacy-rights.css"
-  ],
+  "changedFiles": ["backend/server/services/workout-card.service.ts"],
   "testFocus": [
-    "Cancel pending correction/deletion",
-    "Cancel processing-stop and clear suspend",
-    "No cancel on completed correction/deletion"
+    "Apply template for today → all sets incomplete",
+    "Apply template for future → incomplete",
+    "Past date default still COMPLETED"
   ],
   "fastChecks": [
-    "rg -n \"cancelRightsRequest|/cancel|cancelled\" frontend/src/api/compliance.api.ts backend/server/routes/compliance.routes.ts"
+    "rg -n \"scheduledDate >= today\" backend/server/services/workout-card.service.ts"
   ],
-  "productionChecks": ["Pages privacy-rights cancel after migration + Render"],
-  "deploy": { "expected": "Pages FE + Render BE + migration 127" },
-  "asIs": "No user cancel for rights requests",
-  "toBe": "User cancel for correction/deletion/processing_stop"
+  "productionChecks": ["Apply template on today after Render BE"],
+  "deploy": { "expected": "Render BE" },
+  "asIs": "Today template import marks all sets completed",
+  "toBe": "Today template import marks all sets incomplete"
 }

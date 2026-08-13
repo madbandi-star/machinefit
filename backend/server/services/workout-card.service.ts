@@ -63,7 +63,8 @@ function defaultStatusForDate(
 ): WorkoutCardStatus {
   if (explicit) return explicit;
   const today = todayDateKey();
-  return scheduledDate > today ? 'PLANNED' : 'COMPLETED';
+  // Future + today: planned with incomplete sets. Past only defaults to completed.
+  return scheduledDate >= today ? 'PLANNED' : 'COMPLETED';
 }
 
 function pgCode(error: unknown): string {
