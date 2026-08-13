@@ -1169,7 +1169,7 @@ export function HistoryListPanel() {
               aria-expanded={dayMenuOpen}
               onClick={() => setDayMenuOpen(true)}
             >
-              {t('machines:history.moreLabel')}
+              <Icon name="settings" size={18} />
             </button>
           ) : null}
         </div>

@@ -1002,38 +1002,8 @@ body:has(.records-page--history) .layout__content {
   -webkit-tap-highlight-color: transparent;
 }
 
-.history-record-card__more-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 2rem;
-  padding: 0 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
-  color: var(--color-text-muted);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.history-record-card__more-trigger:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 @media (hover: hover) and (pointer: fine) {
   .history-record-card__order-trigger:hover {
-    border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
-    color: var(--color-primary);
-  }
-
-  .history-record-card__more-trigger:hover:not(:disabled) {
     border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
     color: var(--color-primary);
   }
@@ -1230,16 +1200,13 @@ body:has(.records-page--history) .layout__content {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
   background: color-mix(in srgb, var(--glass-bg) 80%, transparent);
   color: var(--color-text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
   transition:
