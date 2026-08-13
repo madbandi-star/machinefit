@@ -1,7 +1,7 @@
 {
   "title": "Restore fortune share to 22:27 Instagram poster",
   "summary": "Confirm Helchang fortune share card is the 22:23?22:27 Instagram photo-poster build (9ca0d00d), not DNA stack or earlier cinematic-only version. Redeploy Pages.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "05965d52" },
   "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
   "testFocus": ["Share card shows photo BG + neon metric cards (pre-DNA)"],
   "fastChecks": ["rg -n \"fortune-share-bg|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"],
