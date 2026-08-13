@@ -1,7 +1,7 @@
 {
   "title": "Template share creator YouTube / Instagram fields",
   "summary": "My Templates share dialog collects youtubeUrl, youtubeChannelName, and instagramId. Values persist on template_share_posts and show on hub rows + detail posts.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "4876e208" },
   "changedFiles": [
     "database/migrations/128_template_share_creator_links.sql",
     "shared/src/types/template-share.types.ts",

@@ -6,7 +6,7 @@
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `4876e208`
 
 ## Migration
 `database/migrations/128_template_share_creator_links.sql` — **Render DB 적용 필요**
