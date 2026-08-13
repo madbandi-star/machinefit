@@ -1,27 +1,24 @@
 {
-  "title": "Distinguish marketing vs event consent labels",
-  "summary": "Rename near-duplicate promo opt-in labels to General marketing vs Event & campaign, with short hints on Privacy Rights toggles.",
+  "title": "Privacy rights exercise cards UI",
+  "summary": "Rebuild correction/deletion/processing-stop as controlled card accordions with overflow-safe form and inventory layout.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json",
-    "frontend/src/i18n/locales/ko/push.json",
-    "frontend/src/i18n/locales/en/push.json",
     "frontend/src/pages/settings/PrivacyRightsPage.tsx",
-    "frontend/src/styles/privacy-rights.css"
+    "frontend/src/styles/privacy-rights.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Privacy rights: labels clearly different + hints",
-    "Settings marketing toggle uses new marketing label",
-    "Fields unchanged: marketingOptIn vs eventOptIn"
+    "Exercise cards open one at a time",
+    "Correction form no horizontal overflow",
+    "Deletion inventory + checks + CTA",
+    "Processing stop check + CTA"
   ],
   "fastChecks": [
-    "rg -n \"일반 마케팅|이벤트·캠페인|marketingOptInHint\" frontend/src/i18n/locales/ko/common.json frontend/src/pages/settings/PrivacyRightsPage.tsx"
+    "rg -n \"pr-card|pr-field|openExercise|correctionBadge\" frontend/src/pages/settings/PrivacyRightsPage.tsx frontend/src/styles/privacy-rights.css"
   ],
-  "productionChecks": ["Pages /settings/privacy-rights consent section"],
+  "productionChecks": ["Pages /settings/privacy-rights exercise section"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Near-identical event/promo labels",
-  "toBe": "General marketing vs Event & campaign labels + hints"
+  "asIs": "Broken details panels / form-field",
+  "toBe": "Stable card accordion UI for correction/deletion/stop"
 }

@@ -64,6 +64,13 @@ export function PrivacyRightsPage() {
   const [deletionAck, setDeletionAck] = useState(false);
   const [deletionConfirm, setDeletionConfirm] = useState(false);
   const [stopConfirm, setStopConfirm] = useState(false);
+  const [openExercise, setOpenExercise] = useState<
+    'correction' | 'deletion' | 'stop' | null
+  >(null);
+
+  const toggleExercise = (key: 'correction' | 'deletion' | 'stop') => {
+    setOpenExercise((prev) => (prev === key ? null : key));
+  };
 
   const summaryQuery = useQuery({
     queryKey: ['privacy-summary'],
@@ -317,172 +324,254 @@ export function PrivacyRightsPage() {
         <section id="pr-exercise" className="pr-section">
           <header className="pr-section__head">
             <h2 className="pr-section__title">{t('compliance.rights.exerciseTitle')}</h2>
-            <p className="pr-section__desc">{t('compliance.rights.exerciseDesc')}</p>
+            <GuideProse
+              className="pr-section__desc"
+              text={t('compliance.rights.exerciseDesc')}
+              variant="muted"
+            />
           </header>
 
-          <details className="pr-panel">
-            <summary className="pr-panel__summary">
-              {t('compliance.rights.correctionTitle')}
-              <span className="pr-panel__chevron" aria-hidden />
-            </summary>
-            <div className="pr-panel__body">
-              <GuideProse
-                className="pr-section__desc"
-                text={t('compliance.rights.correctionDesc')}
-                variant="muted"
-              />
-              <Link to={ROUTES.SETTINGS} className="pr-link">
-                {t('compliance.rights.editInSettings')}
-              </Link>
-              <label className="form-field">
-                <span>{t('compliance.rights.correctionField')}</span>
-                <select
-                  value={correctionField}
-                  onChange={(e) => setCorrectionField(e.target.value)}
-                >
-                  <option value="displayName">{t('auth.displayNamePlaceholder')}</option>
-                  <option value="email">{t('auth.emailLabel')}</option>
-                  <option value="other">{t('compliance.rights.correctionOther')}</option>
-                </select>
-              </label>
-              <label className="form-field">
-                <span>{t('compliance.rights.correctionCurrent')}</span>
-                <input
-                  value={correctionCurrent}
-                  onChange={(e) => setCorrectionCurrent(e.target.value)}
-                />
-              </label>
-              <label className="form-field">
-                <span>{t('compliance.rights.correctionRequested')}</span>
-                <input
-                  value={correctionRequested}
-                  onChange={(e) => setCorrectionRequested(e.target.value)}
-                />
-              </label>
-              <label className="form-field">
-                <span>{t('compliance.rights.correctionReason')}</span>
-                <input
-                  value={correctionReason}
-                  onChange={(e) => setCorrectionReason(e.target.value)}
-                />
-              </label>
+          <div className="pr-exercise">
+            <article
+              className={`pr-card${openExercise === 'correction' ? ' pr-card--open' : ''}`}
+            >
               <button
                 type="button"
-                className="btn btn--primary"
-                disabled={rightsMutation.isPending || !correctionRequested.trim()}
-                onClick={() =>
-                  rightsMutation.mutate({
-                    requestType: 'correction',
-                    fieldKey: correctionField,
-                    currentValue: correctionCurrent,
-                    requestedValue: correctionRequested,
-                    detail: correctionReason || undefined,
-                  })
-                }
+                className="pr-card__head"
+                aria-expanded={openExercise === 'correction'}
+                onClick={() => toggleExercise('correction')}
               >
-                {t('compliance.rights.correctionCta')}
+                <span className="pr-card__badge">{t('compliance.rights.correctionBadge')}</span>
+                <span className="pr-card__titles">
+                  <strong>{t('compliance.rights.correctionTitle')}</strong>
+                  <span>{t('compliance.rights.correctionLead')}</span>
+                </span>
+                <span className="pr-card__chevron" aria-hidden />
               </button>
-            </div>
-          </details>
-
-          <details className="pr-panel">
-            <summary className="pr-panel__summary">
-              {t('compliance.rights.deletionTitle')}
-              <span className="pr-panel__chevron" aria-hidden />
-            </summary>
-            <div className="pr-panel__body">
-              <GuideProse
-                className="pr-section__desc"
-                text={t('compliance.rights.deletionDesc')}
-                variant="muted"
-              />
-              <p className="pr-note">{t('compliance.rights.deletionRetainedNote')}</p>
-              <div className="pr-lists">
-                <div>
-                  <h4>{t('compliance.rights.deletionDeletableTitle')}</h4>
-                  <ul>
-                    {(purposes?.deletionInventory.deletable ?? []).map((key) => (
-                      <li key={key}>{t(`compliance.rights.inventory.${key}`)}</li>
-                    ))}
-                  </ul>
+              {openExercise === 'correction' ? (
+                <div className="pr-card__body">
+                  <GuideProse
+                    className="pr-section__desc"
+                    text={t('compliance.rights.correctionDesc')}
+                    variant="muted"
+                  />
+                  <Link to={ROUTES.SETTINGS} className="pr-link pr-link--inline">
+                    {t('compliance.rights.editInSettings')}
+                  </Link>
+                  <div className="pr-form">
+                    <label className="pr-field">
+                      <span className="pr-field__label">
+                        {t('compliance.rights.correctionField')}
+                      </span>
+                      <select
+                        className="pr-field__control"
+                        value={correctionField}
+                        onChange={(e) => setCorrectionField(e.target.value)}
+                      >
+                        <option value="displayName">
+                          {t('auth.displayNamePlaceholder')}
+                        </option>
+                        <option value="email">{t('auth.emailLabel')}</option>
+                        <option value="other">{t('compliance.rights.correctionOther')}</option>
+                      </select>
+                    </label>
+                    <label className="pr-field">
+                      <span className="pr-field__label">
+                        {t('compliance.rights.correctionCurrent')}
+                      </span>
+                      <input
+                        className="pr-field__control"
+                        value={correctionCurrent}
+                        onChange={(e) => setCorrectionCurrent(e.target.value)}
+                      />
+                    </label>
+                    <label className="pr-field">
+                      <span className="pr-field__label">
+                        {t('compliance.rights.correctionRequested')}
+                      </span>
+                      <input
+                        className="pr-field__control"
+                        value={correctionRequested}
+                        onChange={(e) => setCorrectionRequested(e.target.value)}
+                      />
+                    </label>
+                    <label className="pr-field">
+                      <span className="pr-field__label">
+                        {t('compliance.rights.correctionReason')}
+                      </span>
+                      <textarea
+                        className="pr-field__control pr-field__control--area"
+                        rows={3}
+                        value={correctionReason}
+                        onChange={(e) => setCorrectionReason(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <div className="pr-card__footer">
+                    <button
+                      type="button"
+                      className="btn btn--primary"
+                      disabled={rightsMutation.isPending || !correctionRequested.trim()}
+                      onClick={() =>
+                        rightsMutation.mutate({
+                          requestType: 'correction',
+                          fieldKey: correctionField,
+                          currentValue: correctionCurrent,
+                          requestedValue: correctionRequested,
+                          detail: correctionReason || undefined,
+                        })
+                      }
+                    >
+                      {t('compliance.rights.correctionCta')}
+                    </button>
+                  </div>
                 </div>
-                <div className="pr-lists--retain">
-                  <h4>{t('compliance.rights.deletionRetainedTitle')}</h4>
-                  <ul>
-                    {(purposes?.deletionInventory.retained ?? []).map((key) => (
-                      <li key={key}>{t(`compliance.rights.inventory.${key}`)}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <label className="pr-check">
-                <input
-                  type="checkbox"
-                  checked={deletionAck}
-                  onChange={(e) => setDeletionAck(e.target.checked)}
-                />
-                <span>{t('compliance.rights.deletionAck')}</span>
-              </label>
-              <label className="pr-check">
-                <input
-                  type="checkbox"
-                  checked={deletionConfirm}
-                  onChange={(e) => setDeletionConfirm(e.target.checked)}
-                />
-                <span>{t('compliance.rights.deletionConfirm')}</span>
-              </label>
-              <button
-                type="button"
-                className="btn btn--primary"
-                disabled={rightsMutation.isPending || !deletionAck || !deletionConfirm}
-                onClick={() =>
-                  rightsMutation.mutate({
-                    requestType: 'deletion',
-                    acknowledgedInventory: true,
-                    confirmed: true,
-                  })
-                }
-              >
-                {t('compliance.rights.deletionCta')}
-              </button>
-              <p className="pr-note">{t('compliance.rights.deletionVsWithdraw')}</p>
-            </div>
-          </details>
+              ) : null}
+            </article>
 
-          <details className="pr-panel">
-            <summary className="pr-panel__summary">
-              {t('compliance.rights.stopTitle')}
-              <span className="pr-panel__chevron" aria-hidden />
-            </summary>
-            <div className="pr-panel__body">
-              <GuideProse
-                className="pr-section__desc"
-                text={t('compliance.rights.stopDesc')}
-                variant="muted"
-              />
-              <label className="pr-check">
-                <input
-                  type="checkbox"
-                  checked={stopConfirm}
-                  onChange={(e) => setStopConfirm(e.target.checked)}
-                />
-                <span>{t('compliance.rights.stopConfirm')}</span>
-              </label>
+            <article
+              className={`pr-card pr-card--danger${
+                openExercise === 'deletion' ? ' pr-card--open' : ''
+              }`}
+            >
               <button
                 type="button"
-                className="btn btn--primary"
-                disabled={rightsMutation.isPending || !stopConfirm}
-                onClick={() =>
-                  rightsMutation.mutate({
-                    requestType: 'processing_stop',
-                    confirmed: true,
-                  })
-                }
+                className="pr-card__head"
+                aria-expanded={openExercise === 'deletion'}
+                onClick={() => toggleExercise('deletion')}
               >
-                {t('compliance.rights.stopCta')}
+                <span className="pr-card__badge pr-card__badge--danger">
+                  {t('compliance.rights.deletionBadge')}
+                </span>
+                <span className="pr-card__titles">
+                  <strong>{t('compliance.rights.deletionTitle')}</strong>
+                  <span>{t('compliance.rights.deletionLead')}</span>
+                </span>
+                <span className="pr-card__chevron" aria-hidden />
               </button>
-            </div>
-          </details>
+              {openExercise === 'deletion' ? (
+                <div className="pr-card__body">
+                  <GuideProse
+                    className="pr-section__desc"
+                    text={t('compliance.rights.deletionDesc')}
+                    variant="muted"
+                  />
+                  <p className="pr-note">{t('compliance.rights.deletionRetainedNote')}</p>
+                  <div className="pr-inventory">
+                    <div className="pr-inventory__col">
+                      <h4>{t('compliance.rights.deletionDeletableTitle')}</h4>
+                      <ul>
+                        {(purposes?.deletionInventory.deletable ?? []).map((key) => (
+                          <li key={key}>{t(`compliance.rights.inventory.${key}`)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="pr-inventory__col pr-inventory__col--retain">
+                      <h4>{t('compliance.rights.deletionRetainedTitle')}</h4>
+                      <ul>
+                        {(purposes?.deletionInventory.retained ?? []).map((key) => (
+                          <li key={key}>{t(`compliance.rights.inventory.${key}`)}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="pr-checks">
+                    <label className="pr-check">
+                      <input
+                        type="checkbox"
+                        checked={deletionAck}
+                        onChange={(e) => setDeletionAck(e.target.checked)}
+                      />
+                      <span>{t('compliance.rights.deletionAck')}</span>
+                    </label>
+                    <label className="pr-check">
+                      <input
+                        type="checkbox"
+                        checked={deletionConfirm}
+                        onChange={(e) => setDeletionConfirm(e.target.checked)}
+                      />
+                      <span>{t('compliance.rights.deletionConfirm')}</span>
+                    </label>
+                  </div>
+                  <div className="pr-card__footer">
+                    <button
+                      type="button"
+                      className="btn btn--primary"
+                      disabled={
+                        rightsMutation.isPending || !deletionAck || !deletionConfirm
+                      }
+                      onClick={() =>
+                        rightsMutation.mutate({
+                          requestType: 'deletion',
+                          acknowledgedInventory: true,
+                          confirmed: true,
+                        })
+                      }
+                    >
+                      {t('compliance.rights.deletionCta')}
+                    </button>
+                  </div>
+                  <p className="pr-note pr-note--soft">
+                    {t('compliance.rights.deletionVsWithdraw')}
+                  </p>
+                </div>
+              ) : null}
+            </article>
+
+            <article
+              className={`pr-card${openExercise === 'stop' ? ' pr-card--open' : ''}`}
+            >
+              <button
+                type="button"
+                className="pr-card__head"
+                aria-expanded={openExercise === 'stop'}
+                onClick={() => toggleExercise('stop')}
+              >
+                <span className="pr-card__badge pr-card__badge--warn">
+                  {t('compliance.rights.stopBadge')}
+                </span>
+                <span className="pr-card__titles">
+                  <strong>{t('compliance.rights.stopTitle')}</strong>
+                  <span>{t('compliance.rights.stopLead')}</span>
+                </span>
+                <span className="pr-card__chevron" aria-hidden />
+              </button>
+              {openExercise === 'stop' ? (
+                <div className="pr-card__body">
+                  <GuideProse
+                    className="pr-section__desc"
+                    text={t('compliance.rights.stopDesc')}
+                    variant="muted"
+                  />
+                  <div className="pr-checks">
+                    <label className="pr-check">
+                      <input
+                        type="checkbox"
+                        checked={stopConfirm}
+                        onChange={(e) => setStopConfirm(e.target.checked)}
+                      />
+                      <span>{t('compliance.rights.stopConfirm')}</span>
+                    </label>
+                  </div>
+                  <div className="pr-card__footer">
+                    <button
+                      type="button"
+                      className="btn btn--primary"
+                      disabled={rightsMutation.isPending || !stopConfirm}
+                      onClick={() =>
+                        rightsMutation.mutate({
+                          requestType: 'processing_stop',
+                          confirmed: true,
+                        })
+                      }
+                    >
+                      {t('compliance.rights.stopCta')}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </article>
+          </div>
         </section>
 
         <section id="pr-requests" className="pr-section">
