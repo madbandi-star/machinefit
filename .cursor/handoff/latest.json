@@ -1,7 +1,7 @@
 {
   "title": "Stop collecting OAuth user emails",
   "summary": "MachineFit no longer stores, returns, or displays OAuth account emails. Login remains (provider, provider_user_id). Migration 130 nulls existing emails; JWT/API always omit email.",
-  "git": { "branch": "main", "commit": "PENDING" },
+  "git": { "branch": "main", "commit": "e61fe486" },
   "changedFiles": [
     "database/migrations/130_remove_user_email_storage.sql",
     "backend/server/middlewares/auth.middleware.ts",

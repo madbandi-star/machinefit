@@ -5,7 +5,7 @@ MachineFit no longer stores, returns, or displays OAuth account emails. Login co
 
 ## Git
 - Branch: `main`
-- Commit: PENDING (filled after push)
+- Commit: `e61fe486`
 
 ## Test focus
 1. OAuth login / signup / rejoin still works (provider link only).
