@@ -1682,6 +1682,52 @@
   flex-shrink: 0;
 }
 
+.language-picker--landing .language-picker__trigger {
+  height: 2rem;
+  padding: 0 0.65rem;
+  gap: 0.3rem;
+  border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, #fff 4%, transparent);
+  color: color-mix(in srgb, #fff 88%, transparent);
+}
+
+.language-picker--landing .language-picker__trigger:hover:not(:disabled) {
+  border-color: color-mix(in srgb, #fff 28%, transparent);
+  background: color-mix(in srgb, #fff 7%, transparent);
+  color: #fff;
+}
+
+.language-picker--landing .language-picker__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.language-picker--landing .language-picker__chevron {
+  color: color-mix(in srgb, #fff 55%, transparent);
+}
+
+.language-picker--landing .language-picker__menu {
+  right: 0;
+  left: auto;
+  min-width: 8.5rem;
+  border: 1px solid color-mix(in srgb, #fff 14%, transparent);
+  background: #111;
+  color: #fff;
+}
+
+.language-picker--landing .language-picker__option {
+  color: color-mix(in srgb, #fff 88%, transparent);
+}
+
+.language-picker--landing .language-picker__option:hover,
+.language-picker--landing .language-picker__option:focus-visible,
+.language-picker--landing .language-picker__option--active {
+  background: color-mix(in srgb, #fff 8%, transparent);
+  color: #fff;
+}
+
 .language-picker--compact .language-picker__trigger {
   height: 1.5rem;
   padding: 0 0.2rem 0 0.3rem;

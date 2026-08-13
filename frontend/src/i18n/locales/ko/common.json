@@ -331,12 +331,12 @@
     "loginBrowseMachines": "기구 둘러보기",
     "landingLabel": "MachineFit 시작",
     "landingSlogan": "내 몸에 딱 맞는 머신 세팅",
-    "landingHeadline1": "더 정확하게, 더 안전하게",
-    "landingHeadline2": "<highlight>최적의 세팅</highlight>으로 운동하세요",
+    "landingHeadline1": "더 정확하게,",
+    "landingHeadline2": "더 안전하게",
     "landingFeat1Title": "정확한 세팅",
-    "landingFeat1Desc": "브랜드 기구별 정확한 세팅값",
+    "landingFeat1Desc": "상세한 기구별 정확한 세팅값",
     "landingFeat2Title": "더 안전한 운동",
-    "landingFeat2Desc": "내 몸에 맞는 수치 세팅 제공",
+    "landingFeat2Desc": "내 몸에 맞는 부상 예방 제안",
     "landingFeat3Title": "운동 기록 관리",
     "landingFeat3Desc": "기록하고 분석하여 더 나은 결과로",
     "startWithKakao": "카카오로 시작하기",
@@ -364,7 +364,9 @@
     "ageRestrictedTitle": "만 14세 미만은 가입할 수 없습니다",
     "ageRestrictedBody": "머신핏 계정은 만 14세 이상만 만들 수 있습니다. 헬스장 시설 회원 명부와는 별개입니다.",
     "ageRestrictedBack": "로그인으로 돌아가기",
-    "trialNoticeSignup": "가입 완료 시 운영 정책에 따라 프리미엄 무료체험(예: 7일)이 제공될 수 있습니다. 세부 조건은 전자상거래·환불 정책을 확인해 주세요."
+    "trialNoticeSignup": "가입 완료 시 운영 정책에 따라 프리미엄 무료체험(예: 7일)이 제공될 수 있습니다. 세부 조건은 전자상거래·환불 정책을 확인해 주세요.",
+    "landingHeadline3": "<highlight>최적의 세팅으로</highlight> 운동하세요",
+    "landingSubhead": "과학적인 데이터와 AI 분석으로\n내 몸에 딱 맞는 머신 세팅을 제안합니다."
   },
   "settings": {
     "language": "언어",
