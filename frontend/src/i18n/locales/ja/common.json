@@ -1706,7 +1706,14 @@
       "sponsored": "This content may include advertising or sponsorship.",
       "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
       "learnMore": "Learn more",
-      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment."
+      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment.",
+      "healthTitle": "重要なお知らせ",
+      "aiTitle": "AIに関する案内",
+      "healthCardBody": "MachineFitの運動情報・器具設定・推奨・データ分析は一般的なフィットネス参考情報であり、医療診断・治療・処方・相談ではありません。\n痛みや異常症状がある場合は無理をせず、医療機関または専門家に相談してください。",
+      "aiCardBody": "AI・アルゴリズム推奨は参考情報であり、誤差が生じる場合があります。",
+      "aiCardHighlight": "医療的判断を代替するものではありません。",
+      "learnMoreCard": "詳しく見る",
+      "noticesLabel": "案内"
     },
     "sponsoredBadge": "Ad",
     "rights": {

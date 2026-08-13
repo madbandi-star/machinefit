@@ -1705,7 +1705,14 @@
       "sponsored": "This content may include advertising or sponsorship.",
       "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
       "learnMore": "Learn more",
-      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment."
+      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment.",
+      "healthTitle": "Important notice",
+      "aiTitle": "AI notice",
+      "healthCardBody": "MachineFit workout info, machine settings, recommendations, and analysis are general fitness guidance — not medical diagnosis, treatment, prescription, or counseling.\nIf you feel pain or unusual symptoms, do not push through it — consult a healthcare professional.",
+      "aiCardBody": "AI algorithm recommendations are for reference only and may contain errors.",
+      "aiCardHighlight": "They do not replace medical judgment.",
+      "learnMoreCard": "View details",
+      "noticesLabel": "Notices"
     },
     "sponsoredBadge": "Ad",
     "rights": {

@@ -1706,7 +1706,14 @@
       "sponsored": "This content may include advertising or sponsorship.",
       "trademark": "Each brand name, product name, and trademark is a registered trademark or trademark of its respective owner. MachineFit is an independent service and does not imply affiliation, endorsement, or an official relationship with any manufacturer.",
       "learnMore": "Learn more",
-      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment."
+      "fitnessNote": "Fitness safety reference only — not medical diagnosis or treatment.",
+      "healthTitle": "重要提示",
+      "aiTitle": "AI 提示",
+      "healthCardBody": "MachineFit 的运动信息、器械设置、推荐与数据分析仅为一般健身参考，不构成医疗诊断、治疗、处方或咨询。\n如有疼痛或不适，请勿勉强，并咨询医疗机构或相关专业人士。",
+      "aiCardBody": "AI 算法推荐仅供参考，可能存在误差。",
+      "aiCardHighlight": "不能替代医疗判断。",
+      "learnMoreCard": "查看详情",
+      "noticesLabel": "提示说明"
     },
     "sponsoredBadge": "Ad",
     "rights": {
