@@ -1,27 +1,24 @@
 {
-  "title": "TODAY'S WORKOUT share: 10 random visual themes",
-  "summary": "Workout complete share card now randomly picks one of 10 mock-matched visual themes at export time. Report data, caption, and share flow are unchanged.",
-  "git": { "branch": "main", "commit": "2ef6bccd" },
+  "title": "TODAY'S WORKOUT share: random theme every share",
+  "summary": "Each share draw uses a shuffle bag over 10 mock themes so consecutive shares get different looks until the pack cycles.",
+  "git": { "branch": "cursor/today-workout-share-random-35b3", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/workoutCompleteShareCard.ts",
     "frontend/src/utils/workoutCompleteShareThemes.ts",
-    "frontend/public/assets/share/workout/cinematic-gym.png",
-    "frontend/public/assets/share/workout/industrial-plates.png"
+    "frontend/src/utils/workoutCompleteShareCard.ts"
   ],
   "testFocus": [
-    "Share from TODAY'S WORKOUT report ? card still shows duration/exercises/sets/volume/POWER/KEEP GOING",
-    "Re-share a few times ? visual theme varies among ~10 looks",
-    "No change to report numbers or share caption logic"
+    "Share several times in one session — each PNG uses a different visual theme",
+    "After 10 shares, themes reshuffle without immediate repeat of the last one",
+    "Report numbers and caption unchanged"
   ],
   "fastChecks": [
-    "rg -n \"pickRandomWorkoutShareTheme|WORKOUT_SHARE_THEMES\" frontend/src/utils/workoutCompleteShareThemes.ts frontend/src/utils/workoutCompleteShareCard.ts",
-    "(Get-Content frontend/src/utils/workoutCompleteShareThemes.ts | Select-String 'id:').Count",
-    "Test-Path frontend/public/assets/share/workout/cinematic-gym.png"
+    "rg -n \"shuffle bag|pickRandomWorkoutShareTheme\" frontend/src/utils/workoutCompleteShareThemes.ts",
+    "npx --yes vite-node src/utils/workoutCompleteShareThemes.smoke.ts"
   ],
   "productionChecks": [
-    "After Pages: end workout ? share ? confirm PNG style rotates; values match report"
+    "After Pages: end workout → share repeatedly → confirm styles rotate"
   ],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Single flat green/slate workout share card",
-  "toBe": "Random among 10 visual themes (sport/hud/minimal/grunge/gauge/cosmic/photo/heat/neon/cinematic)"
+  "asIs": "Math.random each share (possible immediate repeats)",
+  "toBe": "Shuffle bag — distinct theme each share until all 10 used"
 }

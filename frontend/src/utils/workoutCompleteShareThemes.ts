@@ -243,9 +243,101 @@ export const WORKOUT_SHARE_THEMES: WorkoutShareTheme[] = [
   },
 ];
 
+const STORAGE_KEY = 'mf.workoutShareThemeDeck';
+
+/** In-memory shuffle bag so each share draws a different theme until the pack cycles. */
+let themeDeck: string[] = [];
+let lastThemeId: string | null = null;
+
+function shuffleIds(ids: string[]): string[] {
+  const out = [...ids];
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const a = out[i]!;
+    out[i] = out[j]!;
+    out[j] = a;
+  }
+  return out;
+}
+
+function canUseSessionStorage(): boolean {
+  return typeof sessionStorage !== 'undefined';
+}
+
+function readPersistedDeck(): string[] | null {
+  if (!canUseSessionStorage()) return null;
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { deck?: unknown; last?: unknown };
+    if (!Array.isArray(parsed.deck)) return null;
+    const ids = parsed.deck.filter((x): x is string => typeof x === 'string');
+    if (typeof parsed.last === 'string') lastThemeId = parsed.last;
+    return ids;
+  } catch {
+    return null;
+  }
+}
+
+function persistDeck(): void {
+  if (!canUseSessionStorage()) return;
+  try {
+    sessionStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ deck: themeDeck, last: lastThemeId })
+    );
+  } catch {
+    /* private mode — ignore */
+  }
+}
+
+function refillDeck(themes: WorkoutShareTheme[]): void {
+  const ids = themes.map((t) => t.id);
+  let next = shuffleIds(ids);
+  // After a full cycle, avoid drawing the same theme twice in a row.
+  if (lastThemeId && next.length > 1 && next[0] === lastThemeId) {
+    const swap = 1 + Math.floor(Math.random() * (next.length - 1));
+    const a = next[0]!;
+    next[0] = next[swap]!;
+    next[swap] = a;
+  }
+  themeDeck = next;
+}
+
+/**
+ * Pick a share theme at random for every export.
+ * Uses a shuffle bag (no immediate repeats until all 10 themes have been used).
+ */
 export function pickRandomWorkoutShareTheme(
   themes: WorkoutShareTheme[] = WORKOUT_SHARE_THEMES
 ): WorkoutShareTheme {
-  const i = Math.floor(Math.random() * themes.length);
-  return themes[i] ?? themes[0]!;
+  if (themes.length === 0) {
+    throw new Error('WORKOUT_SHARE_THEMES is empty');
+  }
+  if (themeDeck.length === 0) {
+    const persisted = readPersistedDeck();
+    if (persisted && persisted.length > 0) {
+      const valid = new Set(themes.map((t) => t.id));
+      themeDeck = persisted.filter((id) => valid.has(id));
+    }
+    if (themeDeck.length === 0) refillDeck(themes);
+  }
+
+  const id = themeDeck.shift() ?? themes[0]!.id;
+  lastThemeId = id;
+  persistDeck();
+
+  return themes.find((t) => t.id === id) ?? themes[0]!;
+}
+
+/** Test / debug helper — clears the in-session shuffle bag. */
+export function resetWorkoutShareThemeDeck(): void {
+  themeDeck = [];
+  lastThemeId = null;
+  if (!canUseSessionStorage()) return;
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
 }

@@ -1,28 +1,21 @@
-﻿# Test handoff — TODAY'S WORKOUT share 10 random themes
+﻿# Test handoff — TODAY'S WORKOUT share random each time
 
 ## Summary
-운동 종료 공유 카드가 시안 10종 중 **랜덤** 디자인을 씁니다. 리포트/캡션/공유 플로우(비즈니스 로직)는 변경 없음.
+운동 종료 공유를 **누를 때마다** 시안 10종 중 다른 디자인이 나옵니다(셔플 백: 10개 소진 전 중복 없음).
 
 ## Git
-- Branch: `main`
-- Commit: `2ef6bccd`
+- Branch: `cursor/today-workout-share-random-35b3`
 
 ## Changed files
 - `frontend/src/utils/workoutCompleteShareThemes.ts`
 - `frontend/src/utils/workoutCompleteShareCard.ts`
-- `frontend/public/assets/share/workout/*.png` (cinematic + industrial)
 
 ## Test focus
-1. 공유 PNG에 duration / exercises / sets / volume / POWER / KEEP GOING 유지
-2. 여러 번 공유 시 디자인이 바뀜 (10종 풀)
-3. 숫자·캡션은 리포트와 동일
+1. 같은 세션에서 공유를 여러 번 → 연속 카드 디자인이 달라짐
+2. 10번 공유하면 10종을 한 번씩 거친 뒤 다시 섞임
+3. duration / exercises / sets / volume / POWER / KEEP GOING 데이터는 동일
 
 ## Fast checks
 ```powershell
-rg -n "pickRandomWorkoutShareTheme" frontend/src/utils
-(Get-Content frontend/src/utils/workoutCompleteShareThemes.ts | Select-String 'id:').Count  # 10
+rg -n "shuffle bag|pickRandomWorkoutShareTheme" frontend/src/utils/workoutCompleteShareThemes.ts
 ```
-
-## As-is → To-be
-- **As-is:** 단일 슬레이트/그린 카드
-- **To-be:** 시안 10종 랜덤 비주얼

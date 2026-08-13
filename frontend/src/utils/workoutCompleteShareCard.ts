@@ -513,7 +513,8 @@ async function paintBase(
 }
 
 /**
- * TODAY'S WORKOUT share card — visual themes only (10 mock variants, random pick).
+ * TODAY'S WORKOUT share card — visual themes only (10 mock variants).
+ * Every call re-rolls a theme from the shuffle bag (no sticky design).
  * Does not change report data or share business logic.
  */
 export async function buildWorkoutCompleteShareCard(input: {
@@ -521,6 +522,7 @@ export async function buildWorkoutCompleteShareCard(input: {
   labels: WorkoutCompleteShareLabels;
 }): Promise<Blob> {
   const { report, labels } = input;
+  // Fresh draw on every share / download — never reuse a sticky theme.
   const theme = pickRandomWorkoutShareTheme();
   const canvas = document.createElement('canvas');
   canvas.width = W;
