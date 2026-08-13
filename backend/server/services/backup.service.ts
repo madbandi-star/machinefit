@@ -123,7 +123,6 @@ export const backupService = {
         const userRes = await client.query(
           `SELECT u.id::text AS id,
                   u.display_name AS "displayName",
-                  u.email,
                   u.gender,
                   u.birth_date::text AS "birthDate",
                   u.height_cm::float8 AS "heightCm",
@@ -236,9 +235,9 @@ export const backupService = {
           app_version: APP_VERSION,
           user: {
             id: String(u.id),
-            loginId: u.email ? String(u.email) : null,
+            loginId: u.displayName ? String(u.displayName) : String(u.id),
             displayName: u.displayName ? String(u.displayName) : null,
-            email: u.email ? String(u.email) : null,
+            email: null,
             gender: u.gender ? String(u.gender) : null,
             birthDate: u.birthDate ? String(u.birthDate) : null,
             heightCm: u.heightCm != null ? Number(u.heightCm) : null,
