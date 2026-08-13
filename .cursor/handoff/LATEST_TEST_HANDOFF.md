@@ -5,7 +5,7 @@ Cleared all non-empty `gym_members.email` values to NULL (16 rows on connected D
 
 ## Git
 - Branch: `main`
-- Commit: pending (set after push)
+- Commit: `1be4219f`
 
 ## Changed files
 - `database/migrations/131_scrub_gym_members_email.sql`
