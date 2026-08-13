@@ -283,6 +283,7 @@ export function MyPage() {
             label={t('points.myPoints')}
             icon="trendingUp"
           />
+          <ListNavLink to={ROUTES.QA} label={t('myPage.qa')} icon="message" />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showAboveMember ? (
             <ListNavLink

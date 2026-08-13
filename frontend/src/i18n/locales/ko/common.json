@@ -879,7 +879,8 @@
       "toastCancelled": "현재 결제기간까지 Premium을 사용할 수 있습니다.",
       "toastResumed": "자동갱신을 다시 켰어요."
     },
-    "dataManagement": "데이터 관리"
+    "dataManagement": "데이터 관리",
+    "qa": "Q&A"
   },
   "lab": {
     "title": "실험실",
@@ -1964,5 +1965,43 @@
     "empty": "아직 헬창력 내역이 없어요.",
     "earnedToast": "+{{points}}Power 적립!",
     "unit": "Power"
+  },
+  "qa": {
+    "title": "Q&A",
+    "lead": "머신핏 이용 중 궁금한 점을 빠르게 찾아보세요. 공식 도움말 센터입니다.",
+    "searchPlaceholder": "궁금한 내용을 검색해 보세요",
+    "categoryFilter": "카테고리",
+    "allCategories": "전체",
+    "popular": "인기 질문",
+    "frequent": "자주 묻는 질문",
+    "allQuestions": "전체 질문",
+    "results": "검색 결과",
+    "emptySearch": "찾으시는 내용이 없어요. 다른 검색어로 다시 검색해 주세요.",
+    "viewMore": "자세히 보기",
+    "backToList": "Q&A 목록",
+    "feedbackTitle": "이 답변이 도움이 되었나요?",
+    "helpful": "도움이 됐어요",
+    "notHelpful": "도움이 안 됐어요",
+    "feedbackThanks": "소중한 의견 감사합니다",
+    "feedbackLogin": "로그인하면 도움이 되었는지 평가할 수 있어요.",
+    "askSupport": "그래도 해결이 안 되면 고객지원",
+    "privacyRights": "개인정보·권리 센터",
+    "categories": {
+      "getting_started": "머신핏 시작하기",
+      "login_account": "로그인/회원",
+      "workout_recommend": "운동/머신 추천",
+      "machine_settings": "머신 설정",
+      "workout_records": "운동 기록",
+      "timer": "타이머",
+      "templates": "템플릿",
+      "ai_recommend": "AI/추천",
+      "fortune": "헬창운세",
+      "points": "포인트",
+      "subscription": "구독/결제",
+      "notifications": "알림",
+      "mypage_data": "마이페이지/데이터",
+      "privacy_rights": "개인정보/권리",
+      "other": "기타"
+    }
   }
 }

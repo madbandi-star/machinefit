@@ -879,7 +879,8 @@
       "toastCancelled": "You can use Premium until the current billing period ends.",
       "toastResumed": "Auto-renew is on again."
     },
-    "dataManagement": "Data management"
+    "dataManagement": "Data management",
+    "qa": "Q&A"
   },
   "lab": {
     "title": "Lab",
@@ -2012,5 +2013,43 @@
     "empty": "No Power history yet.",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power"
+  },
+  "qa": {
+    "title": "Q&A",
+    "lead": "Find answers about MachineFit quickly. This is the official help center.",
+    "searchPlaceholder": "Search questions",
+    "categoryFilter": "Category",
+    "allCategories": "All",
+    "popular": "Popular",
+    "frequent": "Frequently asked",
+    "allQuestions": "All questions",
+    "results": "Results",
+    "emptySearch": "No matching answers. Try another search term.",
+    "viewMore": "View details",
+    "backToList": "Back to Q&A",
+    "feedbackTitle": "Was this answer helpful?",
+    "helpful": "Helpful",
+    "notHelpful": "Not helpful",
+    "feedbackThanks": "Thanks for your feedback",
+    "feedbackLogin": "Sign in to rate this answer.",
+    "askSupport": "Still need help? Contact support",
+    "privacyRights": "Privacy rights center",
+    "categories": {
+      "getting_started": "Getting started",
+      "login_account": "Login / Account",
+      "workout_recommend": "Workout / Machine recommend",
+      "machine_settings": "Machine settings",
+      "workout_records": "Workout records",
+      "timer": "Timer",
+      "templates": "Templates",
+      "ai_recommend": "AI / Recommend",
+      "fortune": "Hellchang fortune",
+      "points": "Points",
+      "subscription": "Subscription / Billing",
+      "notifications": "Notifications",
+      "mypage_data": "My page / Data",
+      "privacy_rights": "Privacy / Rights",
+      "other": "Other"
+    }
   }
 }

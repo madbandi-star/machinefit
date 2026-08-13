@@ -880,7 +880,8 @@
     "memberIdRealName": "Real-name-like IDs are not allowed.",
     "memberIdPersonalInfo": "Phone- or email-shaped IDs are not allowed.",
     "memberIdForbidden": "That ID is not allowed.",
-    "memberIdRules": "{{min}}–{{max}} chars; Korean, letters, numbers, underscore"
+    "memberIdRules": "{{min}}–{{max}} chars; Korean, letters, numbers, underscore",
+    "qa": "Q&A"
   },
   "lab": {
     "title": "Lab",
@@ -1970,5 +1971,43 @@
     "empty": "No Power history yet.",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power"
+  },
+  "qa": {
+    "title": "Q&A",
+    "lead": "MachineFitの使い方を素早く確認できる公式ヘルプセンターです。",
+    "searchPlaceholder": "質問を検索",
+    "categoryFilter": "Category",
+    "allCategories": "All",
+    "popular": "Popular",
+    "frequent": "Frequently asked",
+    "allQuestions": "All questions",
+    "results": "Results",
+    "emptySearch": "該当する内容がありません。別のキーワードで検索してください。",
+    "viewMore": "詳しく見る",
+    "backToList": "Back to Q&A",
+    "feedbackTitle": "この回答は役に立ちましたか？",
+    "helpful": "役に立った",
+    "notHelpful": "役に立たなかった",
+    "feedbackThanks": "Thanks for your feedback",
+    "feedbackLogin": "Sign in to rate this answer.",
+    "askSupport": "Still need help? Contact support",
+    "privacyRights": "Privacy rights center",
+    "categories": {
+      "getting_started": "はじめる",
+      "login_account": "ログイン/会員",
+      "workout_recommend": "運動/マシン推奨",
+      "machine_settings": "マシン設定",
+      "workout_records": "運動記録",
+      "timer": "タイマー",
+      "templates": "テンプレート",
+      "ai_recommend": "AI/推奨",
+      "fortune": "ヘルチャン運勢",
+      "points": "ポイント",
+      "subscription": "購読/決済",
+      "notifications": "通知",
+      "mypage_data": "マイページ/データ",
+      "privacy_rights": "個人情報/権利",
+      "other": "その他"
+    }
   }
 }

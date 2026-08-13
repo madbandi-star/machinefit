@@ -43,3 +43,4 @@ export * from './fortune.types.js';
 export * from './data-retention.types.js';
 export * from './usage.types.js';
 export * from './points.types.js';
+export * from './qa.types.js';

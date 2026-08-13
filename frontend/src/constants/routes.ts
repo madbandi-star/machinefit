@@ -82,6 +82,8 @@ export const ROUTES = {
   LIVE_DASHBOARD: '/my-page/live',
   ACHIEVEMENTS: '/my-page/achievements',
   POINTS: '/my-page/points',
+  QA: '/my-page/qa',
+  QA_DETAIL: '/my-page/qa/:qaId',
   GROWTH_TIMELINE: '/my-page/growth-timeline',
   /** Research / experiment lab (My Page). */
   LAB: '/my-page/lab',
@@ -121,6 +123,9 @@ export const ROUTES = {
   ADMIN_NOTICES: '/admin/notices',
   ADMIN_NOTICE_NEW: '/admin/notices/new',
   ADMIN_NOTICE_EDIT: '/admin/notices/:noticeId',
+  ADMIN_QA: '/admin/qa',
+  ADMIN_QA_NEW: '/admin/qa/new',
+  ADMIN_QA_EDIT: '/admin/qa/:qaId',
   ADMIN_BANNERS: '/admin/banners',
   ADMIN_BANNER_NEW: '/admin/banners/new',
   ADMIN_BANNER_EDIT: '/admin/banners/:bannerId',

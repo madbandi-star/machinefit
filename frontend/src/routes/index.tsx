@@ -332,6 +332,10 @@ const adminNoticesPage = () =>
   import('@/pages/admin/notices/AdminNoticesPage').then((m) => ({
     default: m.AdminNoticesPage,
   }));
+const adminQaPage = () =>
+  import('@/pages/admin/qa/AdminQaPage').then((m) => ({ default: m.AdminQaPage }));
+const adminQaEditPage = () =>
+  import('@/pages/admin/qa/AdminQaEditPage').then((m) => ({ default: m.AdminQaEditPage }));
 const adminFortunePage = () =>
   import('@/pages/admin/fortune/AdminFortunePage').then((m) => ({
     default: m.AdminFortunePage,
@@ -474,6 +478,10 @@ const pointsPage = () =>
   import('@/pages/points/PointsPage').then((m) => ({
     default: m.PointsPage,
   }));
+const qaPage = () =>
+  import('@/pages/qa/QaPage').then((m) => ({ default: m.QaPage }));
+const qaDetailPage = () =>
+  import('@/pages/qa/QaDetailPage').then((m) => ({ default: m.QaDetailPage }));
 const adminOpsPage = () =>
   import('@/pages/admin/ops/AdminOpsPage').then((m) => ({
     default: m.AdminOpsPage,
@@ -563,6 +571,8 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
             { path: ROUTES.POINTS, element: lazyRoute(pointsPage) },
+            { path: ROUTES.QA, element: lazyRoute(qaPage) },
+            { path: ROUTES.QA_DETAIL, element: lazyRoute(qaDetailPage) },
             { path: ROUTES.GROWTH_TIMELINE, element: lazyRoute(growthTimeline) },
             { path: ROUTES.LAB, element: lazyRoute(lab) },
             { path: ROUTES.OWNER_APPLY, element: lazyRoute(ownerApply) },
@@ -723,6 +733,9 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_NOTICES, element: lazyRoute(adminNoticesPage) },
         { path: ROUTES.ADMIN_NOTICE_NEW, element: lazyRoute(adminNoticeEditPage) },
         { path: ROUTES.ADMIN_NOTICE_EDIT, element: lazyRoute(adminNoticeEditPage) },
+        { path: ROUTES.ADMIN_QA, element: lazyRoute(adminQaPage) },
+        { path: ROUTES.ADMIN_QA_NEW, element: lazyRoute(adminQaEditPage) },
+        { path: ROUTES.ADMIN_QA_EDIT, element: lazyRoute(adminQaEditPage) },
         { path: ROUTES.ADMIN_BANNERS, element: lazyRoute(adminBannersPage) },
         { path: ROUTES.ADMIN_BANNER_NEW, element: lazyRoute(adminBannerEditPage) },
         { path: ROUTES.ADMIN_BANNER_SLOTS, element: lazyRoute(adminBannerSlotsPage) },

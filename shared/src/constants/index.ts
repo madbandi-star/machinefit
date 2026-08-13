@@ -28,3 +28,4 @@ export * from './usage.js';
 export * from './points.js';
 export * from './push-consent.js';
 export * from './privacy-rights.js';
+export * from './qa.js';

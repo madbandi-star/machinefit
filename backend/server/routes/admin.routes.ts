@@ -24,10 +24,12 @@ import * as adminFortuneController from '../controllers/admin-fortune.controller
 import * as dataRetentionAdminController from '../controllers/data-retention-admin.controller.js';
 import * as usageController from '../controllers/usage.controller.js';
 import * as pointsController from '../controllers/points.controller.js';
+import { adminQaRouter } from './qa.routes.js';
 
 export const adminRouter = Router();
 
 adminRouter.use(authMiddleware, requireMinRole(Role.ADMIN));
+adminRouter.use('/qa', adminQaRouter);
 
 /* Catalog CRUD (real DB) */
 adminRouter.get('/catalog/brands', adminCatalogController.listBrands);

@@ -880,7 +880,8 @@
     "memberIdRealName": "Real-name-like IDs are not allowed.",
     "memberIdPersonalInfo": "Phone- or email-shaped IDs are not allowed.",
     "memberIdForbidden": "That ID is not allowed.",
-    "memberIdRules": "{{min}}–{{max}} chars; Korean, letters, numbers, underscore"
+    "memberIdRules": "{{min}}–{{max}} chars; Korean, letters, numbers, underscore",
+    "qa": "Q&A"
   },
   "lab": {
     "title": "Lab",
@@ -1970,5 +1971,43 @@
     "empty": "No Power history yet.",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power"
+  },
+  "qa": {
+    "title": "Q&A",
+    "lead": "快速查找 MachineFit 使用说明的官方帮助中心。",
+    "searchPlaceholder": "搜索问题",
+    "categoryFilter": "Category",
+    "allCategories": "All",
+    "popular": "Popular",
+    "frequent": "Frequently asked",
+    "allQuestions": "All questions",
+    "results": "Results",
+    "emptySearch": "没有找到相关内容，请换个关键词再试。",
+    "viewMore": "查看详情",
+    "backToList": "Back to Q&A",
+    "feedbackTitle": "这个回答有帮助吗？",
+    "helpful": "有帮助",
+    "notHelpful": "没帮助",
+    "feedbackThanks": "Thanks for your feedback",
+    "feedbackLogin": "Sign in to rate this answer.",
+    "askSupport": "Still need help? Contact support",
+    "privacyRights": "Privacy rights center",
+    "categories": {
+      "getting_started": "开始使用",
+      "login_account": "登录/会员",
+      "workout_recommend": "运动/器械推荐",
+      "machine_settings": "器械设置",
+      "workout_records": "运动记录",
+      "timer": "计时器",
+      "templates": "模板",
+      "ai_recommend": "AI/推荐",
+      "fortune": "健身运势",
+      "points": "积分",
+      "subscription": "订阅/支付",
+      "notifications": "通知",
+      "mypage_data": "我的页面/数据",
+      "privacy_rights": "隐私/权利",
+      "other": "其他"
+    }
   }
 }

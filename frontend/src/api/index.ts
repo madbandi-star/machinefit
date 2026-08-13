@@ -635,4 +635,6 @@ export { inspectionApi } from './inspection.api';
 export { billingApi, adminBillingApi } from './billing.api';
 export { workoutCardApi } from './workout-card.api';
 export type { WorkoutCardListParams } from './workout-card.api';
+export { qaApi, adminQaApi } from './qa.api';
+export type { QaListParams } from './qa.api';
 
