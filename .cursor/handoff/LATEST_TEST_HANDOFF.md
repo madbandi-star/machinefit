@@ -1,15 +1,15 @@
-ï»¿# Test handoff â€” Fortune share = DNA stack layout
+# Test handoff ? Fortune share = DNA stack layout
 
 ## Summary
-í—¬ì°½ìš´ì„¸ ê³µìœ  ì¹´ë“œë¥¼ ìš´ë™ì„±í–¥(DNA)ê³¼ ê°™ì€ **ì¤‘ì•™ ë°€ì§‘ ìŠ¤íƒ**ìœ¼ë¡œ ë§ì¶¤. ê¸€ë˜ìŠ¤ ì¹´ë“œ + blockHeight ì¤‘ì•™ ì •ë ¬ + 3ì—´ ë©”íƒ€ íŒ¨ë„ + ì¸ìš© + í‘¸í„°.
+ÇïÃ¢¿î¼¼ °øÀ¯ Ä«µå¸¦ ¿îµ¿¼ºÇâ(DNA)°ú °°Àº **Áß¾Ó ¹ĞÁı ½ºÅÃ**À¸·Î ¸ÂÃã. ±Û·¡½º Ä«µå + blockHeight Áß¾Ó Á¤·Ä + 3¿­ ¸ŞÅ¸ ÆĞ³Î + ÀÎ¿ë + ÇªÅÍ.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `4ba2c415`
 
 ## Changed
 - `frontend/src/utils/fortuneShareCard.ts`
 
 ## Test focus
-1. ê³µìœ  ì¹´ë“œê°€ ì¹´ë“œ ì¤‘ì•™ì— ì˜¹ê¸°ì¢…ê¸° ëª¨ì´ëŠ”ì§€
-2. DNAì™€ ë¹„ìŠ·í•œ ì—¬ë°±/êµ¬ì„± ë¦¬ë“¬
+1. °øÀ¯ Ä«µå°¡ Ä«µå Áß¾Ó¿¡ ¿Ë±âÁ¾±â ¸ğÀÌ´ÂÁö
+2. DNA¿Í ºñ½ÁÇÑ ¿©¹é/±¸¼º ¸®µë
