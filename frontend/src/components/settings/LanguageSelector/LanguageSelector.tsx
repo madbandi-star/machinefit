@@ -38,7 +38,7 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
   };
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || landing) return;
 
     const handlePointerDown = (event: MouseEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
@@ -58,16 +58,37 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
       document.removeEventListener('mousedown', handlePointerDown);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open]);
+  }, [open, landing]);
+
+  if (landing) {
+    return (
+      <div
+        className="language-picker language-picker--landing"
+        role="group"
+        aria-label={t('settings.language')}
+      >
+        {UI_LOCALES.map((code) => {
+          const active = clampedLocale === code;
+          return (
+            <button
+              key={code}
+              type="button"
+              className={`language-picker__seg${active ? ' language-picker__seg--active' : ''}`}
+              aria-pressed={active}
+              onClick={() => handleSelect(code)}
+            >
+              {LOCALE_LABELS[code]}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div
       ref={rootRef}
-      className={[
-        'language-picker',
-        compact ? 'language-picker--compact' : '',
-        landing ? 'language-picker--landing' : '',
-      ]
+      className={['language-picker', compact ? 'language-picker--compact' : '']
         .filter(Boolean)
         .join(' ')}
     >
@@ -80,20 +101,14 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
         aria-label={`${t('settings.language')}: ${LOCALE_LABELS[clampedLocale]}`}
         onClick={() => setOpen((prev) => !prev)}
       >
-        {landing ? (
-          <span className="language-picker__label">{LOCALE_LABELS[clampedLocale]}</span>
-        ) : (
-          <>
-            {!compact ? (
-              <span className="language-picker__flag" aria-hidden>
-                {LOCALE_FLAGS[clampedLocale]}
-              </span>
-            ) : null}
-            <span className="language-picker__code" aria-hidden>
-              {clampedLocale.toUpperCase()}
-            </span>
-          </>
-        )}
+        {!compact ? (
+          <span className="language-picker__flag" aria-hidden>
+            {LOCALE_FLAGS[clampedLocale]}
+          </span>
+        ) : null}
+        <span className="language-picker__code" aria-hidden>
+          {clampedLocale.toUpperCase()}
+        </span>
         <Icon name="chevronDown" size={compact ? 10 : 11} className="language-picker__chevron" />
       </button>
 
@@ -113,11 +128,9 @@ export function LanguageSelector({ variant = 'default' }: LanguageSelectorProps)
                 className={`language-picker__option${clampedLocale === code ? ' language-picker__option--active' : ''}`}
                 onClick={() => handleSelect(code)}
               >
-                {!landing ? (
-                  <span className="language-picker__option-flag" aria-hidden>
-                    {LOCALE_FLAGS[code]}
-                  </span>
-                ) : null}
+                <span className="language-picker__option-flag" aria-hidden>
+                  {LOCALE_FLAGS[code]}
+                </span>
                 <span className="language-picker__option-label">{LOCALE_LABELS[code]}</span>
                 {clampedLocale === code ? (
                   <span className="language-picker__option-check" aria-hidden>

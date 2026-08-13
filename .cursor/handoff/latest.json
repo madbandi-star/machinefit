@@ -1,26 +1,22 @@
 {
-  "title": "Auth landing line break on home + login",
-  "summary": "Line break and hide-below-support now apply to guest `/` landing as well as `/login` (previous change was login-only so home looked unchanged).",
+  "title": "Auth landing language segmented switch",
+  "summary": "Replace ugly landing language dropdown with a 한국어|English segmented control; header/settings pickers unchanged.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/auth/AuthLandingScreen/AuthLandingScreen.tsx",
-    "frontend/src/pages/auth/login/LoginPage.tsx",
-    "frontend/src/layouts/MainLayout.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx",
+    "frontend/src/styles/components.css",
+    "frontend/src/styles/auth.css"
   ],
   "testFocus": [
-    "Guest /: feat3 two lines",
-    "Guest / and /login: no trademark/cookie under 고객센터",
-    "Authed app footer still shows trademark/cookie"
+    "Landing: segmented 한국어|English",
+    "Active white pill; tap switches locale",
+    "Header picker still dropdown"
   ],
   "fastChecks": [
-    "rg -n \"landingFeat3Desc|hideBelowSupport|feature-desc\" frontend/src/layouts/MainLayout.tsx frontend/src/i18n/locales/ko/common.json"
+    "rg -n \"language-picker__seg|language-picker--landing\" frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx frontend/src/styles/components.css"
   ],
-  "productionChecks": ["Pages guest / landing"],
+  "productionChecks": ["Pages guest / language control"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Only /login changed; guest / looked the same",
-  "toBe": "Guest / and /login both show line break + trimmed footer"
+  "asIs": "Landing dropdown with chevron",
+  "toBe": "Landing segmented toggle"
 }

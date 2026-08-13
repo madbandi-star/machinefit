@@ -1682,50 +1682,57 @@
   flex-shrink: 0;
 }
 
-.language-picker--landing .language-picker__trigger {
-  height: 2rem;
-  padding: 0 0.65rem;
-  gap: 0.3rem;
-  border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+/* Auth landing: 2-locale segmented switch (not a dropdown). */
+.language-picker--landing {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, #fff 12%, transparent);
   border-radius: 999px;
-  background: color-mix(in srgb, #fff 4%, transparent);
-  color: color-mix(in srgb, #fff 88%, transparent);
+  background: color-mix(in srgb, #fff 5%, transparent);
 }
 
-.language-picker--landing .language-picker__trigger:hover:not(:disabled) {
-  border-color: color-mix(in srgb, #fff 28%, transparent);
-  background: color-mix(in srgb, #fff 7%, transparent);
-  color: #fff;
-}
-
-.language-picker--landing .language-picker__label {
-  font-size: 0.8125rem;
+.language-picker--landing .language-picker__seg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.25rem;
+  height: 1.7rem;
+  padding: 0 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, #fff 48%, transparent);
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.language-picker--landing .language-picker__chevron {
-  color: color-mix(in srgb, #fff 55%, transparent);
-}
-
-.language-picker--landing .language-picker__menu {
-  right: 0;
-  left: auto;
-  min-width: 8.5rem;
-  border: 1px solid color-mix(in srgb, #fff 14%, transparent);
-  background: #111;
-  color: #fff;
-}
-
-.language-picker--landing .language-picker__option {
+.language-picker--landing .language-picker__seg:hover:not(.language-picker__seg--active) {
   color: color-mix(in srgb, #fff 88%, transparent);
 }
 
-.language-picker--landing .language-picker__option:hover,
-.language-picker--landing .language-picker__option:focus-visible,
-.language-picker--landing .language-picker__option--active {
-  background: color-mix(in srgb, #fff 8%, transparent);
-  color: #fff;
+.language-picker--landing .language-picker__seg:focus-visible {
+  outline: 2px solid #b7f000;
+  outline-offset: 2px;
+}
+
+.language-picker--landing .language-picker__seg--active {
+  background: #fff;
+  color: #0a0a0a;
+  box-shadow: 0 1px 6px color-mix(in srgb, #000 45%, transparent);
+}
+
+.language-picker--landing .language-picker__seg--active:hover {
+  color: #0a0a0a;
 }
 
 .language-picker--compact .language-picker__trigger {
