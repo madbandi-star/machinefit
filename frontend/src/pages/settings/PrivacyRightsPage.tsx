@@ -23,11 +23,13 @@ function typeLabel(t: (k: string) => string, type: string): string {
 
 function ConsentToggle({
   label,
+  description,
   pressed,
   disabled,
   onToggle,
 }: {
   label: string;
+  description?: string;
   pressed: boolean;
   disabled?: boolean;
   onToggle: () => void;
@@ -40,7 +42,10 @@ function ConsentToggle({
       disabled={disabled}
       onClick={onToggle}
     >
-      <span className="pr-toggle__label">{label}</span>
+      <span className="pr-toggle__copy">
+        <span className="pr-toggle__label">{label}</span>
+        {description ? <span className="pr-toggle__desc">{description}</span> : null}
+      </span>
       <span className="pr-switch" aria-hidden />
     </button>
   );
@@ -262,6 +267,7 @@ export function PrivacyRightsPage() {
           <div className="pr-toggles">
             <ConsentToggle
               label={t('settings.marketingOptIn')}
+              description={t('compliance.rights.marketingOptInHint')}
               pressed={Boolean(p?.marketingOptIn)}
               disabled={consentMutation.isPending}
               onToggle={() =>
@@ -270,6 +276,7 @@ export function PrivacyRightsPage() {
             />
             <ConsentToggle
               label={t('compliance.rights.eventOptIn')}
+              description={t('compliance.rights.eventOptInHint')}
               pressed={Boolean(p?.eventOptIn)}
               disabled={consentMutation.isPending}
               onToggle={() => consentMutation.mutate({ eventOptIn: !p?.eventOptIn })}

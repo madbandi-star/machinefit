@@ -267,6 +267,19 @@
   line-height: 1.35;
 }
 
+.pr-toggle__copy {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.pr-toggle__desc {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--color-text-muted, #8a94a6);
+}
+
 .pr-switch {
   position: relative;
   width: 2.55rem;

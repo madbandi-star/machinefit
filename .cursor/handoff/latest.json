@@ -1,17 +1,27 @@
 {
-  "title": "Move Easy mode button left of music player",
-  "summary": "Header EasyMiniHeaderButton moved from beside MachineFit logo to immediately left of MotivationMediaControls.",
+  "title": "Distinguish marketing vs event consent labels",
+  "summary": "Rename near-duplicate promo opt-in labels to General marketing vs Event & campaign, with short hints on Privacy Rights toggles.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/components/layout/Header/Header.tsx"],
+  "changedFiles": [
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json",
+    "frontend/src/i18n/locales/ko/push.json",
+    "frontend/src/i18n/locales/en/push.json",
+    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
+    "frontend/src/styles/privacy-rights.css"
+  ],
   "testFocus": [
-    "Header actions order: Easy then music then bell",
-    "No Easy button beside logo"
+    "Privacy rights: labels clearly different + hints",
+    "Settings marketing toggle uses new marketing label",
+    "Fields unchanged: marketingOptIn vs eventOptIn"
   ],
   "fastChecks": [
-    "rg -n \"EasyMiniHeaderButton|MotivationMediaControls\" frontend/src/components/layout/Header/Header.tsx"
+    "rg -n \"일반 마케팅|이벤트·캠페인|marketingOptInHint\" frontend/src/i18n/locales/ko/common.json frontend/src/pages/settings/PrivacyRightsPage.tsx"
   ],
-  "productionChecks": ["Pages header order"],
+  "productionChecks": ["Pages /settings/privacy-rights consent section"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Easy button beside logo",
-  "toBe": "Easy button left of music player"
+  "asIs": "Near-identical event/promo labels",
+  "toBe": "General marketing vs Event & campaign labels + hints"
 }
