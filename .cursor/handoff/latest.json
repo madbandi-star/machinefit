@@ -1,28 +1,23 @@
 {
-  "title": "Stop collecting OAuth account emails",
-  "summary": "Null users.email and provider_email; strip email from JWT/OAuth/API/UI. Login remains provider_user_id based. Migration 130 required on Render.",
-  "git": { "branch": "main", "commit": "e7efc605" },
+  "title": "Scrub gym_members.email values",
+  "summary": "Cleared 16 non-empty gym_members.email rows to NULL. Column kept. Migration 131 documents the scrub for other environments.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "database/migrations/130_remove_user_email_storage.sql",
-    "backend/server/services/auth.service.ts",
-    "backend/server/utils/oauth-verify.util.ts",
-    "backend/server/middlewares/auth.middleware.ts",
-    "frontend/src/utils/oauthClient.ts",
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/pages/admin/**/*.tsx",
-    "backend/server/services/backup.service.ts"
+    "database/migrations/131_scrub_gym_members_email.sql"
   ],
   "testFocus": [
-    "OAuth login still works",
-    "No account email in API/JWT/My Page/admin",
-    "Migration 130 applied"
+    "gym_members.email all NULL after migration",
+    "Member CRUD still works without email"
   ],
   "fastChecks": [
-    "Test-Path database/migrations/130_remove_user_email_storage.sql",
-    "rg -n \"providerEmail: null\" backend/server/utils/oauth-verify.util.ts"
+    "Test-Path database/migrations/131_scrub_gym_members_email.sql",
+    "rg -n \"SET email = NULL\" database/migrations/131_scrub_gym_members_email.sql"
   ],
-  "productionChecks": ["Apply migration 130", "Redeploy Render BE", "OAuth smoke"],
-  "deploy": { "expected": "Pages FE + Render BE + migration 130" },
-  "asIs": "OAuth emails stored and shown",
-  "toBe": "No OAuth account email collect/store/expose"
+  "productionChecks": [
+    "Confirm gym_members.email count = 0 (already applied on connected DB)",
+    "Apply migration 131 on any other env that still has values"
+  ],
+  "deploy": { "expected": "migration 131 on Render if not yet applied via direct scrub" },
+  "asIs": "16 gym_members rows had email values",
+  "toBe": "gym_members.email all NULL; column retained"
 }
