@@ -115,7 +115,9 @@
     "applySuggested": "Suggested {{weight}}kg",
     "copyPreviousSet": "Previous set",
     "applyAllSets": "Apply to all",
-    "quickActions": "Quick weight actions"
+    "quickActions": "Quick weight actions",
+    "estimatedLoad": "Estimated load",
+    "estimatedLoadHint": "Estimated bodyweight load (bodyweight × factor), not external plate weight. Used for consistent volume."
   },
   "restTimer": {
     "label": "Rest after set {{setNumber}}",
@@ -468,6 +470,10 @@
     "blendedSelection": {
       "title": "Blended from multiple sources",
       "description": "No workout logs yet; final weight is the average of {{count}} reference values."
+    },
+    "bodyweightEstimatedLoad": {
+      "title": "Bodyweight estimated load",
+      "description": "Estimated load = bodyweight {{weightKg}}kg × factor {{loadFactor}}. Not the same as external weight."
     }
   }
 }

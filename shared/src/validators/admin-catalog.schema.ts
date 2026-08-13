@@ -102,6 +102,13 @@ export const adminMachineUpsertSchema = z.object({
   hasFootPlate: z.boolean().optional(),
   hasHandle: z.boolean().optional(),
   romType: z.union([z.literal(''), z.string().max(30)]).optional(),
+  /**
+   * Bodyweight estimated-load factor (admin only).
+   * Null clears override (falls back to shared code default).
+   */
+  bodyweightLoadFactor: z
+    .union([z.number().gt(0).lte(1.5), z.null()])
+    .optional(),
 });
 
 export const adminToggleActiveBodySchema = z.object({

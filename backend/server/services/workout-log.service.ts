@@ -5,11 +5,20 @@ import type {
   DeleteWorkoutLogsByDateBody,
   Locale,
 } from '@machinefit/shared';
-import { isFreeWeightMachineCode, normalizeWorkoutLogTargetMuscle, isAllGymsId } from '@machinefit/shared';
+import {
+  isBodyweightExercise,
+  isFreeWeightMachineCode,
+  isUsableBodyWeightKg,
+  normalizeWorkoutLogTargetMuscle,
+  isAllGymsId,
+  resolveBodyweightLoadFactor,
+} from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { workoutCardRepository } from '../repositories/workout-card.repository.js';
 import { historyRepository } from '../repositories/history.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
+import { gymMemberRepository } from '../repositories/gym-member.repository.js';
+import { userRepository } from '../repositories/user.repository.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
 import { awardPointsSafe } from './points.service.js';
@@ -90,10 +99,11 @@ export const workoutLogService = {
   async upsert(userId: string, input: UpsertWorkoutLogInput) {
     await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
-    const machineId = await machineRepository.findIdByCode(input.machineCode);
-    if (!machineId) {
+    const machine = await machineRepository.findByCode(input.machineCode);
+    if (!machine) {
       throw new AppError(404, 'NOT_FOUND', `Machine not found: ${input.machineCode}`);
     }
+    const machineId = machine.id;
 
     const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
       input.machineCode,
@@ -117,6 +127,36 @@ export const workoutLogService = {
       input.memberId
     );
 
+    let bodyweightKgAtRecord: number | null = null;
+    let appliedLoadFactor: number | null = null;
+    let loadType: 'external_weight' | 'bodyweight_estimated' = 'external_weight';
+
+    if (
+      isBodyweightExercise({
+        machineCode: input.machineCode,
+        machineType: machine.machineType,
+      })
+    ) {
+      loadType = 'bodyweight_estimated';
+      appliedLoadFactor = resolveBodyweightLoadFactor({
+        machineCode: input.machineCode,
+        machineType: machine.machineType,
+        dbFactor: machine.bodyweightLoadFactor,
+      });
+
+      // Prefer member bodyweight, then account profile (never invent 0 kg).
+      const member = await gymMemberRepository.findById(input.memberId).catch(() => null);
+      const memberWeight = member?.weightKg;
+      if (isUsableBodyWeightKg(memberWeight)) {
+        bodyweightKgAtRecord = memberWeight;
+      } else {
+        const user = await userRepository.findById(userId);
+        if (isUsableBodyWeightKg(user?.weightKg)) {
+          bodyweightKgAtRecord = user!.weightKg!;
+        }
+      }
+    }
+
     try {
       const saved = await workoutLogRepository.upsert(userId, input.gymId, input.memberId, machineId, {
         recommendationId: input.recommendationId,
@@ -126,6 +166,9 @@ export const workoutLogService = {
         setWeightsKg: input.setWeightsKg,
         setCompleted: input.setCompleted,
         diary: input.diary,
+        bodyweightKgAtRecord,
+        appliedLoadFactor,
+        loadType,
       });
 
       // Best-effort: mirror diary/sets onto matching workout_card for date-copy.

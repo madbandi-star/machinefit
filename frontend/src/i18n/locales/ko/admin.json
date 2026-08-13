@@ -482,7 +482,10 @@
       "free_weight": "프리웨이트",
       "smith": "스미스",
       "bodyweight": "맨몸"
-    }
+    },
+    "bodyweightLoadFactor": "맨몸 부하계수",
+    "bodyweightLoadFactorPlaceholder": "예: 0.65 (비우면 코드 기본값)",
+    "bodyweightLoadFactorHint": "맨몸운동 부하계수는 운동 자세와 체중 분포를 기반으로 한 추정값이며 실제 외부 중량과 동일한 의미가 아닙니다. (0 초과~1.5)"
   },
   "moderation": "모더레이션",
   "userCount": "사용자",

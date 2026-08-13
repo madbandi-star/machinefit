@@ -31,6 +31,7 @@ interface MachineRow {
   has_handle: boolean;
   rom_type: string | null;
   is_active: boolean;
+  bodyweight_load_factor?: string | number | null;
 }
 
 interface BrandRow {
@@ -96,6 +97,10 @@ function mapMachine(
     hasHandle: row.has_handle,
     romType: row.rom_type ?? undefined,
     isActive: row.is_active,
+    bodyweightLoadFactor:
+      row.bodyweight_load_factor == null || row.bodyweight_load_factor === ''
+        ? null
+        : Number(row.bodyweight_load_factor),
     primaryImageUrl: extras?.primaryImageUrl ?? undefined,
   };
 }
@@ -244,7 +249,7 @@ export const machineRepository = {
          m.id, m.brand_id, m.code, m.name, m.muscle_group, m.machine_type,
          m.description, m.recommended_experience,
          m.has_seat, m.has_back_pad, m.has_foot_plate, m.has_handle,
-         m.rom_type, m.is_active,
+         m.rom_type, m.is_active, m.bodyweight_load_factor,
          NULL::jsonb AS how_to,
          NULL::jsonb AS warnings,
          NULL::jsonb AS tips,

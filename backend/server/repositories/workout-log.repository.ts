@@ -31,6 +31,9 @@ interface WorkoutLogRow {
   set_weights_kg: number[];
   set_completed: boolean[] | null;
   diary: string | null;
+  bodyweight_kg_at_record?: string | number | null;
+  applied_load_factor?: string | number | null;
+  load_type?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -71,13 +74,24 @@ function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
         ? row.set_completed
         : row.set_weights_kg.map(() => false),
     diary: row.diary ?? undefined,
+    bodyweightKgAtRecord:
+      row.bodyweight_kg_at_record == null || row.bodyweight_kg_at_record === ''
+        ? null
+        : Number(row.bodyweight_kg_at_record),
+    appliedLoadFactor:
+      row.applied_load_factor == null || row.applied_load_factor === ''
+        ? null
+        : Number(row.applied_load_factor),
+    loadType:
+      row.load_type === 'bodyweight_estimated' ? 'bodyweight_estimated' : 'external_weight',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
 
 const SELECT_FIELDS = `wl.id, wl.gym_id, wl.member_id, wl.recommendation_id, wl.log_date, wl.target_muscle_group, wl.set_count, wl.set_weights_kg,
-              wl.set_completed, wl.diary, wl.created_at, wl.updated_at,
+              wl.set_completed, wl.diary, wl.bodyweight_kg_at_record, wl.applied_load_factor, wl.load_type,
+              wl.created_at, wl.updated_at,
               m.code AS machine_code, m.name AS machine_name, b.name AS brand_name`;
 
 const MACHINE_JOINS = `JOIN machines m ON m.id = wl.machine_id
@@ -231,6 +245,9 @@ export const workoutLogRepository = {
       setWeightsKg: number[];
       setCompleted?: boolean[];
       diary?: string;
+      bodyweightKgAtRecord?: number | null;
+      appliedLoadFactor?: number | null;
+      loadType?: 'external_weight' | 'bodyweight_estimated';
     }
   ): Promise<WorkoutLog> {
     const pool = getPool();
@@ -244,9 +261,10 @@ export const workoutLogRepository = {
     const result = await pool.query<WorkoutLogRow>(
       `INSERT INTO workout_logs (
          user_id, gym_id, member_id, machine_id, recommendation_id, log_date, target_muscle_group,
-         set_count, set_weights_kg, set_completed, diary
+         set_count, set_weights_kg, set_completed, diary,
+         bodyweight_kg_at_record, applied_load_factor, load_type
        )
-       VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9::jsonb, $10::jsonb, $11)
+       VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9::jsonb, $10::jsonb, $11, $12, $13, $14)
        ON CONFLICT (user_id, gym_id, member_id, machine_id, log_date, target_muscle_group)
        DO UPDATE SET
          set_count = EXCLUDED.set_count,
@@ -254,8 +272,19 @@ export const workoutLogRepository = {
          set_completed = EXCLUDED.set_completed,
          diary = EXCLUDED.diary,
          recommendation_id = COALESCE(EXCLUDED.recommendation_id, workout_logs.recommendation_id),
+         -- Preserve first-recorded BW snapshot so past volume does not drift with profile weight.
+         bodyweight_kg_at_record = COALESCE(
+           workout_logs.bodyweight_kg_at_record,
+           EXCLUDED.bodyweight_kg_at_record
+         ),
+         applied_load_factor = COALESCE(
+           workout_logs.applied_load_factor,
+           EXCLUDED.applied_load_factor
+         ),
+         load_type = EXCLUDED.load_type,
          updated_at = NOW()
        RETURNING id, gym_id, member_id, recommendation_id, log_date, target_muscle_group, set_count, set_weights_kg, set_completed, diary,
+                 bodyweight_kg_at_record, applied_load_factor, load_type,
                  created_at, updated_at,
                  (SELECT code FROM machines WHERE id = $4) AS machine_code,
                  (SELECT name FROM machines WHERE id = $4) AS machine_name`,
@@ -271,6 +300,9 @@ export const workoutLogRepository = {
         JSON.stringify(data.setWeightsKg),
         JSON.stringify(setCompleted),
         data.diary ?? null,
+        data.bodyweightKgAtRecord ?? null,
+        data.appliedLoadFactor ?? null,
+        data.loadType ?? 'external_weight',
       ]
     );
 

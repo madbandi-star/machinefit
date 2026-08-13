@@ -31,6 +31,12 @@ export interface Machine {
   brandCode?: string;
   muscleGroup: string;
   machineType: string;
+  /**
+   * Estimated bodyweight load factor (admin override).
+   * NULL/undefined → shared default by machine code.
+   * Not external plate weight.
+   */
+  bodyweightLoadFactor?: number | null;
   description?: LocalizedString;
   /** Usage steps for coaching / TTS (localized arrays). */
   howTo?: Record<string, string[]>;

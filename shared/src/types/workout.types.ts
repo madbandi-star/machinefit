@@ -1,4 +1,5 @@
 import type { TargetMuscleGroup } from '../constants/workout-goals.js';
+import type { LoadType } from '../constants/bodyweight-load.js';
 
 export interface WorkoutLog {
   id: string;
@@ -15,6 +16,12 @@ export interface WorkoutLog {
   setWeightsKg: number[];
   setCompleted?: boolean[];
   diary?: string;
+  /** Body weight (kg) snapshotted at first BW save — not updated when profile weight changes. */
+  bodyweightKgAtRecord?: number | null;
+  /** Load factor applied at first BW save. */
+  appliedLoadFactor?: number | null;
+  /** external_weight vs bodyweight_estimated */
+  loadType?: LoadType;
   createdAt: string;
   updatedAt: string;
 }

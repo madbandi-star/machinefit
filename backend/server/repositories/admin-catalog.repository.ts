@@ -73,6 +73,7 @@ interface MachineAdminRow {
   created_at: string;
   updated_at: string;
   primary_image_url: string | null;
+  bodyweight_load_factor?: string | number | null;
 }
 
 function mapBrand(row: BrandAdminRow): Brand {
@@ -114,6 +115,10 @@ function mapMachine(row: MachineAdminRow): Machine {
     romType: row.rom_type ?? undefined,
     sortOrder: row.sort_order ?? 0,
     isActive: row.is_active,
+    bodyweightLoadFactor:
+      row.bodyweight_load_factor == null || row.bodyweight_load_factor === ''
+        ? null
+        : Number(row.bodyweight_load_factor),
     primaryImageUrl: row.primary_image_url ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -418,8 +423,9 @@ export const adminCatalogRepository = {
       const result = await pool.query<{ id: string }>(
         `INSERT INTO machines (
            brand_id, code, name, muscle_group, machine_type, description,
-           sort_order, is_active, has_seat, has_back_pad, has_foot_plate, has_handle, rom_type
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+           sort_order, is_active, has_seat, has_back_pad, has_foot_plate, has_handle, rom_type,
+           bodyweight_load_factor
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
          RETURNING id`,
         [
           input.brandId,
@@ -435,6 +441,9 @@ export const adminCatalogRepository = {
           input.hasFootPlate ?? false,
           input.hasHandle ?? true,
           input.romType || null,
+          input.machineType === 'bodyweight'
+            ? (input.bodyweightLoadFactor ?? null)
+            : null,
         ]
       );
       const machineId = result.rows[0].id;
@@ -460,6 +469,14 @@ export const adminCatalogRepository = {
     if (!brand.rows[0]) throw new AppError(400, 'INVALID_BRAND', 'Brand not found');
 
     try {
+      const nextType = input.machineType ?? 'selectorized';
+      const nextFactor =
+        nextType === 'bodyweight'
+          ? input.bodyweightLoadFactor === undefined
+            ? existing.bodyweightLoadFactor ?? null
+            : input.bodyweightLoadFactor
+          : null;
+
       await pool.query(
         `UPDATE machines SET
            brand_id = $2,
@@ -475,6 +492,7 @@ export const adminCatalogRepository = {
            has_foot_plate = COALESCE($12, has_foot_plate),
            has_handle = COALESCE($13, has_handle),
            rom_type = COALESCE($14, rom_type),
+           bodyweight_load_factor = $15,
            updated_at = NOW()
          WHERE id = $1`,
         [
@@ -483,7 +501,7 @@ export const adminCatalogRepository = {
           input.code.trim().toUpperCase(),
           input.name,
           input.muscleGroup,
-          input.machineType ?? 'selectorized',
+          nextType,
           input.description ?? null,
           input.sortOrder ?? 0,
           input.isActive ?? true,
@@ -493,6 +511,7 @@ export const adminCatalogRepository = {
           input.hasHandle ?? null,
           // undefined → preserve via COALESCE(null, rom_type); '' → clear to null
           input.romType === undefined ? null : input.romType.trim() || null,
+          nextFactor,
         ]
       );
 

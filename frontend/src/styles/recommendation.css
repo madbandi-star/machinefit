@@ -643,6 +643,14 @@
   margin-bottom: 0.35rem;
 }
 
+.recommendation-workout-log__bw-hint {
+  margin: 0 0 0.55rem;
+  color: var(--color-text-muted, #8a94a6);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
 .recommendation-workout-log__total {
   display: flex;
   align-items: baseline;

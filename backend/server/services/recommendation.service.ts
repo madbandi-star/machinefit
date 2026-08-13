@@ -109,28 +109,32 @@ export const recommendationService = {
       matchedSettingWeightKg: match?.weightKg,
       gymId: input.gymId,
       memberId: input.memberId,
+      machineType: machine.machineType,
+      bodyweightLoadFactor: machine.bodyweightLoadFactor,
     });
 
     // Progressive / growth targets already come from the user's real logs for that
     // machine (and muscle). Do not re-scale them with goal/muscle bias.
+    // Bodyweight estimated load is bodyweight × factor — keep it unscaled.
     const fromUserHistory =
       weightBasis.primarySourceId === 'progressiveTarget' ||
       weightBasis.primarySourceId === 'growthNextTarget';
+    const fromBodyweightEstimate = weightBasis.primarySourceId === 'bodyweightEstimatedLoad';
 
-    const afterPersonalization = fromUserHistory
-      ? recommendedWeightKg
-      : applyPersonalizationToWeight(recommendedWeightKg, {
-          gender: input.gender,
-          workoutGoal: input.workoutGoal,
-          experienceLevel: input.experienceLevel,
-          age: input.age,
-          targetMuscleGroup: input.targetMuscleGroup,
-        });
+    const afterPersonalization =
+      fromUserHistory || fromBodyweightEstimate
+        ? recommendedWeightKg
+        : applyPersonalizationToWeight(recommendedWeightKg, {
+            gender: input.gender,
+            workoutGoal: input.workoutGoal,
+            experienceLevel: input.experienceLevel,
+            age: input.age,
+            targetMuscleGroup: input.targetMuscleGroup,
+          });
 
-    const personalizedWeight = applyWeightDifficultyToRecommendation(
-      afterPersonalization,
-      input.weightDifficulty
-    );
+    const personalizedWeight = fromBodyweightEstimate
+      ? afterPersonalization
+      : applyWeightDifficultyToRecommendation(afterPersonalization, input.weightDifficulty);
 
     const recommendedReps = recommendRepsForGoal(
       input.workoutGoal,

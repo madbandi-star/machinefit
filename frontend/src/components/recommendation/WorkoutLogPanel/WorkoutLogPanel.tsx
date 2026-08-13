@@ -9,6 +9,7 @@ import {
   WORKOUT_DIARY_MAX_BYTES,
   MACHINE_PERSONAL_TIP_MAX_BYTES,
   isFreeWeightMachineCode,
+  isBodyweightMachineCode,
   formatWeight,
   isAllGymsId,
   computePerformedTotalWeightKg,
@@ -674,6 +675,7 @@ export function WorkoutLogPanel({
   const setCountInputId = `${idPrefix}-set-count`;
   const weightStepKg = getWeightStepKg(machineCode);
   const isFreeWeight = isFreeWeightMachineCode(machineCode);
+  const isBodyweight = isBodyweightMachineCode(machineCode);
   const [selectedMuscle, setSelectedMuscle] = useState<TargetMuscleGroup | null>(
     targetMuscleGroup ?? null
   );
@@ -2030,10 +2032,17 @@ export function WorkoutLogPanel({
       <div className="recommendation-workout-log__weights">
         <div className="recommendation-workout-log__weights-header">
           <p className="recommendation-workout-log__field-label recommendation-workout-log__field-label--inline">
-            {t('machines:workoutLog.weights')}
+            {isBodyweight
+              ? t('machines:workoutLog.estimatedLoad')
+              : t('machines:workoutLog.weights')}
           </p>
           {totalWeightSummary}
         </div>
+        {isBodyweight ? (
+          <p className="recommendation-workout-log__bw-hint">
+            {t('machines:workoutLog.estimatedLoadHint')}
+          </p>
+        ) : null}
         {weightList}
       </div>
 

@@ -7,11 +7,14 @@ import type {
 import {
   EXPERIENCE_WEIGHT_MULTIPLIERS,
   computePerformedTotalWeightKg,
+  estimateBodyweightLoadKg,
   getBoxingWeightClassRange,
   getPeerHeightRange,
+  isBodyweightExercise,
   isFreeWeightMachineCode,
   nextRecommendWeightKg,
   normalizeWorkoutLogTargetMuscle,
+  resolveBodyweightLoadFactor,
   roundRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
@@ -156,8 +159,33 @@ export async function computeRecommendationWeight(options: {
   matchedSettingWeightKg?: number;
   gymId?: string;
   memberId?: string;
+  machineType?: string | null;
+  bodyweightLoadFactor?: number | null;
 }): Promise<{ recommendedWeightKg?: number; weightBasis: WeightRecommendationBasis }> {
-  const { input, userId, machineId, matchedSettingWeightKg, gymId, memberId } = options;
+  const {
+    input,
+    userId,
+    machineId,
+    matchedSettingWeightKg,
+    gymId,
+    memberId,
+    machineType,
+    bodyweightLoadFactor,
+  } = options;
+  const isBodyweight = isBodyweightExercise({
+    machineCode: input.machineCode,
+    machineType,
+  });
+  const resolvedBwFactor = isBodyweight
+    ? resolveBodyweightLoadFactor({
+        machineCode: input.machineCode,
+        machineType,
+        dbFactor: bodyweightLoadFactor,
+      })
+    : null;
+  const bodyweightEstimatedKg = isBodyweight
+    ? estimateBodyweightLoadKg(input.weightKg, resolvedBwFactor)
+    : null;
   const entries: WeightBasisEntry[] = [];
   const experienceMultiplier = EXPERIENCE_WEIGHT_MULTIPLIERS[input.experienceLevel];
 
@@ -203,6 +231,20 @@ export async function computeRecommendationWeight(options: {
     valueKg: bodyReference,
     usedInFinal: false,
   });
+
+  if (bodyweightEstimatedKg != null && resolvedBwFactor != null) {
+    entries.push({
+      id: 'bodyweightEstimatedLoad',
+      titleKey: 'weightBasis.bodyweightEstimatedLoad.title',
+      descriptionKey: 'weightBasis.bodyweightEstimatedLoad.description',
+      params: {
+        weightKg: input.weightKg,
+        loadFactor: resolvedBwFactor,
+      },
+      valueKg: bodyweightEstimatedKg,
+      usedInFinal: false,
+    });
+  }
 
   if (matchedSettingWeightKg != null && matchedSettingWeightKg > 0) {
     entries.push({
@@ -429,6 +471,10 @@ export async function computeRecommendationWeight(options: {
 
     finalWeight = nextTarget.suggestedMaxWeightKg;
     primarySourceId = 'growthNextTarget';
+  } else if (bodyweightEstimatedKg != null) {
+    // Bodyweight cold-start: bodyweight × factor (no plate snap / blend).
+    finalWeight = bodyweightEstimatedKg;
+    primarySourceId = 'bodyweightEstimatedLoad';
   } else {
     const candidates = [
       profileFormula,
@@ -472,7 +518,11 @@ export async function computeRecommendationWeight(options: {
   }
 
   const normalizedFinalWeight =
-    finalWeight != null ? roundRecommendWeightKg(finalWeight) : undefined;
+    finalWeight == null
+      ? undefined
+      : primarySourceId === 'bodyweightEstimatedLoad'
+        ? finalWeight
+        : roundRecommendWeightKg(finalWeight);
 
   return {
     recommendedWeightKg: normalizedFinalWeight,

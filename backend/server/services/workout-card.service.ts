@@ -985,13 +985,65 @@ export const workoutCardService = {
         item.targetMuscleGroup
       );
       const setCount = Math.max(1, item.setCount || 1);
-      const setWeightsKg =
+      let setWeightsKg =
         item.setWeightsKg?.length === setCount
           ? item.setWeightsKg
           : Array.from(
               { length: setCount },
               (_, i) => item.setWeightsKg?.[i] ?? item.setWeightsKg?.[item.setWeightsKg.length - 1] ?? 0
             );
+
+      // Bodyweight templates: recompute estimated load from current bodyweight (do not freeze template kg).
+      let bwSnapshot: {
+        bodyweightKgAtRecord: number | null;
+        appliedLoadFactor: number | null;
+        loadType: 'external_weight' | 'bodyweight_estimated';
+      } = {
+        bodyweightKgAtRecord: null,
+        appliedLoadFactor: null,
+        loadType: 'external_weight',
+      };
+      try {
+        const {
+          estimateBodyweightLoadKg,
+          isBodyweightExercise,
+          isUsableBodyWeightKg,
+          resolveBodyweightLoadFactor,
+        } = await import('@machinefit/shared');
+        const { gymMemberRepository } = await import('../repositories/gym-member.repository.js');
+        const { userRepository } = await import('../repositories/user.repository.js');
+        const machine = await machineRepository.findByCode(item.machineCode);
+        if (
+          machine &&
+          isBodyweightExercise({
+            machineCode: item.machineCode,
+            machineType: machine.machineType,
+          })
+        ) {
+          const factor = resolveBodyweightLoadFactor({
+            machineCode: item.machineCode,
+            machineType: machine.machineType,
+            dbFactor: machine.bodyweightLoadFactor,
+          });
+          const member = await gymMemberRepository.findById(input.memberId);
+          let bodyKg = member?.weightKg;
+          if (!isUsableBodyWeightKg(bodyKg)) {
+            const user = await userRepository.findById(userId);
+            bodyKg = user?.weightKg;
+          }
+          const estimated = estimateBodyweightLoadKg(bodyKg, factor);
+          bwSnapshot = {
+            bodyweightKgAtRecord: isUsableBodyWeightKg(bodyKg) ? bodyKg : null,
+            appliedLoadFactor: factor,
+            loadType: 'bodyweight_estimated',
+          };
+          if (estimated != null) {
+            setWeightsKg = Array.from({ length: setCount }, () => estimated);
+          }
+        }
+      } catch {
+        /* keep template weights */
+      }
       const setCompleted =
         status === 'COMPLETED'
           ? Array.from({ length: setCount }, () => true)
@@ -1039,6 +1091,7 @@ export const workoutCardService = {
               setWeightsKg,
               setCompleted,
               diary: item.diary,
+              ...bwSnapshot,
             }
           );
           const linked = await workoutCardRepository.updateStatus(

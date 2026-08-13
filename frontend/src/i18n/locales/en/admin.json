@@ -381,7 +381,10 @@
       "free_weight": "Free weight",
       "smith": "Smith",
       "bodyweight": "Bodyweight"
-    }
+    },
+    "bodyweightLoadFactor": "Bodyweight load factor",
+    "bodyweightLoadFactorPlaceholder": "e.g. 0.65 (empty = code default)",
+    "bodyweightLoadFactorHint": "Estimated factor from posture/bodyweight distribution — not external weight. (0 exclusive–1.5)"
   },
   "moderation": "Moderation",
   "userCount": "Users",

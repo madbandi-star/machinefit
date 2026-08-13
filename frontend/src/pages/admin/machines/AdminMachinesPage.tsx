@@ -61,6 +61,8 @@ type MachineFormState = {
   descriptionEn: string;
   sortOrder: string;
   isActive: boolean;
+  /** Admin override for BW estimated load factor; empty = shared default. */
+  bodyweightLoadFactor: string;
 };
 
 const EMPTY_FORM: MachineFormState = {
@@ -74,6 +76,7 @@ const EMPTY_FORM: MachineFormState = {
   descriptionEn: '',
   sortOrder: '0',
   isActive: true,
+  bodyweightLoadFactor: '',
 };
 
 function isAllowedImage(file: File): boolean {
@@ -84,6 +87,8 @@ function isAllowedImage(file: File): boolean {
 }
 
 function toUpsertInput(form: MachineFormState): AdminMachineUpsertInput {
+  const factorRaw = form.bodyweightLoadFactor.trim();
+  const factorParsed = factorRaw === '' ? null : Number(factorRaw);
   return {
     brandId: form.brandId,
     code: form.code.trim().toUpperCase(),
@@ -99,6 +104,12 @@ function toUpsertInput(form: MachineFormState): AdminMachineUpsertInput {
         : undefined,
     sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
     isActive: form.isActive,
+    bodyweightLoadFactor:
+      form.machineType === 'bodyweight'
+        ? factorParsed != null && Number.isFinite(factorParsed)
+          ? factorParsed
+          : null
+        : null,
   };
 }
 
@@ -118,6 +129,8 @@ function fromMachine(machine: Machine): MachineFormState {
     descriptionEn: machine.description?.en ?? '',
     sortOrder: String(machine.sortOrder ?? 0),
     isActive: machine.isActive,
+    bodyweightLoadFactor:
+      machine.bodyweightLoadFactor == null ? '' : String(machine.bodyweightLoadFactor),
   };
 }
 
@@ -958,6 +971,26 @@ export function AdminMachinesPage() {
                       ))}
                     </select>
                   </label>
+                  {form.machineType === 'bodyweight' ? (
+                    <label className="admin-catalog-field admin-catalog-field--full">
+                      <span>{t('admin:catalogMachines.bodyweightLoadFactor')}</span>
+                      <input
+                        className="input"
+                        type="number"
+                        min={0.01}
+                        max={1.5}
+                        step={0.01}
+                        placeholder={t('admin:catalogMachines.bodyweightLoadFactorPlaceholder')}
+                        value={form.bodyweightLoadFactor}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, bodyweightLoadFactor: e.target.value }))
+                        }
+                      />
+                      <span className="admin-catalog-field__hint">
+                        {t('admin:catalogMachines.bodyweightLoadFactorHint')}
+                      </span>
+                    </label>
+                  ) : null}
                   <label className="admin-catalog-field">
                     <span>{t('admin:catalogMachines.displayOrder')}</span>
                     <input
