@@ -1,11 +1,18 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getEffectivePlanLimits, type UserGym, type GymMember, type Gender } from '@machinefit/shared';
+import {
+  getEffectivePlanLimits,
+  type UserGym,
+  type GymMember,
+  type Gender,
+  type ExperienceLevel,
+} from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { GenderPicker } from '@/components/settings/GenderPicker/GenderPicker';
+import { ExperienceSelector } from '@/components/settings/ExperienceSelector/ExperienceSelector';
 import {
   emptyLocationValue,
   LocationPicker,
@@ -39,6 +46,7 @@ interface MemberFormState {
   gender: Gender | undefined;
   heightCm: string;
   weightKg: string;
+  experienceLevel: ExperienceLevel | undefined;
   birthDate: string;
   memo: string;
 }
@@ -58,6 +66,7 @@ const emptyMemberForm = (): MemberFormState => ({
   gender: undefined,
   heightCm: '',
   weightKg: '',
+  experienceLevel: undefined,
   birthDate: '',
   memo: '',
 });
@@ -69,6 +78,7 @@ function memberToForm(member: GymMember): MemberFormState {
     gender: member.gender ?? undefined,
     heightCm: member.heightCm != null ? String(member.heightCm) : '',
     weightKg: member.weightKg != null ? String(member.weightKg) : '',
+    experienceLevel: member.experienceLevel,
     birthDate: toDateInputValue(member.birthDate),
     memo: member.memo ?? '',
   };
@@ -104,6 +114,7 @@ function memberHasExtras(form: MemberFormState): boolean {
       form.gender ||
       form.heightCm ||
       form.weightKg ||
+      form.experienceLevel ||
       form.birthDate ||
       form.memo.trim()
   );
@@ -320,6 +331,7 @@ export function GymMemberManagePage() {
         gender: memberForm.gender,
         heightCm,
         weightKg,
+        experienceLevel: memberForm.experienceLevel,
         birthDate,
         memo: memberForm.memo.trim() || undefined,
       };
@@ -738,6 +750,13 @@ export function GymMemberManagePage() {
                             />
                           </label>
                         </div>
+
+                        <ExperienceSelector
+                          value={memberForm.experienceLevel}
+                          onChange={(experienceLevel) =>
+                            setMemberForm((prev) => ({ ...prev, experienceLevel }))
+                          }
+                        />
 
                         <label className="form-field">
                           <span className="form-field__label">{t('gyms:members.birthDate')}</span>

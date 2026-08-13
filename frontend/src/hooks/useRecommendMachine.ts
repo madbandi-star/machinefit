@@ -170,8 +170,8 @@ function buildMemberProfileInput(
     gender: member.gender,
     heightCm: member.heightCm!,
     weightKg: member.weightKg!,
-    // Members do not store experience/goal — do not inherit from account owner.
-    experienceLevel: 'intermediate',
+    // Member-scoped experience (migration 126); default intermediate when unset.
+    experienceLevel: member.experienceLevel ?? 'intermediate',
     unitHeight,
     unitWeight,
     weightDifficulty,

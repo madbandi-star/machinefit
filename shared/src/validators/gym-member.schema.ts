@@ -12,6 +12,10 @@ export const createGymMemberSchema = z.object({
   gender: z.enum(['male', 'female', 'other']).optional(),
   heightCm: z.coerce.number().min(100).max(250).optional(),
   weightKg: z.coerce.number().min(30).max(300).optional(),
+  experienceLevel: z
+    .enum(['beginner', 'intermediate', 'advanced', 'professional'])
+    .optional()
+    .nullable(),
   /** Facility member DOB — may be under 14 (not a MachineFit account). */
   birthDate: z.preprocess(
     dateOnlyPreprocess,

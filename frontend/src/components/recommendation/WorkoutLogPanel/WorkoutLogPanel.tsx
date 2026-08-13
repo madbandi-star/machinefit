@@ -10,6 +10,7 @@ import {
   MACHINE_PERSONAL_TIP_MAX_BYTES,
   isFreeWeightMachineCode,
   isBodyweightMachineCode,
+  freeWeightLoadSemanticsKey,
   formatWeight,
   isAllGymsId,
   computePerformedTotalWeightKg,
@@ -850,11 +851,13 @@ export function WorkoutLogPanel({
         setWeightsKg: weights,
         setCompleted,
         sets: setCount,
+        machineCode,
         // Prefer live 조정/추천 횟수 from parent; never stick on stale voice-coach default.
         recommendedReps: effectiveVolumeReps,
       }),
-    [weights, setCompleted, setCount, effectiveVolumeReps]
+    [weights, setCompleted, setCount, effectiveVolumeReps, machineCode]
   );
+  const loadSemanticsKey = freeWeightLoadSemanticsKey(machineCode);
   const hasPlanSeed =
     Boolean(planSeed) &&
     Math.max(1, planSeed?.setCount ?? 0) >= MIN_SET_COUNT &&
@@ -2043,6 +2046,14 @@ export function WorkoutLogPanel({
             {t('machines:workoutLog.estimatedLoadHint')}
           </p>
         ) : null}
+        {loadSemanticsKey ? (
+          <p className="recommendation-workout-log__bw-hint">
+            {t(`machines:workoutLog.loadSemantics.${loadSemanticsKey}`)}
+          </p>
+        ) : null}
+        <p className="recommendation-workout-log__bw-hint">
+          {t('machines:workoutLog.seedVsRecordHint')}
+        </p>
         {weightList}
       </div>
 

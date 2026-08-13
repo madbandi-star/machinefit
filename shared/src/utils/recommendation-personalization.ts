@@ -281,10 +281,11 @@ export function applyPersonalizationToWeight(
 /** Apply user weight-difficulty preference on top of algorithm output. */
 export function applyWeightDifficultyToRecommendation(
   weightKg: number | undefined,
-  weightDifficulty?: number
+  weightDifficulty?: number,
+  options?: { bodyweightEstimated?: boolean }
 ): number | undefined {
   const multiplier = clampWeightDifficulty(weightDifficulty ?? 1);
-  return applyWeightDifficultyMultiplier(weightKg, multiplier);
+  return applyWeightDifficultyMultiplier(weightKg, multiplier, options);
 }
 
 export function mergeSettingsWithPreferences(

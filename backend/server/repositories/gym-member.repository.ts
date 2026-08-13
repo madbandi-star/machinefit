@@ -9,6 +9,7 @@ interface GymMemberRow {
   gender: string | null;
   height_cm: string | null;
   weight_kg: string | null;
+  experience_level: string | null;
   /** pg may return DATE as string or Date */
   birth_date: string | Date | null;
   memo: string | null;
@@ -55,6 +56,7 @@ function mapMember(row: GymMemberRow): GymMember {
     gender: row.gender as GymMember['gender'],
     heightCm: row.height_cm ? parseFloat(row.height_cm) : undefined,
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
+    experienceLevel: (row.experience_level as GymMember['experienceLevel']) ?? undefined,
     birthDate: toDateOnly(row.birth_date),
     memo: row.memo ?? undefined,
     email: row.email ?? undefined,
@@ -86,8 +88,8 @@ export const gymMemberRepository = {
     if (!pool) return [];
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
-              email, linked_user_id, profile_access, is_self, created_at, updated_at
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, experience_level,
+              birth_date, memo, email, linked_user_id, profile_access, is_self, created_at, updated_at
        FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 ORDER BY created_at ASC`,
       [gymId, ownerUserId]
     );
@@ -99,8 +101,8 @@ export const gymMemberRepository = {
     if (!pool) return null;
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
-              email, linked_user_id, profile_access, is_self, created_at, updated_at
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, experience_level,
+              birth_date, memo, email, linked_user_id, profile_access, is_self, created_at, updated_at
        FROM gym_members WHERE id = $1`,
       [id]
     );
@@ -112,8 +114,8 @@ export const gymMemberRepository = {
     if (!pool) return null;
 
     const result = await pool.query<GymMemberRow>(
-      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, birth_date, memo,
-              email, linked_user_id, profile_access, is_self, created_at, updated_at
+      `SELECT id, gym_id, owner_user_id, name, gender, height_cm, weight_kg, experience_level,
+              birth_date, memo, email, linked_user_id, profile_access, is_self, created_at, updated_at
        FROM gym_members WHERE gym_id = $1 AND owner_user_id = $2 AND is_self = TRUE`,
       [gymId, ownerUserId]
     );
@@ -127,6 +129,7 @@ export const gymMemberRepository = {
     gender?: string;
     heightCm?: number;
     weightKg?: number;
+    experienceLevel?: string;
     birthDate?: string;
     memo?: string;
     email?: string;
@@ -139,8 +142,8 @@ export const gymMemberRepository = {
 
     const result = await pool.query<GymMemberRow>(
       `INSERT INTO gym_members (gym_id, owner_user_id, name, gender, height_cm, weight_kg,
-         birth_date, memo, email, linked_user_id, profile_access, is_self)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+         experience_level, birth_date, memo, email, linked_user_id, profile_access, is_self)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING *`,
       [
         data.gymId,
@@ -149,6 +152,7 @@ export const gymMemberRepository = {
         data.gender ?? null,
         data.heightCm ?? null,
         data.weightKg ?? null,
+        data.experienceLevel ?? null,
         data.birthDate ?? null,
         data.memo ?? null,
         data.email ?? null,
@@ -169,6 +173,7 @@ export const gymMemberRepository = {
       gender?: string | null;
       heightCm?: number | null;
       weightKg?: number | null;
+      experienceLevel?: string | null;
       birthDate?: string | null;
       memo?: string | null;
       email?: string | null;
@@ -186,6 +191,10 @@ export const gymMemberRepository = {
     if ('gender' in data) { fields.push(`gender = $${index++}`); values.push(data.gender ?? null); }
     if ('heightCm' in data) { fields.push(`height_cm = $${index++}`); values.push(data.heightCm ?? null); }
     if ('weightKg' in data) { fields.push(`weight_kg = $${index++}`); values.push(data.weightKg ?? null); }
+    if ('experienceLevel' in data) {
+      fields.push(`experience_level = $${index++}`);
+      values.push(data.experienceLevel ?? null);
+    }
     if ('birthDate' in data) { fields.push(`birth_date = $${index++}`); values.push(data.birthDate ?? null); }
     if ('memo' in data) { fields.push(`memo = $${index++}`); values.push(data.memo ?? null); }
     if ('email' in data) { fields.push(`email = $${index++}`); values.push(data.email ?? null); }
@@ -220,10 +229,13 @@ export const gymMemberRepository = {
       gender: string | null;
       height_cm: string | null;
       weight_kg: string | null;
+      experience_level: string | null;
       email: string;
-    }>(`SELECT display_name, gender, height_cm, weight_kg, email FROM users WHERE id = $1`, [
-      ownerUserId,
-    ]);
+    }>(
+      `SELECT display_name, gender, height_cm, weight_kg, experience_level, email
+       FROM users WHERE id = $1`,
+      [ownerUserId]
+    );
     const user = userResult.rows[0];
     if (!user) throw new Error('User not found');
 
@@ -234,6 +246,7 @@ export const gymMemberRepository = {
       gender: user.gender ?? undefined,
       heightCm: user.height_cm ? parseFloat(user.height_cm) : undefined,
       weightKg: user.weight_kg ? parseFloat(user.weight_kg) : undefined,
+      experienceLevel: user.experience_level ?? undefined,
       email: user.email,
       linkedUserId: ownerUserId,
       profileAccess: 'approved',

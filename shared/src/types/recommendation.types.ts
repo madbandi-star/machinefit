@@ -34,6 +34,11 @@ export interface RecommendationSettings {
   footPosition?: number;
   handlePosition?: number;
   romSetting?: string;
+  /**
+   * Working weight (kg). On AI settings this is the algorithm recommend;
+   * on user preferences / adjusted settings it is the user override.
+   * Prefer `aiRecommendedSettings` vs `activeSource` to tell them apart.
+   */
   recommendedWeightKg?: number;
   /** Inclusive recommended rep range (e.g. hypertrophy 8–12). */
   recommendedRepsMin?: number;

@@ -11,7 +11,10 @@
  *   횟수는 중량 시드와 같은 fit 규칙:
  *   - 추천값 잘맞음 / 미선택 → 추천횟수
  *   - 셋팅값 조정 필요 → 조정횟수(있으면) else 추천횟수
+ * - Dumbbell: per-hand steppers → volume × 2 (both hands)
  */
+
+import { resolveFreeWeightVolumeMultiplier } from './free-weight-load.js';
 
 function toPositiveNumber(value: unknown): number | null {
   if (value == null || value === '') return null;
@@ -67,6 +70,11 @@ export interface EffectiveLoadInput {
   /** Per-set working weights from -무게kg+ steppers / workout log. */
   setWeightsKg?: number[] | null;
   setCompleted?: boolean[] | null;
+  /**
+   * When set, applies free-weight volume semantics (e.g. dumbbell per-hand × 2).
+   * Omit for callers that already store total load.
+   */
+  machineCode?: string | null;
 }
 
 /**
@@ -137,6 +145,7 @@ function resolveSetCount(input: EffectiveLoadInput): number {
 /**
  * Session / log **volume** (총 볼륨) from stepper weights:
  * Σ(setWeight_i × effectiveReps), or effectiveWeight × reps × sets when no steppers yet.
+ * Dumbbell (`FW_DUMBBELL`): set weights are per-hand → volume × 2 (both hands).
  *
  * When `fitRating` is provided (including null): same rule as weight steppers
  * (good/미선택 → 추천횟수, bad → 조정횟수).
@@ -153,6 +162,7 @@ export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number
       : getEffectiveReps(input.adjustedReps, input.recommendedReps);
   const sets = resolveSetCount(input);
   const weights = Array.isArray(input.setWeightsKg) ? input.setWeightsKg : [];
+  const volumeMul = resolveFreeWeightVolumeMultiplier(input.machineCode);
 
   const positiveWeights = weights.filter(
     (w) => typeof w === 'number' && Number.isFinite(w) && w > 0
@@ -168,16 +178,16 @@ export function computePerformedTotalWeightKg(input: EffectiveLoadInput): number
       if (typeof w !== 'number' || !Number.isFinite(w) || w <= 0) continue;
       total += reps > 0 ? w * reps : w;
     }
-    return Math.round(total * 100) / 100;
+    return Math.round(total * volumeMul * 100) / 100;
   }
 
   // Fallback before steppers are filled: seed weight × reps × sets
   const seedWeight = getEffectiveWeight(input.adjustedWeight, input.recommendedWeight);
   if (seedWeight > 0 && reps > 0 && sets > 0) {
-    return computeTotalWeightKg(seedWeight, reps, sets);
+    return Math.round(computeTotalWeightKg(seedWeight, reps, sets) * volumeMul * 100) / 100;
   }
   if (seedWeight > 0 && sets > 0) {
-    return Math.round(seedWeight * sets * 100) / 100;
+    return Math.round(seedWeight * sets * volumeMul * 100) / 100;
   }
 
   return 0;

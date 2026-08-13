@@ -194,6 +194,7 @@ export function computeVolume(
     adjustedWeight?: number | null;
     recommendedWeight?: number | null;
     sets?: number | null;
+    machineCode?: string | null;
   }
 ): number {
   return computePerformedTotalWeightKg({
@@ -204,6 +205,7 @@ export function computeVolume(
     adjustedWeight: options?.adjustedWeight,
     recommendedWeight: options?.recommendedWeight,
     sets: options?.sets ?? weights.length,
+    machineCode: options?.machineCode,
   });
 }
 
@@ -227,6 +229,7 @@ export function toSessionPoint(
       setWeightsKg: log.setWeightsKg,
       setCompleted: log.setCompleted,
       sets: log.setCount,
+      machineCode: log.machineCode,
       adjustedWeight: load?.adjustedWeight,
       recommendedWeight: load?.recommendedWeight,
       adjustedReps: load?.adjustedReps,
@@ -308,6 +311,7 @@ export function aggregateDailySessions(logs: WorkoutLog[]): DailyPoint[] {
         volume: computeVolume(entry.setWeightsKg, {
           setCompleted: entry.setCompleted,
           sets: entry.setCount,
+          machineCode: entry.machineCode,
         }),
       }));
 

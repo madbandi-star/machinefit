@@ -1,4 +1,4 @@
-import type { Gender } from './api.types.js';
+import type { ExperienceLevel, Gender } from './api.types.js';
 
 export type GymMemberProfileAccess = 'none' | 'pending' | 'approved' | 'denied';
 
@@ -10,6 +10,8 @@ export interface GymMember {
   gender?: Gender;
   heightCm?: number;
   weightKg?: number;
+  /** Training experience for member-scoped recommendations (not account owner). */
+  experienceLevel?: ExperienceLevel;
   birthDate?: string;
   memo?: string;
   email?: string;

@@ -117,7 +117,15 @@
     "applyAllSets": "전체 적용",
     "quickActions": "빠른 무게 입력",
     "estimatedLoad": "추정부하",
-    "estimatedLoadHint": "맨몸운동 추정부하입니다. 실제 외부 중량과 같지 않으며, 체중×부하계수로 산출해 총볼륨에 반영합니다."
+    "estimatedLoadHint": "맨몸운동 추정부하입니다. 실제 외부 중량과 같지 않으며, 체중×부하계수로 산출해 총볼륨에 반영합니다.",
+    "seedVsRecordHint": "추천·시드 값은 시작 참고용입니다. 저장한 수행 무게가 기록·총볼륨의 기준이 됩니다.",
+    "bodyweightMissing": "체중이 없어 추정부하를 계산할 수 없습니다. 프로필 또는 회원 체중을 입력해 주세요.",
+    "loadSemantics": {
+      "total_bar": "바벨/스미스: 표시·기록 무게는 총중량(봉+플레이트)입니다. 봉 무게를 따로 더하지 않습니다.",
+      "per_hand": "덤벨: 표시·기록 무게는 한 손 기준입니다. 총볼륨은 양손(×2)으로 계산합니다.",
+      "implement": "케틀벨: 표시·기록 무게는 사용 기구 중량 그대로입니다.",
+      "stack": "케이블: 표시·기록 무게는 스택(핀) 중량 기준입니다."
+    }
   },
   "restTimer": {
     "label": "{{setNumber}}세트 후 휴식",
@@ -449,7 +457,7 @@
     },
     "avgSessionVolume": {
       "title": "평균 세션 볼륨",
-      "description": "{{workoutCount}}회 기록의 세트 중량 합계 평균입니다."
+      "description": "{{workoutCount}}회 기록의 평균 총볼륨 {{volumeKg}}kg 입니다. (작업 무게가 아닌 볼륨 지표)"
     },
     "volumeGrowth": {
       "title": "볼륨 성장률",

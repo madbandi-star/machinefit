@@ -513,9 +513,27 @@ export const workoutLogRepository = {
          INNER JOIN users u ON u.id = wl.user_id
          LEFT JOIN LATERAL (
            SELECT
-             SUM((elem)::numeric) AS session_volume,
-             MAX((elem)::numeric) AS max_weight
-           FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+             SUM(sw.weight) AS session_volume,
+             MAX(sw.weight) AS max_weight
+           FROM (
+             SELECT
+               (elem.value)::numeric AS weight,
+               COALESCE((wl.set_completed ->> ((elem.ord - 1)::int))::boolean, false) AS completed
+             FROM jsonb_array_elements_text(wl.set_weights_kg)
+               WITH ORDINALITY AS elem(value, ord)
+           ) sw
+           WHERE sw.weight > 0
+             AND (
+               wl.set_completed IS NULL
+               OR jsonb_typeof(wl.set_completed) <> 'array'
+               OR jsonb_array_length(wl.set_completed) = 0
+               OR NOT EXISTS (
+                 SELECT 1
+                 FROM jsonb_array_elements(wl.set_completed) AS c(val)
+                 WHERE c.val = 'true'::jsonb
+               )
+               OR sw.completed = true
+             )
          ) w ON TRUE
          WHERE wl.machine_id = $1
            AND wl.log_date >= $2::date
@@ -656,8 +674,26 @@ export const workoutLogRepository = {
          FROM workout_logs wl
          INNER JOIN users u ON u.id = wl.user_id
          LEFT JOIN LATERAL (
-           SELECT MAX((elem)::numeric) AS max_weight
-           FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+           SELECT MAX(sw.weight) AS max_weight
+           FROM (
+             SELECT
+               (elem.value)::numeric AS weight,
+               COALESCE((wl.set_completed ->> ((elem.ord - 1)::int))::boolean, false) AS completed
+             FROM jsonb_array_elements_text(wl.set_weights_kg)
+               WITH ORDINALITY AS elem(value, ord)
+           ) sw
+           WHERE sw.weight > 0
+             AND (
+               wl.set_completed IS NULL
+               OR jsonb_typeof(wl.set_completed) <> 'array'
+               OR jsonb_array_length(wl.set_completed) = 0
+               OR NOT EXISTS (
+                 SELECT 1
+                 FROM jsonb_array_elements(wl.set_completed) AS c(val)
+                 WHERE c.val = 'true'::jsonb
+               )
+               OR sw.completed = true
+             )
          ) w ON TRUE
          WHERE wl.machine_id = $1
            AND wl.log_date >= $2::date
@@ -770,9 +806,27 @@ export const workoutLogRepository = {
          INNER JOIN users u ON u.id = wl.user_id
          LEFT JOIN LATERAL (
            SELECT
-             SUM((elem)::numeric) AS session_volume,
-             MAX((elem)::numeric) AS max_weight
-           FROM jsonb_array_elements_text(wl.set_weights_kg) AS elem
+             SUM(sw.weight) AS session_volume,
+             MAX(sw.weight) AS max_weight
+           FROM (
+             SELECT
+               (elem.value)::numeric AS weight,
+               COALESCE((wl.set_completed ->> ((elem.ord - 1)::int))::boolean, false) AS completed
+             FROM jsonb_array_elements_text(wl.set_weights_kg)
+               WITH ORDINALITY AS elem(value, ord)
+           ) sw
+           WHERE sw.weight > 0
+             AND (
+               wl.set_completed IS NULL
+               OR jsonb_typeof(wl.set_completed) <> 'array'
+               OR jsonb_array_length(wl.set_completed) = 0
+               OR NOT EXISTS (
+                 SELECT 1
+                 FROM jsonb_array_elements(wl.set_completed) AS c(val)
+                 WHERE c.val = 'true'::jsonb
+               )
+               OR sw.completed = true
+             )
          ) w ON TRUE
          WHERE wl.log_date >= $1::date
            AND wl.log_date <= $2::date

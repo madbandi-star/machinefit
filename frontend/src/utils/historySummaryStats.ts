@@ -89,6 +89,7 @@ export function computeHistorySummaryStats(
       sets: log.setCount,
       setWeightsKg: log.setWeightsKg,
       setCompleted: log.setCompleted,
+      machineCode: card.machineCode,
     };
 
     totalSets += log.setCount;

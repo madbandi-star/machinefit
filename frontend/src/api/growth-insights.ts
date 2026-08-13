@@ -9,6 +9,8 @@ import type {
 } from '@machinefit/shared';
 import {
   computeDailyInsightMetrics,
+  EXPERIENCE_WEIGHT_MULTIPLIERS,
+  GENDER_WEIGHT_BIAS,
   getPeerHeightRange,
   getBoxingWeightClassRange,
   hasGrowthBodyProfile,
@@ -47,17 +49,16 @@ function round1(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
+/** Align with recommend-weight cold-start profileFormula × gender bias (shared SoT). */
 function estimateReferenceWeight(user: User & { weightKg: number }): number {
-  const genderFactor = user.gender === 'female' ? 0.65 : 1;
-  const experienceFactor =
-    {
-      beginner: 0.75,
-      intermediate: 1,
-      advanced: 1.15,
-      professional: 1.3,
-    }[user.experienceLevel ?? 'intermediate'] ?? 1;
-
-  return round1(user.weightKg * 0.45 * genderFactor * experienceFactor);
+  const level = user.experienceLevel ?? 'intermediate';
+  const profileFormula = Math.round(
+    user.weightKg * EXPERIENCE_WEIGHT_MULTIPLIERS[level] * 0.5
+  );
+  const bodyReference = Math.round(user.weightKg * 0.45);
+  const blended = (profileFormula + bodyReference) / 2;
+  const gender = user.gender === 'female' || user.gender === 'male' ? user.gender : 'male';
+  return round1(blended * GENDER_WEIGHT_BIAS[gender]);
 }
 
 function buildPeerComparison(

@@ -117,7 +117,15 @@
     "applyAllSets": "Apply to all",
     "quickActions": "Quick weight actions",
     "estimatedLoad": "Estimated load",
-    "estimatedLoadHint": "Estimated bodyweight load (bodyweight × factor), not external plate weight. Used for consistent volume."
+    "estimatedLoadHint": "Estimated bodyweight load (bodyweight × factor), not external plate weight. Used for consistent volume.",
+    "seedVsRecordHint": "Recommended/seed values are a starting reference. Saved performed weights drive records and total volume.",
+    "bodyweightMissing": "Body weight is missing, so estimated load cannot be calculated. Add profile or member weight.",
+    "loadSemantics": {
+      "total_bar": "Barbell/Smith: shown & logged weight is total load (bar + plates). Bar weight is not added separately.",
+      "per_hand": "Dumbbell: shown & logged weight is per hand. Total volume counts both hands (×2).",
+      "implement": "Kettlebell: shown & logged weight is the implement weight as used.",
+      "stack": "Cable: shown & logged weight is the stack (pin) weight."
+    }
   },
   "restTimer": {
     "label": "Rest after set {{setNumber}}",
@@ -449,7 +457,7 @@
     },
     "avgSessionVolume": {
       "title": "Average session volume",
-      "description": "Average total set weight across {{workoutCount}} logged sessions."
+      "description": "Average total volume {{volumeKg}}kg across {{workoutCount}} sessions (volume metric, not working weight)."
     },
     "volumeGrowth": {
       "title": "Volume growth rate",

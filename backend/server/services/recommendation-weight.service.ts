@@ -12,10 +12,12 @@ import {
   getPeerHeightRange,
   isBodyweightExercise,
   isFreeWeightMachineCode,
+  nextBodyweightRecommendKg,
   nextRecommendWeightKg,
   normalizeWorkoutLogTargetMuscle,
   resolveBodyweightLoadFactor,
   roundRecommendWeightKg,
+  snapRecommendWeightKg,
 } from '@machinefit/shared';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import {
@@ -55,6 +57,7 @@ function sessionVolume(log: WorkoutLog, load?: WorkoutLoadContext | null): numbe
     setWeightsKg: log.setWeightsKg,
     setCompleted: log.setCompleted,
     sets: log.setCount,
+    machineCode: log.machineCode,
     adjustedWeight: load?.adjustedWeight,
     recommendedWeight: load?.recommendedWeight,
     adjustedReps: load?.adjustedReps,
@@ -108,16 +111,9 @@ function computeUserMetrics(
 }
 
 function computeBodyBasedReferenceWeight(input: RecommendationInput): number {
-  const experienceFactor =
-    {
-      beginner: 0.78,
-      intermediate: 1,
-      advanced: 1.18,
-      professional: 1.32,
-    }[input.experienceLevel] ?? 1;
-
+  // Experience is applied only via profileFormula (+ goal personalization later).
   // Gender is applied once in applyPersonalizationToWeight (cold-start final step).
-  return roundKg(input.weightKg * 0.45 * experienceFactor);
+  return roundKg(input.weightKg * 0.45);
 }
 
 function computeProfileFormula(input: RecommendationInput): number {
@@ -128,22 +124,63 @@ function computeProfileFormula(input: RecommendationInput): number {
 function buildNextTarget(
   currentMaxWeightKg: number,
   setCount: number,
-  referenceWeightKg?: number | null
+  referenceWeightKg?: number | null,
+  options?: { bodyweightEstimated?: boolean }
 ) {
   const base =
     currentMaxWeightKg > 0
       ? currentMaxWeightKg
       : referenceWeightKg && referenceWeightKg > 0
         ? referenceWeightKg
-        : 20;
+        : options?.bodyweightEstimated
+          ? 0
+          : 20;
 
-  const suggestedMaxWeightKg = nextRecommendWeightKg(base);
+  const suggestedMaxWeightKg = options?.bodyweightEstimated
+    ? nextBodyweightRecommendKg(base)
+    : nextRecommendWeightKg(base);
 
   return {
     base,
     suggestedMaxWeightKg,
     setCount,
   };
+}
+
+/** Deduplicate cold-start blend candidates that resolve to the same kg. */
+function pushUniqueCandidate(candidates: number[], value: number | null | undefined) {
+  if (value == null || !(value > 0)) return;
+  const key = Math.round(value * 10) / 10;
+  if (candidates.some((c) => Math.round(c * 10) / 10 === key)) return;
+  candidates.push(value);
+}
+
+function clampHistoryTarget(
+  suggestedMaxWeightKg: number,
+  profileFormula: number,
+  bodyReference: number,
+  lastMaxWeightKg: number,
+  maxWeightKg: number | null,
+  bodyweightEstimated: boolean
+): number {
+  const floorCandidates = [
+    profileFormula * 0.85,
+    bodyReference * 0.85,
+    lastMaxWeightKg * 0.9,
+  ].filter((value) => value > 0);
+  const floor = floorCandidates.length > 0 ? Math.min(...floorCandidates) : 0;
+
+  const capCandidates = [
+    (maxWeightKg ?? 0) * 1.15,
+    profileFormula * 1.5,
+    lastMaxWeightKg * 1.2,
+  ].filter((value) => value > 0);
+  const cap =
+    capCandidates.length > 0 ? Math.max(...capCandidates) : suggestedMaxWeightKg;
+
+  return snapRecommendWeightKg(Math.min(Math.max(suggestedMaxWeightKg, floor), cap), {
+    bodyweightEstimated,
+  });
 }
 
 function markPrimary(entries: WeightBasisEntry[], primarySourceId: string) {
@@ -378,12 +415,15 @@ export async function computeRecommendationWeight(options: {
   }
 
   if (userMetrics.avgSessionVolumeKg != null && userMetrics.avgSessionVolumeKg > 0) {
+    // Volume metric — not a working weight; keep out of valueKg to avoid UI plate-snap.
     entries.push({
       id: 'avgSessionVolume',
       titleKey: 'weightBasis.avgSessionVolume.title',
       descriptionKey: 'weightBasis.avgSessionVolume.description',
-      params: { workoutCount: userMetrics.workoutCount },
-      valueKg: roundKg(userMetrics.avgSessionVolumeKg),
+      params: {
+        workoutCount: userMetrics.workoutCount,
+        volumeKg: roundKg(userMetrics.avgSessionVolumeKg),
+      },
       usedInFinal: false,
     });
   }
@@ -413,8 +453,13 @@ export async function computeRecommendationWeight(options: {
     });
   }
 
+  const isBwEstimatedPath = bodyweightEstimatedKg != null;
   const fallbackReference =
-    machineReference ?? bodyReference ?? matchedSettingWeightKg ?? profileFormula;
+    (isBwEstimatedPath ? bodyweightEstimatedKg : null) ??
+    machineReference ??
+    bodyReference ??
+    matchedSettingWeightKg ??
+    profileFormula;
 
   let primarySourceId = 'profileFormula';
   let finalWeight: number | undefined;
@@ -423,7 +468,8 @@ export async function computeRecommendationWeight(options: {
     const nextTarget = buildNextTarget(
       userMetrics.lastMaxWeightKg,
       userMetrics.lastSetCount,
-      fallbackReference
+      fallbackReference,
+      { bodyweightEstimated: isBwEstimatedPath }
     );
 
     entries.push({
@@ -435,29 +481,21 @@ export async function computeRecommendationWeight(options: {
       usedInFinal: false,
     });
 
-    const floorCandidates = [
-      profileFormula * 0.85,
-      bodyReference * 0.85,
-      userMetrics.lastMaxWeightKg * 0.9,
-    ].filter((value) => value > 0);
-    const floor = floorCandidates.length > 0 ? Math.min(...floorCandidates) : 0;
-
-    const capCandidates = [
-      (userMetrics.maxWeightKg ?? 0) * 1.15,
-      profileFormula * 1.5,
-      userMetrics.lastMaxWeightKg * 1.2,
-    ].filter((value) => value > 0);
-    const cap = capCandidates.length > 0 ? Math.max(...capCandidates) : nextTarget.suggestedMaxWeightKg;
-
-    finalWeight = roundRecommendWeightKg(
-      Math.min(Math.max(nextTarget.suggestedMaxWeightKg, floor), cap)
+    finalWeight = clampHistoryTarget(
+      nextTarget.suggestedMaxWeightKg,
+      profileFormula,
+      bodyReference,
+      userMetrics.lastMaxWeightKg,
+      userMetrics.maxWeightKg,
+      isBwEstimatedPath
     );
     primarySourceId = 'progressiveTarget';
   } else if (userMetrics.workoutCount > 0 && (userMetrics.maxWeightKg ?? 0) > 0) {
     const nextTarget = buildNextTarget(
       userMetrics.maxWeightKg ?? 0,
       userMetrics.lastSetCount || 3,
-      fallbackReference
+      fallbackReference,
+      { bodyweightEstimated: isBwEstimatedPath }
     );
 
     entries.push({
@@ -469,22 +507,30 @@ export async function computeRecommendationWeight(options: {
       usedInFinal: false,
     });
 
-    finalWeight = nextTarget.suggestedMaxWeightKg;
+    // Same floor/cap as progressive so growth/progressive stay consistent.
+    finalWeight = clampHistoryTarget(
+      nextTarget.suggestedMaxWeightKg,
+      profileFormula,
+      bodyReference,
+      userMetrics.maxWeightKg ?? 0,
+      userMetrics.maxWeightKg,
+      isBwEstimatedPath
+    );
     primarySourceId = 'growthNextTarget';
   } else if (bodyweightEstimatedKg != null) {
     // Bodyweight cold-start: bodyweight × factor (no plate snap / blend).
     finalWeight = bodyweightEstimatedKg;
     primarySourceId = 'bodyweightEstimatedLoad';
   } else {
-    const candidates = [
-      profileFormula,
-      bodyReference,
-      matchedSettingWeightKg,
-      machineReference,
-    ].filter((value): value is number => value != null && value > 0);
+    const candidates: number[] = [];
+    pushUniqueCandidate(candidates, profileFormula);
+    pushUniqueCandidate(candidates, bodyReference);
+    // Prefer live match over duplicate exact-band reference when equal.
+    pushUniqueCandidate(candidates, matchedSettingWeightKg);
+    pushUniqueCandidate(candidates, machineReference);
 
     if (cohortStats.sampleSize >= MIN_COHORT_SAMPLE && cohortStats.avgMaxWeightKg > 0) {
-      candidates.push(cohortStats.avgMaxWeightKg);
+      pushUniqueCandidate(candidates, cohortStats.avgMaxWeightKg);
     }
 
     if (candidates.length === 0) {
@@ -520,9 +566,10 @@ export async function computeRecommendationWeight(options: {
   const normalizedFinalWeight =
     finalWeight == null
       ? undefined
-      : primarySourceId === 'bodyweightEstimatedLoad'
-        ? finalWeight
-        : roundRecommendWeightKg(finalWeight);
+      : snapRecommendWeightKg(finalWeight, {
+          bodyweightEstimated:
+            primarySourceId === 'bodyweightEstimatedLoad' || isBwEstimatedPath,
+        });
 
   return {
     recommendedWeightKg: normalizedFinalWeight,

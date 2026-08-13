@@ -55,8 +55,9 @@ export function WeightStepper({
 
   const handleChange = (next: number | undefined) => {
     const raw = next ?? 0;
+    // Keep storage in kg; snap to the kg step after lb→kg to limit round-trip drift.
     const kg = unitWeight === 'lb' ? lbToKg(raw) : raw;
-    onChange(formatWeight(kg));
+    onChange(roundToWeightStep(formatWeight(kg), step));
   };
 
   const suggested =

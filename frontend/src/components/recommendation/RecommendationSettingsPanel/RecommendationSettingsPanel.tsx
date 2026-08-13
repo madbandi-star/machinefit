@@ -301,13 +301,18 @@ export function RecommendationSettingsPanel({
     if (raw == null) continue;
 
     if (field.isWeight && typeof raw === 'number') {
-      const formatted = formatWeight(roundRecommendWeightKg(raw));
+      const preserveEstimate =
+        weightBasis?.primarySourceId === 'bodyweightEstimatedLoad' ||
+        weightBasis?.primarySourceId === 'progressiveTarget' ||
+        weightBasis?.primarySourceId === 'growthNextTarget';
+      const displayKg = preserveEstimate ? raw : roundRecommendWeightKg(raw);
+      const formatted = formatWeight(displayKg);
       const parts = formatted.split(' ');
       items.push({
         key: field.key,
         label: t(`machines:${field.labelKey}`),
         value: parts[0] ?? formatted,
-        rawValue: roundRecommendWeightKg(raw),
+        rawValue: displayKg,
         unit: parts.slice(1).join(' ') || undefined,
         isWeight: true,
         inputType: field.inputType,
@@ -359,9 +364,16 @@ export function RecommendationSettingsPanel({
     ) : null;
 
   if (items.length === 0) {
+    const missingBw =
+      weightBasis?.primarySourceId === 'profileContext' ||
+      (settings.recommendedWeightKg == null &&
+        weightBasis?.entries.some((e) => e.id === 'bodyweightEstimatedLoad') === false &&
+        weightBasis?.entries.some((e) => e.id === 'profileContext') === true);
     return (
       <p className="recommendation-settings-panel__empty">
-        {t('machines:recommendation.emptySettings')}
+        {missingBw
+          ? t('machines:workoutLog.bodyweightMissing')
+          : t('machines:recommendation.emptySettings')}
       </p>
     );
   }

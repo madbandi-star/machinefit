@@ -4,6 +4,7 @@ import {
   applyWeightDifficultyToRecommendation,
   buildPersonalizedTips,
   DEFAULT_ROM_SETTING,
+  isBodyweightExercise,
   isFreeWeightMachineCode,
   resolveActiveRecommendationSettings,
   recommendRepsForGoal,
@@ -134,7 +135,15 @@ export const recommendationService = {
 
     const personalizedWeight = fromBodyweightEstimate
       ? afterPersonalization
-      : applyWeightDifficultyToRecommendation(afterPersonalization, input.weightDifficulty);
+      : applyWeightDifficultyToRecommendation(afterPersonalization, input.weightDifficulty, {
+          // BW history progressive also uses estimated-load precision (not plate snaps).
+          bodyweightEstimated:
+            isBodyweightExercise({
+              machineCode: input.machineCode,
+              machineType: machine.machineType,
+            }) &&
+            (fromUserHistory || fromBodyweightEstimate),
+        });
 
     const recommendedReps = recommendRepsForGoal(
       input.workoutGoal,

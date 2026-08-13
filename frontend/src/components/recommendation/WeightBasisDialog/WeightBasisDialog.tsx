@@ -25,12 +25,36 @@ function translateParam(
   return value;
 }
 
+function displayBasisWeightKg(
+  valueKg: number,
+  entryId: string,
+  primarySourceId: string
+): number {
+  // Preserve estimated-load / non-plate values (e.g. bodyweight 45.5).
+  if (
+    entryId === 'bodyweightEstimatedLoad' ||
+    primarySourceId === 'bodyweightEstimatedLoad' ||
+    entryId === 'progressiveTarget' ||
+    entryId === 'growthNextTarget'
+  ) {
+    return valueKg;
+  }
+  return roundRecommendWeightKg(valueKg);
+}
+
 export function WeightBasisDialog({ open, basis, onClose }: WeightBasisDialogProps) {
   const { t } = useTranslation('machines');
   const { t: tCommon } = useTranslation('common');
   const { formatWeight } = useUserUnits();
 
   if (!open) return null;
+
+  const finalDisplay =
+    basis.finalWeightKg == null
+      ? null
+      : basis.primarySourceId === 'bodyweightEstimatedLoad'
+        ? basis.finalWeightKg
+        : displayBasisWeightKg(basis.finalWeightKg, basis.primarySourceId, basis.primarySourceId);
 
   return (
     <div className="dialog-overlay" role="presentation" onClick={onClose}>
@@ -44,10 +68,10 @@ export function WeightBasisDialog({ open, basis, onClose }: WeightBasisDialogPro
         <h3 id="weight-basis-dialog-title" className="weight-basis-dialog__title">
           {t('weightBasis.dialogTitle')}
         </h3>
-        {basis.finalWeightKg != null && (
+        {finalDisplay != null && (
           <p className="weight-basis-dialog__summary">
             {t('weightBasis.finalWeight', {
-              weight: formatWeight(roundRecommendWeightKg(basis.finalWeightKg)),
+              weight: formatWeight(finalDisplay),
             })}
           </p>
         )}
@@ -62,6 +86,9 @@ export function WeightBasisDialog({ open, basis, onClose }: WeightBasisDialogPro
                 )
               : undefined;
 
+            const volumeKg =
+              typeof entry.params?.volumeKg === 'number' ? entry.params.volumeKg : null;
+
             return (
               <li
                 key={entry.id}
@@ -71,7 +98,14 @@ export function WeightBasisDialog({ open, basis, onClose }: WeightBasisDialogPro
                   <span className="weight-basis-dialog__item-title">{t(entry.titleKey)}</span>
                   {entry.valueKg != null && (
                     <span className="weight-basis-dialog__item-value">
-                      {formatWeight(roundRecommendWeightKg(entry.valueKg))}
+                      {formatWeight(
+                        displayBasisWeightKg(entry.valueKg, entry.id, basis.primarySourceId)
+                      )}
+                    </span>
+                  )}
+                  {volumeKg != null && (
+                    <span className="weight-basis-dialog__item-value">
+                      {formatWeight(volumeKg)}
                     </span>
                   )}
                 </div>

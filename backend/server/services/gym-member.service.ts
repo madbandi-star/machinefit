@@ -58,6 +58,7 @@ export const gymMemberService = {
       gender: input.gender,
       heightCm: input.heightCm,
       weightKg: input.weightKg,
+      experienceLevel: input.experienceLevel ?? undefined,
       birthDate: input.birthDate || undefined,
       memo: input.memo || undefined,
       email: email,
@@ -88,6 +89,7 @@ export const gymMemberService = {
       gender?: string | null;
       heightCm?: number | null;
       weightKg?: number | null;
+      experienceLevel?: string | null;
       birthDate?: string | null;
       memo?: string | null;
       email?: string | null;
@@ -96,6 +98,9 @@ export const gymMemberService = {
     if (input.gender !== undefined) patch.gender = input.gender;
     if (input.heightCm !== undefined) patch.heightCm = input.heightCm;
     if (input.weightKg !== undefined) patch.weightKg = input.weightKg;
+    if (input.experienceLevel !== undefined) {
+      patch.experienceLevel = input.experienceLevel ?? null;
+    }
     if (input.birthDate !== undefined) patch.birthDate = input.birthDate || null;
     if (input.memo !== undefined) patch.memo = input.memo || null;
     if (input.email !== undefined) patch.email = input.email || null;
@@ -147,6 +152,7 @@ export const gymMemberService = {
         gender?: string | null;
         heightCm?: number | null;
         weightKg?: number | null;
+        experienceLevel?: string | null;
         profileAccess: 'approved';
       } = { profileAccess: 'approved' };
 
@@ -156,7 +162,12 @@ export const gymMemberService = {
           gender: string | null;
           height_cm: string | null;
           weight_kg: string | null;
-        }>(`SELECT display_name, gender, height_cm, weight_kg FROM users WHERE id = $1`, [userId]);
+          experience_level: string | null;
+        }>(
+          `SELECT display_name, gender, height_cm, weight_kg, experience_level
+           FROM users WHERE id = $1`,
+          [userId]
+        );
         const user = userResult.rows[0];
         if (user) {
           profileUpdate = {
@@ -164,6 +175,7 @@ export const gymMemberService = {
             gender: user.gender ?? null,
             heightCm: user.height_cm ? parseFloat(user.height_cm) : null,
             weightKg: user.weight_kg ? parseFloat(user.weight_kg) : null,
+            experienceLevel: user.experience_level ?? null,
             profileAccess: 'approved',
           };
         }

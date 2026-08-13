@@ -1,5 +1,12 @@
 import type { TargetMuscleGroup } from '../constants/workout-goals.js';
 
+export {
+  freeWeightLoadSemanticsKey,
+  resolveFreeWeightLoadMode,
+  resolveFreeWeightVolumeMultiplier,
+  type FreeWeightLoadMode,
+} from './free-weight-load.js';
+
 export function isFreeWeightMachineCode(machineCode: string): boolean {
   return machineCode.startsWith('FW_');
 }
