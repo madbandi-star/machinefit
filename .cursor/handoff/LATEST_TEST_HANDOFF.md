@@ -6,7 +6,7 @@
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `1400a3cd`
 
 ## Test focus
 1. `/easy`, `/easy/wizard` 하단 약관·사업자 푸터 없음

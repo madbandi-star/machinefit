@@ -1,7 +1,7 @@
 {
   "title": "Easy mode: hide legal footer + clearer tips/cautions on step 2",
-  "summary": "Remove LegalFooter from EasyLayout. Replace collapsed ?·???? ?? disclosure on recommend-confirm (2/3) with always-visible caution/tip cards for scanability.",
-  "git": { "branch": "main", "commit": "pending" },
+  "summary": "Remove LegalFooter from EasyLayout. Replace collapsed tips disclosure on recommend-confirm (2/3) with always-visible caution/tip cards for scanability.",
+  "git": { "branch": "main", "commit": "1400a3cd" },
   "changedFiles": [
     "frontend/src/layouts/EasyLayout.tsx",
     "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
@@ -14,7 +14,7 @@
   "testFocus": [
     "Easy home/wizard: no bottom terms/legal footer",
     "Easy wizard step 2/3: tips & cautions shown as open cards (warnings first), not a collapsed details",
-    "Sections labeled ???? / ???; readable at a glance"
+    "Sections labeled cautions / tips; readable at a glance"
   ],
   "fastChecks": [
     "rg -n \"LegalFooter\" frontend/src/layouts/EasyLayout.tsx || true",
