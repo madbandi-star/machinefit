@@ -1,4 +1,4 @@
-﻿# Test handoff — Future 완료↔미완료 must not create today card
+﻿# Test handoff — Future complete↔incomplete must not create today card
 
 ## Summary
 미래 날짜에서 **완료 → 미완료**(및 반대) 시 오늘 개별운동기록카드가 생기거나 남지 않도록 보강.
@@ -7,7 +7,7 @@
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `a81cad31`
 
 ## Changed
 - `backend/server/services/workout-log.service.ts`

@@ -1,15 +1,15 @@
 {
   "title": "Future complete?incomplete must not create today card",
   "summary": "Future/past workout-log upserts never stamp recent_history to NOW; if a prior bump left a today history row, reanchor it to logDate when there is no today log. FE also omits recommendationId on non-today upserts for older BE safety.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a81cad31" },
   "changedFiles": [
     "backend/server/services/workout-log.service.ts",
     "backend/server/repositories/history.repository.ts",
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
   "testFocus": [
-    "Future card: ?? ? ??? ? no new today card",
-    "Future card: ??? ? ?? ? no new today card",
+    "Future card: complete ? incomplete ? no new today card",
+    "Future card: incomplete ? complete ? no new today card",
     "If a today ghost card existed from earlier bump, toggling future set removes/moves it when no today log",
     "Today card set toggle still works"
   ],
@@ -18,9 +18,9 @@
     "rg -n \"recommendationId && isTodayLog\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
   "productionChecks": [
-    "Pages FE + Render BE: future ?????? no today duplicate"
+    "Pages FE + Render BE: future complete?incomplete no today duplicate"
   ],
   "deploy": { "expected": "Pages FE + Render BE" },
-  "asIs": "Toggling ?????? on a future card can leave/create a today Records card",
+  "asIs": "Toggling complete?incomplete on a future card can leave/create a today Records card",
   "toBe": "Future/past set toggles do not bucket history under today; prior today ghosts reanchor when safe"
 }
