@@ -1,21 +1,20 @@
-﻿# Test handoff — TODAY'S WORKOUT share random each time
+﻿# Test handoff — TODAY'S WORKOUT report UI + random share
 
 ## Summary
-운동 종료 공유를 **누를 때마다** 시안 10종 중 다른 디자인이 나옵니다(셔플 백: 10개 소진 전 중복 없음).
+1. 운동 종료 리포트 시트를 네온 라임 시안에 맞게 UI 개편
+2. 공유 PNG는 시안 10종 셔플 백(연속 중복 없음)
 
 ## Git
-- Branch: `cursor/today-workout-share-random-35b3`
+- Merged to `main` (report UI + share shuffle)
 
 ## Changed files
+- `frontend/src/components/home/WorkoutCompleteReport/WorkoutCompleteReportModal.tsx`
+- `frontend/src/styles/workout-complete.css`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json`
 - `frontend/src/utils/workoutCompleteShareThemes.ts`
 - `frontend/src/utils/workoutCompleteShareCard.ts`
 
 ## Test focus
-1. 같은 세션에서 공유를 여러 번 → 연속 카드 디자인이 달라짐
-2. 10번 공유하면 10종을 한 번씩 거친 뒤 다시 섞임
-3. duration / exercises / sets / volume / POWER / KEEP GOING 데이터는 동일
-
-## Fast checks
-```powershell
-rg -n "shuffle bag|pickRandomWorkoutShareTheme" frontend/src/utils/workoutCompleteShareThemes.ts
-```
+1. 홈 → 운동 종료 → 리포트 시트 구성(게이지/3통계/POWER/한마디/CTA)
+2. 공유를 여러 번 → PNG 테마가 매번 달라짐
+3. 좁은 폭(~360) 레이아웃
