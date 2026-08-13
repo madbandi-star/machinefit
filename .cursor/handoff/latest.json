@@ -1,25 +1,23 @@
 {
-  "title": "Records menus use gear icons",
-  "summary": "Date filter and machine card action menus now open from settings-gear icon buttons instead of 더보기 text.",
-  "git": { "branch": "main", "commit": "ef7c6703" },
+  "title": "No today card when completing future workout sets",
+  "summary": "Workout log upsert no longer mirrors recent_history (viewed_at=NOW) for non-today logDate, so completing 미완료→완료 on a future Records card does not spawn a today card.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/icons/Icon.tsx",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/styles/records.css",
-    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css"
+    "backend/server/services/workout-log.service.ts"
   ],
   "testFocus": [
-    "Date filter row shows gear icon (not 더보기)",
-    "Machine card shows gear icon",
-    "Menus still open; reorder arrows unchanged"
+    "Future-date plan card: tap 완료 on a set — no new today individual card",
+    "Future card stays on its date; set completion persists",
+    "Today card set complete still works / still appears in Records"
   ],
   "fastChecks": [
-    "rg -n \"name=\\\"settings\\\"|<Settings|day-menu-trigger|order-trigger\" frontend/src/components/records frontend/src/components/icons/Icon.tsx",
-    "rg -n \"more-trigger|더보기\" frontend/src/components/records/HistoryListPanel frontend/src/components/records/HistoryRecordCard || true"
+    "rg -n \"logDate === todayDateKey\\(\\)\" backend/server/services/workout-log.service.ts",
+    "rg -n \"historyRepository.record\" backend/server/services/workout-log.service.ts"
   ],
-  "productionChecks": ["Pages /records — gear menus"],
-  "deploy": { "expected": "Pages FE" },
-  "asIs": "Text label 더보기 for date and card menus",
-  "toBe": "Gear (settings) icon buttons matching nearby square actions"
+  "productionChecks": [
+    "After Render BE deploy: Records future card complete → no today duplicate"
+  ],
+  "deploy": { "expected": "Render BE required; Pages FE unchanged" },
+  "asIs": "Completing a set on a future date card creates/moves a history card under today",
+  "toBe": "Completing a future (or past) log does not bump recent_history to today; only today saves mirror history"
 }

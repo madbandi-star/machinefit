@@ -31,11 +31,7 @@ import { AppError } from '../middlewares/error.middleware.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
 
 function todayDateKey(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
 }
 
 export const workoutLogService = {
@@ -189,9 +185,11 @@ export const workoutLogService = {
         /* card sync must not fail workout save */
       }
 
-      // Ensure Records can show this machine: recommend usually writes history,
-      // but easy-mode / edge paths may save a log without a recent_history row.
-      if (input.recommendationId) {
+      // Mirror into recent_history only for *today* saves (easy-mode / edge paths).
+      // history.record always stamps viewed_at = NOW(), so calling it for a future
+      // (or past) logDate incorrectly buckets a new Records card under today.
+      // Non-today logs already appear via workout_logs / workout_cards merge.
+      if (input.recommendationId && logDate === todayDateKey()) {
         try {
           await historyRepository.record(
             userId,
