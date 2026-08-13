@@ -24,7 +24,7 @@ export function AuthLayout() {
         >
           <Outlet />
         </div>
-        <LegalFooter compact />
+        <LegalFooter compact hideBelowSupport={isLanding} />
       </main>
     </div>
   );

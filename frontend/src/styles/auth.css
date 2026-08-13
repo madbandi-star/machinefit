@@ -1058,6 +1058,11 @@
   word-break: keep-all;
 }
 
+.auth-landing__feature-desc {
+  white-space: pre-line;
+  text-align: center;
+}
+
 .auth-landing__actions {
   width: 100%;
   margin-top: auto;

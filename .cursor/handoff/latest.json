@@ -1,17 +1,28 @@
 {
-  "title": "Move workout calendar above Insights",
-  "summary": "My Page workout calendar now sits directly above MachineFit Insights; location nudge no longer sits between them.",
-  "git": { "branch": "main", "commit": "7d8700ad" },
-  "changedFiles": ["frontend/src/pages/my-page/MyPage.tsx"],
+  "title": "Login page feat3 line break + footer trim",
+  "summary": "On /login only: break landingFeat3Desc after '기록하고 분석하여', and hide LegalFooter trademark/cookie below 고객센터. Guest home landing unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/components/auth/AuthLandingScreen/AuthLandingScreen.tsx",
+    "frontend/src/pages/auth/login/LoginPage.tsx",
+    "frontend/src/components/layout/LegalFooter/LegalFooter.tsx",
+    "frontend/src/layouts/AuthLayout.tsx",
+    "frontend/src/styles/auth.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
+  ],
   "testFocus": [
-    "My Page order: profile → (location nudge) → calendar → 머신핏 인사이트",
-    "No region nudge between calendar and insights"
+    "/login KO: feat3 two lines",
+    "/login footer: no trademark/cookie below 고객센터",
+    "Guest / landing: feat3 single line; footer unchanged"
   ],
   "fastChecks": [
-    "rg -n \"WorkoutMonthCalendar|quickLinks|myPageNudge\" frontend/src/pages/my-page/MyPage.tsx"
+    "rg -n \"landingFeat3DescLogin|variant=\\\"login\\\"|hideBelowSupport\" frontend/src"
   ],
-  "productionChecks": ["Pages /my-page section order"],
+  "productionChecks": ["Pages /login copy + footer"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Calendar then location nudge then Insights",
-  "toBe": "Calendar immediately above Insights"
+  "asIs": "One-line feat3; trademark+cookie under support on login",
+  "toBe": "Login feat3 broken; hide below 고객센터; home guest unchanged"
 }

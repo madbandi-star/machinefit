@@ -68,7 +68,14 @@ function BusinessFooterBlock() {
   );
 }
 
-export function LegalFooter({ compact = false }: { compact?: boolean }) {
+export function LegalFooter({
+  compact = false,
+  hideBelowSupport = false,
+}: {
+  compact?: boolean;
+  /** Login page: keep links + 고객센터, drop trademark / cookie notice below. */
+  hideBelowSupport?: boolean;
+}) {
   const { t } = useTranslation();
   return (
     <footer className={`legal-footer${compact ? ' legal-footer--landing' : ''}`}>
@@ -87,12 +94,16 @@ export function LegalFooter({ compact = false }: { compact?: boolean }) {
         <Link to={ROUTES.SUPPORT}>{t('support.title')}</Link>
       </div>
       <BusinessFooterBlock />
-      <p className="legal-footer__trademark">{t('compliance.disclaimer.trademark')}</p>
-      <GuideProse
-        className="legal-footer__cookies"
-        text={t('legal.cookieNotice')}
-        variant="compact"
-      />
+      {hideBelowSupport ? null : (
+        <>
+          <p className="legal-footer__trademark">{t('compliance.disclaimer.trademark')}</p>
+          <GuideProse
+            className="legal-footer__cookies"
+            text={t('legal.cookieNotice')}
+            variant="compact"
+          />
+        </>
+      )}
     </footer>
   );
 }
