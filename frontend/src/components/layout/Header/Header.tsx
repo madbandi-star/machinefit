@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
-import { LanguageSelector } from '@/components/settings/LanguageSelector/LanguageSelector';
 import { MotivationMediaControls } from '@/components/motivation/MotivationMediaControls/MotivationMediaControls';
 import { PwaInstallButton } from '@/components/pwa/PwaInstallButton/PwaInstallButton';
 import { NotificationBell } from '@/components/navigation/NotificationBell/NotificationBell';
@@ -29,7 +28,6 @@ export function Header() {
             Machine<span className="header__logo-fit">Fit</span>
           </span>
         </Link>
-        <LanguageSelector variant="compact" />
         <EasyMiniHeaderButton />
       </div>
 
