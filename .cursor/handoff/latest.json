@@ -1,26 +1,25 @@
 {
-  "title": "Records more menus use 더보기 text",
-  "summary": "Replace ellipsis icons on records date menu and machine card plan menu with explicit '더보기' / More text labels.",
-  "git": { "branch": "main", "commit": "pending" },
+  "title": "Records menus use gear icons",
+  "summary": "Date filter and machine card action menus now open from settings-gear icon buttons instead of 더보기 text.",
+  "git": { "branch": "main", "commit": "b4e54df8" },
   "changedFiles": [
+    "frontend/src/components/icons/Icon.tsx",
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
     "frontend/src/styles/records.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css"
   ],
   "testFocus": [
-    "Date filter row shows 더보기",
-    "Machine card shows 더보기",
-    "Menus still open"
+    "Date filter row shows gear icon (not 더보기)",
+    "Machine card shows gear icon",
+    "Menus still open; reorder arrows unchanged"
   ],
   "fastChecks": [
-    "rg -n \"moreLabel|more-trigger\" frontend/src/components/records frontend/src/i18n/locales/ko/machines.json"
+    "rg -n \"name=\\\"settings\\\"|<Settings|day-menu-trigger|order-trigger\" frontend/src/components/records frontend/src/components/icons/Icon.tsx",
+    "rg -n \"more-trigger|더보기\" frontend/src/components/records/HistoryListPanel frontend/src/components/records/HistoryRecordCard || true"
   ],
-  "productionChecks": ["Pages /records"],
+  "productionChecks": ["Pages /records — gear menus"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Ellipsis icons for date and card menus",
-  "toBe": "Text label 더보기"
+  "asIs": "Text label 더보기 for date and card menus",
+  "toBe": "Gear (settings) icon buttons matching nearby square actions"
 }
