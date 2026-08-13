@@ -1,20 +1,17 @@
-﻿# Test handoff — Remove header language selector
+﻿# Test handoff — Move Easy mode button left of music player
 
 ## Summary
-앱 헤더(홈 등 최상단 MachineFit 로고 옆) 언어 선택 compact 제거. 설정·로그인 랜딩 언어 선택은 유지.
+헤더 Easy 모드 버튼을 MachineFit 로고 옆에서 음악 플레이어(MotivationMediaControls) 좌측으로 이동.
 
 ## Test focus
-1. 로그인 홈: 로고 옆에 KO/EN 없음
-2. 설정에서 언어 변경 가능
-3. 게스트 로그인 랜딩 세그먼트는 유지
+1. 헤더 우측: Easy → 음악 → 알림 순서
+2. 로고 옆에 Easy 버튼 없음
 
 ## Fast checks
 ```
-rg -n "LanguageSelector" frontend/src/components/layout/Header/Header.tsx
-# expect: no matches
-rg -n "LanguageSelector" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/auth/AuthLandingScreen
+rg -n "EasyMiniHeaderButton|MotivationMediaControls" frontend/src/components/layout/Header/Header.tsx
 ```
 
 ## As-is → To-be
-- as-is: 헤더 로고 옆 compact 언어 피커
-- to-be: 헤더에서 제거
+- as-is: 로고 | Easy … 음악
+- to-be: 로고 … Easy | 음악

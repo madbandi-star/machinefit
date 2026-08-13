@@ -28,10 +28,10 @@ export function Header() {
             Machine<span className="header__logo-fit">Fit</span>
           </span>
         </Link>
-        <EasyMiniHeaderButton />
       </div>
 
       <div className="header__actions">
+        <EasyMiniHeaderButton />
         <MotivationMediaControls variant="bundle" />
         <NotificationBell />
         <PwaInstallButton variant="header" />

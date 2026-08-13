@@ -1,18 +1,17 @@
 {
-  "title": "Remove header language selector",
-  "summary": "Remove compact LanguageSelector from Header brand row next to MachineFit logo. Settings and auth landing language pickers remain.",
+  "title": "Move Easy mode button left of music player",
+  "summary": "Header EasyMiniHeaderButton moved from beside MachineFit logo to immediately left of MotivationMediaControls.",
   "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/components/layout/Header/Header.tsx"],
   "testFocus": [
-    "Home header: no KO/EN by logo",
-    "Settings still has language picker",
-    "Auth landing segmented control kept"
+    "Header actions order: Easy then music then bell",
+    "No Easy button beside logo"
   ],
   "fastChecks": [
-    "rg -n \"LanguageSelector\" frontend/src/components/layout/Header/Header.tsx"
+    "rg -n \"EasyMiniHeaderButton|MotivationMediaControls\" frontend/src/components/layout/Header/Header.tsx"
   ],
-  "productionChecks": ["Pages home header"],
+  "productionChecks": ["Pages header order"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Language picker beside MachineFit logo in header",
-  "toBe": "No language picker in header"
+  "asIs": "Easy button beside logo",
+  "toBe": "Easy button left of music player"
 }
