@@ -1,11 +1,11 @@
-ï»¿# Test handoff â€” Fortune share card
+# Test handoff ? Fortune share card
 
 ## Summary
-Homepage ã€Œì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ã€ and `/fortune/today` now have **ê³µìœ  ì¹´ë“œ ë§Œë“¤ê¸°**, same Web Share / PNG download flow as ìš´ë™ì„±í–¥ (Lifter DNA), with fortune keyword, stars, scores, and one-liner.
+Homepage ¡¸¿À´ÃÀÇ ÇïÃ¢¿î¼¼¡¹ and `/fortune/today` now have **°øÀ¯ Ä«µå ¸¸µé±â**, same Web Share / PNG download flow as ¿îµ¿¼ºÇâ (Lifter DNA), with fortune keyword, stars, scores, and one-liner.
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `3257d94e`
 
 ## Changed files
 - `frontend/src/utils/fortuneShareCard.ts`
@@ -17,8 +17,8 @@ Homepage ã€Œì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ã€ and `/fortune/today` now have **ê³µìœ  ì¹´
 - `frontend/src/i18n/locales/{ko,en,ja,zh}/fortune.json`
 
 ## Test focus
-1. Home: expand fortune â†’ tap ê³µìœ  ì¹´ë“œ ë§Œë“¤ê¸° â†’ share sheet or download PNG
-2. My Page â†’ ì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ â†’ same button under hero
+1. Home: expand fortune ¡æ tap °øÀ¯ Ä«µå ¸¸µé±â ¡æ share sheet or download PNG
+2. My Page ¡æ ¿À´ÃÀÇ ÇïÃ¢¿î¼¼ ¡æ same button under hero
 3. Card shows keyword, theme, stars, helchang/PR/recovery scores, one-liner
 
 ## Fast checks
@@ -27,6 +27,6 @@ Test-Path frontend/src/utils/fortuneShareCard.ts
 rg -n "shareFortuneCard" frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx frontend/src/components/fortune/FortuneDashboard.tsx
 ```
 
-## As-is â†’ To-be
+## As-is ¡æ To-be
 - **As-is:** No fortune share card
 - **To-be:** DNA-equivalent share card with today's fortune content
