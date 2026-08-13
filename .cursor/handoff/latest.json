@@ -1,7 +1,7 @@
 {
   "title": "Login page feat3 line break + footer trim",
   "summary": "On /login only: break landingFeat3Desc after '기록하고 분석하여', and hide LegalFooter trademark/cookie below 고객센터. Guest home landing unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "101bc9e3" },
   "changedFiles": [
     "frontend/src/components/auth/AuthLandingScreen/AuthLandingScreen.tsx",
     "frontend/src/pages/auth/login/LoginPage.tsx",
