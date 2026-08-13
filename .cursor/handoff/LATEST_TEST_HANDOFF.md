@@ -1,21 +1,21 @@
-ï»¿# Test handoff â€” Future set-complete must not create today card
+# Test handoff ? Future set-complete must not create today card
 
 ## Summary
-ë¯¸ëž˜ ë‚ ì§œ ê°œë³„ìš´ë™ê¸°ë¡ì¹´ë“œì—ì„œ ìˆ˜í–‰ê¸°ë¡ **ë¯¸ì™„ë£Œ â†’ ì™„ë£Œ** ì‹œ, `workout_log` upsertê°€ `recent_history.viewed_at = NOW()`ë¡œ ì˜¬ë ¤ **ì˜¤ëŠ˜** ë²„í‚·ì— ì¹´ë“œê°€ ìƒê¸°ë˜ ë¬¸ì œë¥¼ ìˆ˜ì •.  
-`recommendationId`ê°€ ìžˆì–´ë„ **logDateê°€ ì˜¤ëŠ˜ì¼ ë•Œë§Œ** history mirror.
+¹Ì·¡ ³¯Â¥ °³º°¿îµ¿±â·ÏÄ«µå¿¡¼­ ¼öÇà±â·Ï **¹Ì¿Ï·á ¡æ ¿Ï·á** ½Ã, `workout_log` upsert°¡ `recent_history.viewed_at = NOW()`·Î ¿Ã·Á **¿À´Ã** ¹öÅ¶¿¡ Ä«µå°¡ »ý±â´ø ¹®Á¦¸¦ ¼öÁ¤.  
+`recommendationId`°¡ ÀÖ¾îµµ **logDate°¡ ¿À´ÃÀÏ ¶§¸¸** history mirror.
 
 ## Git
 - branch: `main`
-- commit: pending (push í›„ ê°±ì‹ )
+- commit: `dfffaf03`
 
 ## Changed
 - `backend/server/services/workout-log.service.ts`
 
 ## Test focus
-1. ê¸°ë¡ > ë¯¸ëž˜ ë‚ ì§œ ì¹´ë“œì—ì„œ ì„¸íŠ¸ **ì™„ë£Œ** íƒ­
-2. **ì˜¤ëŠ˜** ë‚ ì§œì— ë™ì¼ ê¸°êµ¬ ì¹´ë“œê°€ **ì‹ ê·œ ìƒì„±ë˜ì§€ ì•ŠìŒ**
-3. ë¯¸ëž˜ ì¹´ë“œì˜ ì™„ë£Œ ìƒíƒœëŠ” ìœ ì§€
-4. **ì˜¤ëŠ˜** ì¹´ë“œì—ì„œ ì™„ë£ŒëŠ” ê¸°ì¡´ì²˜ëŸ¼ ê¸°ë¡ì— ë°˜ì˜
+1. ±â·Ï > ¹Ì·¡ ³¯Â¥ Ä«µå¿¡¼­ ¼¼Æ® **¿Ï·á** ÅÇ
+2. **¿À´Ã** ³¯Â¥¿¡ µ¿ÀÏ ±â±¸ Ä«µå°¡ **½Å±Ô »ý¼ºµÇÁö ¾ÊÀ½**
+3. ¹Ì·¡ Ä«µåÀÇ ¿Ï·á »óÅÂ´Â À¯Áö
+4. **¿À´Ã** Ä«µå¿¡¼­ ¿Ï·á´Â ±âÁ¸Ã³·³ ±â·Ï¿¡ ¹Ý¿µ
 
 ## Fast checks
 ```
@@ -24,8 +24,8 @@ rg -n "historyRepository.record" backend/server/services/workout-log.service.ts
 ```
 
 ## Production
-**Render BE ìž¬ë°°í¬ í•„ìš”** (FE ë³€ê²½ ì—†ìŒ).
+**Render BE Àç¹èÆ÷ ÇÊ¿ä** (FE º¯°æ ¾øÀ½).
 
-## As-is â†’ To-be
-- **As-is:** ë¯¸ëž˜ ì¹´ë“œ ì™„ë£Œ â†’ ì˜¤ëŠ˜ ê°œë³„ìš´ë™ê¸°ë¡ì¹´ë“œ ìƒì„±
-- **To-be:** ë¯¸ëž˜/ê³¼ê±° ì™„ë£ŒëŠ” historyë¥¼ ì˜¤ëŠ˜ë¡œ ì˜¬ë¦¬ì§€ ì•ŠìŒ
+## As-is ¡æ To-be
+- **As-is:** ¹Ì·¡ Ä«µå ¿Ï·á ¡æ ¿À´Ã °³º°¿îµ¿±â·ÏÄ«µå »ý¼º
+- **To-be:** ¹Ì·¡/°ú°Å ¿Ï·á´Â history¸¦ ¿À´Ã·Î ¿Ã¸®Áö ¾ÊÀ½

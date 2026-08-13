@@ -1,12 +1,12 @@
 {
   "title": "No today card when completing future workout sets",
-  "summary": "Workout log upsert no longer mirrors recent_history (viewed_at=NOW) for non-today logDate, so completing 미완료→완료 on a future Records card does not spawn a today card.",
-  "git": { "branch": "main", "commit": "pending" },
+  "summary": "Workout log upsert no longer mirrors recent_history (viewed_at=NOW) for non-today logDate, so completing 미완료→?�료 on a future Records card does not spawn a today card.",
+  "git": { "branch": "main", "commit": "dfffaf03" },
   "changedFiles": [
     "backend/server/services/workout-log.service.ts"
   ],
   "testFocus": [
-    "Future-date plan card: tap 완료 on a set — no new today individual card",
+    "Future-date plan card: tap ?�료 on a set ??no new today individual card",
     "Future card stays on its date; set completion persists",
     "Today card set complete still works / still appears in Records"
   ],
@@ -15,7 +15,7 @@
     "rg -n \"historyRepository.record\" backend/server/services/workout-log.service.ts"
   ],
   "productionChecks": [
-    "After Render BE deploy: Records future card complete → no today duplicate"
+    "After Render BE deploy: Records future card complete ??no today duplicate"
   ],
   "deploy": { "expected": "Render BE required; Pages FE unchanged" },
   "asIs": "Completing a set on a future date card creates/moves a history card under today",
