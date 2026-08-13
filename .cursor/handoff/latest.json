@@ -1,22 +1,18 @@
 {
-  "title": "Premium Instagram fortune share card",
-  "summary": "Helchang fortune share card rebuilt with cinematic gym photo background, glass neon score cards, and refined poster typography for Instagram-ready sharing.",
-  "git": { "branch": "main", "commit": "9ca0d00d" },
-  "changedFiles": [
-    "frontend/src/utils/fortuneShareCard.ts",
-    "frontend/public/assets/share/fortune-share-bg.png"
-  ],
+  "title": "Align fortune share card stack with Lifter DNA",
+  "summary": "Helchang fortune share card now uses the same centered DNA composition: glass card, measured block height, eyebrow?emoji?title?theme?stars?3-col meta?quote?footer.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
   "testFocus": [
-    "Generate share from home/detail fortune",
-    "Background photo + readable text overlays",
-    "Score cards and quote look premium on mobile"
+    "Fortune share card clusters in vertical center like Lifter DNA",
+    "Meta row is one 3-col panel (not three separate neon cards)",
+    "Quote + brand footer sit tight under the stack"
   ],
   "fastChecks": [
-    "Test-Path frontend/public/assets/share/fortune-share-bg.png",
-    "rg -n \"fortune-share-bg|drawImageCover\" frontend/src/utils/fortuneShareCard.ts"
+    "rg -n \"blockHeight|drawMetaPanel|verticalBias\" frontend/src/utils/fortuneShareCard.ts"
   ],
-  "productionChecks": ["Pages deploy", "Share PNG on Instagram Stories crop"],
+  "productionChecks": ["Pages deploy", "Compare side-by-side with DNA share"],
   "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "Ugly procedural canvas share card",
-  "toBe": "Photo-backed Instagram-ready fortune poster"
+  "asIs": "Fortune share elements spread full canvas",
+  "toBe": "DNA-style centered clustered stack"
 }

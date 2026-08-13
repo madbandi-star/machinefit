@@ -1,23 +1,15 @@
-# Test handoff ? Premium fortune share card
+ï»¿# Test handoff â€” Fortune share = DNA stack layout
 
 ## Summary
-¿À´ÃÀÇ ÇïÃ¢¿î¼¼ °øÀ¯ Ä«µå¸¦ ÀÎ½ºÅ¸ Æ÷½ºÅÍ±ŞÀ¸·Î ÀçÁ¦ÀÛ. ½Ã³×¸¶Æ½ Áü ¹è°æ ÀÌ¹ÌÁö + ±Û·¡½º ³×¿Â Á¡¼ö Ä«µå + Á¤±³ÇÑ Å¸ÀÌÆ÷.
+í—¬ì°½ìš´ì„¸ ê³µìœ  ì¹´ë“œë¥¼ ìš´ë™ì„±í–¥(DNA)ê³¼ ê°™ì€ **ì¤‘ì•™ ë°€ì§‘ ìŠ¤íƒ**ìœ¼ë¡œ ë§ì¶¤. ê¸€ë˜ìŠ¤ ì¹´ë“œ + blockHeight ì¤‘ì•™ ì •ë ¬ + 3ì—´ ë©”íƒ€ íŒ¨ë„ + ì¸ìš© + í‘¸í„°.
 
 ## Git
 - Branch: `main`
-- Commit: `9ca0d00d`
+- Commit: pending
 
-## Changed files
+## Changed
 - `frontend/src/utils/fortuneShareCard.ts`
-- `frontend/public/assets/share/fortune-share-bg.png`
 
 ## Test focus
-1. È¨/»ó¼¼ ¡æ °øÀ¯ Ä«µå ¸¸µé±â
-2. ¹è°æ¡¤Çìµå¶óÀÎ¡¤Á¡¼ö¡¤ÇÑ¸¶µğ¡¤ÇªÅÍ °¡µ¶¼º
-3. ¸ğ¹ÙÀÏ ÀúÀå/°øÀ¯ ÈÄ ½ºÅä¸® ºñÀ² È®ÀÎ
-
-## Fast checks
-```powershell
-Test-Path frontend/public/assets/share/fortune-share-bg.png
-rg -n "fortune-share-bg|drawImageCover" frontend/src/utils/fortuneShareCard.ts
-```
+1. ê³µìœ  ì¹´ë“œê°€ ì¹´ë“œ ì¤‘ì•™ì— ì˜¹ê¸°ì¢…ê¸° ëª¨ì´ëŠ”ì§€
+2. DNAì™€ ë¹„ìŠ·í•œ ì—¬ë°±/êµ¬ì„± ë¦¬ë“¬
