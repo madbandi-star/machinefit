@@ -1,31 +1,34 @@
-﻿# Test handoff — Future set-complete must not create today card
+﻿# Test handoff — Future 완료↔미완료 must not create today card
 
 ## Summary
-미래 날짜 개별운동기록카드에서 수행기록 **미완료 → 완료** 시, `workout_log` upsert가 `recent_history.viewed_at = NOW()`로 올려 **오늘** 버킷에 카드가 생기던 문제를 수정.  
-`recommendationId`가 있어도 **logDate가 오늘일 때만** history mirror.
+미래 날짜에서 **완료 → 미완료**(및 반대) 시 오늘 개별운동기록카드가 생기거나 남지 않도록 보강.
+- BE: 오늘이 아니면 `history.record(NOW)` 호출 안 함 + 잘못 오늘로 올라간 history를 `logDate`로 재배치
+- FE: 오늘이 아니면 upsert에 `recommendationId` 미전달 (구버전 BE 방어)
 
 ## Git
 - branch: `main`
-- commit: `dfffaf03`
+- commit: pending
 
 ## Changed
 - `backend/server/services/workout-log.service.ts`
+- `backend/server/repositories/history.repository.ts`
+- `frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx`
 
 ## Test focus
-1. 기록 > 미래 날짜 카드에서 세트 **완료** 탭
-2. **오늘** 날짜에 동일 기구 카드가 **신규 생성되지 않음**
-3. 미래 카드의 완료 상태는 유지
-4. **오늘** 카드에서 완료는 기존처럼 기록에 반영
+1. 미래 카드 **완료 → 미완료** → 오늘 카드 없음
+2. 미래 카드 **미완료 → 완료** → 오늘 카드 없음
+3. 이전에 잘못 생긴 오늘 유령 카드가 있으면, 미래 세트 토글 후(오늘 로그 없을 때) 사라지거나 미래로 이동
+4. 오늘 카드 세트 토글은 정상
 
 ## Fast checks
 ```
-rg -n "logDate === todayDateKey\\(\\)" backend/server/services/workout-log.service.ts
-rg -n "historyRepository.record" backend/server/services/workout-log.service.ts
+rg -n "reanchorFromTodayIfNoTodayLog|logDate === todayDateKey" backend/server
+rg -n "recommendationId && isTodayLog" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx
 ```
 
 ## Production
-**Render BE 재배포 필요** (FE 변경 없음).
+**Pages FE + Render BE** 둘 다 필요.
 
 ## As-is → To-be
-- **As-is:** 미래 카드 완료 → 오늘 개별운동기록카드 생성
-- **To-be:** 미래/과거 완료는 history를 오늘로 올리지 않음
+- **As-is:** 미래 완료↔미완료 시 오늘 카드 생성/잔류
+- **To-be:** 오늘로 history를 올리지 않음 + 유령 오늘 history 재배치

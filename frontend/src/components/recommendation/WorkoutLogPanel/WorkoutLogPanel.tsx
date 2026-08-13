@@ -1071,6 +1071,10 @@ export function WorkoutLogPanel({
   const saveMutation = useMutation({
     mutationFn: async (variables?: SaveWorkoutLogVariables) => {
       if (!activeGymId || !activeMemberId) throw new Error('missing_gym_or_member');
+      // Only attach recommendationId for *today* upserts. Older backends mirror
+      // recent_history with viewed_at=NOW() whenever recommendationId is present,
+      // which spawns a today Records card on future 완료↔미완료 toggles.
+      // COALESCE keeps an existing recommendation_id on the log row.
       const res = await workoutLogApi.upsert({
         gymId: activeGymId,
         memberId: activeMemberId,
@@ -1080,7 +1084,7 @@ export function WorkoutLogPanel({
         setWeightsKg: variables?.setWeightsKg ?? weightsRef.current,
         setCompleted: variables?.setCompleted ?? setCompletedRef.current,
         diary: diary.trim() || undefined,
-        ...(recommendationId ? { recommendationId } : {}),
+        ...(recommendationId && isTodayLog ? { recommendationId } : {}),
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
       });
       return res.data.data;

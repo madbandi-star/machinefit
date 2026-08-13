@@ -1,23 +1,26 @@
 {
-  "title": "No today card when completing future workout sets",
-  "summary": "Workout log upsert no longer mirrors recent_history (viewed_at=NOW) for non-today logDate, so completing incomplete?complete on a future Records card does not spawn a today card.",
-  "git": { "branch": "main", "commit": "dfffaf03" },
+  "title": "Future complete?incomplete must not create today card",
+  "summary": "Future/past workout-log upserts never stamp recent_history to NOW; if a prior bump left a today history row, reanchor it to logDate when there is no today log. FE also omits recommendationId on non-today upserts for older BE safety.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/services/workout-log.service.ts"
+    "backend/server/services/workout-log.service.ts",
+    "backend/server/repositories/history.repository.ts",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
   "testFocus": [
-    "Future-date plan card: tap complete on a set ? no new today individual card",
-    "Future card stays on its date; set completion persists",
-    "Today card set complete still works / still appears in Records"
+    "Future card: ?? ? ??? ? no new today card",
+    "Future card: ??? ? ?? ? no new today card",
+    "If a today ghost card existed from earlier bump, toggling future set removes/moves it when no today log",
+    "Today card set toggle still works"
   ],
   "fastChecks": [
-    "rg -n \"logDate === todayDateKey\\(\\)\" backend/server/services/workout-log.service.ts",
-    "rg -n \"historyRepository.record\" backend/server/services/workout-log.service.ts"
+    "rg -n \"reanchorFromTodayIfNoTodayLog|logDate === todayDateKey\" backend/server",
+    "rg -n \"recommendationId && isTodayLog\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
   ],
   "productionChecks": [
-    "After Render BE deploy: Records future card complete ? no today duplicate"
+    "Pages FE + Render BE: future ?????? no today duplicate"
   ],
-  "deploy": { "expected": "Render BE required; Pages FE unchanged" },
-  "asIs": "Completing a set on a future date card creates/moves a history card under today",
-  "toBe": "Completing a future (or past) log does not bump recent_history to today; only today saves mirror history"
+  "deploy": { "expected": "Pages FE + Render BE" },
+  "asIs": "Toggling ?????? on a future card can leave/create a today Records card",
+  "toBe": "Future/past set toggles do not bucket history under today; prior today ghosts reanchor when safe"
 }

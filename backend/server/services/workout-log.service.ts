@@ -187,17 +187,32 @@ export const workoutLogService = {
 
       // Mirror into recent_history only for *today* saves (easy-mode / edge paths).
       // history.record always stamps viewed_at = NOW(), so calling it for a future
-      // (or past) logDate incorrectly buckets a new Records card under today.
+      // (or past) logDate incorrectly buckets a new Records card under today —
+      // for both 미완료→완료 and 완료→미완료 (same upsert path).
       // Non-today logs already appear via workout_logs / workout_cards merge.
-      if (input.recommendationId && logDate === todayDateKey()) {
+      const historyRecommendationId =
+        input.recommendationId ?? saved.recommendationId ?? undefined;
+      if (historyRecommendationId) {
         try {
-          await historyRepository.record(
-            userId,
-            input.gymId,
-            input.memberId,
-            machineId,
-            input.recommendationId
-          );
+          if (logDate === todayDateKey()) {
+            await historyRepository.record(
+              userId,
+              input.gymId,
+              input.memberId,
+              machineId,
+              historyRecommendationId
+            );
+          } else {
+            // Undo today-bucketing left by older upserts when toggling sets on this logDate.
+            await historyRepository.reanchorFromTodayIfNoTodayLog(
+              userId,
+              input.gymId,
+              input.memberId,
+              machineId,
+              historyRecommendationId,
+              logDate
+            );
+          }
         } catch {
           /* history mirror must not fail workout save */
         }

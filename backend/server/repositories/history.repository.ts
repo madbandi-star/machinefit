@@ -257,4 +257,43 @@ export const historyRepository = {
       [userId, gymId, memberId, machineId, logDate]
     );
   },
+
+  /**
+   * If a prior workout-log upsert wrongly stamped this recommendation to *today*,
+   * move viewed_at back to the log's calendar day. Skips when a today log already
+   * exists for the machine (legitimate today activity).
+   */
+  async reanchorFromTodayIfNoTodayLog(
+    userId: string,
+    gymId: string,
+    memberId: string,
+    machineId: string,
+    recommendationId: string,
+    logDate: string
+  ): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+
+    await pool.query(
+      `UPDATE recent_history rh
+       SET viewed_at = (($6::text || ' 12:00:00')::timestamp AT TIME ZONE 'Asia/Seoul')
+       WHERE rh.user_id = $1
+         AND rh.gym_id = $2
+         AND rh.member_id = $3
+         AND rh.recommendation_id = $5
+         AND (rh.viewed_at AT TIME ZONE 'Asia/Seoul')::date
+             = (NOW() AT TIME ZONE 'Asia/Seoul')::date
+         AND $6::date <> (NOW() AT TIME ZONE 'Asia/Seoul')::date
+         AND NOT EXISTS (
+           SELECT 1
+           FROM workout_logs wl
+           WHERE wl.user_id = $1
+             AND wl.gym_id = $2
+             AND wl.member_id = $3
+             AND wl.machine_id = $4
+             AND wl.log_date = (NOW() AT TIME ZONE 'Asia/Seoul')::date
+         )`,
+      [userId, gymId, memberId, machineId, recommendationId, logDate]
+    );
+  },
 };
