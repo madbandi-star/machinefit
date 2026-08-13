@@ -41,7 +41,7 @@ interface UserRow {
   id: string;
   role_id: string;
   role_code: RoleCode;
-  email: string;
+  email: string | null;
   display_name: string;
   gender: string | null;
   height_cm: string | null;
@@ -88,7 +88,8 @@ function mapUser(row: UserRow): User {
     id: row.id,
     roleId: row.role_id,
     roleCode: row.role_code,
-    email: row.email,
+    // Never expose stored email — MachineFit does not collect OAuth emails.
+    email: '',
     displayName: row.display_name,
     gender: row.gender as User['gender'],
     heightCm: row.height_cm ? parseFloat(row.height_cm) : undefined,
@@ -160,7 +161,7 @@ export const userRepository = {
   },
 
   async create(data: {
-    email: string;
+    email?: string | null;
     displayName: string;
     gender?: Gender;
     languageCode?: string;
@@ -207,7 +208,7 @@ export const userRepository = {
        RETURNING *`,
       [
         roleId,
-        data.email,
+        data.email ?? null,
         data.displayName,
         data.gender ?? null,
         languageId,
@@ -349,7 +350,7 @@ export const userRepository = {
          SET is_active = FALSE,
              account_status = 'WITHDRAWN',
              deactivated_at = NOW(),
-             email = 'deleted+' || id::text || '@invalid.local',
+             email = NULL,
              display_name = '탈퇴회원',
              avatar_url = NULL,
              marketing_opt_in = FALSE,
@@ -386,7 +387,7 @@ export const userRepository = {
       try {
         await client.query(
           `INSERT INTO auth_provider_withdrawals (user_id, provider, provider_user_id, provider_email)
-           SELECT user_id, provider, provider_user_id, provider_email
+           SELECT user_id, provider, provider_user_id, NULL
            FROM auth_providers
            WHERE user_id = $1`,
           [userId]

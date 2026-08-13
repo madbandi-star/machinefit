@@ -23,33 +23,8 @@ export const gymMemberService = {
     await subscriptionService.assertCanAddMember(userId, gymId);
     assertSafeUgc(input.name, input.memo);
 
+    // Gym-member email is optional contact only — never auto-link MachineFit users by email.
     const email = input.email?.trim() || undefined;
-
-    // Check if email matches an existing user
-    let linkedUserId: string | undefined;
-    let profileAccess: string = 'none';
-    let profileRequest: { memberId: string; gymId: string; ownerUserId: string; targetUserId: string } | null = null;
-
-    if (email) {
-      const pool = getPool();
-      if (pool) {
-        const userResult = await pool.query<{ id: string }>(
-          `SELECT id FROM users WHERE email = $1`,
-          [email]
-        );
-        const targetUser = userResult.rows[0];
-        if (targetUser) {
-          linkedUserId = targetUser.id;
-          profileAccess = 'pending';
-          profileRequest = {
-            memberId: '', // filled after create
-            gymId,
-            ownerUserId: userId,
-            targetUserId: targetUser.id,
-          };
-        }
-      }
-    }
 
     const member = await gymMemberRepository.create({
       gymId,
@@ -62,19 +37,10 @@ export const gymMemberService = {
       birthDate: input.birthDate || undefined,
       memo: input.memo || undefined,
       email: email,
-      linkedUserId,
-      profileAccess,
+      linkedUserId: undefined,
+      profileAccess: 'none',
       isSelf: false,
     });
-
-    if (profileRequest) {
-      await gymMemberRepository.createProfileRequest({
-        memberId: member.id,
-        gymId,
-        ownerUserId: userId,
-        targetUserId: profileRequest.targetUserId,
-      });
-    }
 
     return member;
   },

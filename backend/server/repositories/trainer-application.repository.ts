@@ -43,7 +43,7 @@ function mapRow(row: TrainerApplicationRow): TrainerApplication {
     reviewedAt: row.reviewed_at ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    userEmail: row.user_email ?? undefined,
+    userEmail: undefined,
     userDisplayName: row.user_display_name ?? undefined,
   };
 }

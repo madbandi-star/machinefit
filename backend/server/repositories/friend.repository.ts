@@ -177,7 +177,7 @@ export const friendRepository = {
     let i = 2;
     let qFilter = '';
     if (options.q?.trim()) {
-      qFilter = `AND (u.display_name ILIKE $${i} OR u.email ILIKE $${i} OR u.id::text ILIKE $${i})`;
+      qFilter = `AND (u.display_name ILIKE $${i} OR u.id::text ILIKE $${i})`;
       params.push(`%${options.q.trim()}%`);
       i += 1;
     }
@@ -258,7 +258,7 @@ export const friendRepository = {
        WHERE u.is_active = TRUE
          AND u.id <> $1
          AND r.code <> 'guest'
-         AND (u.display_name ILIKE $2 OR u.email ILIKE $2 OR u.id::text ILIKE $2)
+         AND (u.display_name ILIKE $2 OR u.id::text ILIKE $2)
          AND NOT EXISTS (
            SELECT 1 FROM blocked_users b
            WHERE (b.blocker_id = $1 AND b.blocked_id = u.id)
@@ -294,7 +294,7 @@ export const friendRepository = {
        WHERE u.is_active = TRUE
          AND u.id <> $1
          AND r.code <> 'guest'
-         AND (u.display_name ILIKE $2 OR u.email ILIKE $2 OR u.id::text ILIKE $2)
+         AND (u.display_name ILIKE $2 OR u.id::text ILIKE $2)
          AND NOT EXISTS (
            SELECT 1 FROM blocked_users b
            WHERE (b.blocker_id = $1 AND b.blocked_id = u.id)
@@ -1132,7 +1132,7 @@ export const friendRepository = {
     const pool = getPool();
     if (!pool) return [];
     const { rows } = await pool.query(
-      `SELECT u.id, u.display_name, u.email, COUNT(*)::int AS request_count,
+      `SELECT u.id, u.display_name, COUNT(*)::int AS request_count,
               MAX(fr.created_at) AS last_request_at
        FROM friend_requests fr
        JOIN users u ON u.id = fr.from_user_id
@@ -1146,7 +1146,7 @@ export const friendRepository = {
     return rows.map((r) => ({
       userId: String(r.id),
       displayName: String(r.display_name ?? ''),
-      email: String(r.email ?? ''),
+      email: '',
       requestCount: Number(r.request_count) || 0,
       lastRequestAt: r.last_request_at ? iso(r.last_request_at) : null,
     }));

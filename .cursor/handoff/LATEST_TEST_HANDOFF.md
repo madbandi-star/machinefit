@@ -1,35 +1,34 @@
-﻿# Test handoff — Power Box (파워박스)
+﻿# Test handoff: Stop collecting OAuth user emails
 
 ## Summary
-마이페이지 **내 헬창력** 우측에 🎁 파워박스 추가.  
-서버에서 1~100 랜덤 Power를 **서울 기준 하루 1회** 지급 (points ledger 재사용).
+MachineFit no longer stores, returns, or displays OAuth account emails. Login continues with `(provider, provider_user_id)`. Migration `130` nulls existing emails and adds a partial unique index for any future non-null emails.
 
 ## Git
-- branch: `main`
-- commit: `50c69335`
-
-## Migration
-`129_power_box_daily_claim.sql` — policy `power_box_claim` + unique `(user_id, reference_id)` for daily claim  
-**Render DB 적용 필수**
-
-## APIs
-- `GET /points/power-box`
-- `POST /points/power-box/claim`
+- Branch: `main`
+- Commit: PENDING (filled after push)
 
 ## Test focus
-1. 첫 클릭 → 1~100 지급, 총량 증가, +N 애니메이션
-2. 같은 날 재클릭/더블클릭/새로고침 → 미지급
-3. 비활성 + 「오늘의 POWER는 이미 획득했습니다」+ 남은 시간
-4. 기존 헬창력/내역 정상
+1. OAuth login / signup / rejoin still works (provider link only).
+2. `/auth` responses: `user.email === ''`; access JWT has no email.
+3. My Page: no email row / copy UI.
+4. Linked providers: status text only (no provider email).
+5. Workout report: view + copy only (no send-to-my-email).
+6. Billing checkout: Polar payload has no `customer_email`.
+7. Admin users: no real account email shown.
 
-## Fast checks
+## Fast checks (no Pages wait)
+```powershell
+Test-Path database/migrations/130_remove_user_email_storage.sql
+rg -n "providerEmail: null|email: ''|customer_email" backend/server
+rg -n "openid profile|scope: 'name'" frontend/src/utils/oauthClient.ts
+rg -n "handleCopyEmail|myPage\.email" frontend/src/pages/my-page/MyPage.tsx
 ```
-rg -n "power_box_claim|claimPowerBox|PowerBox" backend/server frontend/src shared/src
-```
 
-## Production
-**Pages FE + Render BE + migration 129**
+## Production checks
+- Apply migration **130** on Render DB
+- Redeploy Render backend + GitHub Pages frontend
+- Smoke OAuth login for an existing linked account
 
-## As-is → To-be
-- **As-is:** 파워박스 없음
-- **To-be:** 하루 1회 랜덤 Power 상자
+## as-is → to-be
+- **as-is:** OAuth emails stored on `users` / `auth_providers` and returned in JWT/UI
+- **to-be:** Emails nulled; API returns `''`; UI does not show account email; login by provider id

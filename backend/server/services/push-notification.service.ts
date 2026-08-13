@@ -26,7 +26,7 @@ import {
   pushAudienceService,
 } from './push-audience.service.js';
 import { notificationRepository } from '../repositories/notification.repository.js';
-import { userLoginIdFromEmail } from '../utils/user-login-id.util.js';
+import { userLoginIdFromUser } from '../utils/user-login-id.util.js';
 import { logger } from '../utils/logger.js';
 
 const KIND_TO_NOTIFICATION_TYPE: Record<PushKind, NotificationType> = {
@@ -65,7 +65,7 @@ async function loadSender(
       id: user.id,
       roleCode: isRoleCode(user.roleCode) ? user.roleCode : Role.MEMBER,
       displayName: user.displayName,
-      loginId: userLoginIdFromEmail(user.email),
+      loginId: userLoginIdFromUser(user),
     };
   }
 
@@ -76,7 +76,7 @@ async function loadSender(
       id: dev.id,
       roleCode: isRoleCode(dev.roleCode) ? dev.roleCode : Role.MEMBER,
       displayName: dev.displayName,
-      loginId: userLoginIdFromEmail(dev.email),
+      loginId: userLoginIdFromUser(dev),
     };
   }
 

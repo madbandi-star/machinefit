@@ -216,7 +216,7 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
                   <div className="linked-providers__name">{PROVIDER_LABEL[provider]}</div>
                   <div className="linked-providers__status">
                     {linked
-                      ? item?.providerEmail || t('myPage.providersLinked')
+                      ? t('myPage.providersLinked')
                       : t('myPage.providersNotLinked')}
                   </div>
                 </div>

@@ -27,7 +27,8 @@ function mapRow(row: AuthProviderDbRow): AuthProviderRow {
     userId: row.user_id,
     provider: row.provider,
     providerUserId: row.provider_user_id,
-    providerEmail: row.provider_email,
+    // Never expose stored provider emails.
+    providerEmail: null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -86,7 +87,7 @@ export const authProviderRepository = {
       `INSERT INTO auth_providers (user_id, provider, provider_user_id, provider_email)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [data.userId, data.provider, data.providerUserId, data.providerEmail ?? null]
+      [data.userId, data.provider, data.providerUserId, null]
     );
     return mapRow(result.rows[0]);
   },
@@ -151,7 +152,7 @@ export const authProviderRepository = {
         await client.query(
           `INSERT INTO auth_provider_withdrawals (user_id, provider, provider_user_id, provider_email)
            VALUES ($1, $2, $3, $4)`,
-          [link.userId, link.provider, link.providerUserId, link.providerEmail]
+          [link.userId, link.provider, link.providerUserId, null]
         );
       } catch {
         /* archive optional / duplicate OK */

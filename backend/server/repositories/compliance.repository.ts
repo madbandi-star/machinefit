@@ -225,7 +225,7 @@ export const complianceRepository = {
     return {
       profile: {
         id: String(u.id),
-        email: String(u.email),
+        email: '',
         displayName: String(u.display_name),
         gender: u.gender ?? null,
         heightCm: u.height_cm != null ? parseFloat(String(u.height_cm)) : null,
@@ -729,9 +729,8 @@ export const complianceRepository = {
     }
     const result = await pool.query(
       `SELECT c.id, c.user_id, c.consent_type, c.version, c.agreed, c.agreed_at,
-              c.region_code, c.source, u.email
+              c.region_code, c.source
        FROM user_consents c
-       JOIN users u ON u.id = c.user_id
        ORDER BY c.agreed_at DESC
        LIMIT $1`,
       [Math.min(limit, 500)]
@@ -739,7 +738,7 @@ export const complianceRepository = {
     return result.rows.map((r) => ({
       id: String(r.id),
       userId: String(r.user_id),
-      email: String(r.email),
+      email: '',
       consentType: String(r.consent_type),
       version: String(r.version),
       agreed: Boolean(r.agreed),

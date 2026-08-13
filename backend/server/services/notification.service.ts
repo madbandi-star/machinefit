@@ -8,7 +8,7 @@ import { findDevUserById } from '../data/dev-users.js';
 import { getPool } from '../config/database.js';
 import { notificationRepository } from '../repositories/notification.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
-import { userLoginIdFromEmail } from '../utils/user-login-id.util.js';
+import { userLoginIdFromUser } from '../utils/user-login-id.util.js';
 import { logger } from '../utils/logger.js';
 
 const PUSH_NOTIFICATION_TYPES = new Set<NotificationType>([
@@ -36,7 +36,7 @@ async function loadSenderSnapshot(senderId: string): Promise<SenderSnapshot | nu
     const user = await userRepository.findById(senderId);
     if (!user) return null;
     return {
-      loginId: userLoginIdFromEmail(user.email),
+      loginId: userLoginIdFromUser(user),
       displayName: user.displayName,
       roleCode: isRoleCode(user.roleCode) ? user.roleCode : Role.MEMBER,
     };
@@ -45,7 +45,7 @@ async function loadSenderSnapshot(senderId: string): Promise<SenderSnapshot | nu
   const dev = findDevUserById(senderId);
   if (!dev) return null;
   return {
-    loginId: userLoginIdFromEmail(dev.email),
+    loginId: userLoginIdFromUser(dev),
     displayName: dev.displayName,
     roleCode: isRoleCode(dev.roleCode) ? dev.roleCode : Role.MEMBER,
   };

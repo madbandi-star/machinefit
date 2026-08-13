@@ -20,7 +20,7 @@ export function OwnerApplyPage() {
   const [businessName, setBusinessName] = useState('');
   const [applicantName, setApplicantName] = useState(user?.displayName ?? '');
   const [businessPhone, setBusinessPhone] = useState('');
-  const [businessEmail, setBusinessEmail] = useState(user?.email ?? '');
+  const [businessEmail, setBusinessEmail] = useState('');
   const [evidenceUrl, setEvidenceUrl] = useState('');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);

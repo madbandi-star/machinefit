@@ -59,7 +59,8 @@ async function verifyGoogleIdToken(
     return {
       provider: 'google',
       providerUserId: sub,
-      providerEmail: typeof payload.email === 'string' ? payload.email : null,
+      // Never collect OAuth account email.
+      providerEmail: null,
       // Never map provider profile name → MachineFit username (privacy minimization).
       displayName: null,
       avatarUrl: typeof payload.picture === 'string' ? payload.picture : null,
@@ -83,7 +84,6 @@ async function verifyGoogleAccessToken(accessToken: string): Promise<VerifiedOAu
   }
   const data = (await response.json()) as {
     sub?: string;
-    email?: string;
     name?: string;
     picture?: string;
   };
@@ -93,7 +93,7 @@ async function verifyGoogleAccessToken(accessToken: string): Promise<VerifiedOAu
   return {
     provider: 'google',
     providerUserId: data.sub,
-    providerEmail: data.email ?? null,
+    providerEmail: null,
     displayName: null,
     avatarUrl: data.picture ?? null,
   };
@@ -120,7 +120,7 @@ async function verifyAppleIdToken(idToken: string, nonce?: string): Promise<Veri
     return {
       provider: 'apple',
       providerUserId: sub,
-      providerEmail: typeof payload.email === 'string' ? payload.email : null,
+      providerEmail: null,
       displayName: null,
       avatarUrl: null,
     };
@@ -146,7 +146,6 @@ async function verifyKakaoAccessToken(accessToken: string): Promise<VerifiedOAut
   const data = (await response.json()) as {
     id?: number | string;
     kakao_account?: {
-      email?: string;
       profile?: { nickname?: string; profile_image_url?: string };
     };
   };
@@ -156,7 +155,7 @@ async function verifyKakaoAccessToken(accessToken: string): Promise<VerifiedOAut
   return {
     provider: 'kakao',
     providerUserId: String(data.id),
-    providerEmail: data.kakao_account?.email ?? null,
+    providerEmail: null,
     // Kakao nickname must not become MachineFit public username.
     displayName: null,
     avatarUrl: data.kakao_account?.profile?.profile_image_url ?? null,

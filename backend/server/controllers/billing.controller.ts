@@ -48,7 +48,6 @@ export async function createCheckout(req: Request, res: Response): Promise<void>
     successUrl: input.successUrl,
     cancelUrl: input.cancelUrl,
     couponCode: input.couponCode,
-    email: user.email,
   });
   res.status(201).json({ success: true, data });
 }

@@ -20,7 +20,7 @@ export function TrainerApplyPage() {
 
   const [applicantName, setApplicantName] = useState(user?.displayName ?? '');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState(user?.email ?? '');
+  const [email, setEmail] = useState('');
   const [specialties, setSpecialties] = useState('');
   const [career, setCareer] = useState('');
   const [certs, setCerts] = useState('');

@@ -265,7 +265,7 @@ async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
   return new Promise((resolve, reject) => {
     const client = window.google!.accounts.oauth2.initTokenClient({
       client_id: clientId,
-      scope: 'openid email profile',
+      scope: 'openid profile',
       callback: (response) => {
         if (response.error || !response.access_token) {
           reject(new OAuthClientError(response.error || 'token missing', 'CANCELLED'));
@@ -302,7 +302,7 @@ async function requestAppleIdToken(): Promise<{ idToken: string; nonce: string }
 
   window.AppleID.auth.init({
     clientId,
-    scope: 'name email',
+    scope: 'name',
     redirectURI,
     usePopup: true,
     nonce,

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from '@tanstack/react-query';
 import { workoutReportApi, type WorkoutReportPeriod, type WorkoutReportResult } from '@/api';
 import { useUIStore } from '@/store/ui.store';
-import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
@@ -73,13 +71,12 @@ function WorkoutReportDialog({
 export function WorkoutReportSection() {
   const { t } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
-  const userEmail = useAuthStore((s) => s.user?.email);
   const { activeGymId } = useActiveGym();
   const { activeMemberId, isRealGym } = useActiveMember();
   const [period, setPeriod] = useState<WorkoutReportPeriod>('week');
   const [reportCache, setReportCache] = useState<ReportCache | null>(null);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
-  const [loadingAction, setLoadingAction] = useState<'mail' | 'view' | 'copy' | null>(null);
+  const [loadingAction, setLoadingAction] = useState<'view' | 'copy' | null>(null);
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -90,14 +87,14 @@ export function WorkoutReportSection() {
   const reportGymId = activeGymId ?? undefined;
   const reportMemberId = isRealGym ? (activeMemberId ?? undefined) : undefined;
 
-  const fetchReport = async (previewOnly: boolean): Promise<ReportCache | null> => {
-    if (!previewOnly && reportCache?.period === period) {
+  const fetchReport = async (): Promise<ReportCache | null> => {
+    if (reportCache?.period === period) {
       return reportCache;
     }
 
     const res = await workoutReportApi.send({
       period,
-      previewOnly,
+      previewOnly: true,
       ...(reportGymId ? { gymId: reportGymId } : {}),
       ...(reportMemberId ? { memberId: reportMemberId } : {}),
     });
@@ -108,55 +105,11 @@ export function WorkoutReportSection() {
     return cache;
   };
 
-  const sendMutation = useMutation({
-    mutationFn: async () => {
-      const res = await workoutReportApi.send({
-        period,
-        ...(reportGymId ? { gymId: reportGymId } : {}),
-        ...(reportMemberId ? { memberId: reportMemberId } : {}),
-      });
-      return res.data.data;
-    },
-    onSuccess: async (data) => {
-      const cache = buildReportCache(period, data);
-      if (cache) {
-        setReportCache(cache);
-      }
-
-      if (data.emailSent) {
-        showToast(t('workoutReport.sent'), 'success');
-        return;
-      }
-
-      showToast(t('workoutReport.failed'), 'error');
-    },
-    onError: () => showToast(t('workoutReport.failed'), 'error'),
-  });
-
-  const handleMailApp = async () => {
-    if (!userEmail) return;
-
-    setLoadingAction('mail');
-    try {
-      const cache = reportCache?.period === period ? reportCache : await fetchReport(true);
-      if (!cache) {
-        showToast(t('workoutReport.failed'), 'error');
-        return;
-      }
-
-      const subject = encodeURIComponent(cache.subject);
-      const body = encodeURIComponent(cache.text.slice(0, 1800));
-      window.location.href = `mailto:${userEmail}?subject=${subject}&body=${body}`;
-    } finally {
-      setLoadingAction(null);
-    }
-  };
-
   const handleViewReport = async () => {
     setLoadingAction('view');
     try {
-      const cache = reportCache?.period === period ? reportCache : await fetchReport(true);
-      if (!cache?.html) {
+      const cache = reportCache?.period === period ? reportCache : await fetchReport();
+      if (!cache?.html && !cache?.text) {
         showToast(t('workoutReport.failed'), 'error');
         return;
       }
@@ -169,7 +122,7 @@ export function WorkoutReportSection() {
   const handleCopyReport = async () => {
     setLoadingAction('copy');
     try {
-      const cache = reportCache?.period === period ? reportCache : await fetchReport(true);
+      const cache = reportCache?.period === period ? reportCache : await fetchReport();
       if (!cache?.text) {
         showToast(t('workoutReport.failed'), 'error');
         return;
@@ -232,19 +185,6 @@ export function WorkoutReportSection() {
               />
             </div>
 
-            <button
-              type="button"
-              className="btn btn--primary btn--block"
-              onClick={() => sendMutation.mutate()}
-              disabled={sendMutation.isPending || !userEmail}
-            >
-              {sendMutation.isPending ? t('workoutReport.sending') : t('workoutReport.send')}
-            </button>
-
-            {!userEmail ? (
-              <p className="form-section__desc">{t('workoutReport.emailRequired')}</p>
-            ) : null}
-
             <div
               className="workout-report-section__actions"
               role="group"
@@ -252,17 +192,9 @@ export function WorkoutReportSection() {
             >
               <button
                 type="button"
-                className="btn btn--secondary workout-report-section__action-btn"
-                onClick={() => void handleMailApp()}
-                disabled={!userEmail || actionBusy || sendMutation.isPending}
-              >
-                {loadingAction === 'mail' ? '…' : t('workoutReport.openMailApp')}
-              </button>
-              <button
-                type="button"
-                className="btn btn--secondary workout-report-section__action-btn"
+                className="btn btn--primary workout-report-section__action-btn"
                 onClick={() => void handleViewReport()}
-                disabled={actionBusy || sendMutation.isPending}
+                disabled={actionBusy}
               >
                 {loadingAction === 'view' ? '…' : t('workoutReport.viewReport')}
               </button>
@@ -270,7 +202,7 @@ export function WorkoutReportSection() {
                 type="button"
                 className="btn btn--secondary workout-report-section__action-btn"
                 onClick={() => void handleCopyReport()}
-                disabled={actionBusy || sendMutation.isPending}
+                disabled={actionBusy}
               >
                 {loadingAction === 'copy' ? '…' : t('workoutReport.copyReport')}
               </button>

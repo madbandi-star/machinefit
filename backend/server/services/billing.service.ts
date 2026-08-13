@@ -247,16 +247,6 @@ export async function syncUserEntitlementPlan(userId: string): Promise<void> {
   await pushMembershipCache(userId, live);
 }
 
-function isUsableTrialEmail(email: string | null | undefined): email is string {
-  if (!email) return false;
-  const normalized = email.trim().toLowerCase();
-  if (!normalized || !normalized.includes('@')) return false;
-  if (normalized.endsWith('@users.local')) return false;
-  if (normalized.endsWith('@invalid.local')) return false;
-  if (normalized.startsWith('deleted+')) return false;
-  return true;
-}
-
 async function collectTrialIdentities(
   userId: string
 ): Promise<Array<{ key: string; kind: 'oauth' | 'email' }>> {
@@ -274,22 +264,9 @@ async function collectTrialIdentities(
     const links = await authProviderRepository.findByUserId(userId);
     for (const link of links) {
       push(`oauth:${link.provider}:${link.providerUserId}`, 'oauth');
-      if (isUsableTrialEmail(link.providerEmail)) {
-        push(`email:${link.providerEmail.trim().toLowerCase()}`, 'email');
-      }
     }
   } catch {
     // auth_providers table may be missing in early boot — OAuth check skipped.
-  }
-
-  try {
-    const { userRepository } = await import('../repositories/user.repository.js');
-    const user = await userRepository.findById(userId);
-    if (user && isUsableTrialEmail(user.email)) {
-      push(`email:${user.email.trim().toLowerCase()}`, 'email');
-    }
-  } catch {
-    /* ignore */
   }
 
   return identities;
@@ -467,7 +444,6 @@ export async function createCheckout(
 
   const result = await provider.createCheckout({
     userId,
-    email: input.email,
     displayName: input.displayName,
     planCode,
     amountCents: plan.priceCents,

@@ -11,6 +11,10 @@ export interface User {
   id: string;
   roleId: string;
   roleCode: RoleCode;
+  /**
+   * Always empty from API — MachineFit does not collect or return OAuth account emails.
+   * Kept as `string` for client compat.
+   */
   email: string;
   displayName: string;
   gender?: Gender;

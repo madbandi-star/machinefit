@@ -48,7 +48,7 @@ function refreshTokenExpiresAt(): Date {
   return new Date(Date.now() + ms);
 }
 
-async function issueAuthTokens(user: Pick<User, 'id' | 'roleCode' | 'email'>) {
+async function issueAuthTokens(user: Pick<User, 'id' | 'roleCode'>) {
   const refreshToken = signRefreshToken({ userId: user.id });
   await userRepository.saveRefreshToken(
     user.id,
@@ -59,7 +59,6 @@ async function issueAuthTokens(user: Pick<User, 'id' | 'roleCode' | 'email'>) {
     accessToken: signAccessToken({
       userId: user.id,
       roleCode: user.roleCode,
-      email: user.email,
     }),
     refreshToken,
     expiresIn: '15m' as const,
@@ -82,7 +81,8 @@ async function buildAuthResponse(user: User) {
     user: {
       id: safe.id,
       roleId: safe.roleId,
-      email: safe.email,
+      // API always returns empty — MachineFit does not expose account emails.
+      email: '',
       displayName: safe.displayName,
       roleCode: safe.roleCode,
       gender: safe.gender,
@@ -197,19 +197,16 @@ export const authService = {
     }
 
     let roleCode: RoleCode = Role.MEMBER;
-    let email = '';
 
     if (pool) {
       const user = await userRepository.findById(payload.userId);
       if (!user) throw new AppError(401, 'INVALID_TOKEN', 'User not found');
       if (!user.isActive) throw new AppError(403, 'ACCOUNT_DISABLED', 'Account is disabled');
       roleCode = user.roleCode;
-      email = user.email;
     } else {
       const user = findDevUserById(payload.userId);
       if (user) {
         roleCode = user.roleCode;
-        email = user.email;
       }
     }
 
@@ -218,7 +215,6 @@ export const authService = {
     const tokens = await issueAuthTokens({
       id: payload.userId,
       roleCode,
-      email,
     });
     return { tokens };
   },
@@ -316,7 +312,7 @@ export const authService = {
         await complianceRepository
           .recordLoginEvent({
             userId: user.id,
-            email: user.email,
+            email: null,
             success: true,
             ipAddress: meta?.ipAddress,
             userAgent: meta?.userAgent,
@@ -345,7 +341,7 @@ export const authService = {
       await complianceRepository
         .recordLoginEvent({
           userId: user?.id ?? null,
-          email: identity.providerEmail,
+          email: null,
           success: false,
           failureReason: 'WITHDRAWN_REJOIN_STARTED',
           ipAddress: meta?.ipAddress,
@@ -365,7 +361,7 @@ export const authService = {
     const pending = signOAuthPendingToken({
       provider,
       providerUserId: identity.providerUserId,
-      providerEmail: identity.providerEmail,
+      providerEmail: null,
       displayName: null,
       avatarUrl: identity.avatarUrl,
     });
@@ -380,7 +376,7 @@ export const authService = {
       pendingToken: pending.token,
       identity: {
         provider,
-        email: identity.providerEmail,
+        email: null,
         displayName: null,
       },
       versions: currentLegalVersions(),
@@ -464,16 +460,10 @@ export const authService = {
       );
     }
 
-    const email = await allocateOAuthUserEmail(
-      pending.provider,
-      pending.providerUserId,
-      pending.providerEmail
-    );
-
     try {
       // MachineFit-generated username only — never pending/provider profile names.
+      // Account email is not collected (NULL in DB; API returns '').
       let user = await createOAuthUserWithRandomUsername({
-        email,
         avatarUrl: pending.avatarUrl ?? undefined,
         marketingOptIn: Boolean(input.agreeMarketing),
         locationOptIn: Boolean(input.agreeLocation),
@@ -484,7 +474,7 @@ export const authService = {
         userId: user.id,
         provider: pending.provider,
         providerUserId: pending.providerUserId,
-        providerEmail: pending.providerEmail,
+        providerEmail: null,
       });
       await applyConsentBundle(user.id, input, { ...meta, source: 'oauth_signup' });
 
@@ -590,7 +580,7 @@ export const authService = {
         return {
           provider,
           linked: Boolean(row),
-          providerEmail: row?.providerEmail ?? null,
+          providerEmail: null,
           linkedAt: row?.createdAt ?? null,
         };
       }),
@@ -648,7 +638,7 @@ export const authService = {
         userId,
         provider,
         providerUserId: identity.providerUserId,
-        providerEmail: identity.providerEmail,
+        providerEmail: null,
       });
     } catch (error: unknown) {
       const code =
@@ -696,7 +686,6 @@ export const authService = {
  * Retries on display_name unique collisions (race / duplicate check miss).
  */
 async function createOAuthUserWithRandomUsername(input: {
-  email: string;
   avatarUrl?: string | null;
   marketingOptIn: boolean;
   locationOptIn: boolean;
@@ -712,7 +701,7 @@ async function createOAuthUserWithRandomUsername(input: {
     if (taken) continue;
     try {
       return await userRepository.create({
-        email: input.email,
+        email: null,
         displayName: validated.normalized,
         avatarUrl: input.avatarUrl ?? undefined,
         experienceLevel: 'beginner',
@@ -741,17 +730,4 @@ async function createOAuthUserWithRandomUsername(input: {
     }
   }
   throw new AppError(500, 'USERNAME_ALLOCATION_FAILED', 'Could not allocate a unique username');
-}
-
-/** Prefer provider email when free; otherwise synthetic (never auto-merge accounts). */
-async function allocateOAuthUserEmail(
-  provider: string,
-  providerUserId: string,
-  providerEmail: string | null
-): Promise<string> {
-  const synthetic = `oauth.${provider}.${providerUserId.replace(/[^a-zA-Z0-9_-]/g, '_')}@users.local`;
-  if (!providerEmail) return synthetic;
-  const taken = await userRepository.emailExists(providerEmail);
-  if (taken) return synthetic;
-  return providerEmail;
 }

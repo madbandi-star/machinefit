@@ -12,10 +12,10 @@ import { getPool } from '../config/database.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { findDevUserById } from '../data/dev-users.js';
 
+/** Access-token claims — never include account email. */
 export interface AuthPayload {
   userId: string;
   roleCode: RoleCode;
-  email: string;
 }
 
 declare global {
@@ -52,7 +52,6 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
     return {
       userId: user.id,
       roleCode: isRoleCode(user.roleCode) ? user.roleCode : Role.MEMBER,
-      email: user.email,
     };
   }
 
@@ -62,7 +61,6 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
     return {
       userId: dev.id,
       roleCode: isRoleCode(dev.roleCode) ? dev.roleCode : Role.MEMBER,
-      email: dev.email,
     };
   }
 
@@ -71,7 +69,6 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
   return {
     userId: payload.userId,
     roleCode: payload.roleCode,
-    email: payload.email,
   };
 }
 

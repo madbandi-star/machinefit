@@ -125,17 +125,6 @@ export function MyPage() {
     navigate(ROUTES.HOME, { replace: true });
   };
 
-  const handleCopyEmail = async () => {
-    const email = user?.email?.trim();
-    if (!email) return;
-    try {
-      await navigator.clipboard.writeText(email);
-      showToast(t('myPage.emailCopied'), 'success');
-    } catch {
-      showToast(t('myPage.emailCopyFailed'), 'error');
-    }
-  };
-
   return (
     <div className="my-page">
       <PageShell>
@@ -151,34 +140,6 @@ export function MyPage() {
                 <dd>{user?.roleCode || '—'}</dd>
               </div>
             ) : null}
-
-            <div className="profile-card__row profile-card__row--full">
-              <dt>{t('myPage.email')}</dt>
-              <dd className="profile-card__email">
-                {user?.email ? (
-                  <>
-                    <button
-                      type="button"
-                      className="profile-card__email-value"
-                      onClick={() => void handleCopyEmail()}
-                      title={t('myPage.copyEmail')}
-                    >
-                      {user.email}
-                    </button>
-                    <button
-                      type="button"
-                      className="profile-card__email-copy"
-                      onClick={() => void handleCopyEmail()}
-                      aria-label={t('myPage.copyEmail')}
-                    >
-                      {t('myPage.copyEmail')}
-                    </button>
-                  </>
-                ) : (
-                  '—'
-                )}
-              </dd>
-            </div>
 
             <div className="profile-card__row profile-card__row--full">
               <dt>{t('myPage.location')}</dt>

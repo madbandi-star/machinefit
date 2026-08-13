@@ -95,7 +95,7 @@ export function AdminUsersPage() {
                       {user.isActive ? t('active') : t('inactive')}
                     </span>
                   </div>
-                  <p className="admin-table__meta">{user.email}</p>
+                  <p className="admin-table__meta">{user.id.slice(0, 8)}</p>
                 </div>
                 <div className="admin-table__actions">
                   {editingId === user.id ? (

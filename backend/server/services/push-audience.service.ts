@@ -479,8 +479,8 @@ async function resolveMemberExact(
       (u) =>
         u.isActive &&
         (u.displayName.toLowerCase() === q.toLowerCase() ||
-          u.email.toLowerCase() === q.toLowerCase() ||
-          u.email.split('@')[0]?.toLowerCase() === q.toLowerCase())
+          u.id.toLowerCase() === q.toLowerCase() ||
+          u.id.slice(0, 8).toLowerCase() === q.toLowerCase())
     ).map((u) => ({
       id: u.id,
       displayName: u.displayName,
@@ -498,8 +498,8 @@ async function resolveMemberExact(
        WHERE u.is_active = TRUE
          AND (
            LOWER(u.display_name) = LOWER($1)
-           OR LOWER(u.email) = LOWER($1)
-           OR LOWER(split_part(u.email, '@', 1)) = LOWER($1)
+           OR LOWER(u.id::text) = LOWER($1)
+           OR LOWER(LEFT(u.id::text, 8)) = LOWER($1)
          )`,
       [q]
     );

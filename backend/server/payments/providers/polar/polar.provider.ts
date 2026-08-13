@@ -110,7 +110,6 @@ export class PolarPaymentProvider implements PaymentProvider {
         ? successUrl
         : `${successUrl}${successUrl.includes('?') ? '&' : '?'}checkout_id={CHECKOUT_ID}`,
       return_url: returnUrl,
-      customer_email: input.email,
       customer_name: input.displayName,
       external_customer_id: input.userId,
       metadata: {

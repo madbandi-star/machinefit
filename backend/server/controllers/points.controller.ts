@@ -81,7 +81,7 @@ export async function adminGetUserPoints(req: Request, res: Response): Promise<v
     data: {
       summary,
       recent,
-      email: user.email,
+      email: null,
       displayName: user.displayName,
     },
   });
@@ -109,17 +109,16 @@ export async function adminListUsersWithPoints(req: Request, res: Response): Pro
   }
   const { rows } = await pool.query<{
     user_id: string;
-    email: string | null;
     display_name: string | null;
     balance: number;
     lifetime_earned: number;
     lifetime_spent: number;
     updated_at: Date;
   }>(
-    `SELECT up.user_id, u.email, u.display_name, up.balance, up.lifetime_earned, up.lifetime_spent, up.updated_at
+    `SELECT up.user_id, u.display_name, up.balance, up.lifetime_earned, up.lifetime_spent, up.updated_at
      FROM user_points up
      JOIN users u ON u.id = up.user_id
-     WHERE ($1 = '' OR u.email ILIKE '%' || $1 || '%' OR u.display_name ILIKE '%' || $1 || '%')
+     WHERE ($1 = '' OR u.display_name ILIKE '%' || $1 || '%' OR u.id::text ILIKE '%' || $1 || '%')
      ORDER BY up.updated_at DESC
      LIMIT 50`,
     [q]
@@ -128,7 +127,7 @@ export async function adminListUsersWithPoints(req: Request, res: Response): Pro
     success: true,
     data: rows.map((r) => ({
       userId: r.user_id,
-      email: r.email,
+      email: null,
       displayName: r.display_name,
       balance: Number(r.balance),
       lifetimeEarned: Number(r.lifetime_earned),

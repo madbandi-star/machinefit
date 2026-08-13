@@ -683,7 +683,7 @@ export const billingRepository = {
     if (opts.q?.trim()) {
       params.push(`%${opts.q.trim()}%`);
       where.push(
-        `(u.email ILIKE $${params.length} OR u.display_name ILIKE $${params.length} OR u.id::text ILIKE $${params.length})`
+        `(u.display_name ILIKE $${params.length} OR u.id::text ILIKE $${params.length})`
       );
     }
     if (opts.status === 'expiring') {
@@ -715,7 +715,7 @@ export const billingRepository = {
     const offset = (opts.page - 1) * opts.limit;
     params.push(opts.limit, offset);
     const result = await pool.query(
-      `SELECT u.id AS user_id, u.email, u.display_name, u.subscription_plan,
+      `SELECT u.id AS user_id, u.display_name, u.subscription_plan,
               u.membership_type, u.subscription_status AS membership_status,
               u.trial_consumed_at, u.trial_used, r.code AS role_code,
               s.status, s.start_at, s.expire_at, s.trial_end_at,
@@ -736,7 +736,7 @@ export const billingRepository = {
     );
     const items: AdminSubscriptionRow[] = result.rows.map((row) => ({
       userId: String(row.user_id),
-      email: String(row.email),
+      email: '',
       displayName: String(row.display_name),
       roleCode: String(row.role_code),
       entitlementPlan: String(row.subscription_plan ?? 'free'),

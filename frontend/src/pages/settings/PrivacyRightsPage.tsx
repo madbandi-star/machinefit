@@ -213,10 +213,6 @@ export function PrivacyRightsPage() {
           {p ? (
             <div className="pr-grid">
               <div className="pr-fact">
-                <span className="pr-fact__label">{t('auth.emailLabel')}</span>
-                <span className="pr-fact__value">{p.email}</span>
-              </div>
-              <div className="pr-fact">
                 <span className="pr-fact__label">{t('auth.displayNamePlaceholder')}</span>
                 <span className="pr-fact__value">{p.displayName}</span>
               </div>
@@ -399,7 +395,6 @@ export function PrivacyRightsPage() {
                         <option value="displayName">
                           {t('auth.displayNamePlaceholder')}
                         </option>
-                        <option value="email">{t('auth.emailLabel')}</option>
                         <option value="other">{t('compliance.rights.correctionOther')}</option>
                       </select>
                     </label>

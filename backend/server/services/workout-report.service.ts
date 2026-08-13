@@ -3,7 +3,6 @@ import { isFreeWeightMachineCode, isAllGymsId } from '@machinefit/shared';
 import { userRepository } from '../repositories/user.repository.js';
 import { workoutLogRepository } from '../repositories/workout-log.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
-import { emailService } from './email.service.js';
 import {
   computeLogTotalWeightKg,
   resolveWorkoutLoadContexts,
@@ -260,27 +259,12 @@ export const workoutReportService = {
       };
     }
 
-    try {
-      const delivery = await emailService.send({
-        to: user.email,
-        subject,
-        text,
-        html,
-      });
-      return {
-        message: logs.length ? 'Report sent to your email.' : 'Report sent (no logs in period).',
-        emailSent: true,
-        emailMethod: delivery.method,
-        ...reportPayload,
-      };
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : 'Email delivery failed';
-      return {
-        message: 'Email service unavailable. Report is ready to copy or share.',
-        emailSent: false,
-        emailError: reason,
-        ...reportPayload,
-      };
-    }
+    // Account email is not collected — only preview / copy / external share paths work.
+    return {
+      message: 'email not available',
+      emailSent: false,
+      emailError: 'email not available',
+      ...reportPayload,
+    };
   },
 };

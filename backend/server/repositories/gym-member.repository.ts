@@ -230,9 +230,8 @@ export const gymMemberRepository = {
       height_cm: string | null;
       weight_kg: string | null;
       experience_level: string | null;
-      email: string;
     }>(
-      `SELECT display_name, gender, height_cm, weight_kg, experience_level, email
+      `SELECT display_name, gender, height_cm, weight_kg, experience_level
        FROM users WHERE id = $1`,
       [ownerUserId]
     );
@@ -247,7 +246,7 @@ export const gymMemberRepository = {
       heightCm: user.height_cm ? parseFloat(user.height_cm) : undefined,
       weightKg: user.weight_kg ? parseFloat(user.weight_kg) : undefined,
       experienceLevel: user.experience_level ?? undefined,
-      email: user.email,
+      email: undefined,
       linkedUserId: ownerUserId,
       profileAccess: 'approved',
       isSelf: true,

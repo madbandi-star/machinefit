@@ -27,7 +27,8 @@ export interface OAuthPendingPayload {
   jti: string;
   provider: AuthProviderCode;
   providerUserId: string;
-  providerEmail: string | null;
+  /** Always unused — MachineFit does not collect OAuth emails. */
+  providerEmail?: string | null;
   displayName: string | null;
   avatarUrl: string | null;
 }

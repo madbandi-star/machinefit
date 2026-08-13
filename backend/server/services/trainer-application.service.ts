@@ -55,7 +55,6 @@ export const trainerApplicationService = {
         `신청자: ${application.applicantName}`,
         `연락처: ${application.phone}`,
         `이메일: ${application.email}`,
-        `계정 이메일: ${user.email}`,
         `전문분야: ${application.specialties ?? '(없음)'}`,
         `경력: ${application.career ?? '(없음)'}`,
         `자격증: ${application.certifications ?? '(없음)'}`,

@@ -72,7 +72,7 @@ export const adminRepository = {
     if (!pool) {
       const users = listDevUsers().map((u) => ({
         id: u.id,
-        email: u.email,
+        email: '',
         displayName: u.displayName,
         roleCode: u.roleCode as RoleCode,
         isActive: u.isActive,
@@ -88,14 +88,14 @@ export const adminRepository = {
     const count = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM users');
     const total = parseInt(count.rows[0]?.count ?? '0', 10);
     const result = await pool.query(
-      `SELECT u.id, u.email, u.display_name, u.is_active, u.created_at, r.code AS role_code
+      `SELECT u.id, u.display_name, u.is_active, u.created_at, r.code AS role_code
        FROM users u JOIN roles r ON r.id = u.role_id
        ORDER BY u.created_at DESC LIMIT $1 OFFSET $2`,
       [limit, (page - 1) * limit]
     );
     const items = result.rows.map((r) => ({
       id: r.id,
-      email: r.email,
+      email: '',
       displayName: r.display_name,
       roleCode: r.role_code as RoleCode,
       isActive: r.is_active,
@@ -115,7 +115,7 @@ export const adminRepository = {
       if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
       return {
         id: user.id,
-        email: user.email,
+        email: '',
         displayName: user.displayName,
         roleCode: user.roleCode,
         isActive: user.isActive,

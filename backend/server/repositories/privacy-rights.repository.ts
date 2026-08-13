@@ -29,10 +29,8 @@ function mapRow(row: Record<string, unknown>): PrivacyRightsRequest {
     dueState: privacyRightsDueState(dueAt, status),
     processedAt: row.processed_at != null ? String(row.processed_at) : null,
     processedBy: row.processed_by != null ? String(row.processed_by) : null,
-    processorEmail:
-      row.processor_email != null ? String(row.processor_email) : null,
-    requesterEmail:
-      row.requester_email != null ? String(row.requester_email) : null,
+    processorEmail: null,
+    requesterEmail: null,
     requesterDisplayName:
       row.requester_display_name != null
         ? String(row.requester_display_name)

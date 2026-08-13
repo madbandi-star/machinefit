@@ -126,7 +126,6 @@ export const ownerService = {
         `신청자: ${application.applicantName ?? '-'}`,
         `연락처: ${application.businessPhone ?? '-'}`,
         `이메일: ${application.businessEmail ?? '-'}`,
-        `계정 이메일: ${user.email}`,
         `결제상태: ${application.paymentStatus}`,
         `증빙: ${application.evidenceUrl ?? '(없음)'}`,
         `메모: ${application.description ?? '(없음)'}`,

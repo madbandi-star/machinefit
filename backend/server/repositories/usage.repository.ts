@@ -462,8 +462,7 @@ export const usageRepository = {
     if (opts.q?.trim()) {
       filterParams.push(`%${opts.q.trim()}%`);
       where += ` AND (
-        u.email ILIKE $1
-        OR u.display_name ILIKE $1
+        u.display_name ILIKE $1
         OR u.id::text ILIKE $1
       )`;
     }
@@ -479,14 +478,13 @@ export const usageRepository = {
     const offsetIdx = listParams.length;
     const whereList = filterParams.length
       ? `WHERE u.is_active = TRUE AND (
-           u.email ILIKE $${qIdx}
-           OR u.display_name ILIKE $${qIdx}
+           u.display_name ILIKE $${qIdx}
            OR u.id::text ILIKE $${qIdx}
          )`
       : 'WHERE u.is_active = TRUE';
 
     const { rows } = await pool().query(
-      `SELECT u.id, u.email, u.display_name, u.role_code,
+      `SELECT u.id, u.display_name, u.role_code,
               u.membership_type, u.subscription_plan, u.created_at,
               d.*, m.active_days AS month_active_days,
               m.exercise_card_create_count AS m_exercise_card_create_count,
@@ -519,7 +517,7 @@ export const usageRepository = {
       total: Number(countRes.rows[0]?.c ?? 0),
       items: rows.map((r) => ({
         userId: String(r.id),
-        email: String(r.email ?? ''),
+        email: '',
         displayName: String(r.display_name ?? ''),
         roleCode: String(r.role_code ?? ''),
         membershipType: r.membership_type ? String(r.membership_type) : null,
@@ -557,7 +555,7 @@ export const usageRepository = {
     const from7 = seoulDateKey(new Date(Date.now() - 6 * 24 * 60 * 60 * 1000));
 
     const userRes = await pool().query(
-      `SELECT u.id, u.email, u.display_name, r.code AS role_code, u.membership_type,
+      `SELECT u.id, u.display_name, r.code AS role_code, u.membership_type,
               u.subscription_plan, u.subscription_status, u.created_at
        FROM users u
        JOIN roles r ON r.id = u.role_id
@@ -626,7 +624,7 @@ export const usageRepository = {
     return {
       user: {
         id: String(u.id),
-        email: String(u.email ?? ''),
+        email: '',
         displayName: String(u.display_name ?? ''),
         roleCode: String(u.role_code ?? ''),
         membershipType: u.membership_type ? String(u.membership_type) : null,

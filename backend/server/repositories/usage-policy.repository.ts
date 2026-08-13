@@ -164,7 +164,7 @@ export const usagePolicyRepository = {
         beforeValue: (r.before_value ?? {}) as Record<string, unknown>,
         afterValue: (r.after_value ?? {}) as Record<string, unknown>,
         changedBy: r.changed_by ? String(r.changed_by) : null,
-        changedByEmail: r.changed_by_email ? String(r.changed_by_email) : null,
+        changedByEmail: null,
         changedByName: r.changed_by_name ? String(r.changed_by_name) : null,
         createdAt: new Date(r.created_at).toISOString(),
       })),
