@@ -1,7 +1,7 @@
 {
   "title": "Fortune share cards per keyword theme",
   "summary": "Each Helchang fortune keyword (PR/DUMBBELL/FREE WEIGHT/DROP SET/VOLUME/RECOVERY/CARDIO/CONTROL/LEG/CHEST/BACK + SUPER SET) now uses its own 4:5 background and accent palette on the Instagram share card.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "f69be506" },
   "changedFiles": [
     "frontend/src/utils/fortuneShareCard.ts",
     "frontend/src/utils/fortuneShareThemes.ts",
@@ -10,7 +10,7 @@
   "testFocus": [
     "Share card background/colors differ by keyword (PR purple, DROP SET red, LEG green, etc.)",
     "SUPER SET DAY still uses yellow lightning style",
-    "Export still 1080×1350"
+    "Export still 1080?1350"
   ],
   "fastChecks": [
     "rg -n \"getFortuneShareTheme|FORTUNE_SHARE_THEMES\" frontend/src/utils/fortuneShareCard.ts frontend/src/utils/fortuneShareThemes.ts",
