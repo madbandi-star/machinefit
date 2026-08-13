@@ -1,7 +1,7 @@
 {
   "title": "Count mode help text under settings selector",
   "summary": "My Page settings count-mode segmented control now shows a short plain-language description for each mode (normal / turbo / AI accel) underneath, with the active mode highlighted.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "bbd94f09" },
   "changedFiles": [
     "frontend/src/pages/settings/SettingsPage.tsx",
     "frontend/src/styles/components.css",

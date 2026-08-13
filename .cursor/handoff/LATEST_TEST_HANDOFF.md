@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `bbd94f09`
 
 ## Test focus
 1. 설정 > 음성 카운트 > 카운트 모드 아래 4줄 설명
