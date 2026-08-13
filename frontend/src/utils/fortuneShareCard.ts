@@ -299,7 +299,7 @@ function drawHashtagPills(
 }
 
 /**
- * Instagram-ready Helchang fortune share card.
+ * Instagram-ready Helchang fortune share card (restored 22:27 KST / 9ca0d00d).
  * Photo background + premium typography + neon glass score cards.
  */
 export async function buildFortuneShareCard(input: FortuneShareCardInput): Promise<Blob> {

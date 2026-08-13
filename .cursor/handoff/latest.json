@@ -1,12 +1,12 @@
 {
-  "title": "Rollback fortune share DNA layout",
-  "summary": "Reverted Helchang fortune share card to the previous Instagram photo-poster version; DNA-centered stack layout rolled back.",
-  "git": { "branch": "main", "commit": "f60c018b" },
+  "title": "Restore fortune share to 22:27 Instagram poster",
+  "summary": "Confirm Helchang fortune share card is the 22:23?22:27 Instagram photo-poster build (9ca0d00d), not DNA stack or earlier cinematic-only version. Redeploy Pages.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
-  "testFocus": ["Share card matches pre-DNA Instagram poster design again"],
-  "fastChecks": ["rg -n \"drawImageCover|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"],
-  "productionChecks": ["Pages deploy"],
+  "testFocus": ["Share card shows photo BG + neon metric cards (pre-DNA)"],
+  "fastChecks": ["rg -n \"fortune-share-bg|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"],
+  "productionChecks": ["Pages deploy success"],
   "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "DNA-centered stack fortune share",
-  "toBe": "Previous photo-poster fortune share"
+  "asIs": "Confusion after DNA rollback",
+  "toBe": "22:27 Instagram photo-poster share card live"
 }

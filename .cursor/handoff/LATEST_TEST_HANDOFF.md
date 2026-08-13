@@ -1,11 +1,8 @@
-# Test handoff ? Rollback fortune DNA share layout
+ï»¿# Test handoff â€” Restore 22:27 fortune share
 
 ## Summary
-ÇïÃ¢¿î¼¼ °øÀ¯ Ä«µå DNA Áß¾Ó½ºÅÃ º¯°æÀ» ·Ñ¹é. Á÷Àü ÀÎ½ºÅ¸ Æ÷Åä Æ÷½ºÅÍ ¹öÀüÀ¸·Î º¹±¸.
+í—¬ì°½ìš´ì„¸ ê³µìœ  ì¹´ë“œë¥¼ **22:23â€“22:27ì— ë°°í¬ëœ ì¸ìŠ¤íƒ€ í¬í†  í¬ìŠ¤í„°** (`9ca0d00d`)ë¡œ í™•ì •Â·ì¬ë°°í¬. DNA ìŠ¤íƒÂ·ê·¸ ì´ì „ ì‹œì•ˆ-only ë²„ì „ ì•„ë‹˜.
 
 ## Git
 - Branch: `main`
-- Commit: `f60c018b`
-
-## Changed
-- `frontend/src/utils/fortuneShareCard.ts` (restored from `dd7f9097`)
+- Commit: pending
