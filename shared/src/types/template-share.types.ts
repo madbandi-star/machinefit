@@ -21,6 +21,9 @@ export interface TemplateShareListItem {
   difficulty: TemplateShareDifficulty;
   tags: string[];
   thumbnailUrl?: string | null;
+  youtubeUrl?: string | null;
+  youtubeChannelName?: string | null;
+  instagramId?: string | null;
   authorUserId: string;
   authorName: string;
   status: TemplateShareStatus;

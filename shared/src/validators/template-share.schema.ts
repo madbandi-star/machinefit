@@ -41,6 +41,38 @@ export const publishTemplateShareSchema = z.object({
       (v) => !v || /^https?:\/\//i.test(v) || v.startsWith('/'),
       'thumbnailUrl must be http(s) or app-relative'
     ),
+  youtubeUrl: z
+    .string()
+    .trim()
+    .max(2000)
+    .optional()
+    .nullable()
+    .transform((v) => (v && v.length > 0 ? v : null))
+    .refine(
+      (v) => !v || /^https?:\/\/(www\.)?(youtube\.com|youtu\.be|m\.youtube\.com)\//i.test(v),
+      'youtubeUrl must be a YouTube http(s) link'
+    ),
+  youtubeChannelName: z
+    .string()
+    .trim()
+    .max(100)
+    .optional()
+    .nullable()
+    .transform((v) => (v && v.length > 0 ? v : null)),
+  instagramId: z
+    .string()
+    .trim()
+    .max(64)
+    .optional()
+    .nullable()
+    .transform((v) => {
+      if (!v) return null;
+      return v.replace(/^@+/, '').trim() || null;
+    })
+    .refine(
+      (v) => !v || /^[A-Za-z0-9._]{1,30}$/.test(v),
+      'instagramId must be a valid Instagram handle'
+    ),
 });
 export type PublishTemplateShareInput = z.infer<typeof publishTemplateShareSchema>;
 
@@ -51,6 +83,39 @@ export const updateTemplateShareSchema = z.object({
   difficulty: z.enum(TEMPLATE_SHARE_DIFFICULTIES).optional(),
   tags: z.array(z.string().trim().min(1).max(30)).max(12).optional(),
   thumbnailUrl: z.string().trim().max(2000).optional().nullable(),
+  youtubeUrl: z
+    .string()
+    .trim()
+    .max(2000)
+    .optional()
+    .nullable()
+    .transform((v) => (v == null ? v : v.length > 0 ? v : null))
+    .refine(
+      (v) => v == null || v === '' || /^https?:\/\/(www\.)?(youtube\.com|youtu\.be|m\.youtube\.com)\//i.test(v),
+      'youtubeUrl must be a YouTube http(s) link'
+    ),
+  youtubeChannelName: z
+    .string()
+    .trim()
+    .max(100)
+    .optional()
+    .nullable()
+    .transform((v) => (v == null ? v : v.length > 0 ? v : null)),
+  instagramId: z
+    .string()
+    .trim()
+    .max(64)
+    .optional()
+    .nullable()
+    .transform((v) => {
+      if (v == null) return v;
+      if (!v) return null;
+      return v.replace(/^@+/, '').trim() || null;
+    })
+    .refine(
+      (v) => v == null || v === '' || /^[A-Za-z0-9._]{1,30}$/.test(v),
+      'instagramId must be a valid Instagram handle'
+    ),
   status: z.enum(['published', 'hidden']).optional(),
 });
 export type UpdateTemplateShareInput = z.infer<typeof updateTemplateShareSchema>;

@@ -72,9 +72,14 @@ export const templateShareService = {
     userId: string,
     input: PublishTemplateShareInput
   ): Promise<TemplateShareDetail> {
-    assertSafeUgc(input.title, input.description, ...(input.tags ?? []));
-
-    const template = await workoutCardRepository.getTemplateForShareCheck(
+    assertSafeUgc(
+      input.title,
+      input.description,
+      ...(input.tags ?? []),
+      input.youtubeChannelName,
+      input.instagramId,
+      input.youtubeUrl
+    );
       userId,
       input.templateId
     );
@@ -109,7 +114,14 @@ export const templateShareService = {
     userId: string,
     input: UpdateTemplateShareInput
   ): Promise<TemplateShareDetail> {
-    assertSafeUgc(input.title, input.description, ...(input.tags ?? []));
+    assertSafeUgc(
+      input.title,
+      input.description,
+      ...(input.tags ?? []),
+      input.youtubeChannelName,
+      input.instagramId,
+      input.youtubeUrl
+    );
     const updated = await templateShareRepository.update(id, userId, input);
     if (!updated) {
       throw new AppError(404, 'NOT_FOUND', 'Share post not found');

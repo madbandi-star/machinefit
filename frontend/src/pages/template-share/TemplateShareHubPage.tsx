@@ -187,6 +187,19 @@ export function TemplateShareHubPage() {
                           {' · '}
                           {t('templateShare.exerciseCount', { count: item.itemCount })}
                         </p>
+                        {item.youtubeChannelName || item.instagramId || item.youtubeUrl ? (
+                          <p className="tpl-share-row__social">
+                            {item.youtubeChannelName
+                              ? item.youtubeChannelName
+                              : item.youtubeUrl
+                                ? t('templateShare.fieldYoutubeUrl')
+                                : null}
+                            {(item.youtubeChannelName || item.youtubeUrl) && item.instagramId
+                              ? ' · '
+                              : null}
+                            {item.instagramId ? `@${item.instagramId}` : null}
+                          </p>
+                        ) : null}
                         <div className="tpl-share-row__stats">
                           <span>
                             {t('templateShare.statLikes')} {item.likeCount}

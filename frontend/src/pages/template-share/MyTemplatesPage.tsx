@@ -43,6 +43,9 @@ export function MyTemplatesPage() {
   const [category, setCategory] = useState<TemplateShareCategory>('general');
   const [difficulty, setDifficulty] = useState<TemplateShareDifficulty>('beginner');
   const [tags, setTags] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [youtubeChannelName, setYoutubeChannelName] = useState('');
+  const [instagramId, setInstagramId] = useState('');
 
   const templatesQuery = useQuery({
     queryKey: QUERY_KEYS.workoutCardTemplates(),
@@ -112,6 +115,28 @@ export function MyTemplatesPage() {
     setCategory('general');
     setDifficulty('beginner');
     setTags('');
+    setYoutubeUrl('');
+    setYoutubeChannelName('');
+    setInstagramId('');
+    if (tpl.sharePostId) {
+      void templateShareApi
+        .get(tpl.sharePostId)
+        .then((res) => {
+          const post = res.data.data;
+          if (!post) return;
+          setTitle(post.title || tpl.name);
+          setDescription(post.description ?? '');
+          setCategory(post.category);
+          setDifficulty(post.difficulty);
+          setTags((post.tags ?? []).join(', '));
+          setYoutubeUrl(post.youtubeUrl ?? '');
+          setYoutubeChannelName(post.youtubeChannelName ?? '');
+          setInstagramId(post.instagramId ?? '');
+        })
+        .catch(() => {
+          /* keep blank social fields if post load fails */
+        });
+    }
   };
 
   const onPublish = (e: FormEvent) => {
@@ -128,6 +153,9 @@ export function MyTemplatesPage() {
         .map((s) => s.trim())
         .filter(Boolean)
         .slice(0, 12),
+      youtubeUrl: youtubeUrl.trim() || null,
+      youtubeChannelName: youtubeChannelName.trim() || null,
+      instagramId: instagramId.trim().replace(/^@+/, '') || null,
     });
   };
 
@@ -370,6 +398,45 @@ export function MyTemplatesPage() {
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
                   placeholder={t('templateShare.tagsPlaceholder')}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="share-youtube-url">{t('templateShare.fieldYoutubeUrl')}</label>
+                <input
+                  id="share-youtube-url"
+                  className="input"
+                  type="url"
+                  inputMode="url"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  placeholder={t('templateShare.youtubeUrlPlaceholder')}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="share-youtube-channel">
+                  {t('templateShare.fieldYoutubeChannel')}
+                </label>
+                <input
+                  id="share-youtube-channel"
+                  className="input"
+                  value={youtubeChannelName}
+                  onChange={(e) => setYoutubeChannelName(e.target.value)}
+                  placeholder={t('templateShare.youtubeChannelPlaceholder')}
+                  maxLength={100}
+                />
+              </div>
+              <div className="form-field">
+                <label htmlFor="share-instagram">{t('templateShare.fieldInstagramId')}</label>
+                <input
+                  id="share-instagram"
+                  className="input"
+                  value={instagramId}
+                  onChange={(e) => setInstagramId(e.target.value)}
+                  placeholder={t('templateShare.instagramIdPlaceholder')}
+                  maxLength={64}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                 />
               </div>
               <div className="tpl-share-dialog__actions">

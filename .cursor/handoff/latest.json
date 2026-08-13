@@ -1,27 +1,38 @@
 {
-  "title": "Easy mode: hide legal footer + clearer tips/cautions on step 2",
-  "summary": "Remove LegalFooter from EasyLayout. Replace collapsed tips disclosure on recommend-confirm (2/3) with always-visible caution/tip cards for scanability.",
-  "git": { "branch": "main", "commit": "1400a3cd" },
+  "title": "Template share creator YouTube / Instagram fields",
+  "summary": "My Templates share dialog collects youtubeUrl, youtubeChannelName, and instagramId. Values persist on template_share_posts and show on hub rows + detail posts.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/layouts/EasyLayout.tsx",
-    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-    "frontend/src/styles/easy-mode.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "database/migrations/128_template_share_creator_links.sql",
+    "shared/src/types/template-share.types.ts",
+    "shared/src/validators/template-share.schema.ts",
+    "backend/server/repositories/template-share.repository.ts",
+    "backend/server/services/template-share.service.ts",
+    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
+    "frontend/src/styles/template-share.css",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json",
+    "frontend/src/i18n/locales/ja/community.json",
+    "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "Easy home/wizard: no bottom terms/legal footer",
-    "Easy wizard step 2/3: tips & cautions shown as open cards (warnings first), not a collapsed details",
-    "Sections labeled cautions / tips; readable at a glance"
+    "My Templates ? Share: three optional social fields",
+    "Publish then open hub detail: creator links section with YT URL/channel and IG handle",
+    "Hub list shows channel/@id when present",
+    "Update share prefills existing social fields"
   ],
   "fastChecks": [
-    "rg -n \"LegalFooter\" frontend/src/layouts/EasyLayout.tsx || true",
-    "rg -n \"easy-s2-coach|coachTitle|tipsSection\" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/i18n/locales/ko/common.json frontend/src/styles/easy-mode.css"
+    "rg -n \"youtubeUrl|youtubeChannelName|instagramId|youtube_url\" shared/src backend/server/repositories/template-share.repository.ts frontend/src/pages/template-share",
+    "Test-Path database/migrations/128_template_share_creator_links.sql"
   ],
-  "productionChecks": ["Pages /easy ? no footer; /easy/wizard step 2 coach cards"],
-  "deploy": { "expected": "Pages FE" },
-  "asIs": "Easy mode shows compact legal footer; step 2 hides tips behind details summary",
-  "toBe": "No legal footer in easy mode; step 2 shows separate always-open caution/tip cards"
+  "productionChecks": [
+    "Apply migration 128 on Render DB",
+    "Redeploy Render BE + Pages FE",
+    "Share template with social fields and verify detail page"
+  ],
+  "deploy": { "expected": "Pages FE + Render BE + migration 128" },
+  "asIs": "Share form has no creator social fields; posts cannot show them",
+  "toBe": "Optional YouTube URL/channel + Instagram ID on share; visible on hub/detail"
 }

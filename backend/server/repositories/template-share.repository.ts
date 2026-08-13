@@ -40,6 +40,9 @@ interface PostRow {
   difficulty: string;
   tags: string[] | null;
   thumbnail_url: string | null;
+  youtube_url?: string | null;
+  youtube_channel_name?: string | null;
+  instagram_id?: string | null;
   payload: WorkoutCardTemplateItem[] | unknown;
   status: string;
   view_count: string | number;
@@ -144,6 +147,9 @@ function mapListItem(row: PostRow): TemplateShareListItem {
     difficulty: row.difficulty as TemplateShareListItem['difficulty'],
     tags: Array.isArray(row.tags) ? row.tags : [],
     thumbnailUrl: row.thumbnail_url,
+    youtubeUrl: row.youtube_url ?? null,
+    youtubeChannelName: row.youtube_channel_name ?? null,
+    instagramId: row.instagram_id ?? null,
     authorUserId: row.author_user_id,
     authorName: row.author_name?.trim() || 'User',
     status: row.status as TemplateShareStatus,
@@ -369,9 +375,10 @@ export const templateShareRepository = {
     const result = await pool.query<PostRow>(
       `INSERT INTO template_share_posts (
          author_user_id, source_template_id, title, description, category, difficulty,
-         tags, thumbnail_url, payload, status, published_at
+         tags, thumbnail_url, youtube_url, youtube_channel_name, instagram_id,
+         payload, status, published_at
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7::text[], $8, $9::jsonb, 'published', NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, $7::text[], $8, $9, $10, $11, $12::jsonb, 'published', NOW())
        ON CONFLICT (source_template_id) DO UPDATE SET
          title = EXCLUDED.title,
          description = EXCLUDED.description,
@@ -379,6 +386,9 @@ export const templateShareRepository = {
          difficulty = EXCLUDED.difficulty,
          tags = EXCLUDED.tags,
          thumbnail_url = EXCLUDED.thumbnail_url,
+         youtube_url = EXCLUDED.youtube_url,
+         youtube_channel_name = EXCLUDED.youtube_channel_name,
+         instagram_id = EXCLUDED.instagram_id,
          payload = EXCLUDED.payload,
          status = 'published',
          published_at = CASE
@@ -397,6 +407,9 @@ export const templateShareRepository = {
         input.difficulty,
         input.tags ?? [],
         input.thumbnailUrl ?? null,
+        input.youtubeUrl ?? null,
+        input.youtubeChannelName ?? null,
+        input.instagramId ?? null,
         JSON.stringify(frozen.payload),
       ]
     );
@@ -449,6 +462,18 @@ export const templateShareRepository = {
     if (input.thumbnailUrl !== undefined) {
       sets.push(`thumbnail_url = $${idx++}`);
       params.push(input.thumbnailUrl);
+    }
+    if (input.youtubeUrl !== undefined) {
+      sets.push(`youtube_url = $${idx++}`);
+      params.push(input.youtubeUrl);
+    }
+    if (input.youtubeChannelName !== undefined) {
+      sets.push(`youtube_channel_name = $${idx++}`);
+      params.push(input.youtubeChannelName);
+    }
+    if (input.instagramId !== undefined) {
+      sets.push(`instagram_id = $${idx++}`);
+      params.push(input.instagramId);
     }
     if (input.status !== undefined) {
       sets.push(`status = $${idx++}`);

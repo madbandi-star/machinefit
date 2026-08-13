@@ -206,6 +206,52 @@ export function TemplateShareDetailPage() {
           </div>
 
           {post.description ? <p className="tpl-share-detail__desc">{post.description}</p> : null}
+
+          {post.youtubeUrl || post.youtubeChannelName || post.instagramId ? (
+            <div className="tpl-share-creator-links" aria-label={t('templateShare.creatorLinks')}>
+              <p className="tpl-share-creator-links__title">{t('templateShare.creatorLinks')}</p>
+              <ul className="tpl-share-creator-links__list">
+                {post.youtubeChannelName ? (
+                  <li>
+                    <span className="tpl-share-creator-links__label">
+                      {t('templateShare.fieldYoutubeChannel')}
+                    </span>
+                    <span className="tpl-share-creator-links__value">{post.youtubeChannelName}</span>
+                  </li>
+                ) : null}
+                {post.youtubeUrl ? (
+                  <li>
+                    <span className="tpl-share-creator-links__label">
+                      {t('templateShare.fieldYoutubeUrl')}
+                    </span>
+                    <a
+                      className="tpl-share-creator-links__link"
+                      href={post.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {post.youtubeUrl}
+                    </a>
+                  </li>
+                ) : null}
+                {post.instagramId ? (
+                  <li>
+                    <span className="tpl-share-creator-links__label">
+                      {t('templateShare.fieldInstagramId')}
+                    </span>
+                    <a
+                      className="tpl-share-creator-links__link"
+                      href={`https://instagram.com/${encodeURIComponent(post.instagramId)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      @{post.instagramId}
+                    </a>
+                  </li>
+                ) : null}
+              </ul>
+            </div>
+          ) : null}
         </section>
 
         <section className="tpl-share-panel">

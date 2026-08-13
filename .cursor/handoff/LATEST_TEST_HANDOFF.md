@@ -1,24 +1,30 @@
-﻿# Test handoff — Easy mode footer hide + step 2 tips UX
+﻿# Test handoff — Template share YouTube / Instagram fields
 
 ## Summary
-1. 이지모드 레이아웃에서 하단 **이용약관(LegalFooter) 전체 제거**
-2. 3스텝 2/3 추천확인: 「팁·주의사항 보기」접기 UI → **주의사항 / 운동팁 카드로 바로 노출** (한눈에 읽기)
+내 템플릿 공유 시 **유튜브 URL · 유튜브 채널 이름 · 인스타그램 ID** 입력 가능.  
+공유관 목록/게시글 상세에서 확인 가능.
 
 ## Git
 - branch: `main`
-- commit: `1400a3cd`
+- commit: pending
+
+## Migration
+`database/migrations/128_template_share_creator_links.sql` — **Render DB 적용 필요**
 
 ## Test focus
-1. `/easy`, `/easy/wizard` 하단 약관·사업자 푸터 없음
-2. 추천확인(2/3): 주의사항(있으면) → 운동팁(있으면) 카드가 펼쳐진 상태로 표시
-3. 접기 토글 「팁·주의사항 보기」 없음
+1. 마이페이지 > 내 템플릿 > 공유하기: 3개 소셜 필드
+2. 공개 후 공유관 상세: 크리에이터 링크 섹션 (채널명 / URL 링크 / @인스타)
+3. 공유관 목록 행에 채널·@ID 요약 표시
+4. 「공유 정보 수정」 시 기존 값 프리필
 
 ## Fast checks
 ```
-rg -n "LegalFooter" frontend/src/layouts/EasyLayout.tsx || true
-rg -n "easy-s2-coach|coachTitle|tipsSection" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/i18n/locales/ko/common.json
+rg -n "youtubeUrl|instagramId|youtube_url" shared/src backend/server/repositories/template-share.repository.ts frontend/src/pages/template-share
 ```
 
+## Production
+**Pages FE + Render BE + migration 128**
+
 ## As-is → To-be
-- **As-is:** 이지모드에도 LegalFooter / 팁은 details로 접힘
-- **To-be:** 푸터 없음 + 팁·주의 카드 상시 표시
+- **As-is:** 소셜 필드 없음
+- **To-be:** 공유 시 입력 · 게시글에서 확인
