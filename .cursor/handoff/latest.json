@@ -1,7 +1,7 @@
 {
   "title": "TODAY'S WORKOUT complete report",
   "summary": "Home [?? ?? ??] now confirms, ends timer, and shows TODAY'S WORKOUT report (summary, POWER ledger, MVP, record/progress, one-liner, share card). Emits WORKOUT_COMPLETED for future hooks. Reuses computePerformedTotalWeightKg; no new POWER award (idempotent existing ledger).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "3167f97e" },
   "changedFiles": [
     "shared/src/constants/workout-events.ts",
     "shared/src/types/workout-complete.types.ts",

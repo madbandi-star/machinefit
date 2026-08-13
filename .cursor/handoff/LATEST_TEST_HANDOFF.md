@@ -1,17 +1,17 @@
-Ôªø# Test handoff ‚Äî TODAY'S WORKOUT complete report
+# Test handoff ? TODAY'S WORKOUT complete report
 
 ## Summary
-Home **Ïò§Îäò Ïö¥Îèô Ï¢ÖÎ£å** opens confirm, ends the session timer, then shows **TODAY'S WORKOUT** (summary, POWER from ledger, MVP, new record or progress, one-liner, share). Emits `WORKOUT_COMPLETED`. Volume uses `computePerformedTotalWeightKg`. No new POWER grant on end (existing idempotent awards).
+Home **ø¿¥√ øÓµø ¡æ∑·** opens confirm, ends the session timer, then shows **TODAY'S WORKOUT** (summary, POWER from ledger, MVP, new record or progress, one-liner, share). Emits `WORKOUT_COMPLETED`. Volume uses `computePerformedTotalWeightKg`. No new POWER grant on end (existing idempotent awards).
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `3167f97e`
 
 ## Test focus
-1. Timer running ‚Üí Ïò§Îäò Ïö¥Îèô Ï¢ÖÎ£å ‚Üí cancel / confirm
+1. Timer running °Ê ø¿¥√ øÓµø ¡æ∑· °Ê cancel / confirm
 2. Numbers match today's logs + timer duration
 3. Share card + PC download fallback
-4. Rapid confirm clicks ‚Üí single in-flight complete
+4. Rapid confirm clicks °Ê single in-flight complete
 
 ## Fast checks
 ```powershell
@@ -19,6 +19,6 @@ Test-Path frontend/src/components/home/WorkoutCompleteReport/WorkoutCompleteHost
 rg -n "WORKOUT_COMPLETED" shared/src/constants/workout-events.ts frontend/src/events/workoutEvents.ts
 ```
 
-## As-is ‚Üí To-be
+## As-is °Ê To-be
 - **As-is:** End only cleared timer
 - **To-be:** Finale report + share + extensible event
