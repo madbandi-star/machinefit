@@ -1,7 +1,7 @@
 {
   "title": "Premium Instagram fortune share card",
   "summary": "Helchang fortune share card rebuilt with cinematic gym photo background, glass neon score cards, and refined poster typography for Instagram-ready sharing.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9ca0d00d" },
   "changedFiles": [
     "frontend/src/utils/fortuneShareCard.ts",
     "frontend/public/assets/share/fortune-share-bg.png"
