@@ -1,24 +1,24 @@
-# Test handoff ? TODAY'S WORKOUT complete report
+﻿# Test handoff — Fortune share card redesign
 
 ## Summary
-Home **���� � ����** opens confirm, ends the session timer, then shows **TODAY'S WORKOUT** (summary, POWER from ledger, MVP, new record or progress, one-liner, share). Emits `WORKOUT_COMPLETED`. Volume uses `computePerformedTotalWeightKg`. No new POWER grant on end (existing idempotent awards).
+오늘의 헬창운세 공유 카드를 첨부 시안형 다크 짐 포스터로 재디자인 (스플릿 헤드라인, 네온 점수 카드 3열, 인용 박스, 해시태그 필).
 
 ## Git
 - Branch: `main`
-- Commit: `3167f97e`
+- Commit: pending
+
+## Changed files
+- `frontend/src/utils/fortuneShareCard.ts`
 
 ## Test focus
-1. Timer running �� ���� � ���� �� cancel / confirm
-2. Numbers match today's logs + timer duration
-3. Share card + PC download fallback
-4. Rapid confirm clicks �� single in-flight complete
+1. 홈/상세 → 공유 카드 만들기
+2. 키워드 타이틀·별·헬창/PR/회복 카드·한마디·푸터 확인
 
 ## Fast checks
 ```powershell
-Test-Path frontend/src/components/home/WorkoutCompleteReport/WorkoutCompleteHost.tsx
-rg -n "WORKOUT_COMPLETED" shared/src/constants/workout-events.ts frontend/src/events/workoutEvents.ts
+rg -n "drawGymAtmosphere|drawMetricCard" frontend/src/utils/fortuneShareCard.ts
 ```
 
-## As-is �� To-be
-- **As-is:** End only cleared timer
-- **To-be:** Finale report + share + extensible event
+## As-is → To-be
+- **As-is:** 밋밋한 DNA형 카드
+- **To-be:** 시안과 같은 시네마틱 공유 카드

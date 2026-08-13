@@ -1,37 +1,18 @@
 {
-  "title": "TODAY'S WORKOUT complete report",
-  "summary": "Home [?? ?? ??] now confirms, ends timer, and shows TODAY'S WORKOUT report (summary, POWER ledger, MVP, record/progress, one-liner, share card). Emits WORKOUT_COMPLETED for future hooks. Reuses computePerformedTotalWeightKg; no new POWER award (idempotent existing ledger).",
-  "git": { "branch": "main", "commit": "3167f97e" },
-  "changedFiles": [
-    "shared/src/constants/workout-events.ts",
-    "shared/src/types/workout-complete.types.ts",
-    "shared/src/utils/workout-complete-report.ts",
-    "frontend/src/events/workoutEvents.ts",
-    "frontend/src/store/workoutComplete.store.ts",
-    "frontend/src/services/workoutCompleteReport.service.ts",
-    "frontend/src/components/home/WorkoutCompleteReport/*",
-    "frontend/src/components/home/HomeWorkoutSessionTimer/HomeWorkoutSessionTimer.tsx",
-    "frontend/src/pages/home/HomePage.tsx",
-    "frontend/src/utils/workoutCompleteShareCard.ts",
-    "frontend/src/utils/shareWorkoutCompleteCard.ts",
-    "frontend/src/styles/workout-complete.css",
-    "frontend/src/i18n/locales/*/common.json"
-  ],
+  "title": "Redesign Helchang fortune share card",
+  "summary": "Fortune share PNG restyled to cinematic dark-gym poster: split headline, neon metric cards, quote panel, branded footer pills ? matching attached mock.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
   "testFocus": [
-    "Start timer ? End ? confirm cancel/confirm",
-    "Report shows real duration/exercises/sets/volume",
-    "POWER balance + earnedToday from ledger (no double award)",
-    "MVP / NEW RECORD / progress hide when no data",
-    "Share PNG + Web Share / download",
-    "Double-click end does not open two completes"
+    "Home/detail ?? ?? ??? ? PNG looks like dark poster mock",
+    "Scores cards glow yellow/orange/cyan",
+    "Hashtag pills + MachineFit footer"
   ],
   "fastChecks": [
-    "Test-Path frontend/src/components/home/WorkoutCompleteReport/WorkoutCompleteHost.tsx",
-    "rg -n \"WORKOUT_COMPLETED\" shared/src/constants/workout-events.ts frontend/src/events/workoutEvents.ts",
-    "rg -n \"computePerformedTotalWeightKg\" shared/src/utils/workout-complete-report.ts"
+    "rg -n \"drawGymAtmosphere|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"
   ],
-  "productionChecks": ["Pages deploy", "Mobile share smoke on home timer end"],
+  "productionChecks": ["Pages deploy", "Generate share from /fortune/today"],
   "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "Timer end only stopped local timer",
-  "toBe": "Confirm ? TODAY'S WORKOUT finale with share + WORKOUT_COMPLETED event"
+  "asIs": "Plain DNA-style fortune share card",
+  "toBe": "Cinematic Helchang fortune share card matching design mock"
 }

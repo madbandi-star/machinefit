@@ -1,6 +1,5 @@
 import type { FortuneScores, FortuneSection } from '@machinefit/shared';
 import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
-import { measureShareFooterH } from '@/utils/shareHashtags';
 
 export interface FortuneShareCardLabels {
   title: string;
@@ -15,7 +14,6 @@ export interface FortuneShareCardInput {
   fortune: FortuneSection;
   scores: FortuneScores;
   emoji: string;
-  /** Core theme / keyword line under the main title */
   themeLabel: string;
   dateLabel: string;
   labels: FortuneShareCardLabels;
@@ -24,12 +22,36 @@ export interface FortuneShareCardInput {
 const FONT =
   'system-ui, -apple-system, "Segoe UI", "Noto Sans KR", "Apple Color Emoji", sans-serif';
 
-const GREEN = '#4ade80';
-const FOOTER_MIN_H = 64;
+const W = 1080;
+const H = 1350;
 
-function starsText(n: number): string {
+const YELLOW = '#f5c518';
+const ORANGE = '#ff6a2a';
+const CYAN = '#3ee0c2';
+const GREEN = '#4ade80';
+
+function mulberry32(seed: number) {
+  let t = seed >>> 0;
+  return () => {
+    t += 0x6d2b79f5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function hashSeed(input: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i += 1) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function starsFilled(n: number): string {
   const filled = Math.max(0, Math.min(5, Math.round(n)));
-  return '★'.repeat(filled) + '☆'.repeat(5 - filled);
+  return '★'.repeat(filled);
 }
 
 function roundRect(
@@ -40,446 +62,401 @@ function roundRect(
   h: number,
   r: number
 ) {
+  const radius = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
   ctx.closePath();
 }
 
-function measureWrapHeight(
+function wrapLines(
   ctx: CanvasRenderingContext2D,
   text: string,
   maxWidth: number,
-  lineHeight: number
-): number {
-  const chars = [...text];
-  let line = '';
-  let lines = 1;
-
-  for (const ch of chars) {
-    const test = line + ch;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      line = ch;
-      lines += 1;
-    } else {
-      line = test;
-    }
-  }
-
-  return lines * lineHeight;
-}
-
-function wrapText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number
-): number {
-  const chars = [...text];
-  let line = '';
-  let cursorY = y;
-
-  for (const ch of chars) {
-    const test = line + ch;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      ctx.fillText(line, x, cursorY);
-      line = ch;
-      cursorY += lineHeight;
-    } else {
-      line = test;
-    }
-  }
-
-  if (line) {
-    ctx.fillText(line, x, cursorY);
-    cursorY += lineHeight;
-  }
-
-  return cursorY;
-}
-
-function drawPageBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const gradient = ctx.createLinearGradient(0, 0, width * 0.15, height);
-  gradient.addColorStop(0, '#1a0a14');
-  gradient.addColorStop(0.45, '#0f172a');
-  gradient.addColorStop(1, '#042f2e');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
-
-  ctx.fillStyle = 'rgba(251, 113, 133, 0.14)';
-  ctx.beginPath();
-  ctx.arc(width * 0.12, height * 0.18, 280, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = 'rgba(251, 191, 36, 0.1)';
-  ctx.beginPath();
-  ctx.arc(width * 0.9, height * 0.72, 320, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = 'rgba(56, 189, 248, 0.06)';
-  ctx.beginPath();
-  ctx.arc(width * 0.5, height * 0.92, 240, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function drawEmojiGlow(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number) {
-  const glow = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius);
-  glow.addColorStop(0, 'rgba(251, 191, 36, 0.28)');
-  glow.addColorStop(0.55, 'rgba(251, 113, 133, 0.12)');
-  glow.addColorStop(1, 'rgba(15, 23, 42, 0)');
-  ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function countWrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): number {
-  const chars = [...text];
-  let line = '';
-  let lines = 1;
-
-  for (const ch of chars) {
-    const test = line + ch;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      line = ch;
-      lines += 1;
-    } else {
-      line = test;
-    }
-  }
-
-  return lines;
-}
-
-function drawMetaPanel(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  labels: string[],
-  values: string[]
-) {
-  roundRect(ctx, x, y, w, h, 24);
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  const colW = w / 3;
-  const padX = 18;
-  const labelLH = 30;
-  const valueLH = 40;
-  const labelValueGap = 14;
-  const maxColWidth = colW - padX * 2;
-
-  const colHeights = values.map((value) => {
-    ctx.font = `bold 32px ${FONT}`;
-    const valueLines = countWrapLines(ctx, value, maxColWidth);
-    return labelLH + labelValueGap + valueLines * valueLH;
-  });
-  const contentH = Math.max(...colHeights);
-  const contentTop = y + (h - contentH) / 2;
-  const dividerTop = contentTop - 10;
-  const dividerBottom = contentTop + contentH + 10;
-
-  for (let i = 0; i < 3; i += 1) {
-    const colX = x + colW * i + colW / 2;
-    const colTop = contentTop + (contentH - colHeights[i]) / 2;
-
-    if (i > 0) {
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
-      ctx.beginPath();
-      ctx.moveTo(x + colW * i, dividerTop);
-      ctx.lineTo(x + colW * i, dividerBottom);
-      ctx.stroke();
-    }
-
-    ctx.textAlign = 'center';
-    ctx.font = `24px ${FONT}`;
-    ctx.fillStyle = '#9ca3af';
-    ctx.fillText(labels[i], colX, colTop + labelLH * 0.82);
-
-    ctx.font = `bold 32px ${FONT}`;
-    ctx.fillStyle = '#f9fafb';
-    wrapText(ctx, values[i], colX, colTop + labelLH + labelValueGap + valueLH * 0.82, maxColWidth, valueLH);
-  }
-}
-
-const QUOTE_FONT_SIZE = 34;
-const QUOTE_LINE_HEIGHT = 46;
-const QUOTE_TARGET_CHARS_PER_LINE = 20;
-
-function isWrapBreakpoint(ch: string): boolean {
-  return /[\s,.·…!?;:)]/.test(ch);
-}
-
-function getBalancedWrapLines(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  maxCharsPerLine = QUOTE_TARGET_CHARS_PER_LINE
+  maxChars = 22
 ): string[] {
   const chars = [...text];
   const lines: string[] = [];
   let line = '';
 
-  const pushLine = (value: string) => {
-    const trimmed = value.trimEnd();
-    if (trimmed) lines.push(trimmed);
+  const push = (v: string) => {
+    const t = v.trimEnd();
+    if (t) lines.push(t);
   };
 
   for (const ch of chars) {
     const test = line + ch;
     const tooWide = ctx.measureText(test).width > maxWidth;
-    const tooLong = line.length >= maxCharsPerLine;
-
-    if ((tooWide || tooLong) && line.length > 0) {
-      let breakAt = -1;
-      for (let i = line.length - 1; i >= Math.max(0, line.length - 10); i -= 1) {
-        if (isWrapBreakpoint(line[i])) {
-          breakAt = i + 1;
-          break;
-        }
-      }
-
-      if (breakAt > 0) {
-        pushLine(line.slice(0, breakAt));
-        line = line.slice(breakAt).trimStart() + ch;
-      } else {
-        pushLine(line);
-        line = ch;
-      }
+    const tooLong = [...line].length >= maxChars;
+    if ((tooWide || tooLong) && line) {
+      push(line);
+      line = ch.trimStart();
     } else {
       line = test;
     }
   }
-
-  if (line) pushLine(line);
+  if (line) push(line);
   return lines.length ? lines : [''];
 }
 
-function formatQuotedLines(lines: string[]): string[] {
-  if (lines.length === 0) return [''];
-  if (lines.length === 1) return [`“${lines[0]}”`];
+/** Split "SUPER SET DAY" → top SUPER / bottom SET DAY for poster hierarchy. */
+function splitHeadline(title: string): { top: string; bottom: string | null } {
+  const trimmed = title.trim();
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return { top: trimmed, bottom: null };
 
-  return [`“${lines[0]}`, ...lines.slice(1, -1), `${lines[lines.length - 1]}”`];
-}
-
-function measureBalancedWrapHeight(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  lineHeight: number,
-  maxCharsPerLine = QUOTE_TARGET_CHARS_PER_LINE
-): number {
-  const innerLines = getBalancedWrapLines(ctx, text, maxWidth, maxCharsPerLine);
-  const quotedLines = formatQuotedLines(innerLines);
-  return quotedLines.length * lineHeight;
-}
-
-function drawCenteredWrapText(
-  ctx: CanvasRenderingContext2D,
-  lines: string[],
-  centerX: number,
-  boxY: number,
-  boxH: number,
-  lineHeight: number
-) {
-  const totalHeight = lines.length * lineHeight;
-  let cursorY = boxY + (boxH - totalHeight) / 2 + lineHeight * 0.82;
-
-  ctx.textAlign = 'center';
-  for (const line of lines) {
-    ctx.fillText(line, centerX, cursorY);
-    cursorY += lineHeight;
+  const last = parts[parts.length - 1]!.toUpperCase();
+  if (last === 'DAY' && parts.length >= 2) {
+    return { top: parts[0]!, bottom: parts.slice(1).join(' ') };
   }
+  if (parts.length === 2) return { top: parts[0]!, bottom: parts[1]! };
+  const mid = Math.max(1, Math.ceil(parts.length / 2));
+  return { top: parts.slice(0, mid).join(' '), bottom: parts.slice(mid).join(' ') };
 }
 
-function drawQuotePanel(
+function drawGymAtmosphere(ctx: CanvasRenderingContext2D, rand: () => number) {
+  const bg = ctx.createLinearGradient(0, 0, W * 0.3, H);
+  bg.addColorStop(0, '#05070c');
+  bg.addColorStop(0.45, '#0a1018');
+  bg.addColorStop(1, '#060a0e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  for (const [cx, cy, r, c] of [
+    [W * 0.2, H * 0.78, 340, 'rgba(40, 28, 18, 0.55)'],
+    [W * 0.82, H * 0.72, 300, 'rgba(30, 24, 16, 0.5)'],
+    [W * 0.5, H * 0.92, 420, 'rgba(20, 16, 12, 0.65)'],
+  ] as const) {
+    const g = ctx.createRadialGradient(cx, cy, 20, cx, cy, r);
+    g.addColorStop(0, c);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const glow = ctx.createRadialGradient(W / 2, H * 0.34, 20, W / 2, H * 0.34, 420);
+  glow.addColorStop(0, 'rgba(255, 196, 40, 0.38)');
+  glow.addColorStop(0.35, 'rgba(255, 120, 30, 0.16)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(W / 2, H * 0.34, 420, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const bolts: Array<[number, number, number, number]> = [
+    [W * 0.18, H * 0.22, W * 0.42, H * 0.36],
+    [W * 0.82, H * 0.18, W * 0.58, H * 0.34],
+    [W * 0.28, H * 0.42, W * 0.48, H * 0.3],
+    [W * 0.74, H * 0.44, W * 0.55, H * 0.32],
+    [W * 0.12, H * 0.36, W * 0.35, H * 0.28],
+    [W * 0.9, H * 0.38, W * 0.66, H * 0.28],
+  ];
+  for (const [x1, y1, x2, y2] of bolts) {
+    ctx.strokeStyle = 'rgba(255, 210, 60, 0.55)';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    const mx = (x1 + x2) / 2 + (rand() * 40 - 20);
+    const my = (y1 + y2) / 2 + (rand() * 30 - 15);
+    ctx.lineTo(mx, my);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255, 255, 220, 0.35)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+  for (let i = 0; i < 48; i += 1) {
+    const x = rand() * W;
+    const y = H * 0.12 + rand() * H * 0.45;
+    const a = 0.25 + rand() * 0.55;
+    ctx.fillStyle = `rgba(255, ${180 + Math.floor(rand() * 60)}, 40, ${a})`;
+    ctx.beginPath();
+    ctx.arc(x, y, 1 + rand() * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawMetricCard(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
   h: number,
-  quote: string
+  border: string,
+  icon: string,
+  label: string,
+  value: string,
+  valueAccent?: string
 ) {
-  roundRect(ctx, x, y, w, h, 24);
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+  ctx.save();
+  ctx.shadowColor = border;
+  ctx.shadowBlur = 18;
+  roundRect(ctx, x, y, w, h, 18);
+  ctx.fillStyle = 'rgba(8, 12, 18, 0.72)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(251, 191, 36, 0.22)';
-  ctx.lineWidth = 1.5;
+  ctx.restore();
+
+  roundRect(ctx, x, y, w, h, 18);
+  ctx.strokeStyle = border;
+  ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  const padX = 56;
-  const maxWidth = w - padX * 2;
-  const inner = quote.trim();
-  const innerLines = getBalancedWrapLines(ctx, inner, maxWidth, QUOTE_TARGET_CHARS_PER_LINE);
-  const lines = formatQuotedLines(innerLines);
+  roundRect(ctx, x + 2, y + 2, w - 4, h - 4, 16);
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
 
-  ctx.font = `${QUOTE_FONT_SIZE}px ${FONT}`;
-  ctx.fillStyle = '#e5e7eb';
-  drawCenteredWrapText(ctx, lines, x + w / 2, y, h, QUOTE_LINE_HEIGHT);
+  ctx.textAlign = 'center';
+  ctx.font = `48px ${FONT}`;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(icon, x + w / 2, y + 58);
+
+  ctx.font = `700 24px ${FONT}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  ctx.fillText(label, x + w / 2, y + 98);
+
+  ctx.font = `800 40px ${FONT}`;
+  if (valueAccent) {
+    const parts = value.split(' / ');
+    if (parts.length === 2) {
+      const main = parts[0]!;
+      const rest = ` / ${parts[1]}`;
+      ctx.fillStyle = valueAccent;
+      const mainW = ctx.measureText(main).width;
+      ctx.font = `600 28px ${FONT}`;
+      const restW = ctx.measureText(rest).width;
+      const total = mainW + restW;
+      const start = x + w / 2 - total / 2;
+      ctx.font = `800 40px ${FONT}`;
+      ctx.textAlign = 'left';
+      ctx.fillText(main, start, y + h - 28);
+      ctx.font = `600 28px ${FONT}`;
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fillText(rest, start + mainW, y + h - 28);
+      ctx.textAlign = 'center';
+      return;
+    }
+  }
+  ctx.fillStyle = '#f9fafb';
+  ctx.fillText(value, x + w / 2, y + h - 28);
 }
 
-function drawFooter(
+function drawHashtagPills(
   ctx: CanvasRenderingContext2D,
-  left: number,
-  topY: number,
-  width: number,
-  height: number,
-  labels: FortuneShareCardLabels
+  tags: string[],
+  right: number,
+  bottomY: number
 ) {
-  const right = left + width;
-  const markSize = 28;
-  const logoRowY = topY + markSize;
-  drawShareBrandLockup(ctx, left, logoRowY, FONT);
-  void labels.tagline;
-
-  const tags = labels.hashtags.split(/\s+/).filter(Boolean);
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
-  ctx.font = `600 22px ${FONT}`;
-  ctx.fillStyle = GREEN;
-  const tagsBlockH = Math.max(0, (tags.length - 1) * 26);
-  const tagStartY = logoRowY + 10 - tagsBlockH / 2;
-  tags.forEach((tag, i) => {
-    ctx.fillText(tag, right, tagStartY + i * 26);
-  });
+  ctx.font = `700 22px ${FONT}`;
+  let y = bottomY;
+  for (const tag of tags.slice(0, 4).reverse()) {
+    const padX = 18;
+    const tw = ctx.measureText(tag).width;
+    const bw = tw + padX * 2;
+    const bh = 36;
+    const bx = right - bw;
+    const by = y - bh / 2;
+    roundRect(ctx, bx, by, bw, bh, 999);
+    ctx.fillStyle = 'rgba(10, 18, 16, 0.75)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = GREEN;
+    ctx.fillText(tag, right - padX, y + 1);
+    y -= bh + 10;
+  }
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
-  void height;
 }
 
-/** Today’s Helchang fortune share card — same layout family as Lifter DNA. */
+/**
+ * Cinematic Helchang fortune share card — dark gym poster layout
+ * matching the product share mock (hero keyword, neon score cards, quote).
+ */
 export async function buildFortuneShareCard(input: FortuneShareCardInput): Promise<Blob> {
   const { fortune, scores, emoji, themeLabel, dateLabel, labels } = input;
-  const width = 1080;
-  const height = 1350;
   const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = W;
+  canvas.height = H;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
 
-  drawPageBackground(ctx, width, height);
+  const rand = mulberry32(hashSeed(`${fortune.keyword}|${dateLabel}|${scores.healthmanIndex}`));
+  drawGymAtmosphere(ctx, rand);
 
-  const cardX = 48;
-  const cardY = 48;
-  const cardW = width - cardX * 2;
-  const cardH = height - cardY * 2;
-  roundRect(ctx, cardX, cardY, cardW, cardH, 40);
-  ctx.fillStyle = 'rgba(15, 23, 42, 0.74)';
+  const cx = W / 2;
+  const padX = 56;
+  const contentW = W - padX * 2;
+
+  // Header
+  ctx.textAlign = 'center';
+  ctx.font = `800 34px ${FONT}`;
+  ctx.fillStyle = '#f3f4f6';
+  ctx.fillText(`⚡ ${labels.title} ⚡`, cx, 78);
+
+  ctx.font = `600 26px ${FONT}`;
+  ctx.fillStyle = 'rgba(180, 186, 196, 0.85)';
+  ctx.fillText(dateLabel, cx, 118);
+
+  // Hero emoji (behind headline)
+  const heroY = 340;
+  const eg = ctx.createRadialGradient(cx, heroY + 20, 10, cx, heroY + 20, 210);
+  eg.addColorStop(0, 'rgba(255, 200, 40, 0.5)');
+  eg.addColorStop(0.45, 'rgba(255, 120, 20, 0.14)');
+  eg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = eg;
+  ctx.beginPath();
+  ctx.arc(cx, heroY + 20, 210, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+
+  ctx.font = `210px ${FONT}`;
+  ctx.globalAlpha = 0.98;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(emoji, cx, heroY + 90);
+  ctx.globalAlpha = 1;
+
+  // Split headline over emoji
+  const headline = fortune.keywordTitle || fortune.title;
+  const { top, bottom } = splitHeadline(headline);
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.7)';
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 5;
+  ctx.font = `900 96px ${FONT}`;
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillText(top.toUpperCase(), cx, 248);
+  ctx.restore();
+
+  if (bottom) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 170, 0, 0.65)';
+    ctx.shadowBlur = 22;
+    ctx.font = `900 82px ${FONT}`;
+    ctx.fillStyle = YELLOW;
+    ctx.fillText(bottom.toUpperCase(), cx, 336);
+    ctx.restore();
+  }
+
+  // Theme + stars
+  const star = starsFilled(fortune.scoreStars);
+  const themeLine = star ? `${star}  ${themeLabel}  ${star}` : themeLabel;
+  ctx.font = `800 34px ${FONT}`;
+  ctx.fillStyle = YELLOW;
+  ctx.shadowColor = 'rgba(245, 197, 24, 0.4)';
+  ctx.shadowBlur = 12;
+  ctx.fillText(themeLine, cx, 520);
+  ctx.shadowBlur = 0;
+
+  // Metric cards
+  const cardGap = 18;
+  const cardW = (contentW - cardGap * 2) / 3;
+  const cardH = 168;
+  const cardY = 560;
+  const cards: Array<{
+    border: string;
+    icon: string;
+    label: string;
+    value: string;
+    accent?: string;
+  }> = [
+    {
+      border: YELLOW,
+      icon: '💪',
+      label: labels.healthman,
+      value: `${scores.healthmanIndex} / 100`,
+      accent: YELLOW,
+    },
+    {
+      border: ORANGE,
+      icon: '🔥',
+      label: labels.prLuck,
+      value: `${scores.prLuck}%`,
+    },
+    {
+      border: CYAN,
+      icon: '💚',
+      label: labels.recoveryLuck,
+      value: `${scores.recoveryLuck}%`,
+    },
+  ];
+
+  cards.forEach((c, i) => {
+    drawMetricCard(
+      ctx,
+      padX + i * (cardW + cardGap),
+      cardY,
+      cardW,
+      cardH,
+      c.border,
+      c.icon,
+      c.label,
+      c.value,
+      c.accent
+    );
+  });
+
+  // Quote panel
+  const quote = (fortune.oneLiner || fortune.headline || '').trim();
+  const detailRaw = (fortune.oneLinerDetail || '').trim();
+  const detail =
+    detailRaw && detailRaw !== quote
+      ? detailRaw
+      : fortune.headline && fortune.headline !== quote
+        ? fortune.headline
+        : '';
+
+  const quoteY = cardY + cardH + 36;
+  const quoteH = detail ? 240 : 170;
+  roundRect(ctx, padX, quoteY, contentW, quoteH, 22);
+  ctx.fillStyle = 'rgba(6, 12, 16, 0.62)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(62, 224, 194, 0.55)';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  const cx = width / 2;
-  const contentMax = cardW - 128;
-  const innerX = cardX + 64;
-  const footerInnerW = cardW - 128;
-
-  ctx.textAlign = 'center';
-
-  const headline = fortune.keywordTitle || fortune.title;
-  const tagline = themeLabel || fortune.headline;
-  const quote = (fortune.oneLiner || fortune.headline || '').trim();
-
-  const quotePanelW = cardW - 128;
-  const quoteMaxWidth = quotePanelW - 112;
-
-  ctx.font = `bold 52px ${FONT}`;
-  const headlineHeight = measureWrapHeight(ctx, headline, contentMax, 62);
-  ctx.font = `34px ${FONT}`;
-  const taglineHeight = measureWrapHeight(ctx, tagline, contentMax, 44);
-  ctx.font = `${QUOTE_FONT_SIZE}px ${FONT}`;
-  const quoteHeight = measureBalancedWrapHeight(ctx, quote, quoteMaxWidth, QUOTE_LINE_HEIGHT);
-
-  const gapSm = 24;
-  const gapMd = 40;
-  const gapLg = 56;
-  const gapQuoteToFooter = 12;
-  const metaPanelH = 168;
-  const quotePanelH = Math.max(140, quoteHeight + 88);
-  const footerH = measureShareFooterH(labels.hashtags, { minH: FOOTER_MIN_H });
-
-  const blockHeight =
-    60 + // title
-    36 + // date
-    200 +
-    gapMd +
-    headlineHeight +
-    gapSm +
-    taglineHeight +
-    gapMd +
-    48 +
-    gapLg +
-    metaPanelH +
-    gapLg +
-    quotePanelH +
-    gapQuoteToFooter +
-    footerH;
-
-  const verticalBias = 36;
-  let y = cardY + Math.max(96, (cardH - blockHeight) / 2 + verticalBias);
-
-  ctx.font = `bold 30px ${FONT}`;
-  ctx.fillStyle = '#fda4af';
-  ctx.fillText(labels.title, cx, y);
-
-  y += 36;
-  ctx.font = `26px ${FONT}`;
-  ctx.fillStyle = '#9ca3af';
-  ctx.fillText(dateLabel, cx, y);
-
-  y += gapMd + 8;
-  drawEmojiGlow(ctx, cx, y + 24, 118);
-  ctx.font = `176px ${FONT}`;
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(emoji, cx, y + 96);
-
-  y += 200;
-  ctx.font = `bold 52px ${FONT}`;
+  ctx.font = `italic 800 40px ${FONT}`;
   ctx.fillStyle = '#f9fafb';
-  y = wrapText(ctx, headline, cx, y, contentMax, 62);
-
-  y += gapSm;
-  ctx.font = `34px ${FONT}`;
-  ctx.fillStyle = '#fcd34d';
-  y = wrapText(ctx, tagline, cx, y, contentMax, 44);
-
-  y += gapMd;
-  ctx.font = `48px ${FONT}`;
-  ctx.fillStyle = '#fbbf24';
-  ctx.fillText(starsText(fortune.scoreStars), cx, y);
-
-  y += gapLg;
-  drawMetaPanel(
-    ctx,
-    innerX,
-    y,
-    cardW - 128,
-    metaPanelH,
-    [labels.healthman, labels.prLuck, labels.recoveryLuck],
-    [`${scores.healthmanIndex}`, `${scores.prLuck}%`, `${scores.recoveryLuck}%`]
-  );
-
-  y += metaPanelH + gapLg;
-  if (quote) {
-    drawQuotePanel(ctx, innerX, y, quotePanelW, quotePanelH, quote);
-    y += quotePanelH + gapQuoteToFooter;
-  } else {
-    y += gapMd;
+  const quoteLines = wrapLines(ctx, `“${quote}”`, contentW - 80, 18);
+  let qy = quoteY + (detail ? 70 : 88);
+  for (const line of quoteLines.slice(0, 3)) {
+    ctx.fillText(line, cx, qy);
+    qy += 48;
   }
 
-  drawFooter(ctx, innerX, y, footerInnerW, footerH, labels);
+  if (detail) {
+    ctx.font = `500 26px ${FONT}`;
+    ctx.fillStyle = 'rgba(226, 232, 240, 0.88)';
+    const detailLines = wrapLines(ctx, detail, contentW - 90, 28);
+    qy = quoteY + quoteH - 28 - Math.min(detailLines.length, 3) * 34;
+    for (const line of detailLines.slice(0, 3)) {
+      ctx.fillText(line, cx, qy);
+      qy += 34;
+    }
+  }
+
+  // Footer
+  const footerY = H - 110;
+  drawShareBrandLockup(ctx, padX + 8, footerY, FONT, {
+    markSize: 30,
+    brandSize: 26,
+    domainSize: 18,
+  });
+
+  const tags = labels.hashtags.split(/\s+/).filter(Boolean);
+  drawHashtagPills(ctx, tags, W - padX - 8, footerY + 8);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
