@@ -2,9 +2,11 @@ import type { Request, Response } from 'express';
 import {
   Role,
   adminLegalDocumentSchema,
+  adminPrivacyRightsUpdateSchema,
   adminSanctionSchema,
   adminSupportTicketUpdateSchema,
   consentUpdateSchema,
+  createPrivacyRightsRequestSchema,
   createSupportTicketSchema,
   legalDocumentsQuerySchema,
   supportTicketMessageSchema,
@@ -50,6 +52,76 @@ export async function updateMyConsents(req: Request, res: Response): Promise<voi
     userAgent: getRequestUserAgent(req),
     source: 'settings',
   });
+  res.json({ success: true, data });
+}
+
+export async function getPrivacyProcessingPurposes(
+  _req: Request,
+  res: Response
+): Promise<void> {
+  const data = complianceService.getPrivacyProcessingPurposes();
+  res.json({ success: true, data });
+}
+
+export async function listMyPrivacyRightsRequests(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const data = await complianceService.listPrivacyRightsRequests(user.userId);
+  res.json({ success: true, data });
+}
+
+export async function getMyPrivacyRightsRequest(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const data = await complianceService.getPrivacyRightsRequest(
+    String(req.params.requestId),
+    user.userId
+  );
+  res.json({ success: true, data });
+}
+
+export async function createMyPrivacyRightsRequest(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const input = createPrivacyRightsRequestSchema.parse(req.body);
+  const data = await complianceService.createPrivacyRightsRequest(user.userId, input, {
+    ipAddress: getRequestIp(req),
+    userAgent: getRequestUserAgent(req),
+  });
+  res.status(201).json({ success: true, data });
+}
+
+export async function adminListPrivacyRightsRequests(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+  const requestType =
+    typeof req.query.requestType === 'string' ? req.query.requestType : undefined;
+  const data = await complianceService.listAdminPrivacyRightsRequests({
+    status,
+    requestType,
+  });
+  res.json({ success: true, data });
+}
+
+export async function adminUpdatePrivacyRightsRequest(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const input = adminPrivacyRightsUpdateSchema.parse(req.body);
+  const data = await complianceService.adminUpdatePrivacyRightsRequest(
+    String(req.params.requestId),
+    user.userId,
+    input
+  );
   res.json({ success: true, data });
 }
 

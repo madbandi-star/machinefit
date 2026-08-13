@@ -42,8 +42,10 @@ export interface PrivacyDataSummary {
     experienceLevel?: string | null;
     homeGymName?: string | null;
     marketingOptIn: boolean;
+    eventOptIn: boolean;
     locationOptIn: boolean;
     pushServiceOptIn: boolean;
+    privacyProcessingSuspended: boolean;
     createdAt: string;
   };
   location?: {
@@ -113,4 +115,39 @@ export interface ComplianceOverview {
   locationOptInUsers: number;
   activeLegalDocuments: number;
   recentLoginFailures: number;
+  pendingPrivacyRightsRequests?: number;
+}
+
+export interface PrivacyRightsRequest {
+  id: string;
+  userId: string;
+  requestType: string;
+  status: string;
+  subject: string;
+  detail?: string | null;
+  payload: Record<string, unknown>;
+  resultMessage?: string | null;
+  rejectionReason?: string | null;
+  dueAt: string;
+  dueState?: 'ok' | 'soon' | 'overdue' | 'done';
+  processedAt?: string | null;
+  processedBy?: string | null;
+  processorEmail?: string | null;
+  requesterEmail?: string | null;
+  requesterDisplayName?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PrivacyProcessingPurposes {
+  purposes: Array<{
+    key: string;
+    titleKey: string;
+    retentionKey: string;
+    required: boolean;
+  }>;
+  deletionInventory: {
+    deletable: string[];
+    retained: string[];
+  };
 }

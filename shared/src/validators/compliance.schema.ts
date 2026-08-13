@@ -8,13 +8,45 @@ import {
   SUPPORT_CATEGORIES,
   SUPPORT_TICKET_STATUSES,
 } from '../constants/legal.js';
+import {
+  PRIVACY_RIGHTS_REQUEST_STATUSES,
+  PRIVACY_RIGHTS_REQUEST_TYPES,
+} from '../constants/privacy-rights.js';
 
 export const consentUpdateSchema = z.object({
   marketingOptIn: z.boolean().optional(),
+  eventOptIn: z.boolean().optional(),
   locationOptIn: z.boolean().optional(),
   pushServiceOptIn: z.boolean().optional(),
   regionCode: z.enum(LEGAL_REGIONS).optional(),
   legalVersion: z.string().min(1).max(32).optional(),
+});
+
+export const createPrivacyRightsRequestSchema = z.object({
+  requestType: z.enum(PRIVACY_RIGHTS_REQUEST_TYPES),
+  subject: z.string().min(1).max(200).optional(),
+  detail: z.string().max(5000).optional(),
+  /** Correction: field / current / requested */
+  fieldKey: z.string().max(80).optional(),
+  currentValue: z.string().max(2000).optional(),
+  requestedValue: z.string().max(2000).optional(),
+  /** consent_withdraw target */
+  consentTarget: z
+    .enum(['marketing', 'event', 'push_service', 'location', 'privacy_essential'])
+    .optional(),
+  /** deletion / processing_stop confirmation */
+  acknowledgedInventory: z.boolean().optional(),
+  confirmed: z.boolean().optional(),
+});
+
+export const adminPrivacyRightsUpdateSchema = z.object({
+  status: z.enum(PRIVACY_RIGHTS_REQUEST_STATUSES),
+  resultMessage: z.string().max(5000).optional(),
+  rejectionReason: z.string().max(5000).optional(),
+  /** When completing processing_stop — apply suspend flag */
+  applyProcessingStop: z.boolean().optional(),
+  /** When completing deletion — note only; actual purge stays withdraw/retention pipeline */
+  noteLegalRetention: z.boolean().optional(),
 });
 
 /** Record feature-scoped profile data processing consent (body / birth / location-gym). */
@@ -68,4 +100,10 @@ export const adminSanctionSchema = z.object({
 });
 
 export type ConsentUpdateInput = z.infer<typeof consentUpdateSchema>;
+export type CreatePrivacyRightsRequestInput = z.infer<
+  typeof createPrivacyRightsRequestSchema
+>;
+export type AdminPrivacyRightsUpdateInput = z.infer<
+  typeof adminPrivacyRightsUpdateSchema
+>;
 export type CreateSupportTicketInput = z.infer<typeof createSupportTicketSchema>;

@@ -2,11 +2,14 @@ import type { PushKind } from '../types/push-notification.types.js';
 import type { NotificationType } from '../types/notification.types.js';
 
 /** Consent gate required before delivering a push / inbox notification. */
-export const PUSH_CONSENT_CATEGORIES = ['marketing', 'service'] as const;
+export const PUSH_CONSENT_CATEGORIES = ['marketing', 'event', 'service'] as const;
 export type PushConsentCategory = (typeof PUSH_CONSENT_CATEGORIES)[number];
 
-/** Campaign kinds that are event / promotion (marketing). */
-export const PUSH_MARKETING_KINDS: readonly PushKind[] = ['general', 'event'];
+/** General marketing / promo (not event campaigns). */
+export const PUSH_MARKETING_KINDS: readonly PushKind[] = ['general'];
+
+/** Event / promotion campaigns — independent opt-in from general marketing. */
+export const PUSH_EVENT_KINDS: readonly PushKind[] = ['event'];
 
 /** Campaign kinds that are non-marketing service notices. */
 export const PUSH_SERVICE_KINDS: readonly PushKind[] = [
@@ -17,7 +20,9 @@ export const PUSH_SERVICE_KINDS: readonly PushKind[] = [
 ];
 
 export function getPushConsentCategoryForKind(kind: PushKind): PushConsentCategory {
-  return PUSH_MARKETING_KINDS.includes(kind) ? 'marketing' : 'service';
+  if (PUSH_EVENT_KINDS.includes(kind)) return 'event';
+  if (PUSH_MARKETING_KINDS.includes(kind)) return 'marketing';
+  return 'service';
 }
 
 /**
@@ -29,9 +34,10 @@ export function getPushConsentCategoryForNotificationType(
 ): PushConsentCategory | null {
   switch (type) {
     case 'push_general':
-    case 'push_event':
     case 'announcement':
       return 'marketing';
+    case 'push_event':
+      return 'event';
     case 'push_notice':
     case 'push_workout':
     case 'push_schedule':
@@ -94,8 +100,7 @@ export function assertServiceKindContentAllowed(
   body: string
 ): { ok: true } | { ok: false; code: 'MARKETING_CONTENT_AS_SERVICE' } {
   const category = getPushConsentCategoryForKind(kind);
-  if (category !== 'service') return { ok: true };
-  if (detectMarketingContent(title, body)) {
+  if (category === 'service' && detectMarketingContent(title, body)) {
     return { ok: false, code: 'MARKETING_CONTENT_AS_SERVICE' };
   }
   return { ok: true };

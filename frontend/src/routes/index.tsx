@@ -426,6 +426,10 @@ const adminCompliancePage = () =>
   import('@/pages/admin/compliance/AdminCompliancePage').then((m) => ({
     default: m.AdminCompliancePage,
   }));
+const adminPrivacyRightsPage = () =>
+  import('@/pages/admin/compliance/AdminPrivacyRightsPage').then((m) => ({
+    default: m.AdminPrivacyRightsPage,
+  }));
 const adminDataRetentionPage = () =>
   import('@/pages/admin/data-retention/AdminDataRetentionPage').then((m) => ({
     default: m.AdminDataRetentionPage,
@@ -730,6 +734,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_PUSH, element: lazyRoute(pushCompose) },
         { path: ROUTES.ADMIN_FRIENDS, element: lazyRoute(adminFriends) },
         { path: ROUTES.ADMIN_COMPLIANCE, element: lazyRoute(adminCompliancePage) },
+        { path: ROUTES.ADMIN_PRIVACY_RIGHTS, element: lazyRoute(adminPrivacyRightsPage) },
         { path: ROUTES.ADMIN_DATA_RETENTION, element: lazyRoute(adminDataRetentionPage) },
         {
           path: ROUTES.ADMIN_DATA_RETENTION_SCHEDULED,

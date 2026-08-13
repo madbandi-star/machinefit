@@ -558,7 +558,7 @@
       "s4Title": "4. Processors",
       "s4Body": "サービス提供のため、ホスティング（Render）、フロント配布（GitHub Pages）、カスタムドメインCDN（利用時Cloudflare）、DB/ストレージ（Supabase）、ソーシャルログイン（Kakao/Google/Apple）、決済（Polar）、エラー監視（設定時Sentry）、メール（SMTPまたはResend。FormSubmitは運営者が明示的に有効化した場合のみ）、YouTube埋め込み等で個人データが処理・国外移転され得ます。カード番号等は決済事業者が直接処理します。",
       "s5Title": "5. Your rights",
-      "s5Body": "設定 > 個人情報権利センターで閲覧・同意撤回・JSONダウンロード・退会が可能です。追加の訂正・削除等はサポートへお問い合わせください。",
+      "s5Body": "In Settings > Privacy Rights Center you can view processing purposes, request access/correction/deletion/processing stop, manage marketing/event/service notification consents, and download your data. Account withdrawal is separate in Settings.",
       "s6Title": "6. Children",
       "s6Body": "MachineFitアカウント（ソーシャル登録）は満14歳未満を受け付けません。登録時に生年月日から韓国時間の満年齢をサーバーで計算し、14歳未満なら会員レコードを作成しません。チェックだけでは登録できません。ジムオーナーが入力する施設会員の生年月日は施設管理用の例外であり、当該児童のMachineFitアカウント作成はできません。",
       "s7Title": "7. 安全管理・問い合わせ",
@@ -1727,7 +1727,40 @@
       "moreTitle": "More rights",
       "saved": "Consent preferences saved.",
       "hasGps": "残留座標あり（未使用・削除対象）",
-      "regionOnly": "地域のみ保存（GPSなし）"
+      "regionOnly": "地域のみ保存（GPSなし）",
+      "admin": {
+        "nav": "Privacy rights requests",
+        "title": "Privacy rights management",
+        "subtitle": "Review access/correction/deletion/processing-stop/consent-withdraw requests. Due in 10 days.",
+        "filterStatus": "Status filter",
+        "allStatuses": "All",
+        "empty": "No requests.",
+        "requester": "Requester",
+        "status": "Status",
+        "dueAt": "Due date",
+        "dueSoon": "Due soon",
+        "overdue": "Overdue",
+        "detail": "Request detail",
+        "payload": "Payload",
+        "resultMessage": "Result",
+        "rejectionReason": "Rejection reason",
+        "dueHint": "Aim to act within 10 days of the request when required.",
+        "saved": "Saved."
+      },
+      "status": {
+        "received": "Received",
+        "reviewing": "Reviewing",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "requestType": {
+        "access": "Access",
+        "correction": "Correction",
+        "deletion": "Deletion",
+        "processing_stop": "Processing stop",
+        "consent_withdraw": "Consent withdraw"
+      },
+      "eventOptIn": "Event / promotion notifications"
     },
     "report": {
       "cta": "Report",

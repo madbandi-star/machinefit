@@ -1,11 +1,15 @@
 import type {
   ApiResponse,
   AdminAuditLog,
+  AdminPrivacyRightsUpdateInput,
   ComplianceOverview,
   ConsentUpdateInput,
+  CreatePrivacyRightsRequestInput,
   CreateSupportTicketInput,
   LegalDocument,
   PrivacyDataSummary,
+  PrivacyProcessingPurposes,
+  PrivacyRightsRequest,
   SupportTicket,
   SupportTicketDetail,
   SupportTicketMessage,
@@ -30,10 +34,40 @@ export const complianceApi = {
     apiClient.patch<
       ApiResponse<{
         marketingOptIn: boolean;
+        eventOptIn: boolean;
         locationOptIn: boolean;
         pushServiceOptIn: boolean;
       }>
     >('/privacy/me/consents', input),
+
+  getProcessingPurposes: () =>
+    apiClient.get<ApiResponse<PrivacyProcessingPurposes>>(
+      '/privacy/me/processing-purposes'
+    ),
+
+  listRightsRequests: () =>
+    apiClient.get<ApiResponse<PrivacyRightsRequest[]>>('/privacy/me/rights-requests'),
+
+  createRightsRequest: (input: CreatePrivacyRightsRequestInput) =>
+    apiClient.post<ApiResponse<PrivacyRightsRequest>>(
+      '/privacy/me/rights-requests',
+      input
+    ),
+
+  adminListRightsRequests: (params?: { status?: string; requestType?: string }) =>
+    apiClient.get<ApiResponse<PrivacyRightsRequest[]>>(
+      '/admin/privacy-rights/requests',
+      { params }
+    ),
+
+  adminUpdateRightsRequest: (
+    requestId: string,
+    body: AdminPrivacyRightsUpdateInput
+  ) =>
+    apiClient.patch<ApiResponse<PrivacyRightsRequest>>(
+      `/admin/privacy-rights/requests/${requestId}`,
+      body
+    ),
 
   createTicket: (input: CreateSupportTicketInput) =>
     apiClient.post<ApiResponse<SupportTicketDetail>>('/support/tickets', input),

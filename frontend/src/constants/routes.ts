@@ -159,6 +159,7 @@ export const ROUTES = {
   FRIEND_PROFILE: '/friends/:userId',
   ADMIN_FRIENDS: '/admin/friends',
   ADMIN_COMPLIANCE: '/admin/compliance',
+  ADMIN_PRIVACY_RIGHTS: '/admin/privacy-rights',
   ADMIN_DATA_RETENTION: '/admin/data-retention',
   ADMIN_DATA_RETENTION_SCHEDULED: '/admin/data-retention/scheduled',
   ADMIN_DATA_RETENTION_LOGS: '/admin/data-retention/logs',

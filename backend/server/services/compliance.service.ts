@@ -1,10 +1,14 @@
 import {
   LEGAL_DOC_VERSION,
   DEFAULT_LEGAL_REGION,
+  PRIVACY_DELETION_INVENTORY,
+  type AdminPrivacyRightsUpdateInput,
   type ConsentUpdateInput,
+  type CreatePrivacyRightsRequestInput,
   type CreateSupportTicketInput,
 } from '@machinefit/shared';
 import { complianceRepository } from '../repositories/compliance.repository.js';
+import { privacyRightsRepository } from '../repositories/privacy-rights.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
@@ -38,6 +42,7 @@ export const complianceService = {
     const regionCode = input.regionCode || DEFAULT_LEGAL_REGION;
     const flags: {
       marketingOptIn?: boolean;
+      eventOptIn?: boolean;
       locationOptIn?: boolean;
       pushServiceOptIn?: boolean;
     } = {};
@@ -46,6 +51,10 @@ export const complianceService = {
     if (input.marketingOptIn !== undefined) {
       flags.marketingOptIn = input.marketingOptIn;
       consentItems.push({ type: 'marketing', version, agreed: input.marketingOptIn });
+    }
+    if (input.eventOptIn !== undefined) {
+      flags.eventOptIn = input.eventOptIn;
+      consentItems.push({ type: 'event', version, agreed: input.eventOptIn });
     }
     if (input.locationOptIn !== undefined) {
       flags.locationOptIn = input.locationOptIn;
@@ -76,9 +85,205 @@ export const complianceService = {
     const user = await userRepository.findById(userId);
     return {
       marketingOptIn: user?.marketingOptIn ?? false,
+      eventOptIn: user?.eventOptIn ?? false,
       locationOptIn: user?.locationOptIn ?? false,
       pushServiceOptIn: user?.pushServiceOptIn ?? true,
     };
+  },
+
+  getPrivacyProcessingPurposes() {
+    return privacyRightsRepository.getProcessingPurposes();
+  },
+
+  listPrivacyRightsRequests(userId: string) {
+    return privacyRightsRepository.listForUser(userId);
+  },
+
+  async getPrivacyRightsRequest(requestId: string, userId: string) {
+    const row = await privacyRightsRepository.getForUser(requestId, userId);
+    if (!row) throw new AppError(404, 'NOT_FOUND', 'Rights request not found');
+    return row;
+  },
+
+  async createPrivacyRightsRequest(
+    userId: string,
+    input: CreatePrivacyRightsRequestInput,
+    meta?: { ipAddress?: string | null; userAgent?: string | null }
+  ) {
+    // Immediate optional consent withdraws — apply now + log completed request.
+    if (input.requestType === 'consent_withdraw') {
+      const target = input.consentTarget;
+      if (!target) {
+        throw new AppError(400, 'VALIDATION_ERROR', 'consentTarget is required');
+      }
+      if (target === 'privacy_essential') {
+        const created = await privacyRightsRepository.create(userId, input, {
+          status: 'rejected',
+          resultMessage:
+            '서비스 제공에 필수적인 개인정보 처리 동의는 앱 내 철회만으로 종료할 수 없습니다. 회원탈퇴 절차를 이용해 주세요.',
+          payload: {
+            requiresAccountWithdrawal: true,
+            deletable: PRIVACY_DELETION_INVENTORY.deletable,
+            retained: PRIVACY_DELETION_INVENTORY.retained,
+          },
+        });
+        await complianceRepository.writeAuditLog({
+          actorId: userId,
+          action: 'privacy.rights.consent_withdraw.essential_blocked',
+          targetType: 'privacy_rights_request',
+          targetId: created.id,
+          meta: { target, ip: meta?.ipAddress },
+        });
+        return created;
+      }
+      const patch: ConsentUpdateInput = {};
+      if (target === 'marketing') patch.marketingOptIn = false;
+      if (target === 'event') patch.eventOptIn = false;
+      if (target === 'push_service') patch.pushServiceOptIn = false;
+      if (target === 'location') patch.locationOptIn = false;
+      await this.updateConsents(userId, patch, {
+        ...meta,
+        source: 'privacy_rights',
+      });
+      return privacyRightsRepository.create(userId, input, {
+        status: 'completed',
+        resultMessage: '선택 동의를 철회하고 즉시 반영했습니다.',
+      });
+    }
+
+    if (input.requestType === 'access') {
+      // Access is fulfilled by providing export/summary; record as completed.
+      return privacyRightsRepository.create(userId, input, {
+        status: 'completed',
+        resultMessage:
+          '개인정보 열람·다운로드 기능을 제공했습니다. 권리 센터에서 JSON 다운로드 및 요약 열람이 가능합니다.',
+      });
+    }
+
+    if (input.requestType === 'deletion') {
+      if (!input.acknowledgedInventory || !input.confirmed) {
+        throw new AppError(
+          400,
+          'VALIDATION_ERROR',
+          'Deletion requires inventory acknowledgement and confirmation'
+        );
+      }
+      const created = await privacyRightsRepository.create(userId, input, {
+        status: 'received',
+        payload: {
+          deletable: PRIVACY_DELETION_INVENTORY.deletable,
+          retained: PRIVACY_DELETION_INVENTORY.retained,
+          note: '법정 보존 데이터는 즉시 삭제되지 않습니다. 계정 전체 종료는 회원탈퇴를 이용하세요.',
+        },
+      });
+      await complianceRepository.writeAuditLog({
+        actorId: userId,
+        action: 'privacy.rights.deletion.requested',
+        targetType: 'privacy_rights_request',
+        targetId: created.id,
+        meta: { ip: meta?.ipAddress },
+      });
+      return created;
+    }
+
+    if (input.requestType === 'processing_stop') {
+      if (!input.confirmed) {
+        throw new AppError(400, 'VALIDATION_ERROR', 'Processing stop requires confirmation');
+      }
+      // Optional processing stop can be applied immediately; essential service continues.
+      await privacyRightsRepository.setProcessingSuspended(
+        userId,
+        true,
+        'User requested processing stop for optional personal data uses'
+      );
+      const created = await privacyRightsRepository.create(userId, input, {
+        status: 'completed',
+        resultMessage:
+          '선택적 개인정보 처리(마케팅·이벤트·부가 분석)를 정지했습니다. 계정·운동기록 등 필수 서비스 처리는 계속되며, 전체 종료는 회원탈퇴가 필요합니다.',
+        payload: {
+          suspendedOptional: true,
+          serviceContinues: true,
+        },
+      });
+      await complianceRepository.writeAuditLog({
+        actorId: userId,
+        action: 'privacy.rights.processing_stop.applied',
+        targetType: 'privacy_rights_request',
+        targetId: created.id,
+        meta: { ip: meta?.ipAddress },
+      });
+      return created;
+    }
+
+    if (input.requestType === 'correction') {
+      if (!input.fieldKey || input.requestedValue == null) {
+        throw new AppError(
+          400,
+          'VALIDATION_ERROR',
+          'Correction requires fieldKey and requestedValue'
+        );
+      }
+      const created = await privacyRightsRepository.create(userId, input, {
+        status: 'received',
+      });
+      await complianceRepository.writeAuditLog({
+        actorId: userId,
+        action: 'privacy.rights.correction.requested',
+        targetType: 'privacy_rights_request',
+        targetId: created.id,
+        meta: { fieldKey: input.fieldKey, ip: meta?.ipAddress },
+      });
+      return created;
+    }
+
+    throw new AppError(400, 'VALIDATION_ERROR', 'Unsupported request type');
+  },
+
+  listAdminPrivacyRightsRequests(filters?: {
+    status?: string;
+    requestType?: string;
+  }) {
+    return privacyRightsRepository.listAdmin(filters);
+  },
+
+  async adminUpdatePrivacyRightsRequest(
+    requestId: string,
+    adminId: string,
+    input: AdminPrivacyRightsUpdateInput
+  ) {
+    const existing = await privacyRightsRepository.getById(requestId);
+    if (!existing) throw new AppError(404, 'NOT_FOUND', 'Rights request not found');
+
+    if (input.status === 'rejected' && !input.rejectionReason && !input.resultMessage) {
+      throw new AppError(400, 'VALIDATION_ERROR', 'Rejection reason is required');
+    }
+
+    if (input.applyProcessingStop && input.status === 'completed') {
+      await privacyRightsRepository.setProcessingSuspended(
+        existing.userId,
+        true,
+        input.resultMessage ?? 'Admin completed processing stop'
+      );
+    }
+
+    const updated = await privacyRightsRepository.updateAdmin(requestId, adminId, {
+      status: input.status,
+      resultMessage: input.resultMessage,
+      rejectionReason: input.rejectionReason,
+    });
+
+    await complianceRepository.writeAuditLog({
+      actorId: adminId,
+      action: 'privacy.rights.admin.update',
+      targetType: 'privacy_rights_request',
+      targetId: requestId,
+      meta: {
+        status: input.status,
+        requestType: existing.requestType,
+        noteLegalRetention: input.noteLegalRetention,
+      },
+    });
+    return updated;
   },
 
   createTicket(userId: string, input: CreateSupportTicketInput) {

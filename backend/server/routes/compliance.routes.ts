@@ -17,6 +17,26 @@ complianceRouter.patch(
   authMiddleware,
   complianceController.updateMyConsents
 );
+complianceRouter.get(
+  '/privacy/me/processing-purposes',
+  authMiddleware,
+  complianceController.getPrivacyProcessingPurposes
+);
+complianceRouter.get(
+  '/privacy/me/rights-requests',
+  authMiddleware,
+  complianceController.listMyPrivacyRightsRequests
+);
+complianceRouter.get(
+  '/privacy/me/rights-requests/:requestId',
+  authMiddleware,
+  complianceController.getMyPrivacyRightsRequest
+);
+complianceRouter.post(
+  '/privacy/me/rights-requests',
+  authMiddleware,
+  complianceController.createMyPrivacyRightsRequest
+);
 
 /** Support / inquiry */
 complianceRouter.post('/support/tickets', authMiddleware, complianceController.createTicket);
@@ -74,4 +94,16 @@ complianceRouter.post(
   authMiddleware,
   requireMinRole(Role.ADMIN),
   complianceController.adminCreateSanction
+);
+complianceRouter.get(
+  '/admin/privacy-rights/requests',
+  authMiddleware,
+  requireMinRole(Role.ADMIN),
+  complianceController.adminListPrivacyRightsRequests
+);
+complianceRouter.patch(
+  '/admin/privacy-rights/requests/:requestId',
+  authMiddleware,
+  requireMinRole(Role.ADMIN),
+  complianceController.adminUpdatePrivacyRightsRequest
 );

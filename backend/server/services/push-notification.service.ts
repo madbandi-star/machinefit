@@ -127,7 +127,9 @@ export async function filterRecipientsByPushConsent<T extends { id: string }>(
   const allowed =
     category === 'marketing'
       ? await userRepository.listMarketingOptInUserIds(ids)
-      : await userRepository.listPushServiceOptInUserIds(ids);
+      : category === 'event'
+        ? await userRepository.listEventOptInUserIds(ids)
+        : await userRepository.listPushServiceOptInUserIds(ids);
 
   const kept = recipients.filter((r) => allowed.has(r.id));
   const consentExcluded = recipients.length - kept.length;

@@ -21,7 +21,7 @@ export function legalVersionSatisfies(
 export const LEGAL_DOC_VERSIONS = {
   terms: '2026-08-15',
   /** Bumped when privacy copy is aligned to live processing (ops/usage/storage/GPS). */
-  privacy: '2026-08-17',
+  privacy: '2026-08-18',
   location: '2026-08-17',
   marketing: '2026-08-17',
   commerce: '2026-08-14',

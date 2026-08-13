@@ -557,7 +557,7 @@
       "s4Title": "4. Processors",
       "s4Body": "To run the service we may process or transfer data via hosting (Render), frontend hosting (GitHub Pages), custom-domain CDN (Cloudflare when used), DB/storage (Supabase), social login (Kakao/Google/Apple), payments (Polar), optional error monitoring (Sentry when configured), email (SMTP or Resend; FormSubmit only if an operator explicitly enables it), and YouTube embeds. Sensitive card data is handled by the payment provider.",
       "s5Title": "5. Your rights",
-      "s5Body": "In Settings > Privacy Rights Center you can view data, withdraw consents, download JSON, and delete your account. For further correction/erasure/restriction requests, contact support.",
+      "s5Body": "In Settings > Privacy Rights Center you can view processing purposes, request access/correction/deletion/processing stop, manage marketing/event/service notification consents, and download your data. Account withdrawal is separate in Settings.",
       "s6Title": "6. Children",
       "s6Body": "MachineFit accounts (social signup) are not available under age 14. At signup we compute full years from date of birth in Korea time on the server and do not create a user if under 14. A checkbox alone is not sufficient. Gym-owner facility member birth dates are an exception for facility management only and do not create a MachineFit account.",
       "s7Title": "7. Security & contact",
@@ -1726,7 +1726,40 @@
       "moreTitle": "More rights",
       "saved": "Consent preferences saved.",
       "hasGps": "Legacy coordinates present (unused; queued for removal)",
-      "regionOnly": "Region only (no GPS)"
+      "regionOnly": "Region only (no GPS)",
+      "admin": {
+        "nav": "Privacy rights requests",
+        "title": "Privacy rights management",
+        "subtitle": "Review access/correction/deletion/processing-stop/consent-withdraw requests. Due in 10 days.",
+        "filterStatus": "Status filter",
+        "allStatuses": "All",
+        "empty": "No requests.",
+        "requester": "Requester",
+        "status": "Status",
+        "dueAt": "Due date",
+        "dueSoon": "Due soon",
+        "overdue": "Overdue",
+        "detail": "Request detail",
+        "payload": "Payload",
+        "resultMessage": "Result",
+        "rejectionReason": "Rejection reason",
+        "dueHint": "Aim to act within 10 days of the request when required.",
+        "saved": "Saved."
+      },
+      "status": {
+        "received": "Received",
+        "reviewing": "Reviewing",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "requestType": {
+        "access": "Access",
+        "correction": "Correction",
+        "deletion": "Deletion",
+        "processing_stop": "Processing stop",
+        "consent_withdraw": "Consent withdraw"
+      },
+      "eventOptIn": "Event / promotion notifications"
     },
     "report": {
       "cta": "Report",

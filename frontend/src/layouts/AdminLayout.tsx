@@ -70,6 +70,11 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     items: [
       { to: ROUTES.ADMIN_MODERATION, labelKey: 'moderation', icon: 'shield' },
       { to: ROUTES.ADMIN_COMPLIANCE, labelKey: 'compliance.nav', icon: 'circleCheck' },
+      {
+        to: ROUTES.ADMIN_PRIVACY_RIGHTS,
+        labelKey: 'compliance.rights.admin.nav',
+        icon: 'shield',
+      },
       { to: ROUTES.ADMIN_PHOTO_BOARD, labelKey: 'photoBoard.nav', icon: 'camera' },
       { to: ROUTES.ADMIN_TEMPLATE_SHARE, labelKey: 'templateShare.nav', icon: 'dumbbell' },
       { to: ROUTES.ADMIN_NOTICES, labelKey: 'notices.nav', icon: 'bell' },

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
+  PUSH_EVENT_KINDS,
   PUSH_MARKETING_KINDS,
   PUSH_SERVICE_KINDS,
   ROLE_CODES,
@@ -698,14 +699,16 @@ export function PushComposePage() {
               <p className="push-hint">
                 {consentCategory === 'marketing'
                   ? t('consentHintMarketing')
-                  : t('consentHintService')}
+                  : consentCategory === 'event'
+                    ? t('consentHintEvent', { defaultValue: t('consentHintMarketing') })
+                    : t('consentHintService')}
               </p>
 
               <div className="push-kind-groups">
                 <div>
                   <p className="push-meta">{t('kindGroupMarketing')}</p>
                   <div className="push-kind-row" role="radiogroup" aria-label={t('kindGroupMarketing')}>
-                    {PUSH_MARKETING_KINDS.map((k) => (
+                    {[...PUSH_MARKETING_KINDS, ...PUSH_EVENT_KINDS].map((k) => (
                       <label
                         key={k}
                         className={`push-kind-pill${kind === k ? ' is-selected' : ''}`}
@@ -765,7 +768,11 @@ export function PushComposePage() {
                         category:
                           previewQuery.data.consentCategory === 'marketing'
                             ? t('consentLabelMarketing')
-                            : t('consentLabelService'),
+                            : previewQuery.data.consentCategory === 'event'
+                              ? t('consentLabelEvent', {
+                                  defaultValue: t('consentLabelMarketing'),
+                                })
+                              : t('consentLabelService'),
                       })}
                     </li>
                     <li>

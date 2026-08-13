@@ -37,12 +37,16 @@ export interface User {
   activeGymId?: string;
   /** free | premium — gym/member limits. */
   subscriptionPlan?: import('../constants/subscription.js').SubscriptionPlan;
-  /** Opt-in for marketing / event push campaigns. */
+  /** Opt-in for general marketing push campaigns. */
   marketingOptIn?: boolean;
+  /** Opt-in for event / promotion push campaigns (independent of marketing). */
+  eventOptIn?: boolean;
   /** Opt-in for storing/using precise GPS location. */
   locationOptIn?: boolean;
   /** Opt-in for service (non-marketing) push notifications. */
   pushServiceOptIn?: boolean;
+  /** Optional personal-data processing suspended via rights request. */
+  privacyProcessingSuspended?: boolean;
   /** Accepted legal document versions (null/undefined = never accepted). */
   termsVersion?: string | null;
   privacyVersion?: string | null;

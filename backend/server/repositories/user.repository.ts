@@ -64,8 +64,10 @@ interface UserRow {
   avatar_url: string | null;
   subscription_plan: string | null;
   marketing_opt_in: boolean | null;
+  event_opt_in?: boolean | null;
   location_opt_in: boolean | null;
   push_service_opt_in: boolean | null;
+  privacy_processing_suspended_at?: string | null;
   terms_version: string | null;
   privacy_version: string | null;
   location_version: string | null;
@@ -109,8 +111,10 @@ function mapUser(row: UserRow): User {
     avatarUrl: row.avatar_url ?? undefined,
     subscriptionPlan: (row.subscription_plan === 'premium' ? 'premium' : 'free') as SubscriptionPlan,
     marketingOptIn: Boolean(row.marketing_opt_in),
+    eventOptIn: Boolean(row.event_opt_in ?? row.marketing_opt_in),
     locationOptIn: Boolean(row.location_opt_in),
     pushServiceOptIn: row.push_service_opt_in !== false,
+    privacyProcessingSuspended: Boolean(row.privacy_processing_suspended_at),
     termsVersion: row.terms_version ?? null,
     privacyVersion: row.privacy_version ?? null,
     locationVersion: row.location_version ?? null,
@@ -349,8 +353,11 @@ export const userRepository = {
              display_name = '탈퇴회원',
              avatar_url = NULL,
              marketing_opt_in = FALSE,
+             event_opt_in = FALSE,
              location_opt_in = FALSE,
              push_service_opt_in = FALSE,
+             privacy_processing_suspended_at = NULL,
+             privacy_processing_suspend_note = NULL,
              gender = NULL,
              height_cm = NULL,
              weight_kg = NULL,
@@ -407,7 +414,22 @@ export const userRepository = {
       `SELECT id::text AS id FROM users
        WHERE id = ANY($1::uuid[])
          AND is_active = TRUE
-         AND marketing_opt_in = TRUE`,
+         AND marketing_opt_in = TRUE
+         AND privacy_processing_suspended_at IS NULL`,
+      [userIds]
+    );
+    return new Set(result.rows.map((r) => r.id));
+  },
+
+  async listEventOptInUserIds(userIds: string[]): Promise<Set<string>> {
+    const pool = getPool();
+    if (!pool || userIds.length === 0) return new Set();
+    const result = await pool.query<{ id: string }>(
+      `SELECT id::text AS id FROM users
+       WHERE id = ANY($1::uuid[])
+         AND is_active = TRUE
+         AND COALESCE(event_opt_in, marketing_opt_in, FALSE) = TRUE
+         AND privacy_processing_suspended_at IS NULL`,
       [userIds]
     );
     return new Set(result.rows.map((r) => r.id));
@@ -429,13 +451,24 @@ export const userRepository = {
 
   async userHasPushConsent(
     userId: string,
-    category: 'marketing' | 'service'
+    category: 'marketing' | 'event' | 'service'
   ): Promise<boolean> {
     const pool = getPool();
     if (!pool) return false;
     if (category === 'marketing') {
       const { rows } = await pool.query<{ ok: boolean }>(
-        `SELECT (is_active = TRUE AND marketing_opt_in = TRUE) AS ok
+        `SELECT (is_active = TRUE AND marketing_opt_in = TRUE
+           AND privacy_processing_suspended_at IS NULL) AS ok
+         FROM users WHERE id = $1`,
+        [userId]
+      );
+      return Boolean(rows[0]?.ok);
+    }
+    if (category === 'event') {
+      const { rows } = await pool.query<{ ok: boolean }>(
+        `SELECT (is_active = TRUE
+           AND COALESCE(event_opt_in, marketing_opt_in, FALSE) = TRUE
+           AND privacy_processing_suspended_at IS NULL) AS ok
          FROM users WHERE id = $1`,
         [userId]
       );

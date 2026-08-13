@@ -558,7 +558,7 @@
       "s4Title": "4. Processors",
       "s4Body": "为提供服务，个人数据可能经以下处理或出境：托管（Render）、前端部署（GitHub Pages）、自定义域名CDN（使用时为Cloudflare）、数据库/存储（Supabase）、社交登录（Kakao/Google/Apple）、支付（Polar）、错误监控（如配置Sentry）、邮件（SMTP或Resend；FormSubmit仅在运营者明确开启时）、YouTube嵌入。敏感卡数据由支付方直接处理。",
       "s5Title": "5. Your rights",
-      "s5Body": "可在设置 > 个人信息权利中心查看、撤回同意、下载 JSON 并注销。其他更正/删除请求请联系客服。",
+      "s5Body": "In Settings > Privacy Rights Center you can view processing purposes, request access/correction/deletion/processing stop, manage marketing/event/service notification consents, and download your data. Account withdrawal is separate in Settings.",
       "s6Title": "6. Children",
       "s6Body": "MachineFit 账号（社交注册）不接受未满14周岁。注册时服务器按韩国时间根据出生日期计算周岁，未满14岁则不创建会员记录。仅勾选同意不足以完成注册。店主录入的场馆会员出生日期仅用于场馆管理，不能据此创建 MachineFit 账号。",
       "s7Title": "7. 安全措施与联系",
@@ -1727,7 +1727,40 @@
       "moreTitle": "More rights",
       "saved": "Consent preferences saved.",
       "hasGps": "存在遗留坐标（未使用·待清除）",
-      "regionOnly": "仅保存地区（无GPS）"
+      "regionOnly": "仅保存地区（无GPS）",
+      "admin": {
+        "nav": "Privacy rights requests",
+        "title": "Privacy rights management",
+        "subtitle": "Review access/correction/deletion/processing-stop/consent-withdraw requests. Due in 10 days.",
+        "filterStatus": "Status filter",
+        "allStatuses": "All",
+        "empty": "No requests.",
+        "requester": "Requester",
+        "status": "Status",
+        "dueAt": "Due date",
+        "dueSoon": "Due soon",
+        "overdue": "Overdue",
+        "detail": "Request detail",
+        "payload": "Payload",
+        "resultMessage": "Result",
+        "rejectionReason": "Rejection reason",
+        "dueHint": "Aim to act within 10 days of the request when required.",
+        "saved": "Saved."
+      },
+      "status": {
+        "received": "Received",
+        "reviewing": "Reviewing",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "requestType": {
+        "access": "Access",
+        "correction": "Correction",
+        "deletion": "Deletion",
+        "processing_stop": "Processing stop",
+        "consent_withdraw": "Consent withdraw"
+      },
+      "eventOptIn": "Event / promotion notifications"
     },
     "report": {
       "cta": "Report",

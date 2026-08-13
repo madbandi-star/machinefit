@@ -166,6 +166,7 @@ export const complianceRepository = {
     userId: string,
     flags: {
       marketingOptIn?: boolean;
+      eventOptIn?: boolean;
       locationOptIn?: boolean;
       pushServiceOptIn?: boolean;
     }
@@ -177,6 +178,10 @@ export const complianceRepository = {
     if (flags.marketingOptIn !== undefined) {
       params.push(flags.marketingOptIn);
       sets.push(`marketing_opt_in = $${params.length}`);
+    }
+    if (flags.eventOptIn !== undefined) {
+      params.push(flags.eventOptIn);
+      sets.push(`event_opt_in = $${params.length}`);
     }
     if (flags.locationOptIn !== undefined) {
       params.push(flags.locationOptIn);
@@ -195,8 +200,8 @@ export const complianceRepository = {
     if (!pool) return null;
     const userResult = await pool.query(
       `SELECT id, email, display_name, gender, height_cm, weight_kg, age, workout_goal,
-              experience_level, home_gym_name, marketing_opt_in, location_opt_in,
-              push_service_opt_in, created_at
+              experience_level, home_gym_name, marketing_opt_in, event_opt_in, location_opt_in,
+              push_service_opt_in, privacy_processing_suspended_at, created_at
        FROM users WHERE id = $1`,
       [userId]
     );
@@ -230,8 +235,10 @@ export const complianceRepository = {
         experienceLevel: u.experience_level ?? null,
         homeGymName: u.home_gym_name ?? null,
         marketingOptIn: Boolean(u.marketing_opt_in),
+        eventOptIn: Boolean(u.event_opt_in ?? u.marketing_opt_in),
         locationOptIn: Boolean(u.location_opt_in),
         pushServiceOptIn: u.push_service_opt_in !== false,
+        privacyProcessingSuspended: Boolean(u.privacy_processing_suspended_at),
         createdAt: String(u.created_at),
       },
       location: loc
@@ -680,6 +687,7 @@ export const complianceRepository = {
         locationOptInUsers: 0,
         activeLegalDocuments: 0,
         recentLoginFailures: 0,
+        pendingPrivacyRightsRequests: 0,
       };
     }
     const q = async (sql: string) => {
@@ -706,6 +714,10 @@ export const complianceRepository = {
         `SELECT COUNT(*)::text AS count FROM auth_login_events
          WHERE success = FALSE AND created_at > NOW() - INTERVAL '24 hours'`
       ),
+      pendingPrivacyRightsRequests: await q(
+        `SELECT COUNT(*)::text AS count FROM privacy_rights_requests
+         WHERE status IN ('received','reviewing')`
+      ).catch(() => 0),
     };
   },
 

@@ -6,14 +6,15 @@ import {
   getPushConsentCategoryForNotificationType,
 } from './push-consent.js';
 
-assert.equal(getPushConsentCategoryForKind('event'), 'marketing');
+assert.equal(getPushConsentCategoryForKind('event'), 'event');
 assert.equal(getPushConsentCategoryForKind('general'), 'marketing');
 assert.equal(getPushConsentCategoryForKind('notice'), 'service');
 assert.equal(getPushConsentCategoryForKind('workout'), 'service');
 assert.equal(getPushConsentCategoryForKind('schedule'), 'service');
 assert.equal(getPushConsentCategoryForKind('trade'), 'service');
 
-assert.equal(getPushConsentCategoryForNotificationType('push_event'), 'marketing');
+assert.equal(getPushConsentCategoryForNotificationType('push_event'), 'event');
+assert.equal(getPushConsentCategoryForNotificationType('push_general'), 'marketing');
 assert.equal(getPushConsentCategoryForNotificationType('push_schedule'), 'service');
 assert.equal(getPushConsentCategoryForNotificationType('friend_request'), null);
 

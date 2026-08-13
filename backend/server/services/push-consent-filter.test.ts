@@ -6,7 +6,7 @@ import {
 
 /** Mirrors server filter rules used in pushNotificationService.send */
 
-type Category = 'marketing' | 'service';
+type Category = 'marketing' | 'event' | 'service';
 
 function filterByConsent(
   recipients: string[],
@@ -21,10 +21,10 @@ function filterByConsent(
   };
 }
 
-// Event push — marketing consent required
+// Event push — event consent required (independent of marketing)
 {
   const category = getPushConsentCategoryForKind('event');
-  assert.equal(category, 'marketing');
+  assert.equal(category, 'event');
   const r = filterByConsent(
     ['u1', 'u2', 'u3'],
     new Set(['u1']),
