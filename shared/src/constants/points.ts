@@ -18,6 +18,7 @@ export const POINT_ACTION_CODES = [
   'community_post',
   'community_comment',
   'community_like',
+  'power_box_claim',
 ] as const;
 
 export type PointActionCode = (typeof POINT_ACTION_CODES)[number];

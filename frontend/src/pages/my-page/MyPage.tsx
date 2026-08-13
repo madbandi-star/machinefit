@@ -12,6 +12,7 @@ import { WorkoutMonthCalendar } from '@/components/my-page/WorkoutMonthCalendar/
 import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
+import { PowerBox } from '@/components/my-page/PowerBox/PowerBox';
 import { locationApi, userApi, authApi } from '@/api';
 import { pointsApi } from '@/api/points.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -187,13 +188,14 @@ export function MyPage() {
               <dt>{t('myPage.homeGym')}</dt>
               <dd>{homeGymDisplay}</dd>
             </div>
-            <div className="profile-card__row profile-card__row--full">
+            <div className="profile-card__row profile-card__row--full profile-card__row--power">
               <dt>{t('points.myPoints')}</dt>
-              <dd>
-                <Link to={ROUTES.POINTS} className="profile-card__email-value">
+              <dd className="profile-card__power-dd">
+                <Link to={ROUTES.POINTS} className="profile-card__email-value profile-card__power-link">
                   {(pointsQuery.data?.balance ?? 0).toLocaleString()}
                   {t('points.unit')}
                 </Link>
+                <PowerBox />
               </dd>
             </div>
           </dl>

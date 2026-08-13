@@ -2022,7 +2022,15 @@
     "historyTitle": "Power history",
     "empty": "No Power history yet.",
     "earnedToast": "+{{points}}Power earned!",
-    "unit": "Power"
+    "unit": "Power",
+    "powerBox": {
+      "openLabel": "Open Power Box",
+      "readyHint": "Once today",
+      "alreadyClaimed": "Today's POWER is already claimed.",
+      "nextHoursMinutes": "{{hours}}h {{minutes}}m until next POWER",
+      "nextMinutes": "{{minutes}}m until next POWER",
+      "claimFailed": "Couldn't open Power Box. Try again shortly."
+    }
   },
   "qa": {
     "title": "Q&A",

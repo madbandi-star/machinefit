@@ -1,38 +1,43 @@
 {
-  "title": "Template share creator YouTube / Instagram fields",
-  "summary": "My Templates share dialog collects youtubeUrl, youtubeChannelName, and instagramId. Values persist on template_share_posts and show on hub rows + detail posts.",
-  "git": { "branch": "main", "commit": "4876e208" },
+  "title": "My Page Power Box daily 1?100 claim",
+  "summary": "Adds a gift Power Box beside Hellchang Power on My Page. Server awards random 1?100 Power once per Seoul day via points ledger with idempotency + unique daily index.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "database/migrations/128_template_share_creator_links.sql",
-    "shared/src/types/template-share.types.ts",
-    "shared/src/validators/template-share.schema.ts",
-    "backend/server/repositories/template-share.repository.ts",
+    "database/migrations/129_power_box_daily_claim.sql",
+    "shared/src/constants/points.ts",
+    "shared/src/types/points.types.ts",
+    "backend/server/services/points.service.ts",
+    "backend/server/repositories/points.repository.ts",
+    "backend/server/controllers/points.controller.ts",
+    "backend/server/routes/points.routes.ts",
     "backend/server/services/template-share.service.ts",
-    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
-    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
-    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
-    "frontend/src/styles/template-share.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/components/my-page/PowerBox/PowerBox.tsx",
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/api/points.api.ts",
+    "frontend/src/constants/query-keys.ts",
+    "frontend/src/styles/components.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "My Templates ? Share: three optional social fields",
-    "Publish then open hub detail: creator links section with YT URL/channel and IG handle",
-    "Hub list shows channel/@id when present",
-    "Update share prefills existing social fields"
+    "My Page: Power Box ?? right of Hellchang Power",
+    "First click awards 1?100 and balance increases",
+    "Same-day reclick / double-click / refresh: no second award",
+    "Claimed state shows already-claimed + countdown",
+    "Existing Power features unchanged"
   ],
   "fastChecks": [
-    "rg -n \"youtubeUrl|youtubeChannelName|instagramId|youtube_url\" shared/src backend/server/repositories/template-share.repository.ts frontend/src/pages/template-share",
-    "Test-Path database/migrations/128_template_share_creator_links.sql"
+    "rg -n \"power_box_claim|claimPowerBox|PowerBox\" backend/server frontend/src shared/src",
+    "Test-Path database/migrations/129_power_box_daily_claim.sql"
   ],
   "productionChecks": [
-    "Apply migration 128 on Render DB",
+    "Apply migration 129 on Render DB",
     "Redeploy Render BE + Pages FE",
-    "Share template with social fields and verify detail page"
+    "Claim once, verify ledger EARN power_box_claim"
   ],
-  "deploy": { "expected": "Pages FE + Render BE + migration 128" },
-  "asIs": "Share form has no creator social fields; posts cannot show them",
-  "toBe": "Optional YouTube URL/channel + Instagram ID on share; visible on hub/detail"
+  "deploy": { "expected": "Pages FE + Render BE + migration 129" },
+  "asIs": "No Power Box on My Page",
+  "toBe": "Daily server-side 1?100 Power gift beside Hellchang Power"
 }

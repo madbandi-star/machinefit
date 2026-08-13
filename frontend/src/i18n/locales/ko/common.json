@@ -2016,7 +2016,15 @@
     "historyTitle": "헬창력 내역",
     "empty": "아직 헬창력 내역이 없어요.",
     "earnedToast": "+{{points}}Power 적립!",
-    "unit": "Power"
+    "unit": "Power",
+    "powerBox": {
+      "openLabel": "파워박스 열기",
+      "readyHint": "오늘 1회",
+      "alreadyClaimed": "오늘의 POWER는 이미 획득했습니다.",
+      "nextHoursMinutes": "다음 POWER까지 {{hours}}시간 {{minutes}}분",
+      "nextMinutes": "다음 POWER까지 {{minutes}}분",
+      "claimFailed": "파워박스를 열지 못했어요. 잠시 후 다시 시도해 주세요."
+    }
   },
   "qa": {
     "title": "Q&A",

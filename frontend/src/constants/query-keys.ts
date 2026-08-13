@@ -9,6 +9,7 @@ export const QUERY_KEYS = {
   me: ['user', 'me'] as const,
   pointsBalance: ['points', 'balance'] as const,
   pointsLedger: (offset = 0) => ['points', 'ledger', offset] as const,
+  pointsPowerBox: ['points', 'power-box'] as const,
   fortuneToday: (date: string, gymId?: string, memberId?: string) =>
     ['fortune', 'today', date, gymId ?? '', memberId ?? ''] as const,
   authProviders: ['auth', 'providers'] as const,

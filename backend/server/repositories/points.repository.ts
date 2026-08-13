@@ -222,6 +222,24 @@ export const pointsRepository = {
     return Number(rows[0]?.c ?? 0);
   },
 
+  async getLastEarnToday(
+    userId: string,
+    actionCode: string
+  ): Promise<PointTransaction | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const { rows } = await pool.query<TxRow>(
+      `SELECT * FROM point_transactions
+       WHERE user_id = $1 AND action_code = $2 AND transaction_type = 'EARN'
+         AND created_at >= date_trunc('day', NOW() AT TIME ZONE 'Asia/Seoul')
+             AT TIME ZONE 'Asia/Seoul'
+       ORDER BY created_at DESC
+       LIMIT 1`,
+      [userId, actionCode]
+    );
+    return rows[0] ? mapTx(rows[0]) : null;
+  },
+
   async countEarnLifetime(userId: string, actionCode: string): Promise<number> {
     const pool = getPool();
     if (!pool) return 0;

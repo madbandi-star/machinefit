@@ -5,6 +5,8 @@ import type {
   PointPolicy,
   PointPolicyUpdateInput,
   PointTransaction,
+  PowerBoxClaimResult,
+  PowerBoxStatus,
   UserPointsSummary,
 } from '@machinefit/shared';
 import type { ApiResponse } from '@machinefit/shared';
@@ -22,6 +24,9 @@ export const pointsApi = {
     referenceType?: string;
     referenceId?: string;
   }) => apiClient.post<ApiResponse<PointAwardResult>>('/points/track', body),
+  getPowerBox: () => apiClient.get<ApiResponse<PowerBoxStatus>>('/points/power-box'),
+  claimPowerBox: () =>
+    apiClient.post<ApiResponse<PowerBoxClaimResult>>('/points/power-box/claim'),
 };
 
 export const adminPointsApi = {

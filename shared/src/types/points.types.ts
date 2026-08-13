@@ -57,6 +57,25 @@ export interface PointAwardResult {
   transactionId?: string;
 }
 
+/** My Page Power Box daily claim status (Asia/Seoul day). */
+export interface PowerBoxStatus {
+  available: boolean;
+  claimedToday: boolean;
+  rewardDate: string;
+  nextAvailableAt: string;
+  lastRewardPower: number | null;
+}
+
+export interface PowerBoxClaimResult {
+  awarded: boolean;
+  points: number;
+  balance: number;
+  rewardDate: string;
+  nextAvailableAt: string;
+  reason: PointAwardResult['reason'];
+  transactionId?: string;
+}
+
 export interface AdminUserPointsDetail {
   summary: UserPointsSummary;
   recent: PointTransaction[];

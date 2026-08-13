@@ -80,6 +80,8 @@ export const templateShareService = {
       input.instagramId,
       input.youtubeUrl
     );
+
+    const template = await workoutCardRepository.getTemplateForShareCheck(
       userId,
       input.templateId
     );

@@ -46,6 +46,18 @@ export async function trackClientAction(req: Request, res: Response): Promise<vo
   res.json({ success: true, data: result });
 }
 
+export async function getPowerBoxStatus(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const data = await pointsService.getPowerBoxStatus(req.user.userId);
+  res.json({ success: true, data });
+}
+
+export async function claimPowerBox(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
+  const data = await pointsService.claimPowerBox(req.user.userId);
+  res.json({ success: true, data });
+}
+
 export async function adminListPolicies(_req: Request, res: Response): Promise<void> {
   const data = await pointsService.listPolicies();
   res.json({ success: true, data });
