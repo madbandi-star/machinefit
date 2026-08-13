@@ -1,7 +1,7 @@
 {
   "title": "Rollback fortune share DNA layout",
   "summary": "Reverted Helchang fortune share card to the previous Instagram photo-poster version; DNA-centered stack layout rolled back.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "f60c018b" },
   "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
   "testFocus": ["Share card matches pre-DNA Instagram poster design again"],
   "fastChecks": ["rg -n \"drawImageCover|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"],
