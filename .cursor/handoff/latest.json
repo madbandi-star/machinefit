@@ -1,7 +1,7 @@
 {
   "title": "Records menus use gear icons",
   "summary": "Date filter and machine card action menus now open from settings-gear icon buttons instead of 더보기 text.",
-  "git": { "branch": "main", "commit": "b4e54df8" },
+  "git": { "branch": "main", "commit": "ef7c6703" },
   "changedFiles": [
     "frontend/src/components/icons/Icon.tsx",
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",

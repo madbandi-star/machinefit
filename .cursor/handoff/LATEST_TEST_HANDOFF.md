@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: `b4e54df8` (+ follow-up CSS sync in HistoryDayActionsSheet if present)
+- commit: `ef7c6703`
 
 ## Test focus
 1. 기록 > 일자조회 오른쪽: 톱니바퀴 아이콘 · 탭 시 날짜 관리 시트
