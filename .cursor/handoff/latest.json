@@ -1,7 +1,7 @@
 {
   "title": "TODAY'S WORKOUT share: random theme every share",
   "summary": "Each share draw uses a shuffle bag over 10 mock themes so consecutive shares get different looks until the pack cycles.",
-  "git": { "branch": "cursor/today-workout-share-random-35b3", "commit": "pending" },
+  "git": { "branch": "cursor/today-workout-share-random-35b3", "commit": "a578c9bb" },
   "changedFiles": [
     "frontend/src/utils/workoutCompleteShareThemes.ts",
     "frontend/src/utils/workoutCompleteShareCard.ts"
