@@ -1,32 +1,24 @@
-# Test handoff ? Fortune share card
+ï»¿# Test handoff â€” TODAY'S WORKOUT complete report
 
 ## Summary
-Homepage ¡¸¿À´ÃÀÇ ÇïÃ¢¿î¼¼¡¹ and `/fortune/today` now have **°øÀ¯ Ä«µå ¸¸µé±â**, same Web Share / PNG download flow as ¿îµ¿¼ºÇâ (Lifter DNA), with fortune keyword, stars, scores, and one-liner.
+Home **ì˜¤ëŠ˜ ìš´ë™ ì¢…ë£Œ** opens confirm, ends the session timer, then shows **TODAY'S WORKOUT** (summary, POWER from ledger, MVP, new record or progress, one-liner, share). Emits `WORKOUT_COMPLETED`. Volume uses `computePerformedTotalWeightKg`. No new POWER grant on end (existing idempotent awards).
 
 ## Git
 - Branch: `main`
-- Commit: `3257d94e`
-
-## Changed files
-- `frontend/src/utils/fortuneShareCard.ts`
-- `frontend/src/utils/shareFortuneCard.ts`
-- `frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx`
-- `frontend/src/components/fortune/FortuneDashboard.tsx`
-- `frontend/src/pages/fortune/FortuneDetailPage.tsx`
-- `frontend/src/styles/fortune.css`, `fortune-reading.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/fortune.json`
+- Commit: pending
 
 ## Test focus
-1. Home: expand fortune ¡æ tap °øÀ¯ Ä«µå ¸¸µé±â ¡æ share sheet or download PNG
-2. My Page ¡æ ¿À´ÃÀÇ ÇïÃ¢¿î¼¼ ¡æ same button under hero
-3. Card shows keyword, theme, stars, helchang/PR/recovery scores, one-liner
+1. Timer running â†’ ì˜¤ëŠ˜ ìš´ë™ ì¢…ë£Œ â†’ cancel / confirm
+2. Numbers match today's logs + timer duration
+3. Share card + PC download fallback
+4. Rapid confirm clicks â†’ single in-flight complete
 
 ## Fast checks
 ```powershell
-Test-Path frontend/src/utils/fortuneShareCard.ts
-rg -n "shareFortuneCard" frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx frontend/src/components/fortune/FortuneDashboard.tsx
+Test-Path frontend/src/components/home/WorkoutCompleteReport/WorkoutCompleteHost.tsx
+rg -n "WORKOUT_COMPLETED" shared/src/constants/workout-events.ts frontend/src/events/workoutEvents.ts
 ```
 
-## As-is ¡æ To-be
-- **As-is:** No fortune share card
-- **To-be:** DNA-equivalent share card with today's fortune content
+## As-is â†’ To-be
+- **As-is:** End only cleared timer
+- **To-be:** Finale report + share + extensible event

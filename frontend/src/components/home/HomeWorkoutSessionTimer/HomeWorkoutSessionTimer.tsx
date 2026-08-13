@@ -7,10 +7,11 @@ import {
   getWorkoutSessionElapsedMs,
   useWorkoutSessionTimerStore,
 } from '@/store/workoutSessionTimer.store';
+import { useWorkoutCompleteStore } from '@/store/workoutComplete.store';
 
 /**
  * Home workout session timer: start/pause/resume/end + iPhone-style LAP splits.
- * Elapsed time is timestamp-based; pause gaps are excluded. Persists across refresh/navigation.
+ * End opens confirm → TODAY'S WORKOUT report (see WorkoutCompleteHost).
  */
 export function HomeWorkoutSessionTimer() {
   const { t } = useTranslation('common');
@@ -24,7 +25,8 @@ export function HomeWorkoutSessionTimer() {
   const pause = useWorkoutSessionTimerStore((s) => s.pause);
   const resume = useWorkoutSessionTimerStore((s) => s.resume);
   const lap = useWorkoutSessionTimerStore((s) => s.lap);
-  const end = useWorkoutSessionTimerStore((s) => s.end);
+  const openConfirm = useWorkoutCompleteStore((s) => s.openConfirm);
+  const completing = useWorkoutCompleteStore((s) => s.completing);
 
   const [nowMs, setNowMs] = useState(() => Date.now());
 
@@ -86,10 +88,7 @@ export function HomeWorkoutSessionTimer() {
   };
 
   return (
-    <section
-      className="home-session-timer"
-      aria-label={t('pages.home.sessionTimerTitle')}
-    >
+    <section className="home-session-timer" aria-label={t('pages.home.sessionTimerTitle')}>
       <div className="home-session-timer__row">
         <div className="home-session-timer__display" aria-live="polite" aria-atomic="true">
           <div className="home-session-timer__label-line">
@@ -136,11 +135,8 @@ export function HomeWorkoutSessionTimer() {
           <button
             type="button"
             className="btn btn--secondary home-session-timer__btn"
-            disabled={isIdle}
-            onClick={() => {
-              end();
-              void import('@/utils/usageTelemetry').then(({ trackUsage }) => trackUsage('timer_end'));
-            }}
+            disabled={isIdle || completing}
+            onClick={() => openConfirm()}
           >
             {t('pages.home.sessionTimerEnd')}
           </button>
