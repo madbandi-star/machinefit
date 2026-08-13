@@ -1,24 +1,24 @@
-ï»¿# Test handoff â€” Fortune share card redesign
+# Test handoff ? Fortune share card redesign
 
 ## Summary
-ì˜¤ëŠ˜ì˜ í—¬ì°½ìš´ì„¸ ê³µìœ  ì¹´ë“œë¥¼ ì²¨ë¶€ ì‹œì•ˆí˜• ë‹¤í¬ ì§ í¬ìŠ¤í„°ë¡œ ì¬ë””ìì¸ (ìŠ¤í”Œë¦¿ í—¤ë“œë¼ì¸, ë„¤ì˜¨ ì ìˆ˜ ì¹´ë“œ 3ì—´, ì¸ìš© ë°•ìŠ¤, í•´ì‹œíƒœê·¸ í•„).
+¿À´ÃÀÇ ÇïÃ¢¿î¼¼ °øÀ¯ Ä«µå¸¦ Ã·ºÎ ½Ã¾ÈÇü ´ÙÅ© Áü Æ÷½ºÅÍ·Î ÀçµğÀÚÀÎ (½ºÇÃ¸´ Çìµå¶óÀÎ, ³×¿Â Á¡¼ö Ä«µå 3¿­, ÀÎ¿ë ¹Ú½º, ÇØ½ÃÅÂ±× ÇÊ).
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `716d893d`
 
 ## Changed files
 - `frontend/src/utils/fortuneShareCard.ts`
 
 ## Test focus
-1. í™ˆ/ìƒì„¸ â†’ ê³µìœ  ì¹´ë“œ ë§Œë“¤ê¸°
-2. í‚¤ì›Œë“œ íƒ€ì´í‹€Â·ë³„Â·í—¬ì°½/PR/íšŒë³µ ì¹´ë“œÂ·í•œë§ˆë””Â·í‘¸í„° í™•ì¸
+1. È¨/»ó¼¼ ¡æ °øÀ¯ Ä«µå ¸¸µé±â
+2. Å°¿öµå Å¸ÀÌÆ²¡¤º°¡¤ÇïÃ¢/PR/È¸º¹ Ä«µå¡¤ÇÑ¸¶µğ¡¤ÇªÅÍ È®ÀÎ
 
 ## Fast checks
 ```powershell
 rg -n "drawGymAtmosphere|drawMetricCard" frontend/src/utils/fortuneShareCard.ts
 ```
 
-## As-is â†’ To-be
-- **As-is:** ë°‹ë°‹í•œ DNAí˜• ì¹´ë“œ
-- **To-be:** ì‹œì•ˆê³¼ ê°™ì€ ì‹œë„¤ë§ˆí‹± ê³µìœ  ì¹´ë“œ
+## As-is ¡æ To-be
+- **As-is:** ¹Ô¹ÔÇÑ DNAÇü Ä«µå
+- **To-be:** ½Ã¾È°ú °°Àº ½Ã³×¸¶Æ½ °øÀ¯ Ä«µå
