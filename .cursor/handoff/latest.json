@@ -1,22 +1,18 @@
 {
-  "title": "Auth landing language segmented switch",
-  "summary": "Replace ugly landing language dropdown with a 한국어|English segmented control; header/settings pickers unchanged.",
+  "title": "Remove header language selector",
+  "summary": "Remove compact LanguageSelector from Header brand row next to MachineFit logo. Settings and auth landing language pickers remain.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx",
-    "frontend/src/styles/components.css",
-    "frontend/src/styles/auth.css"
-  ],
+  "changedFiles": ["frontend/src/components/layout/Header/Header.tsx"],
   "testFocus": [
-    "Landing: segmented 한국어|English",
-    "Active white pill; tap switches locale",
-    "Header picker still dropdown"
+    "Home header: no KO/EN by logo",
+    "Settings still has language picker",
+    "Auth landing segmented control kept"
   ],
   "fastChecks": [
-    "rg -n \"language-picker__seg|language-picker--landing\" frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx frontend/src/styles/components.css"
+    "rg -n \"LanguageSelector\" frontend/src/components/layout/Header/Header.tsx"
   ],
-  "productionChecks": ["Pages guest / language control"],
+  "productionChecks": ["Pages home header"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Landing dropdown with chevron",
-  "toBe": "Landing segmented toggle"
+  "asIs": "Language picker beside MachineFit logo in header",
+  "toBe": "No language picker in header"
 }

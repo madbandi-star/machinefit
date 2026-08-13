@@ -1,18 +1,20 @@
-﻿# Test handoff — Auth landing language segmented switch
+﻿# Test handoff — Remove header language selector
 
 ## Summary
-로그인/게스트 랜딩 언어 선택을 드롭다운 → 한국어|English 세그먼트 토글로 교체. 헤더/설정 compact·default는 기존 유지.
+앱 헤더(홈 등 최상단 MachineFit 로고 옆) 언어 선택 compact 제거. 설정·로그인 랜딩 언어 선택은 유지.
 
 ## Test focus
-1. `/`·`/login` 우상단: 세그먼트 2버튼, 활성은 흰 필
-2. 탭 시 즉시 언어 전환
-3. 헤더 언어 피커는 기존 드롭다운 유지
+1. 로그인 홈: 로고 옆에 KO/EN 없음
+2. 설정에서 언어 변경 가능
+3. 게스트 로그인 랜딩 세그먼트는 유지
 
 ## Fast checks
 ```
-rg -n "language-picker__seg|language-picker--landing" frontend/src/components/settings/LanguageSelector/LanguageSelector.tsx frontend/src/styles/components.css
+rg -n "LanguageSelector" frontend/src/components/layout/Header/Header.tsx
+# expect: no matches
+rg -n "LanguageSelector" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/auth/AuthLandingScreen
 ```
 
 ## As-is → To-be
-- as-is: 드롭다운 + chevron (한국어 한 줄)
-- to-be: 세그먼트 토글 한국어 | English
+- as-is: 헤더 로고 옆 compact 언어 피커
+- to-be: 헤더에서 제거
