@@ -1006,15 +1006,15 @@ body:has(.records-page--history) .layout__content {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2rem;
-  padding: 0.28rem 0.55rem;
-  border-radius: 999px;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border-radius: var(--radius-md);
   border: 1px solid var(--glass-border);
   background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
-  color: var(--color-text);
+  color: var(--color-text-muted);
   font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1;
   white-space: nowrap;
   cursor: pointer;
@@ -1023,7 +1023,7 @@ body:has(.records-page--history) .layout__content {
 }
 
 .history-record-card__more-trigger:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
@@ -1229,26 +1229,32 @@ body:has(.records-page--history) .layout__content {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2rem;
-  padding: 0.3rem 0.65rem;
-  border: 1px solid var(--glass-border);
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-bg-secondary) 80%, transparent);
-  color: var(--color-text);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
+  background: color-mix(in srgb, var(--glass-bg) 80%, transparent);
+  color: var(--color-text-muted);
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .records-list__day-menu-trigger:hover {
-    border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
-    color: var(--color-primary);
-  }
+.records-list__day-menu-trigger:hover,
+.records-list__day-menu-trigger:focus-visible,
+.records-list__day-menu-trigger[aria-expanded='true'] {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  outline: none;
 }
 
 .records-list__day-menu-panel {
