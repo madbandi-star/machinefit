@@ -1,18 +1,22 @@
 {
-  "title": "Redesign Helchang fortune share card",
-  "summary": "Fortune share PNG restyled to cinematic dark-gym poster: split headline, neon metric cards, quote panel, branded footer pills ? matching attached mock.",
-  "git": { "branch": "main", "commit": "716d893d" },
-  "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
+  "title": "Premium Instagram fortune share card",
+  "summary": "Helchang fortune share card rebuilt with cinematic gym photo background, glass neon score cards, and refined poster typography for Instagram-ready sharing.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/utils/fortuneShareCard.ts",
+    "frontend/public/assets/share/fortune-share-bg.png"
+  ],
   "testFocus": [
-    "Home/detail ?? ?? ??? ? PNG looks like dark poster mock",
-    "Scores cards glow yellow/orange/cyan",
-    "Hashtag pills + MachineFit footer"
+    "Generate share from home/detail fortune",
+    "Background photo + readable text overlays",
+    "Score cards and quote look premium on mobile"
   ],
   "fastChecks": [
-    "rg -n \"drawGymAtmosphere|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"
+    "Test-Path frontend/public/assets/share/fortune-share-bg.png",
+    "rg -n \"fortune-share-bg|drawImageCover\" frontend/src/utils/fortuneShareCard.ts"
   ],
-  "productionChecks": ["Pages deploy", "Generate share from /fortune/today"],
+  "productionChecks": ["Pages deploy", "Share PNG on Instagram Stories crop"],
   "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "Plain DNA-style fortune share card",
-  "toBe": "Cinematic Helchang fortune share card matching design mock"
+  "asIs": "Ugly procedural canvas share card",
+  "toBe": "Photo-backed Instagram-ready fortune poster"
 }
