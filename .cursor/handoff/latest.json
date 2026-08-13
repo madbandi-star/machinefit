@@ -1,23 +1,28 @@
 {
-  "title": "Scrub gym_members.email values",
-  "summary": "Cleared 16 non-empty gym_members.email rows to NULL. Column kept. Migration 131 documents the scrub for other environments.",
-  "git": { "branch": "main", "commit": "1be4219f" },
+  "title": "Fortune share card on home + detail",
+  "summary": "Add Create share card (same flow as Lifter DNA) to homepage Helchang fortune and /fortune/today, exporting today's fortune PNG.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "database/migrations/131_scrub_gym_members_email.sql"
+    "frontend/src/utils/fortuneShareCard.ts",
+    "frontend/src/utils/shareFortuneCard.ts",
+    "frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx",
+    "frontend/src/components/fortune/FortuneDashboard.tsx",
+    "frontend/src/pages/fortune/FortuneDetailPage.tsx",
+    "frontend/src/styles/fortune.css",
+    "frontend/src/styles/fortune-reading.css",
+    "frontend/src/i18n/locales/*/fortune.json"
   ],
   "testFocus": [
-    "gym_members.email all NULL after migration",
-    "Member CRUD still works without email"
+    "Home fortune expanded: share button builds/shares PNG with keyword, scores, oneLiner",
+    "My Page ? ??? ????: share button same content",
+    "Fallback download when Web Share unavailable"
   ],
   "fastChecks": [
-    "Test-Path database/migrations/131_scrub_gym_members_email.sql",
-    "rg -n \"SET email = NULL\" database/migrations/131_scrub_gym_members_email.sql"
+    "Test-Path frontend/src/utils/fortuneShareCard.ts",
+    "rg -n \"shareFortuneCard\" frontend/src/components/home/HomeFortuneCard/HomeFortuneCard.tsx frontend/src/components/fortune/FortuneDashboard.tsx"
   ],
-  "productionChecks": [
-    "Confirm gym_members.email count = 0 (already applied on connected DB)",
-    "Apply migration 131 on any other env that still has values"
-  ],
-  "deploy": { "expected": "migration 131 on Render if not yet applied via direct scrub" },
-  "asIs": "16 gym_members rows had email values",
-  "toBe": "gym_members.email all NULL; column retained"
+  "productionChecks": ["Pages deploy after push", "Smoke share on machine-fit.com"],
+  "deploy": { "expected": "GitHub Pages FE" },
+  "asIs": "No fortune share card",
+  "toBe": "Share card on home fortune + fortune detail like Lifter DNA"
 }

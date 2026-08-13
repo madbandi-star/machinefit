@@ -107,6 +107,14 @@
   animation: fr-hero-in 0.65s ease both;
 }
 
+.fr-share-row {
+  margin: 0.15rem 0 0.35rem;
+}
+
+.fr-share-btn {
+  width: 100%;
+}
+
 .fr-hero__glow {
   pointer-events: none;
   position: absolute;

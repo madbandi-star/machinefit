@@ -6,12 +6,16 @@ import { fortuneApi } from '@/api/fortune.api';
 import {
   keywordEmoji,
   keywordTone,
+  parseFortuneDateParts,
 } from '@/components/fortune/fortuneVisuals';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useAuthStore } from '@/store/auth.store';
+import { useUIStore } from '@/store/ui.store';
 import { getTodayDateKey } from '@/utils/historyDate';
+import { shareFortuneCard } from '@/utils/shareFortuneCard';
 import { isAllGymsId } from '@machinefit/shared';
 
 const EXPANDED_KEY = 'machinefit.homeFortuneExpanded';
@@ -121,12 +125,15 @@ function FortuneCardShell({
 }
 
 export function HomeFortuneCard() {
-  const { t, i18n } = useTranslation('fortune');
+  const { t, i18n } = useTranslation(['fortune', 'common']);
+  const showToast = useUIStore((s) => s.showToast);
+  const displayName = useAuthStore((s) => s.user?.displayName);
   const { activeGymId } = useActiveGym();
   const { activeMemberId } = useActiveMember();
   const today = getTodayDateKey();
   const [expanded, setExpanded] = useState(readExpandedPreference);
   const [hiddenToday, setHiddenToday] = useState(() => isHiddenForDate(today));
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     setHiddenToday(isHiddenForDate(today));
@@ -221,6 +228,40 @@ export function HomeFortuneCard() {
   const emoji = keywordEmoji(fortune.keyword);
   const tone = keywordTone(fortune.keyword);
   const filled = Math.min(5, Math.max(0, Math.round(fortune.scoreStars)));
+  const themeLabel = data.narrative
+    ? t(data.narrative.coreThemeLabelKey)
+    : fortune.keywordTitle;
+  const parts = parseFortuneDateParts(data.date);
+  const dateLabel = parts
+    ? t('dateLong', { year: parts.year, month: parts.month, day: parts.day })
+    : data.date;
+
+  const handleShare = async () => {
+    if (sharing) return;
+    setSharing(true);
+    try {
+      await shareFortuneCard({
+        fortune,
+        scores,
+        themeLabel,
+        dateLabel,
+        labels: {
+          title: t('title'),
+          healthman: t('healthmanIndexLabel'),
+          prLuck: t('prLuckLabel'),
+          recoveryLuck: t('recoveryLuckLabel'),
+          tagline: t('shareTagline'),
+          shareHashtags: t('shareHashtags'),
+        },
+        displayName,
+        showToast,
+        shareSavedMessage: t('shareSaved'),
+        errorMessage: t('common:errors.submitFailed'),
+      });
+    } finally {
+      setSharing(false);
+    }
+  };
 
   return (
     <FortuneCardShell
@@ -276,6 +317,14 @@ export function HomeFortuneCard() {
       </div>
 
       <div className="home-fortune-card__actions">
+        <button
+          type="button"
+          className="home-fortune-card__share btn btn--primary"
+          onClick={() => void handleShare()}
+          disabled={sharing}
+        >
+          {t('share')}
+        </button>
         <Link to={ROUTES.FORTUNE_TODAY} className="home-fortune-card__cta">
           {t('viewDetail')}
           <span aria-hidden>→</span>

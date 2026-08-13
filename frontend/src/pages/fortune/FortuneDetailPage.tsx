@@ -85,8 +85,8 @@ export function FortuneDetailPage() {
     );
   }
 
-  const { fortune, recommendation, dataAnalysis, mode, narrative, traditionalDetail } = data;
-  if (!fortune || !recommendation) {
+  const { fortune, recommendation, dataAnalysis, mode, narrative, traditionalDetail, scores } = data;
+  if (!fortune || !recommendation || !scores) {
     return (
       <PageShell title={t('fortune:title')}>
         <p>{t('fortune:loadError')}</p>
@@ -100,6 +100,7 @@ export function FortuneDetailPage() {
         date={data.date}
         mode={mode}
         fortune={fortune}
+        scores={scores}
         recommendation={recommendation}
         dataAnalysis={dataAnalysis}
         narrative={narrative}
