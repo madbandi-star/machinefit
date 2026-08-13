@@ -40,7 +40,7 @@ export function MainLayout() {
       <div className="layout layout--auth-landing">
         <ConsentRedirect />
         <Outlet />
-        <LegalFooter compact />
+        <LegalFooter compact hideBelowSupport />
       </div>
     );
   }

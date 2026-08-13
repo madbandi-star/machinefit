@@ -1,28 +1,26 @@
 {
-  "title": "Login page feat3 line break + footer trim",
-  "summary": "On /login only: break landingFeat3Desc after '기록하고 분석하여', and hide LegalFooter trademark/cookie below 고객센터. Guest home landing unchanged.",
-  "git": { "branch": "main", "commit": "101bc9e3" },
+  "title": "Auth landing line break on home + login",
+  "summary": "Line break and hide-below-support now apply to guest `/` landing as well as `/login` (previous change was login-only so home looked unchanged).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/auth/AuthLandingScreen/AuthLandingScreen.tsx",
     "frontend/src/pages/auth/login/LoginPage.tsx",
-    "frontend/src/components/layout/LegalFooter/LegalFooter.tsx",
-    "frontend/src/layouts/AuthLayout.tsx",
-    "frontend/src/styles/auth.css",
+    "frontend/src/layouts/MainLayout.tsx",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ja/common.json",
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "/login KO: feat3 two lines",
-    "/login footer: no trademark/cookie below 고객센터",
-    "Guest / landing: feat3 single line; footer unchanged"
+    "Guest /: feat3 two lines",
+    "Guest / and /login: no trademark/cookie under 고객센터",
+    "Authed app footer still shows trademark/cookie"
   ],
   "fastChecks": [
-    "rg -n \"landingFeat3DescLogin|variant=\\\"login\\\"|hideBelowSupport\" frontend/src"
+    "rg -n \"landingFeat3Desc|hideBelowSupport|feature-desc\" frontend/src/layouts/MainLayout.tsx frontend/src/i18n/locales/ko/common.json"
   ],
-  "productionChecks": ["Pages /login copy + footer"],
+  "productionChecks": ["Pages guest / landing"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "One-line feat3; trademark+cookie under support on login",
-  "toBe": "Login feat3 broken; hide below 고객센터; home guest unchanged"
+  "asIs": "Only /login changed; guest / looked the same",
+  "toBe": "Guest / and /login both show line break + trimmed footer"
 }

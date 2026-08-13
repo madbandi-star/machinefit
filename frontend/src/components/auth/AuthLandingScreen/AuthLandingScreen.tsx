@@ -55,17 +55,10 @@ function FeatureChartIcon() {
   );
 }
 
-type AuthLandingScreenProps = {
-  /** `/login` only — line-break for feat3; guest home stays unchanged. */
-  variant?: 'default' | 'login';
-};
-
 /** Shared marketing + social login landing for `/` (guest) and `/login`. */
-export function AuthLandingScreen({ variant = 'default' }: AuthLandingScreenProps) {
+export function AuthLandingScreen() {
   const { t } = useTranslation();
   const { oauthPending, handleOAuth, handleOAuthClientError } = useSocialAuthLogin();
-  const feat3Desc =
-    variant === 'login' ? t('auth.landingFeat3DescLogin') : t('auth.landingFeat3Desc');
 
   return (
     <section className="auth-landing auth-landing--settled" aria-label={t('auth.landingLabel')}>
@@ -114,7 +107,7 @@ export function AuthLandingScreen({ variant = 'default' }: AuthLandingScreenProp
             <FeatureChartIcon />
           </span>
           <strong>{t('auth.landingFeat3Title')}</strong>
-          <span className="auth-landing__feature-desc">{feat3Desc}</span>
+          <span className="auth-landing__feature-desc">{t('auth.landingFeat3Desc')}</span>
         </li>
       </ul>
 
