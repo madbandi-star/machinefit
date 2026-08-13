@@ -421,7 +421,7 @@ export function AdminOpsPage() {
                 <ul className="admin-ops__list">
                   {d.recentSignups.map((u) => (
                     <li key={u.id}>
-                      <span>{u.displayName || u.email}</span>
+                      <span>{u.displayName || u.id.slice(0, 8)}</span>
                       <span className="admin-ops__list-meta">
                         {new Date(u.createdAt).toLocaleDateString()}
                       </span>

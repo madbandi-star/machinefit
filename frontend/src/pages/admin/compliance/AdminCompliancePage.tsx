@@ -190,7 +190,7 @@ export function AdminCompliancePage() {
             const row = c as Record<string, unknown>;
             return (
               <li key={String(row.id ?? idx)} className="admin-list__item">
-                {String(row.email ?? row.userId ?? '')} · {String(row.consentType)} · v
+                {String(row.displayName ?? row.userId ?? '')} · {String(row.consentType)} · v
                 {String(row.version)} · {row.agreed ? 'agreed' : 'revoked'} ·{' '}
                 {String(row.agreedAt)}
               </li>

@@ -86,8 +86,8 @@ export function AdminUsageUsersPage() {
                     }`}
                     onClick={() => setSelectedId(u.userId)}
                   >
-                    <strong>{u.displayName || u.email}</strong>
-                    <span>{u.email}</span>
+                    <strong>{u.displayName || u.userId.slice(0, 8)}</strong>
+                    <span className="admin-muted">{u.userId.slice(0, 8)}</span>
                     <span className="admin-muted">
                       {u.membershipType ?? u.subscriptionPlan ?? 'FREE'} ·{' '}
                       {t('usage.activeDays', { n: u.monthActiveDays })}
@@ -109,7 +109,7 @@ export function AdminUsageUsersPage() {
               <header className="admin-usage__detail-head">
                 <h3>{detailQuery.data.user.displayName}</h3>
                 <p>
-                  {detailQuery.data.user.email} · {detailQuery.data.user.roleCode}
+                  {detailQuery.data.user.roleCode}
                 </p>
                 <p className="admin-muted">
                   {detailQuery.data.user.membershipType ??

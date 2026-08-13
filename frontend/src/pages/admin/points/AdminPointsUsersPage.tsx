@@ -73,7 +73,7 @@ export function AdminPointsUsersPage() {
                     }
                     onClick={() => setSelectedId(u.userId)}
                   >
-                    <strong>{u.displayName || u.email || u.userId.slice(0, 8)}</strong>
+                    <strong>{u.displayName || u.userId.slice(0, 8)}</strong>
                     <span>
                       {u.balance}P · +{u.lifetimeEarned} / −{u.lifetimeSpent}
                     </span>
@@ -92,9 +92,7 @@ export function AdminPointsUsersPage() {
           ) : (
             <div className="form-stack">
               <p>
-                <strong>{detailQuery.data?.displayName}</strong>
-                <br />
-                {detailQuery.data?.email}
+                <strong>{detailQuery.data?.displayName || selectedId?.slice(0, 8)}</strong>
               </p>
               <p>
                 {t('points.balance')}: <strong>{detailQuery.data?.summary.balance ?? 0}P</strong>

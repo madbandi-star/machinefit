@@ -243,7 +243,7 @@ export function AdminFriendsPage() {
                       <div className="friends-row__meta">
                         <div className="friends-row__name">{s.displayName}</div>
                         <div className="friends-row__sub">
-                          {s.email} · {s.requestCount}
+                          {s.userId.slice(0, 8)} · {s.requestCount}
                         </div>
                       </div>
                       <button

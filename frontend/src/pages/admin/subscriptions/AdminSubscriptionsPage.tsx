@@ -244,7 +244,7 @@ export function AdminSubscriptionsPage() {
                           })}
                         </span>
                       </div>
-                      <p className="admin-subs__email">{row.email || '—'}</p>
+                      <p className="admin-subs__email">{row.displayName || row.userId.slice(0, 8)}</p>
                       <p className="admin-subs__submeta">
                         {t('role')}: {row.roleCode}
                         {' · '}
