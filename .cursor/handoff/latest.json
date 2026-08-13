@@ -1,25 +1,27 @@
 {
-  "title": "Count mode help text under settings selector",
-  "summary": "My Page settings count-mode segmented control now shows a short plain-language description for each mode (normal / turbo / AI accel) underneath, with the active mode highlighted.",
-  "git": { "branch": "main", "commit": "bbd94f09" },
+  "title": "Easy mode: hide legal footer + clearer tips/cautions on step 2",
+  "summary": "Remove LegalFooter from EasyLayout. Replace collapsed ?·???? ?? disclosure on recommend-confirm (2/3) with always-visible caution/tip cards for scanability.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/styles/components.css",
+    "frontend/src/layouts/EasyLayout.tsx",
+    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
+    "frontend/src/styles/easy-mode.css",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ja/common.json",
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Settings ? voice coach ? count mode: four help lines under selector",
-    "Selecting a mode highlights that help row",
-    "KO copy is easy to read; hold-only flow hides the block"
+    "Easy home/wizard: no bottom terms/legal footer",
+    "Easy wizard step 2/3: tips & cautions shown as open cards (warnings first), not a collapsed details",
+    "Sections labeled ???? / ???; readable at a glance"
   ],
   "fastChecks": [
-    "rg -n \"voiceCountModeHelp_|voice-count-mode-help\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json frontend/src/styles/components.css"
+    "rg -n \"LegalFooter\" frontend/src/layouts/EasyLayout.tsx || true",
+    "rg -n \"easy-s2-coach|coachTitle|tipsSection\" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/i18n/locales/ko/common.json frontend/src/styles/easy-mode.css"
   ],
-  "productionChecks": ["Pages /settings ? count mode help under selector"],
+  "productionChecks": ["Pages /easy ? no footer; /easy/wizard step 2 coach cards"],
   "deploy": { "expected": "Pages FE" },
-  "asIs": "Count mode selector with labels only",
-  "toBe": "Selector plus concise per-mode explanations below"
+  "asIs": "Easy mode shows compact legal footer; step 2 hides tips behind details summary",
+  "toBe": "No legal footer in easy mode; step 2 shows separate always-open caution/tip cards"
 }

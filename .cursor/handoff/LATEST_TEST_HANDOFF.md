@@ -1,22 +1,24 @@
-﻿# Test handoff — Count mode help under settings
+﻿# Test handoff — Easy mode footer hide + step 2 tips UX
 
 ## Summary
-마이페이지 설정 > 카운트 모드 선택 영역 하단에 각 모드(일반 / 일반+터보 / AI 가속 / AI 가속+터보) 짧은 설명을 표시. 선택된 모드는 강조.
+1. 이지모드 레이아웃에서 하단 **이용약관(LegalFooter) 전체 제거**
+2. 3스텝 2/3 추천확인: 「팁·주의사항 보기」접기 UI → **주의사항 / 운동팁 카드로 바로 노출** (한눈에 읽기)
 
 ## Git
 - branch: `main`
-- commit: `bbd94f09`
+- commit: pending
 
 ## Test focus
-1. 설정 > 음성 카운트 > 카운트 모드 아래 4줄 설명
-2. 모드 변경 시 해당 설명 행 강조
-3. 세션 모드가 버텨!!!만일 때는 카운트 모드(설명 포함) 숨김
+1. `/easy`, `/easy/wizard` 하단 약관·사업자 푸터 없음
+2. 추천확인(2/3): 주의사항(있으면) → 운동팁(있으면) 카드가 펼쳐진 상태로 표시
+3. 접기 토글 「팁·주의사항 보기」 없음
 
 ## Fast checks
 ```
-rg -n "voiceCountModeHelp_|voice-count-mode-help" frontend/src/pages/settings/SettingsPage.tsx frontend/src/i18n/locales/ko/common.json frontend/src/styles/components.css
+rg -n "LegalFooter" frontend/src/layouts/EasyLayout.tsx || true
+rg -n "easy-s2-coach|coachTitle|tipsSection" frontend/src/pages/easy-mode/EasyWizardPage.tsx frontend/src/i18n/locales/ko/common.json
 ```
 
 ## As-is → To-be
-- **As-is:** 모드 라벨만
-- **To-be:** 선택 영역 아래 쉬운 모드별 설명
+- **As-is:** 이지모드에도 LegalFooter / 팁은 details로 접힘
+- **To-be:** 푸터 없음 + 팁·주의 카드 상시 표시

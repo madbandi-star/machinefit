@@ -1057,27 +1057,52 @@ export function EasyWizardPage() {
           ) : null}
 
           {hasDetails ? (
-            <details className="easy-s2-details">
-              <summary>{t('easyMode.moreDetails')}</summary>
-              <div className="easy-s2-details__body">
-                {tips.map((tip) => (
-                  <p key={tip} className="easy-s2-tip">
-                    {tip}
-                  </p>
-                ))}
-                {warnings.map((w) => (
-                  <p key={w} className="easy-s2-warning">
-                    {w}
-                  </p>
-                ))}
-                {aiDiffers ? (
-                  <p className="easy-s2-ai">
-                    {t('easyMode.aiWeight')}: {ai.recommendedWeightKg ?? '—'} kg · {repsLabel(ai)}{' '}
-                    {t('easyMode.repsUnit')}
-                  </p>
-                ) : null}
-              </div>
-            </details>
+            <section className="easy-s2-coach" aria-label={t('easyMode.coachTitle')}>
+              <p className="easy-list__label">{t('easyMode.coachTitle')}</p>
+
+              {warnings.length > 0 ? (
+                <div className="easy-s2-coach__card easy-s2-coach__card--warn">
+                  <div className="easy-s2-coach__head">
+                    <span className="easy-s2-coach__badge easy-s2-coach__badge--warn">
+                      {t('easyMode.warningsSection')}
+                    </span>
+                    <span className="easy-s2-coach__count">{warnings.length}</span>
+                  </div>
+                  <ul className="easy-s2-coach__list">
+                    {warnings.map((w) => (
+                      <li key={w} className="easy-s2-coach__item easy-s2-coach__item--warn">
+                        {w}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {tips.length > 0 ? (
+                <div className="easy-s2-coach__card easy-s2-coach__card--tip">
+                  <div className="easy-s2-coach__head">
+                    <span className="easy-s2-coach__badge easy-s2-coach__badge--tip">
+                      {t('easyMode.tipsSection')}
+                    </span>
+                    <span className="easy-s2-coach__count">{tips.length}</span>
+                  </div>
+                  <ul className="easy-s2-coach__list">
+                    {tips.map((tip) => (
+                      <li key={tip} className="easy-s2-coach__item easy-s2-coach__item--tip">
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {aiDiffers ? (
+                <p className="easy-s2-coach__ai">
+                  <span className="easy-s2-coach__ai-label">{t('easyMode.aiWeight')}</span>
+                  {ai.recommendedWeightKg ?? '—'} kg · {repsLabel(ai)} {t('easyMode.repsUnit')}
+                </p>
+              ) : null}
+            </section>
           ) : null}
 
           <LegalDisclaimerBanner variant="health" compact />
