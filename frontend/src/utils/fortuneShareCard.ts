@@ -22,8 +22,13 @@ export interface FortuneShareCardInput {
 const FONT =
   '"Pretendard Variable", Pretendard, "Noto Sans KR", system-ui, -apple-system, "Segoe UI", "Apple Color Emoji", sans-serif';
 
-const W = 1080;
-const H = 1350;
+/** Instagram feed / 공유 카드 표준 4:5 */
+export const FORTUNE_SHARE_ASPECT = '4:5' as const;
+export const FORTUNE_SHARE_WIDTH = 1080;
+export const FORTUNE_SHARE_HEIGHT = 1350;
+
+const W = FORTUNE_SHARE_WIDTH;
+const H = FORTUNE_SHARE_HEIGHT;
 
 const GOLD = '#ffd24a';
 const GOLD_SOFT = '#f6c453';
@@ -305,8 +310,9 @@ function drawHashtagPills(
 export async function buildFortuneShareCard(input: FortuneShareCardInput): Promise<Blob> {
   const { fortune, scores, emoji, themeLabel, dateLabel, labels } = input;
   const canvas = document.createElement('canvas');
-  canvas.width = W;
-  canvas.height = H;
+  // Export pixel size: Instagram 4:5 = 1080 × 1350
+  canvas.width = FORTUNE_SHARE_WIDTH;
+  canvas.height = FORTUNE_SHARE_HEIGHT;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
 

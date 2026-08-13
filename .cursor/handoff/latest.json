@@ -1,12 +1,17 @@
 {
-  "title": "Restore fortune share to 22:27 Instagram poster",
-  "summary": "Confirm Helchang fortune share card is the 22:23?22:27 Instagram photo-poster build (9ca0d00d), not DNA stack or earlier cinematic-only version. Redeploy Pages.",
-  "git": { "branch": "main", "commit": "05965d52" },
-  "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
-  "testFocus": ["Share card shows photo BG + neon metric cards (pre-DNA)"],
-  "fastChecks": ["rg -n \"fortune-share-bg|drawMetricCard\" frontend/src/utils/fortuneShareCard.ts"],
-  "productionChecks": ["Pages deploy success"],
+  "title": "Fortune share card locked to 4:5 1080×1350",
+  "summary": "Helchang fortune share export explicitly uses Instagram 4:5 at 1080×1350; background asset resized to match.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/utils/fortuneShareCard.ts",
+    "frontend/public/assets/share/fortune-share-bg.png"
+  ],
+  "testFocus": ["Downloaded PNG is 1080×1350 (4:5)"],
+  "fastChecks": [
+    "rg -n \"FORTUNE_SHARE_WIDTH|1080|1350\" frontend/src/utils/fortuneShareCard.ts"
+  ],
+  "productionChecks": ["Pages deploy"],
   "deploy": { "expected": "GitHub Pages FE" },
-  "asIs": "Confusion after DNA rollback",
-  "toBe": "22:27 Instagram photo-poster share card live"
+  "asIs": "Canvas was 1080×1350 but BG was 2:3",
+  "toBe": "Explicit 4:5 1080×1350 canvas + matching BG"
 }
