@@ -1,31 +1,28 @@
-﻿# Test handoff — Fortune share per-keyword themes
+﻿# Test handoff — TODAY'S WORKOUT share 10 random themes
 
 ## Summary
-헬창운세 공유 카드가 키워드별로 다른 배경·포인트 컬러를 씁니다. 첨부 시안 순서(PR → … → BACK) + SUPER SET.
+운동 종료 공유 카드가 시안 10종 중 **랜덤** 디자인을 씁니다. 리포트/캡션/공유 플로우(비즈니스 로직)는 변경 없음.
 
 ## Git
 - Branch: `main`
-- Commit: `f69be506`
+- Commit: _(after push)_
 
 ## Changed files
-- `frontend/src/utils/fortuneShareThemes.ts`
-- `frontend/src/utils/fortuneShareCard.ts`
-- `frontend/public/assets/share/fortune/*.png` (12)
+- `frontend/src/utils/workoutCompleteShareThemes.ts`
+- `frontend/src/utils/workoutCompleteShareCard.ts`
+- `frontend/public/assets/share/workout/*.png` (cinematic + industrial)
 
 ## Test focus
-1. 키워드별 BG/액센트 다름 (PR 보라, DUMBBELL 시안, DROP SET 빨강, LEG 네온그린 등)
-2. SUPER SET DAY는 기존 노란 번개 톤 유지
-3. PNG 1080×1350 (4:5)
+1. 공유 PNG에 duration / exercises / sets / volume / POWER / KEEP GOING 유지
+2. 여러 번 공유 시 디자인이 바뀜 (10종 풀)
+3. 숫자·캡션은 리포트와 동일
 
 ## Fast checks
 ```powershell
-rg -n "getFortuneShareTheme|FORTUNE_SHARE_THEMES" frontend/src/utils/fortuneShareCard.ts frontend/src/utils/fortuneShareThemes.ts
-(Get-ChildItem frontend/public/assets/share/fortune/*.png).Count  # expect 12
+rg -n "pickRandomWorkoutShareTheme" frontend/src/utils
+(Get-Content frontend/src/utils/workoutCompleteShareThemes.ts | Select-String 'id:').Count  # 10
 ```
 
 ## As-is → To-be
-- **As-is:** 모든 키워드가 동일 SUPER SET 배경/골드 톤
-- **To-be:** 키워드별 시안 매칭 배경 + 팔레트
-
-## Production (optional after Pages)
-`/fortune/today` 또는 홈 운세 공유로 몇 개 키워드 카드 비교
+- **As-is:** 단일 슬레이트/그린 카드
+- **To-be:** 시안 10종 랜덤 비주얼
