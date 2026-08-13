@@ -108,5 +108,8 @@
   "audienceStatsConsentOk": "Passed {{category}}: {{count}}",
   "audienceStatsExcluded": "Excluded by consent: {{count}}",
   "audienceStatsFinal": "Final recipients: {{count}}",
-  "marketingContentAsService": "Marketing/promotional copy cannot be sent as a service notice. Choose an event/promotion kind or rewrite the message."
+  "marketingContentAsService": "Marketing/promotional copy cannot be sent as a service notice. Choose an event/promotion kind or rewrite the message.",
+  "kindGroupEvent": "Event & campaign (event consent required)",
+  "consentHintEvent": "Sent only to users who opted in to event & campaign alerts. Opt-outs are removed at final send.",
+  "consentLabelEvent": "event & campaign consent"
 }

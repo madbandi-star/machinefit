@@ -1850,7 +1850,15 @@
       "processedAt": "처리일",
       "exitSupportHint": "문의·결과 확인",
       "exitPrivacyHint": "처리방침 보기",
-      "exitWithdrawHint": "이용계약 종료"
+      "exitWithdrawHint": "이용계약 종료",
+      "correctionBadge": "Edit",
+      "deletionBadge": "Delete",
+      "stopBadge": "Pause",
+      "correctionLead": "Only for fields you cannot edit in Settings",
+      "deletionLead": "Different from full account withdrawal",
+      "stopLead": "Pause optional processing only",
+      "marketingOptInHint": "Product news, offers, and general promo. Separate from time-limited event campaigns.",
+      "eventOptInHint": "Time-limited event and campaign alerts only. Separate from general marketing."
     },
     "report": {
       "cta": "Report",
