@@ -87,15 +87,11 @@ function FortuneCardShell({
             <span className="home-fortune-card__peek">{peek}</span>
           ) : null}
         </span>
-        <span className="home-fortune-card__fold">
-          <span className="home-fortune-card__fold-label">
-            {expanded ? t('common:collapse') : t('common:expand')}
-          </span>
+        <span className="home-fortune-card__fold" aria-hidden>
           <ChevronDown
             className={`home-fortune-card__chevron${expanded ? ' is-open' : ''}`}
             size={22}
             strokeWidth={2.5}
-            aria-hidden
           />
         </span>
       </button>
