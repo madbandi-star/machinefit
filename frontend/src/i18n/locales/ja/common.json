@@ -2112,6 +2112,10 @@
     "progressBody": "直近30日平均より {{direction}} {{percent}}%",
     "progressMore": "多い",
     "progressLess": "少ない",
+    "exerciseListTitle": "今日の種目",
+    "exerciseSetsCol": "セット",
+    "exerciseVolumeCol": "ボリューム",
+    "moreExercises": "+{{count}}種目",
     "oneLinerTitle": "今日の一言",
     "oneLiner": {
       "high_volume": "今日は本気だった。💪",

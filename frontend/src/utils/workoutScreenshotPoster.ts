@@ -1,12 +1,13 @@
 /**
  * Premium TODAY'S WORKOUT screenshot poster (1080×1920 story).
- * Designed for Photos / Instagram — not a DOM raster of the modal.
+ * Tight editorial grid with per-exercise rows — not a DOM raster.
  */
 import {
   formatVolumeKg,
   formatWorkoutDateDots,
   formatWorkoutDurationCompact,
   type WorkoutCompleteReport,
+  type WorkoutDayExerciseMetric,
 } from '@machinefit/shared';
 import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
 
@@ -16,18 +17,19 @@ export type WorkoutScreenshotLabels = {
   titleAccent: string;
   tagline: string;
   duration: string;
-  exercises: string;
-  exercisesSub: string;
-  sets: string;
-  setsSub: string;
-  volume: string;
-  volumeSub: string;
+  /** Localized short labels (single language). */
+  exercisesLabel: string;
+  setsLabel: string;
+  volumeLabel: string;
   powerTitle: string;
   powerEarned: string;
   mvpTitle: string;
   newRecordTitle: string;
-  recordToday: string;
-  recordPrev: string;
+  exerciseListTitle: string;
+  setsCol: string;
+  volumeCol: string;
+  /** Must include {{count}} placeholder. */
+  moreExercises: string;
   oneLinerTitle: string;
   oneLiner: string;
   keepGoing: string;
@@ -38,11 +40,18 @@ const W = 1080;
 const H = 1920;
 const LIME = '#b8ff3c';
 const TEXT = '#f4f7f0';
-const MUTED = 'rgba(228, 237, 220, 0.7)';
+const MUTED = 'rgba(228, 237, 220, 0.68)';
+const RULE = 'rgba(184, 255, 60, 0.22)';
+const PANEL = 'rgba(6, 10, 6, 0.64)';
 const FONT =
   '"Barlow Condensed", "Pretendard Variable", Pretendard, "Noto Sans KR", system-ui, sans-serif';
 const FONT_BODY = '"Noto Sans KR", Pretendard, system-ui, sans-serif';
-const FONT_SCRIPT = '"Caveat", "Barlow Condensed", cursive';
+
+const PAD = 64;
+const CONTENT_W = W - PAD * 2;
+const COL_SETS_X = PAD + CONTENT_W - 210;
+const COL_VOL_X = PAD + CONTENT_W - 8;
+const NAME_MAX_W = CONTENT_W - 290;
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -100,20 +109,31 @@ function drawCover(
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, width, height);
 }
 
+function ellipsize(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  const t = text.trim();
+  if (!t) return '';
+  if (ctx.measureText(t).width <= maxWidth) return t;
+  let out = t;
+  while (out.length > 1 && ctx.measureText(`${out}…`).width > maxWidth) {
+    out = out.slice(0, -1);
+  }
+  return `${out}…`;
+}
+
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
   maxWidth: number,
   maxLines = 3
 ): string[] {
-  const normalized = text.trim();
+  const normalized = text.trim().replace(/\s+/g, ' ');
   if (!normalized) return [''];
 
-  const hasSpaces = /\s/.test(normalized);
-  const tokens = hasSpaces
-    ? normalized.split(/\s+/).filter(Boolean)
-    : Array.from(normalized);
+  const cleaned = normalized.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+  const source = cleaned || normalized;
 
+  const hasSpaces = /\s/.test(source);
+  const tokens = hasSpaces ? source.split(/\s+/).filter(Boolean) : Array.from(source);
   const lines: string[] = [];
   let current = '';
   const joiner = hasSpaces ? ' ' : '';
@@ -147,67 +167,54 @@ async function paintAtmosphere(ctx: CanvasRenderingContext2D) {
   } else {
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#0a1208');
-    g.addColorStop(0.45, '#050705');
+    g.addColorStop(0.5, '#050705');
     g.addColorStop(1, '#020302');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
   }
 
-  // Top stage light + deep bottom fade for typography
   const veil = ctx.createLinearGradient(0, 0, 0, H);
-  veil.addColorStop(0, 'rgba(2,6,2,0.55)');
-  veil.addColorStop(0.22, 'rgba(0,0,0,0.28)');
-  veil.addColorStop(0.55, 'rgba(0,0,0,0.52)');
-  veil.addColorStop(0.78, 'rgba(0,0,0,0.78)');
-  veil.addColorStop(1, 'rgba(0,0,0,0.94)');
+  veil.addColorStop(0, 'rgba(2,6,2,0.74)');
+  veil.addColorStop(0.2, 'rgba(0,0,0,0.48)');
+  veil.addColorStop(0.55, 'rgba(0,0,0,0.7)');
+  veil.addColorStop(1, 'rgba(0,0,0,0.93)');
   ctx.fillStyle = veil;
   ctx.fillRect(0, 0, W, H);
 
-  const bloom = ctx.createRadialGradient(W * 0.5, 160, 10, W * 0.5, 220, 560);
-  bloom.addColorStop(0, 'rgba(184,255,60,0.26)');
-  bloom.addColorStop(0.45, 'rgba(184,255,60,0.07)');
+  const bloom = ctx.createRadialGradient(W * 0.78, 100, 8, W * 0.78, 140, 380);
+  bloom.addColorStop(0, 'rgba(184,255,60,0.16)');
   bloom.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = bloom;
   ctx.fillRect(0, 0, W, H);
-
-  // Soft film grain
-  ctx.save();
-  ctx.globalAlpha = 0.04;
-  for (let i = 0; i < 2400; i += 1) {
-    const x = (i * 97) % W;
-    const y = (i * 53) % H;
-    ctx.fillStyle = i % 2 === 0 ? '#fff' : '#000';
-    ctx.fillRect(x, y, 1, 1);
-  }
-  ctx.restore();
 }
 
-function drawStatColumn(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  value: string,
-  en: string,
-  ko: string
-) {
-  ctx.textAlign = 'center';
+function drawHairline(ctx: CanvasRenderingContext2D, y: number) {
+  ctx.strokeStyle = RULE;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(PAD, y);
+  ctx.lineTo(PAD + CONTENT_W, y);
+  ctx.stroke();
+}
+
+function drawSectionLabel(ctx: CanvasRenderingContext2D, label: string, y: number) {
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
-
-  ctx.font = `800 72px ${FONT}`;
+  ctx.font = `700 22px ${FONT}`;
   ctx.fillStyle = LIME;
-  ctx.shadowColor = 'rgba(184,255,60,0.4)';
-  ctx.shadowBlur = 18;
-  ctx.fillText(value, x + w / 2, y);
-  ctx.shadowBlur = 0;
+  const text = label.toUpperCase();
+  ctx.fillText(text, PAD, y);
+  const lw = ctx.measureText(text).width;
+  ctx.strokeStyle = RULE;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(PAD + lw + 18, y - 6);
+  ctx.lineTo(PAD + CONTENT_W, y - 6);
+  ctx.stroke();
+}
 
-  ctx.font = `700 26px ${FONT}`;
-  ctx.fillStyle = 'rgba(244,247,240,0.92)';
-  ctx.fillText(en.toUpperCase(), x + w / 2, y + 42);
-
-  ctx.font = `600 22px ${FONT_BODY}`;
-  ctx.fillStyle = MUTED;
-  ctx.fillText(ko, x + w / 2, y + 74);
+function sortExercises(list: WorkoutDayExerciseMetric[]): WorkoutDayExerciseMetric[] {
+  return [...list].sort((a, b) => b.volumeKg - a.volumeKg || b.setCount - a.setCount);
 }
 
 /**
@@ -229,282 +236,248 @@ export async function buildWorkoutScreenshotPoster(input: {
     await document.fonts.ready.catch(() => undefined);
   }
 
-  const pad = 72;
-  const contentW = W - pad * 2;
   const cx = W / 2;
-  let y = 108;
+  let y = 86;
 
-  // Brand wordmark
-  ctx.textAlign = 'left';
+  // Header
   ctx.textBaseline = 'alphabetic';
-  ctx.font = `800 italic 30px ${FONT}`;
-  ctx.fillStyle = '#fff';
-  ctx.shadowColor = 'rgba(184,255,60,0.45)';
-  ctx.shadowBlur = 16;
-  ctx.fillText(labels.brand.toUpperCase(), pad, y);
-  ctx.shadowBlur = 0;
-
-  // Lime accent rule under brand
-  ctx.fillStyle = LIME;
-  ctx.globalAlpha = 0.9;
-  ctx.fillRect(pad, y + 16, 56, 4);
-  ctx.globalAlpha = 1;
-
-  y += 96;
-  // Hero title
-  ctx.font = `800 98px ${FONT}`;
-  ctx.fillStyle = '#fff';
-  const lead = labels.titleLead;
-  const accent = labels.titleAccent;
-  const leadW = ctx.measureText(`${lead} `).width;
-  ctx.fillText(lead, pad, y);
-  ctx.fillStyle = LIME;
-  ctx.shadowColor = 'rgba(184,255,60,0.5)';
-  ctx.shadowBlur = 24;
-  ctx.fillText(accent, pad + leadW, y);
-  ctx.shadowBlur = 0;
-
-  // Handwritten tagline (Caveat)
-  ctx.save();
-  ctx.translate(W - pad + 8, y - 58);
-  ctx.rotate((-10 * Math.PI) / 180);
-  ctx.textAlign = 'right';
-  ctx.font = `700 44px ${FONT_SCRIPT}`;
-  ctx.fillStyle = LIME;
-  ctx.shadowColor = 'rgba(184,255,60,0.35)';
-  ctx.shadowBlur = 10;
-  ctx.fillText(labels.tagline, 0, 0);
-  ctx.restore();
-
-  y += 46;
   ctx.textAlign = 'left';
-  ctx.font = `600 30px ${FONT}`;
+  ctx.font = `800 26px ${FONT}`;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(labels.brand.toUpperCase(), PAD, y);
+
+  ctx.textAlign = 'right';
+  ctx.font = `600 24px ${FONT}`;
+  ctx.fillStyle = LIME;
+  ctx.fillText(labels.tagline, PAD + CONTENT_W, y);
+
+  y += 56;
+  ctx.textAlign = 'left';
+  ctx.font = `800 76px ${FONT}`;
+  const leadW = ctx.measureText(`${labels.titleLead} `).width;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(labels.titleLead, PAD, y);
+  ctx.fillStyle = LIME;
+  ctx.fillText(labels.titleAccent, PAD + leadW, y);
+
+  y += 38;
+  ctx.font = `600 26px ${FONT}`;
   ctx.fillStyle = MUTED;
-  ctx.fillText(formatWorkoutDateDots(report.dateKey), pad, y);
+  ctx.fillText(formatWorkoutDateDots(report.dateKey), PAD, y);
 
-  // Duration hero ring
-  y += 150;
+  // Duration + summary on one aligned band
+  y += 70;
   const duration = formatWorkoutDurationCompact(report.summary.durationMs);
-  const ringR = 188;
-  const ringCy = y;
-
-  ctx.save();
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-  ctx.lineWidth = 18;
-  ctx.beginPath();
-  ctx.arc(cx, ringCy, ringR, 0, Math.PI * 2);
-  ctx.stroke();
-
-  const progress = Math.min(1, Math.max(0.14, report.summary.durationMs / (90 * 60 * 1000)));
-  ctx.strokeStyle = LIME;
-  ctx.lineWidth = 18;
-  ctx.lineCap = 'round';
-  ctx.shadowColor = 'rgba(184,255,60,0.6)';
-  ctx.shadowBlur = 28;
-  ctx.beginPath();
-  ctx.arc(cx, ringCy, ringR, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
-  ctx.stroke();
-  ctx.restore();
-
-  // Soft inner disc for legibility
-  const disc = ctx.createRadialGradient(cx, ringCy, 20, cx, ringCy, ringR - 28);
-  disc.addColorStop(0, 'rgba(6,12,6,0.55)');
-  disc.addColorStop(1, 'rgba(6,12,6,0)');
-  ctx.fillStyle = disc;
-  ctx.beginPath();
-  ctx.arc(cx, ringCy, ringR - 24, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.textAlign = 'center';
   ctx.font = `800 108px ${FONT}`;
   ctx.fillStyle = LIME;
-  ctx.shadowColor = 'rgba(184,255,60,0.4)';
-  ctx.shadowBlur = 22;
-  ctx.fillText(duration, cx, ringCy + 22);
+  ctx.shadowColor = 'rgba(184,255,60,0.3)';
+  ctx.shadowBlur = 16;
+  ctx.fillText(duration, PAD, y);
   ctx.shadowBlur = 0;
-  ctx.font = `700 28px ${FONT}`;
+
+  const durW = ctx.measureText(duration).width;
+  ctx.font = `700 26px ${FONT}`;
   ctx.fillStyle = MUTED;
-  ctx.fillText(labels.duration.toUpperCase(), cx, ringCy + 68);
+  ctx.fillText(labels.duration.toUpperCase(), PAD + durW + 24, y - 10);
 
-  // Stats — open typography, not boxed cards
-  y = ringCy + ringR + 88;
-  const colW = contentW / 3;
-  drawStatColumn(
-    ctx,
-    pad,
-    y,
-    colW,
-    String(report.summary.exerciseCount),
-    labels.exercises,
-    labels.exercisesSub
-  );
-  drawStatColumn(
-    ctx,
-    pad + colW,
-    y,
-    colW,
-    String(report.summary.setCount),
-    labels.sets,
-    labels.setsSub
-  );
-  drawStatColumn(
-    ctx,
-    pad + colW * 2,
-    y,
-    colW,
-    formatVolumeKg(report.summary.totalVolumeKg),
-    labels.volume,
-    labels.volumeSub
-  );
+  // Right-aligned summary stack (fixed label / value columns)
+  const sumLabelX = PAD + CONTENT_W - 300;
+  const summaryLines: Array<[string, string]> = [
+    [labels.exercisesLabel, String(report.summary.exerciseCount)],
+    [labels.setsLabel, String(report.summary.setCount)],
+    [labels.volumeLabel, `${formatVolumeKg(report.summary.totalVolumeKg)} kg`],
+  ];
+  summaryLines.forEach(([label, value], i) => {
+    const sy = y - 58 + i * 34;
+    ctx.textAlign = 'left';
+    ctx.font = `600 22px ${FONT_BODY}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText(label, sumLabelX, sy);
+    ctx.textAlign = 'right';
+    ctx.font = `800 30px ${FONT}`;
+    ctx.fillStyle = TEXT;
+    ctx.fillText(value, COL_VOL_X, sy);
+  });
+  ctx.textAlign = 'left';
 
-  // Thin lime dividers between stats
-  ctx.strokeStyle = 'rgba(184,255,60,0.28)';
-  ctx.lineWidth = 2;
-  for (const dx of [1, 2]) {
-    const lx = pad + colW * dx;
-    ctx.beginPath();
-    ctx.moveTo(lx, y - 48);
-    ctx.lineTo(lx, y + 56);
-    ctx.stroke();
-  }
+  y += 28;
+  drawHairline(ctx, y);
 
-  y += 118;
-
-  // Highlight band: power + MVP / record (single composition)
-  const highlights: Array<{ kicker: string; title: string; sub?: string }> = [];
+  // Highlights (compact, above list so list fills remaining height)
+  const highlightBits: string[] = [];
   if (report.power) {
-    highlights.push({
-      kicker: labels.powerTitle,
-      title: String(report.power.balance),
-      sub: report.power.earnedToday > 0 ? labels.powerEarned : undefined,
-    });
+    const earned = report.power.earnedToday > 0 ? ` · ${labels.powerEarned}` : '';
+    highlightBits.push(`${labels.powerTitle}  ${report.power.balance}${earned}`);
   }
   if (report.mvp) {
-    highlights.push({
-      kicker: labels.mvpTitle,
-      title: report.mvp.machineName,
-      sub: report.mvp.valueLabel,
-    });
+    highlightBits.push(`${labels.mvpTitle}  ${report.mvp.machineName} · ${report.mvp.valueLabel}`);
   } else if (report.newRecord) {
-    highlights.push({
-      kicker: labels.newRecordTitle,
-      title: report.newRecord.machineName,
-      sub: `${labels.recordToday} ${formatVolumeKg(report.newRecord.todayVolumeKg)} kg · ${labels.recordPrev} ${formatVolumeKg(report.newRecord.previousBestKg)} kg`,
-    });
+    highlightBits.push(
+      `${labels.newRecordTitle}  ${report.newRecord.machineName}  (+${formatVolumeKg(report.newRecord.deltaKg)} kg)`
+    );
   }
 
-  if (highlights.length > 0) {
-    const bandH = highlights.length === 1 ? 168 : 280;
-    roundRect(ctx, pad, y, contentW, bandH, 28);
-    const bandGrad = ctx.createLinearGradient(pad, y, pad, y + bandH);
-    bandGrad.addColorStop(0, 'rgba(184,255,60,0.1)');
-    bandGrad.addColorStop(1, 'rgba(6,10,6,0.72)');
-    ctx.fillStyle = bandGrad;
+  y += 36;
+  if (highlightBits.length > 0) {
+    const stripH = 20 + highlightBits.length * 40;
+    roundRect(ctx, PAD, y, CONTENT_W, stripH, 12);
+    ctx.fillStyle = 'rgba(184,255,60,0.08)';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(184,255,60,0.32)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = RULE;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-
-    // Left lime bar
     ctx.fillStyle = LIME;
-    ctx.fillRect(pad, y + 24, 6, bandH - 48);
+    ctx.fillRect(PAD, y + 10, 4, stripH - 20);
 
-    let rowY = y + 48;
-    highlights.slice(0, 2).forEach((h, idx) => {
-      if (idx > 0) {
-        ctx.strokeStyle = 'rgba(184,255,60,0.18)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(pad + 36, rowY - 22);
-        ctx.lineTo(pad + contentW - 36, rowY - 22);
-        ctx.stroke();
-      }
+    highlightBits.forEach((line, i) => {
       ctx.textAlign = 'left';
-      ctx.font = `700 22px ${FONT}`;
-      ctx.fillStyle = LIME;
-      ctx.fillText(h.kicker.toUpperCase(), pad + 40, rowY);
-
-      ctx.font = `800 48px ${FONT}`;
+      ctx.textBaseline = 'middle';
+      ctx.font = `700 26px ${FONT}`;
       ctx.fillStyle = TEXT;
-      const titleLines = wrapText(ctx, h.title, contentW - 100, 1);
-      ctx.fillText(titleLines[0] || h.title, pad + 40, rowY + 52);
-
-      if (h.sub) {
-        ctx.font = `600 24px ${FONT_BODY}`;
-        ctx.fillStyle = MUTED;
-        const subLines = wrapText(ctx, h.sub, contentW - 100, 1);
-        ctx.fillText(subLines[0] || h.sub, pad + 40, rowY + 90);
-        rowY += 140;
-      } else {
-        rowY += 110;
-      }
+      ctx.fillText(ellipsize(ctx, line, CONTENT_W - 40), PAD + 22, y + 22 + i * 40);
     });
-
-    y += bandH + 40;
-  } else {
-    y += 24;
+    y += stripH + 28;
   }
 
-  // Quote — editorial, light panel
-  const quoteH = 200;
-  roundRect(ctx, pad, y, contentW, quoteH, 28);
-  ctx.fillStyle = 'rgba(6, 10, 6, 0.55)';
+  // Fixed bottom blocks: quote + keepGoing + footer
+  const FOOTER_Y = H - 150;
+  const quotePreviewFont = `600 28px ${FONT_BODY}`;
+  ctx.font = quotePreviewFont;
+  const quoteLines = wrapText(ctx, labels.oneLiner, CONTENT_W - 40, 2);
+  const quoteBlockH = 48 + quoteLines.length * 36;
+  const keepGoingH = 48;
+  const gapBeforeQuote = 24;
+  const listEndY = FOOTER_Y - keepGoingH - quoteBlockH - gapBeforeQuote;
+
+  // Exercise list fills middle
+  drawSectionLabel(ctx, labels.exerciseListTitle, y);
+  y += 26;
+
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `700 20px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  ctx.textAlign = 'left';
+  ctx.fillText(labels.exercisesLabel.toUpperCase(), PAD + 8, y);
+  ctx.textAlign = 'right';
+  ctx.fillText(labels.setsCol.toUpperCase(), COL_SETS_X, y);
+  ctx.fillText(labels.volumeCol.toUpperCase(), COL_VOL_X, y);
+  y += 12;
+  drawHairline(ctx, y);
+  y += 8;
+
+  const exercises = sortExercises(report.summary.exercises);
+  const minRowH = 52;
+  const moreH = 36;
+  const listBudget = Math.max(minRowH + 16, listEndY - y);
+  let maxRowsBySpace = Math.max(1, Math.floor((listBudget - 12) / minRowH));
+  if (exercises.length > maxRowsBySpace) {
+    maxRowsBySpace = Math.max(1, Math.floor((listBudget - 12 - moreH) / minRowH));
+  }
+  const visible = exercises.slice(0, maxRowsBySpace);
+  const hidden = Math.max(0, exercises.length - visible.length);
+  const rowsPad = 10;
+  const moreSpace = hidden > 0 ? moreH : 0;
+  const panelH = listBudget;
+  const rowH =
+    visible.length > 0
+      ? Math.max(minRowH, Math.floor((panelH - rowsPad * 2 - moreSpace) / visible.length))
+      : minRowH;
+
+  roundRect(ctx, PAD, y, CONTENT_W, panelH, 14);
+  ctx.fillStyle = PANEL;
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.strokeStyle = RULE;
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  ctx.textAlign = 'left';
-  ctx.font = `800 110px ${FONT}`;
-  ctx.fillStyle = 'rgba(184,255,60,0.22)';
-  ctx.fillText('“', pad + 22, y + 96);
+  let rowY = y + rowsPad;
+  const nameSize = rowH >= 70 ? 34 : 30;
+  const valueSize = rowH >= 70 ? 32 : 28;
 
-  ctx.font = `700 22px ${FONT}`;
-  ctx.fillStyle = LIME;
-  ctx.fillText(labels.oneLinerTitle.toUpperCase(), pad + 56, y + 46);
+  visible.forEach((ex, i) => {
+    const mid = rowY + rowH / 2;
+    if (i % 2 === 1) {
+      ctx.fillStyle = 'rgba(184,255,60,0.045)';
+      ctx.fillRect(PAD + 2, rowY, CONTENT_W - 4, rowH);
+    }
 
-  ctx.font = `700 34px ${FONT_BODY}`;
-  ctx.fillStyle = TEXT;
-  const quoteLines = wrapText(ctx, labels.oneLiner, contentW - 112, 3);
-  quoteLines.forEach((line, i) => {
-    ctx.fillText(line, pad + 56, y + 96 + i * 40);
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    ctx.font = `700 ${nameSize}px ${FONT_BODY}`;
+    ctx.fillStyle = TEXT;
+    ctx.fillText(ellipsize(ctx, ex.machineName, NAME_MAX_W), PAD + 20, mid);
+
+    ctx.textAlign = 'right';
+    ctx.font = `700 ${valueSize}px ${FONT}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText(`${ex.setCount} ${labels.setsCol}`, COL_SETS_X, mid);
+
+    ctx.font = `800 ${valueSize + 2}px ${FONT}`;
+    ctx.fillStyle = LIME;
+    ctx.fillText(`${formatVolumeKg(ex.volumeKg)} kg`, COL_VOL_X, mid);
+
+    rowY += rowH;
   });
 
-  y += quoteH + 56;
+  if (hidden > 0) {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `600 24px ${FONT_BODY}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText(
+      labels.moreExercises.replace(/\{\{count\}\}/g, String(hidden)),
+      cx,
+      y + panelH - moreH / 2 - 4
+    );
+  } else if (visible.length === 0) {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `600 28px ${FONT_BODY}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText('—', cx, y + panelH / 2);
+  }
 
-  // Closing script line
-  const keepY = Math.min(y + 8, H - 210);
-  ctx.save();
-  ctx.translate(cx, keepY);
-  ctx.rotate((-5 * Math.PI) / 180);
-  ctx.textAlign = 'center';
-  ctx.font = `700 52px ${FONT_SCRIPT}`;
+  // Quote anchored above footer
+  let qy = FOOTER_Y - keepGoingH - quoteBlockH;
+  roundRect(ctx, PAD, qy, CONTENT_W, quoteBlockH, 12);
+  ctx.fillStyle = PANEL;
+  ctx.fill();
+
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `700 20px ${FONT}`;
   ctx.fillStyle = LIME;
-  ctx.shadowColor = 'rgba(184,255,60,0.4)';
-  ctx.shadowBlur = 14;
-  ctx.fillText(labels.keepGoing, 0, 0);
-  ctx.restore();
+  ctx.fillText(labels.oneLinerTitle.toUpperCase(), PAD + 22, qy + 28);
 
-  // Footer
-  drawShareBrandLockup(ctx, pad, H - 118, FONT, {
-    markSize: 34,
-    brandSize: 30,
-    domainSize: 18,
+  ctx.font = quotePreviewFont;
+  ctx.fillStyle = TEXT;
+  quoteLines.forEach((line, i) => {
+    ctx.fillText(line, PAD + 22, qy + 64 + i * 36);
+  });
+
+  qy += quoteBlockH + 34;
+  ctx.font = `800 34px ${FONT}`;
+  ctx.fillStyle = LIME;
+  ctx.fillText(labels.keepGoing, PAD, qy);
+
+  drawShareBrandLockup(ctx, PAD, H - 96, FONT, {
+    markSize: 28,
+    brandSize: 24,
+    domainSize: 16,
   });
 
   const tags = labels.hashtags.split(/\s+/).filter(Boolean).slice(0, 3);
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
-  ctx.font = `700 24px ${FONT}`;
+  ctx.font = `700 22px ${FONT}`;
   ctx.fillStyle = LIME;
   tags.forEach((tag, i) => {
-    ctx.fillText(tag, W - pad, H - 136 + i * 28);
+    ctx.fillText(tag, PAD + CONTENT_W, H - 114 + i * 26);
   });
 
-  // Outer neon frame
-  roundRect(ctx, 24, 24, W - 48, H - 48, 40);
-  ctx.strokeStyle = 'rgba(184,255,60,0.2)';
-  ctx.lineWidth = 3;
+  roundRect(ctx, 18, 18, W - 36, H - 36, 24);
+  ctx.strokeStyle = 'rgba(184,255,60,0.14)';
+  ctx.lineWidth = 2;
   ctx.stroke();
 
   return new Promise((resolve, reject) => {

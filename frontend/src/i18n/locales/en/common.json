@@ -2156,6 +2156,10 @@
     "progressBody": "{{direction}} {{percent}}% volume vs your 30-day average.",
     "progressMore": "More",
     "progressLess": "Less",
+    "exerciseListTitle": "Today's exercises",
+    "exerciseSetsCol": "sets",
+    "exerciseVolumeCol": "volume",
+    "moreExercises": "+{{count}} more",
     "oneLinerTitle": "Today's line",
     "oneLiner": {
       "high_volume": "You went hard today. 💪",
