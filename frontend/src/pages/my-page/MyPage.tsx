@@ -8,7 +8,6 @@ import { Icon, type IconName } from '@/components/icons/Icon';
 import { LogoutDialog } from '@/components/auth/LogoutDialog';
 import { ShareAppButton } from '@/components/share/ShareAppButton/ShareAppButton';
 import { WorkoutReportSection } from '@/components/my-page/WorkoutReportSection/WorkoutReportSection';
-import { WorkoutMonthCalendar } from '@/components/my-page/WorkoutMonthCalendar/WorkoutMonthCalendar';
 import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { MemberProfileRequests } from '@/components/my-page/MemberProfileRequests/MemberProfileRequests';
 import { MemberIdEditor } from '@/components/my-page/MemberIdEditor/MemberIdEditor';
@@ -182,8 +181,6 @@ export function MyPage() {
       ) : null}
 
       <MemberProfileRequests />
-
-      <WorkoutMonthCalendar />
 
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
