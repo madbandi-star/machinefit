@@ -1,7 +1,7 @@
 {
   "title": "Machine request write form glanceable redesign",
   "summary": "Request write page now shows a progress checklist and numbered section cards (photo/info/gym/consent). Gym choice uses compact segments. Submit/create/update logic unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "753b0f58" },
   "changedFiles": [
     "frontend/src/pages/machine-request-board/MachineRequestWritePage.tsx",
     "frontend/src/styles/community.css",
