@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Share2, X } from 'lucide-react';
 import { fortuneApi } from '@/api/fortune.api';
 import {
   keywordEmoji,
@@ -75,12 +76,14 @@ function FortuneCardShell({
   className,
   expanded,
   onToggle,
+  onDismiss,
   peek,
   children,
 }: {
   className: string;
   expanded: boolean;
   onToggle: () => void;
+  onDismiss?: () => void;
   peek?: ReactNode;
   children: ReactNode;
 }) {
@@ -88,24 +91,22 @@ function FortuneCardShell({
 
   return (
     <section className={className}>
-      <button
-        type="button"
-        className="home-fortune-card__toggle"
-        aria-expanded={expanded}
-        aria-controls="home-fortune-card-body"
-        onClick={onToggle}
-      >
-        <span className="home-fortune-card__toggle-main">
-          <span className="home-fortune-card__eyebrow">
-            <span aria-hidden>🔥</span> {t('fortune:title')}
-          </span>
-          {!expanded && peek ? (
-            <span className="home-fortune-card__peek">{peek}</span>
-          ) : null}
-        </span>
-        <span className="home-fortune-card__toggle-meta">
-          <span className="home-fortune-card__toggle-label">
-            {expanded ? t('common:collapse') : t('common:expand')}
+      <div className="home-fortune-card__header">
+        <button
+          type="button"
+          className="home-fortune-card__toggle"
+          aria-expanded={expanded}
+          aria-controls="home-fortune-card-body"
+          aria-label={expanded ? t('common:collapse') : t('common:expand')}
+          onClick={onToggle}
+        >
+          <span className="home-fortune-card__toggle-main">
+            <span className="home-fortune-card__eyebrow">
+              <span aria-hidden>🔥</span> {t('fortune:title')}
+            </span>
+            {!expanded && peek ? (
+              <span className="home-fortune-card__peek">{peek}</span>
+            ) : null}
           </span>
           <span
             className={`home-fortune-card__chevron${expanded ? ' is-open' : ''}`}
@@ -113,8 +114,19 @@ function FortuneCardShell({
           >
             ▾
           </span>
-        </span>
-      </button>
+        </button>
+        {onDismiss ? (
+          <button
+            type="button"
+            className="home-fortune-card__hide"
+            onClick={onDismiss}
+            aria-label={t('fortune:dismissToday')}
+            title={t('fortune:dismissToday')}
+          >
+            <X size={16} strokeWidth={2.25} aria-hidden />
+          </button>
+        ) : null}
+      </div>
       {expanded ? (
         <div id="home-fortune-card-body" className="home-fortune-card__body-wrap">
           {children}
@@ -180,6 +192,7 @@ export function HomeFortuneCard() {
         className="home-fortune-card home-fortune-card--loading"
         expanded={expanded}
         onToggle={toggleExpanded}
+        onDismiss={dismissForToday}
       >
         <p className="home-fortune-card__muted" aria-busy="true">
           …
@@ -194,6 +207,7 @@ export function HomeFortuneCard() {
         className="home-fortune-card"
         expanded={expanded}
         onToggle={toggleExpanded}
+        onDismiss={dismissForToday}
       >
         <p className="home-fortune-card__muted" aria-live="polite">
           {t('loadError')}
@@ -208,6 +222,7 @@ export function HomeFortuneCard() {
         className="home-fortune-card home-fortune-card--gate"
         expanded={expanded}
         onToggle={toggleExpanded}
+        onDismiss={dismissForToday}
         peek={<span aria-hidden>🔮</span>}
       >
         <p className="home-fortune-card__gate-emoji" aria-hidden>
@@ -268,6 +283,7 @@ export function HomeFortuneCard() {
       className={`home-fortune-card home-fortune-card--ready home-fortune-card--${tone}`}
       expanded={expanded}
       onToggle={toggleExpanded}
+      onDismiss={dismissForToday}
       peek={
         <>
           <span aria-hidden>{emoji}</span> {fortune.keywordTitle}
@@ -317,24 +333,19 @@ export function HomeFortuneCard() {
       </div>
 
       <div className="home-fortune-card__actions">
-        <button
-          type="button"
-          className="home-fortune-card__share btn btn--primary"
-          onClick={() => void handleShare()}
-          disabled={sharing}
-        >
-          {t('share')}
-        </button>
         <Link to={ROUTES.FORTUNE_TODAY} className="home-fortune-card__cta">
           {t('viewDetail')}
           <span aria-hidden>→</span>
         </Link>
         <button
           type="button"
-          className="home-fortune-card__dismiss"
-          onClick={dismissForToday}
+          className="home-fortune-card__share"
+          onClick={() => void handleShare()}
+          disabled={sharing}
+          aria-label={t('share')}
+          title={t('share')}
         >
-          {t('dismissToday')}
+          <Share2 size={18} strokeWidth={2.25} aria-hidden />
         </button>
       </div>
     </FortuneCardShell>

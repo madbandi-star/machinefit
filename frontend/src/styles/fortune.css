@@ -38,14 +38,21 @@
   padding-bottom: 0.85rem;
 }
 
-.home-fortune-card__toggle {
+.home-fortune-card__header {
   position: relative;
   z-index: 1;
   display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.home-fortune-card__toggle {
+  display: flex;
+  flex: 1;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  width: 100%;
+  min-width: 0;
   margin: 0;
   padding: 0.15rem 0;
   border: 0;
@@ -55,7 +62,9 @@
   cursor: pointer;
 }
 
-.home-fortune-card__toggle:focus-visible {
+.home-fortune-card__toggle:focus-visible,
+.home-fortune-card__hide:focus-visible,
+.home-fortune-card__share:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
   outline-offset: 3px;
   border-radius: 8px;
@@ -79,24 +88,38 @@
   text-overflow: ellipsis;
 }
 
-.home-fortune-card__toggle-meta {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--color-text-muted);
-  font-size: 0.78rem;
-  font-weight: 650;
-}
-
 .home-fortune-card__chevron {
   display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
   transition: transform 0.18s ease;
   transform: rotate(0deg);
 }
 
 .home-fortune-card__chevron.is-open {
   transform: rotate(180deg);
+}
+
+.home-fortune-card__hide {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: -0.15rem -0.2rem 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.home-fortune-card__hide:hover {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
 }
 
 .home-fortune-card__body-wrap {
@@ -272,23 +295,20 @@
 .home-fortune-card__actions {
   position: relative;
   display: grid;
-  gap: 0.4rem;
-  margin-top: 0.15rem;
-}
-
-.home-fortune-card__share {
-  width: 100%;
-  margin: 0;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+  align-items: stretch;
+  margin-top: 0.25rem;
 }
 
 .home-fortune-card__cta {
   position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  width: 100%;
-  padding: 0.72rem 1rem;
+  min-height: 2.65rem;
+  padding: 0.65rem 1rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
   background: color-mix(in srgb, var(--color-primary) 16%, transparent);
@@ -302,27 +322,30 @@
   background: color-mix(in srgb, var(--color-primary) 24%, transparent);
 }
 
-.home-fortune-card__dismiss {
-  width: 100%;
+.home-fortune-card__share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  min-height: 2.65rem;
   margin: 0;
-  padding: 0.55rem 0.75rem;
-  border: 0;
+  padding: 0;
   border-radius: 999px;
-  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+  background: color-mix(in srgb, var(--color-surface, #fff) 70%, transparent);
   color: var(--color-text-muted);
-  font-size: 0.82rem;
-  font-weight: 650;
   cursor: pointer;
 }
 
-.home-fortune-card__dismiss:hover {
+.home-fortune-card__share:hover:not(:disabled) {
   color: var(--color-text);
-  background: color-mix(in srgb, var(--color-text) 6%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
-.home-fortune-card__dismiss:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
-  outline-offset: 2px;
+.home-fortune-card__share:disabled {
+  opacity: 0.55;
+  cursor: wait;
 }
 
 .home-fortune-card--gate {
