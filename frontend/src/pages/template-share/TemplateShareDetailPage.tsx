@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   AtSign,
+  Check,
   Download,
   Flag,
   Heart,
@@ -47,6 +48,12 @@ function formatCommentTime(iso: string) {
   } catch {
     return iso;
   }
+}
+
+function authorInitial(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return '?';
+  return [...trimmed][0]!.toUpperCase();
 }
 
 export function TemplateShareDetailPage() {
@@ -328,6 +335,52 @@ export function TemplateShareDetailPage() {
           </div>
         ) : null}
 
+        <section className="tpl-share-take" aria-label={t('templateShare.download')}>
+          <div className="tpl-share-take__copy">
+            <p className="tpl-share-take__eyebrow">
+              {post.downloadedByMe
+                ? t('templateShare.downloadedAlready')
+                : t('templateShare.takeEyebrow')}
+            </p>
+            <p className="tpl-share-take__title">
+              {post.downloadedByMe
+                ? t('templateShare.alreadyDownloaded')
+                : t('templateShare.download')}
+            </p>
+            <p className="tpl-share-take__meta">
+              {t('templateShare.exerciseCount', { count: post.items.length })}
+              {' · '}
+              {t('templateShare.statDownloads')} {post.downloadCount}
+              {' · '}
+              {t('templateShare.statComments')} {post.commentCount}
+            </p>
+          </div>
+          {post.downloadedByMe ? (
+            <Link
+              to={`${ROUTES.MY_TEMPLATES}#received`}
+              className="btn btn--primary tpl-share-take__cta"
+            >
+              <Check size={17} strokeWidth={2.4} aria-hidden />
+              {t('templateShare.viewInMyTemplates')}
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="btn btn--primary tpl-share-take__cta"
+              disabled={!isAuthenticated || !post.canDownload || downloadMutation.isPending}
+              onClick={() => requireAuth(() => downloadMutation.mutate())}
+            >
+              <Download size={17} strokeWidth={2.4} aria-hidden />
+              {downloadMutation.isPending ? '…' : t('templateShare.downloadShort')}
+            </button>
+          )}
+          {!isAuthenticated && !post.downloadedByMe ? (
+            <p className="tpl-share-take__hint">
+              <Link to={ROUTES.LOGIN}>{tc('nav.login')}</Link> {t('templateShare.loginHint')}
+            </p>
+          ) : null}
+        </section>
+
         {hasCreatorLinks ? (
           <section className="tpl-share-creator" aria-label={t('templateShare.creatorLinks')}>
             <h3 className="tpl-share-detail__section-title">{t('templateShare.creatorLinks')}</h3>
@@ -456,66 +509,97 @@ export function TemplateShareDetailPage() {
 
           {isAuthenticated ? (
             <form className="tpl-share-comment-form" onSubmit={onComment}>
+              <span className="tpl-share-comment-form__avatar" aria-hidden>
+                {authorInitial(t('templateShare.me'))}
+              </span>
               <input
-                className="input"
+                className="input tpl-share-comment-form__input"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder={t('templateShare.commentPlaceholder')}
+                maxLength={500}
               />
               <button
                 type="submit"
-                className="btn btn--primary"
+                className="btn btn--primary btn--sm tpl-share-comment-form__submit"
                 disabled={commentMutation.isPending || !comment.trim()}
               >
                 {t('templateShare.commentSubmit')}
               </button>
             </form>
-          ) : null}
+          ) : (
+            <p className="tpl-share-comments-block__login">
+              <Link to={ROUTES.LOGIN}>{tc('nav.login')}</Link> {t('templateShare.commentLoginHint')}
+            </p>
+          )}
 
-          <div className="tpl-share-comments">
-            {comments.map((c) => (
-              <article key={c.id} className="tpl-share-comment">
-                <div className="tpl-share-comment__meta">
-                  <span className="tpl-share-comment__author">
-                    {c.authorName}
-                    {c.userId === userId ? ` · ${t('templateShare.me')}` : ''}
+          {commentsQuery.isLoading ? <Skeleton count={2} height={56} /> : null}
+
+          {!commentsQuery.isLoading && comments.length === 0 ? (
+            <div className="tpl-share-comments-empty">
+              <MessageCircle size={22} strokeWidth={1.75} aria-hidden />
+              <p>{t('templateShare.noComments')}</p>
+            </div>
+          ) : (
+            <ul className="tpl-share-comments">
+              {comments.map((c) => (
+                <li key={c.id} className="tpl-share-comment">
+                  <span className="tpl-share-comment__avatar" aria-hidden>
+                    {authorInitial(c.authorName)}
                   </span>
-                  <time className="tpl-share-comment__time" dateTime={c.createdAt}>
-                    {formatCommentTime(c.createdAt)}
-                  </time>
-                </div>
-                <p className="tpl-share-comment__body">{c.content}</p>
-                {c.canDelete ? (
-                  <button
-                    type="button"
-                    className="tpl-share-comment__delete"
-                    onClick={() => deleteCommentMutation.mutate(c.id)}
-                  >
-                    {tc('actions.delete')}
-                  </button>
-                ) : null}
-              </article>
-            ))}
-            {comments.length === 0 ? (
-              <p className="tpl-share-empty">{t('templateShare.noComments')}</p>
-            ) : null}
-          </div>
+                  <div className="tpl-share-comment__content">
+                    <div className="tpl-share-comment__meta">
+                      <span className="tpl-share-comment__author">
+                        {c.authorName}
+                        {c.userId === userId ? (
+                          <span className="tpl-share-comment__me">{t('templateShare.me')}</span>
+                        ) : null}
+                      </span>
+                      <time className="tpl-share-comment__time" dateTime={c.createdAt}>
+                        {formatCommentTime(c.createdAt)}
+                      </time>
+                    </div>
+                    <p className="tpl-share-comment__body">{c.content}</p>
+                    {c.canDelete ? (
+                      <button
+                        type="button"
+                        className="tpl-share-comment__delete"
+                        onClick={() => deleteCommentMutation.mutate(c.id)}
+                      >
+                        {tc('actions.delete')}
+                      </button>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <div className="tpl-share-sticky-cta">
+          <div className="tpl-share-sticky-cta__meta">
+            <span>{t('templateShare.exerciseCount', { count: post.items.length })}</span>
+            <span>
+              {t('templateShare.statDownloads')} {post.downloadCount}
+            </span>
+          </div>
           {post.downloadedByMe ? (
-            <Link to={`${ROUTES.MY_TEMPLATES}#received`} className="btn btn--primary">
+            <Link
+              to={`${ROUTES.MY_TEMPLATES}#received`}
+              className="btn btn--primary tpl-share-sticky-cta__btn"
+            >
+              <Check size={17} strokeWidth={2.4} aria-hidden />
               {t('templateShare.viewInMyTemplates')}
             </Link>
           ) : (
             <button
               type="button"
-              className="btn btn--primary"
+              className="btn btn--primary tpl-share-sticky-cta__btn"
               disabled={!isAuthenticated || !post.canDownload || downloadMutation.isPending}
               onClick={() => requireAuth(() => downloadMutation.mutate())}
             >
-              <Download size={18} strokeWidth={2.3} aria-hidden />
-              {t('templateShare.download')}
+              <Download size={17} strokeWidth={2.4} aria-hidden />
+              {downloadMutation.isPending ? '…' : t('templateShare.downloadShort')}
             </button>
           )}
         </div>

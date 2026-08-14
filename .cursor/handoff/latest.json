@@ -1,9 +1,9 @@
 {
-  "title": "My Templates page glanceable redesign",
-  "summary": "My Templates now opens with count overview + mine/received tabs and compact one-line rows (name, status, actions). Share/delete/publish logic unchanged.",
-  "git": { "branch": "main", "commit": "635c0e47" },
+  "title": "Template share detail: take CTA + comments glanceable",
+  "summary": "Detail page now shows a prominent take-template card early, improved sticky CTA with meta, and card-style comments with composer/avatars. Download/comment APIs unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
     "frontend/src/styles/template-share.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
@@ -11,16 +11,15 @@
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "? ???: top stats (mine/received/shared) visible",
-    "Tab switch mine ? received without long stacked cards",
-    "Share / edit / delete / view post still work",
-    "Received: use in records + origin line truncated"
+    "Open a hub post ? take card visible above workout list",
+    "Take / already-taken ? my templates still works",
+    "Comments: composer, empty state, list cards, delete own"
   ],
   "fastChecks": [
-    "rg -n \"tpl-mine-overview|tpl-mine-row|listTab\" frontend/src/pages/template-share/MyTemplatesPage.tsx frontend/src/styles/template-share.css"
+    "rg -n \"tpl-share-take|tpl-share-comment__avatar|downloadShort\" frontend/src/pages/template-share/TemplateShareDetailPage.tsx frontend/src/styles/template-share.css"
   ],
-  "productionChecks": ["Pages: open My Templates and scan list"],
+  "productionChecks": ["Pages: template share detail take + comments UI"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Tall stacked cards, redundant badges, both sections always stacked",
-  "toBe": "Overview counts + tabs + compact rows for one-glance scanning"
+  "asIs": "Download buried in sticky bar; flat comment lines",
+  "toBe": "Early take card + sticky meta CTA; glanceable comment cards"
 }
