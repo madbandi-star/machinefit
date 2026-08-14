@@ -87,3 +87,5 @@ services:
         sync: false
       - key: APPLE_REDIRECT_URI
         sync: false
+
+# Deploy hook secret configured — trigger Render redeploy
