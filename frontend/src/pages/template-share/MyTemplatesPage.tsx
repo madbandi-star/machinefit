@@ -1,11 +1,13 @@
-import { FormEvent, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import {
   ArrowLeft,
   ExternalLink,
+  LayoutTemplate,
+  Pencil,
   Share2,
   Trash2,
 } from 'lucide-react';
@@ -61,6 +63,7 @@ function normalizeYoutubeUrl(raw: string): string | null {
 export function MyTemplatesPage() {
   const { t } = useTranslation('community');
   const { t: tc } = useTranslation('common');
+  const location = useLocation();
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [shareTarget, setShareTarget] = useState<WorkoutCardTemplate | null>(null);
@@ -73,6 +76,13 @@ export function MyTemplatesPage() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [youtubeChannelName, setYoutubeChannelName] = useState('');
   const [instagramId, setInstagramId] = useState('');
+  const [listTab, setListTab] = useState<'mine' | 'received'>(() =>
+    typeof window !== 'undefined' && window.location.hash === '#received' ? 'received' : 'mine'
+  );
+
+  useEffect(() => {
+    if (location.hash === '#received') setListTab('received');
+  }, [location.hash]);
 
   const templatesQuery = useQuery({
     queryKey: QUERY_KEYS.workoutCardTemplates(),
@@ -97,6 +107,10 @@ export function MyTemplatesPage() {
           Boolean(tpl.sourceSharePostId || tpl.sourceTemplateId || tpl.originalTemplateId)
       ),
     [templatesQuery.data]
+  );
+  const sharedCount = useMemo(
+    () => mine.filter((tpl) => Boolean(tpl.sharePostId)).length,
+    [mine]
   );
 
   const publishMutation = useMutation({
@@ -383,184 +397,261 @@ export function MyTemplatesPage() {
       subtitle={t('templateShare.myTemplatesSubtitle')}
     >
       <div className="tpl-share-page tpl-share-mine-page">
-        <Link to={ROUTES.TEMPLATE_SHARE} className="tpl-share-hub-link">
-          {t('templateShare.goHub')}
-          <ExternalLink size={14} strokeWidth={2.3} aria-hidden />
-        </Link>
-
-        {templatesQuery.isLoading ? <Skeleton count={3} height={88} /> : null}
+        {templatesQuery.isLoading ? <Skeleton count={4} height={64} /> : null}
         {templatesQuery.isError ? (
           <QueryErrorMessage onRetry={() => void templatesQuery.refetch()} />
         ) : null}
 
         {!templatesQuery.isLoading && !templatesQuery.isError ? (
           <>
-            <section className="tpl-mine-section" aria-labelledby="tpl-mine-heading">
-              <header className="tpl-mine-section__head">
-                <h3 id="tpl-mine-heading" className="tpl-mine-section__title">
+            <div className="tpl-mine-overview" aria-label={t('templateShare.myTemplates')}>
+              <button
+                type="button"
+                className={[
+                  'tpl-mine-overview__stat',
+                  listTab === 'mine' ? 'is-active' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={() => setListTab('mine')}
+              >
+                <span className="tpl-mine-overview__label">{t('templateShare.sectionMine')}</span>
+                <strong className="tpl-mine-overview__value">{mine.length}</strong>
+              </button>
+              <button
+                type="button"
+                className={[
+                  'tpl-mine-overview__stat',
+                  listTab === 'received' ? 'is-active' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={() => setListTab('received')}
+              >
+                <span className="tpl-mine-overview__label">
+                  {t('templateShare.sectionReceived')}
+                </span>
+                <strong className="tpl-mine-overview__value">{received.length}</strong>
+              </button>
+              <div className="tpl-mine-overview__stat tpl-mine-overview__stat--static">
+                <span className="tpl-mine-overview__label">{t('templateShare.summaryShared')}</span>
+                <strong className="tpl-mine-overview__value">{sharedCount}</strong>
+              </div>
+            </div>
+
+            <div className="tpl-mine-toolbar">
+              <div className="tpl-mine-tabs" role="tablist" aria-label={t('templateShare.myTemplates')}>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={listTab === 'mine'}
+                  className={['tpl-mine-tabs__btn', listTab === 'mine' ? 'is-active' : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => setListTab('mine')}
+                >
                   {t('templateShare.sectionMine')}
-                </h3>
-                <span className="tpl-mine-section__count">{mine.length}</span>
-              </header>
+                  <span className="tpl-mine-tabs__count">{mine.length}</span>
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={listTab === 'received'}
+                  className={[
+                    'tpl-mine-tabs__btn',
+                    listTab === 'received' ? 'is-active' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => setListTab('received')}
+                >
+                  {t('templateShare.sectionReceived')}
+                  <span className="tpl-mine-tabs__count">{received.length}</span>
+                </button>
+              </div>
+              <Link to={ROUTES.TEMPLATE_SHARE} className="tpl-share-hub-link">
+                {t('templateShare.goHub')}
+                <ExternalLink size={14} strokeWidth={2.3} aria-hidden />
+              </Link>
+            </div>
 
-              {mine.length === 0 ? (
-                <div className="tpl-share-empty-box">
-                  <p className="tpl-share-empty-box__text">{t('templateShare.noMine')}</p>
-                  <div className="tpl-share-empty-box__actions">
-                    <Link to={ROUTES.RECORDS} className="btn btn--primary btn--sm">
-                      {t('templateShare.goRecords')}
-                    </Link>
+            {listTab === 'mine' ? (
+              <section
+                className="tpl-mine-section"
+                aria-label={t('templateShare.sectionMine')}
+              >
+                {mine.length === 0 ? (
+                  <div className="tpl-share-empty-box">
+                    <LayoutTemplate size={28} strokeWidth={1.75} aria-hidden />
+                    <p className="tpl-share-empty-box__text">{t('templateShare.noMine')}</p>
+                    <div className="tpl-share-empty-box__actions">
+                      <Link to={ROUTES.RECORDS} className="btn btn--primary btn--sm">
+                        {t('templateShare.goRecords')}
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <ul className="tpl-mine-list">
-                  {mine.map((tpl) => {
-                    const canShare =
-                      tpl.canShare === true ||
-                      (tpl.isOriginal !== false &&
-                        !tpl.sourceSharePostId &&
-                        !tpl.sourceTemplateId);
-                    const shared = Boolean(tpl.sharePostId);
-                    return (
-                      <li key={tpl.id} className="tpl-mine-card">
-                        <div className="tpl-mine-card__top">
-                          <div className="tpl-mine-card__badges">
-                            <span className="tpl-share-pill">{t('templateShare.badgeOriginal')}</span>
-                            {shared ? (
-                              <span className="tpl-share-pill tpl-share-pill--shared">
-                                {t('templateShare.alreadyShared')}
-                              </span>
-                            ) : null}
+                ) : (
+                  <ul className="tpl-mine-list">
+                    {mine.map((tpl) => {
+                      const canShare =
+                        tpl.canShare === true ||
+                        (tpl.isOriginal !== false &&
+                          !tpl.sourceSharePostId &&
+                          !tpl.sourceTemplateId);
+                      const shared = Boolean(tpl.sharePostId);
+                      return (
+                        <li key={tpl.id} className="tpl-mine-row">
+                          <div className="tpl-mine-row__main">
+                            <div className="tpl-mine-row__title-line">
+                              <h4 className="tpl-mine-row__name">{tpl.name}</h4>
+                              {shared ? (
+                                <span className="tpl-share-pill tpl-share-pill--shared">
+                                  {t('templateShare.alreadyShared')}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="tpl-mine-row__meta">
+                              {t('templateShare.exerciseCount', { count: tpl.items.length })}
+                            </p>
                           </div>
-                          <h4 className="tpl-mine-card__name">{tpl.name}</h4>
-                          <p className="tpl-mine-card__meta">
-                            {t('templateShare.exerciseCount', { count: tpl.items.length })}
-                          </p>
-                        </div>
-
-                        <div className="tpl-mine-card__footer">
-                          {canShare ? (
-                            <button
-                              type="button"
-                              className="btn btn--primary tpl-mine-card__primary"
-                              onClick={() => openShare(tpl)}
-                            >
-                              <Share2 size={16} strokeWidth={2.3} aria-hidden />
-                              {shared
-                                ? t('templateShare.updateShare')
-                                : t('templateShare.share')}
-                            </button>
-                          ) : (
-                            <span className="tpl-mine-card__locked">
-                              {t('templateShare.cannotShare')}
-                            </span>
-                          )}
-                          <div className="tpl-mine-card__links">
+                          <div className="tpl-mine-row__actions">
+                            {canShare ? (
+                              <button
+                                type="button"
+                                className={[
+                                  'tpl-mine-row__action',
+                                  'tpl-mine-row__action--primary',
+                                  shared ? 'is-shared' : '',
+                                ]
+                                  .filter(Boolean)
+                                  .join(' ')}
+                                onClick={() => openShare(tpl)}
+                                aria-label={
+                                  shared
+                                    ? t('templateShare.updateShare')
+                                    : t('templateShare.share')
+                                }
+                                title={
+                                  shared
+                                    ? t('templateShare.updateShare')
+                                    : t('templateShare.share')
+                                }
+                              >
+                                {shared ? (
+                                  <Pencil size={16} strokeWidth={2.3} aria-hidden />
+                                ) : (
+                                  <Share2 size={16} strokeWidth={2.3} aria-hidden />
+                                )}
+                                <span className="tpl-mine-row__action-label">
+                                  {shared
+                                    ? t('templateShare.updateShareShort')
+                                    : t('templateShare.share')}
+                                </span>
+                              </button>
+                            ) : (
+                              <span className="tpl-mine-row__locked">
+                                {t('templateShare.cannotShare')}
+                              </span>
+                            )}
                             {tpl.sharePostId ? (
                               <Link
                                 to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
                                   ':postId',
                                   tpl.sharePostId
                                 )}
-                                className="tpl-mine-card__link"
+                                className="tpl-mine-row__icon-btn"
+                                aria-label={t('templateShare.viewPost')}
+                                title={t('templateShare.viewPost')}
                               >
-                                {t('templateShare.viewPost')}
+                                <ExternalLink size={15} strokeWidth={2.3} aria-hidden />
                               </Link>
                             ) : null}
                             <button
                               type="button"
-                              className="tpl-mine-card__link tpl-mine-card__link--danger"
+                              className="tpl-mine-row__icon-btn tpl-mine-row__icon-btn--danger"
                               onClick={() => setDeleteId(tpl.id)}
+                              aria-label={tc('actions.delete')}
+                              title={tc('actions.delete')}
                             >
-                              <Trash2 size={13} strokeWidth={2.3} aria-hidden />
-                              {tc('actions.delete')}
+                              <Trash2 size={15} strokeWidth={2.3} aria-hidden />
                             </button>
                           </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </section>
-
-            <section
-              id="received"
-              className="tpl-mine-section"
-              aria-labelledby="tpl-received-heading"
-            >
-              <header className="tpl-mine-section__head">
-                <h3 id="tpl-received-heading" className="tpl-mine-section__title">
-                  {t('templateShare.sectionReceived')}
-                </h3>
-                <span className="tpl-mine-section__count">{received.length}</span>
-              </header>
-
-              {received.length === 0 ? (
-                <div className="tpl-share-empty-box">
-                  <p className="tpl-share-empty-box__text">{t('templateShare.noReceived')}</p>
-                  <div className="tpl-share-empty-box__actions">
-                    <Link to={ROUTES.TEMPLATE_SHARE} className="btn btn--primary btn--sm">
-                      {t('templateShare.browseHub')}
-                    </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </section>
+            ) : (
+              <section
+                id="received"
+                className="tpl-mine-section"
+                aria-label={t('templateShare.sectionReceived')}
+              >
+                {received.length === 0 ? (
+                  <div className="tpl-share-empty-box">
+                    <LayoutTemplate size={28} strokeWidth={1.75} aria-hidden />
+                    <p className="tpl-share-empty-box__text">{t('templateShare.noReceived')}</p>
+                    <div className="tpl-share-empty-box__actions">
+                      <Link to={ROUTES.TEMPLATE_SHARE} className="btn btn--primary btn--sm">
+                        {t('templateShare.browseHub')}
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <ul className="tpl-mine-list">
-                  {received.map((tpl) => (
-                    <li key={tpl.id} className="tpl-mine-card">
-                      <div className="tpl-mine-card__top">
-                        <div className="tpl-mine-card__badges">
-                          <span className="tpl-share-pill tpl-share-pill--received">
-                            {t('templateShare.badgeReceived')}
-                          </span>
+                ) : (
+                  <ul className="tpl-mine-list">
+                    {received.map((tpl) => (
+                      <li key={tpl.id} className="tpl-mine-row">
+                        <div className="tpl-mine-row__main">
+                          <div className="tpl-mine-row__title-line">
+                            <h4 className="tpl-mine-row__name">{tpl.name}</h4>
+                            <span className="tpl-share-pill tpl-share-pill--received">
+                              {t('templateShare.badgeReceivedShort')}
+                            </span>
+                          </div>
+                          <p className="tpl-mine-row__meta">
+                            {t('templateShare.exerciseCount', { count: tpl.items.length })}
+                            {tpl.originTitle
+                              ? ` · ${tpl.originAuthorName || '—'} · ${tpl.originTitle}`
+                              : ` · ${t('templateShare.originUnknown')}`}
+                          </p>
                         </div>
-                        <h4 className="tpl-mine-card__name">{tpl.name}</h4>
-                        <p className="tpl-mine-card__meta">
-                          {t('templateShare.exerciseCount', { count: tpl.items.length })}
-                          {tpl.originTitle
-                            ? ` · ${t('templateShare.originLine', {
-                                title: tpl.originTitle,
-                                author: tpl.originAuthorName || '—',
-                              })}`
-                            : ` · ${t('templateShare.originUnknown')}`}
-                        </p>
-                      </div>
-
-                      <div className="tpl-mine-card__footer">
-                        <Link
-                          to={ROUTES.RECORDS}
-                          className="btn btn--primary tpl-mine-card__primary"
-                        >
-                          {t('templateShare.useInRecords')}
-                        </Link>
-                        <div className="tpl-mine-card__links">
+                        <div className="tpl-mine-row__actions">
+                          <Link
+                            to={ROUTES.RECORDS}
+                            className="tpl-mine-row__action tpl-mine-row__action--primary"
+                          >
+                            {t('templateShare.useInRecordsShort')}
+                          </Link>
                           {tpl.sourceSharePostId ? (
                             <Link
                               to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
                                 ':postId',
                                 tpl.sourceSharePostId
                               )}
-                              className="tpl-mine-card__link"
+                              className="tpl-mine-row__icon-btn"
+                              aria-label={t('templateShare.viewOriginal')}
+                              title={t('templateShare.viewOriginal')}
                             >
-                              {t('templateShare.viewOriginal')}
+                              <ExternalLink size={15} strokeWidth={2.3} aria-hidden />
                             </Link>
                           ) : null}
                           <button
                             type="button"
-                            className="tpl-mine-card__link tpl-mine-card__link--danger"
+                            className="tpl-mine-row__icon-btn tpl-mine-row__icon-btn--danger"
                             onClick={() => setDeleteId(tpl.id)}
+                            aria-label={tc('actions.delete')}
+                            title={tc('actions.delete')}
                           >
-                            <Trash2 size={13} strokeWidth={2.3} aria-hidden />
-                            {tc('actions.delete')}
+                            <Trash2 size={15} strokeWidth={2.3} aria-hidden />
                           </button>
                         </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            )}
           </>
         ) : null}
       </div>

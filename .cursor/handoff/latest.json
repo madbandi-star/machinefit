@@ -1,17 +1,26 @@
 {
-  "title": "Fortune share: logo/tags under one-liner box",
-  "summary": "Helchang fortune share card moves MachineFit lockup and hashtag pills to sit directly under the one-liner advice panel instead of the canvas bottom.",
-  "git": { "branch": "main", "commit": "1aa90d44" },
-  "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
+  "title": "My Templates page glanceable redesign",
+  "summary": "My Templates now opens with count overview + mine/received tabs and compact one-line rows (name, status, actions). Share/delete/publish logic unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
+    "frontend/src/styles/template-share.css",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json",
+    "frontend/src/i18n/locales/ja/community.json",
+    "frontend/src/i18n/locales/zh/community.json"
+  ],
   "testFocus": [
-    "Share ?¤ëŠ˜???¬ì°½?´ì„¸ ??logo left + tags right sit just below the quote/advice box",
-    "Still 1080Ã—1350; content values unchanged"
+    "? ???: top stats (mine/received/shared) visible",
+    "Tab switch mine ? received without long stacked cards",
+    "Share / edit / delete / view post still work",
+    "Received: use in records + origin line truncated"
   ],
   "fastChecks": [
-    "rg -n \"quoteY \\+ quoteH \\+ 44|footerY\" frontend/src/utils/fortuneShareCard.ts"
+    "rg -n \"tpl-mine-overview|tpl-mine-row|listTab\" frontend/src/pages/template-share/MyTemplatesPage.tsx frontend/src/styles/template-share.css"
   ],
-  "productionChecks": ["Pages: fortune share PNG footer placement"],
+  "productionChecks": ["Pages: open My Templates and scan list"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Logo/tags pinned near canvas bottom (H-96)",
-  "toBe": "Logo/tags directly under one-liner advice box"
+  "asIs": "Tall stacked cards, redundant badges, both sections always stacked",
+  "toBe": "Overview counts + tabs + compact rows for one-glance scanning"
 }
