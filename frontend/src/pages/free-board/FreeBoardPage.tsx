@@ -99,48 +99,110 @@ export function FreeBoardPage() {
   };
 
   if (showForm) {
+    const titleReady = Boolean(title.trim());
+    const contentReady = Boolean(content.trim());
+    const checklist = [
+      { id: 'title', label: t('freeStepTitle'), done: titleReady },
+      { id: 'content', label: t('freeStepContent'), done: contentReady },
+    ];
+    const checklistDone = checklist.filter((item) => item.done).length;
+
     return (
-      <div className="community-board-page board-write-page">
+      <div className="community-board-page board-write-page board-write-page--free">
         <PageShell title={t('newPost')} subtitle={t('freeWriteHint')}>
-          <form className="board-write" onSubmit={handleSubmit}>
-            <div className="board-write__fields">
-              <div className="board-write__field">
-                <div className="board-write__label-row">
-                  <label htmlFor="post-title">{t('postTitle')}</label>
-                  <span className="board-write__counter" aria-hidden>
-                    {title.length}/{TITLE_MAX}
-                  </span>
-                </div>
-                <input
-                  id="post-title"
-                  className="input board-write__title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
-                  maxLength={TITLE_MAX}
-                  required
-                  placeholder={t('postTitlePlaceholder')}
-                  autoFocus
-                />
-              </div>
-              <div className="board-write__field">
-                <div className="board-write__label-row">
-                  <label htmlFor="post-content">{t('postContent')}</label>
-                  <span className="board-write__counter" aria-hidden>
-                    {content.length}/{CONTENT_MAX}
-                  </span>
-                </div>
-                <textarea
-                  id="post-content"
-                  className="input board-write__textarea"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value.slice(0, CONTENT_MAX))}
-                  maxLength={CONTENT_MAX}
-                  required
-                  rows={10}
-                  placeholder={t('postContentPlaceholder')}
-                />
-              </div>
+          <div className="board-write-checklist" aria-label={t('freeChecklistLabel')}>
+            <div className="board-write-checklist__head">
+              <p className="board-write-checklist__title">{t('freeChecklistLabel')}</p>
+              <span className="board-write-checklist__progress">
+                {checklistDone}/{checklist.length}
+              </span>
             </div>
+            <ul className="board-write-checklist__list board-write-checklist__list--free">
+              {checklist.map((item) => (
+                <li
+                  key={item.id}
+                  className={[
+                    'board-write-checklist__item',
+                    item.done ? 'is-done' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  <span className="board-write-checklist__mark" aria-hidden>
+                    {item.done ? '✓' : '·'}
+                  </span>
+                  <span>{item.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <form className="board-write board-write--free" onSubmit={handleSubmit}>
+            <section
+              className={[
+                'board-write__section',
+                titleReady ? 'is-ready' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              aria-labelledby="free-step-title"
+            >
+              <header className="board-write__section-head">
+                <span className="board-write__step">1</span>
+                <div>
+                  <h3 id="free-step-title" className="board-write__section-title">
+                    {t('freeStepTitle')}
+                  </h3>
+                  <p className="board-write__section-hint">{t('freeStepTitleHint')}</p>
+                </div>
+                <span className="board-write__section-status">
+                  {title.length}/{TITLE_MAX}
+                </span>
+              </header>
+              <input
+                id="post-title"
+                className="input board-write__title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
+                maxLength={TITLE_MAX}
+                required
+                placeholder={t('postTitlePlaceholder')}
+                autoFocus
+              />
+            </section>
+
+            <section
+              className={[
+                'board-write__section',
+                contentReady ? 'is-ready' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              aria-labelledby="free-step-content"
+            >
+              <header className="board-write__section-head">
+                <span className="board-write__step">2</span>
+                <div>
+                  <h3 id="free-step-content" className="board-write__section-title">
+                    {t('freeStepContent')}
+                  </h3>
+                  <p className="board-write__section-hint">{t('freeStepContentHint')}</p>
+                </div>
+                <span className="board-write__section-status">
+                  {content.length}/{CONTENT_MAX}
+                </span>
+              </header>
+              <textarea
+                id="post-content"
+                className="input board-write__textarea board-write__textarea--free"
+                value={content}
+                onChange={(e) => setContent(e.target.value.slice(0, CONTENT_MAX))}
+                maxLength={CONTENT_MAX}
+                required
+                rows={8}
+                placeholder={t('postContentPlaceholder')}
+              />
+            </section>
 
             <div className="board-write__actions">
               <button

@@ -1733,3 +1733,32 @@ section:has(> .post-detail) .btn--sm,
     grid-column: 2;
   }
 }
+
+/* ── Free board write ── */
+.board-write-page--free .page-shell__subtitle {
+  max-width: 22rem;
+}
+
+.board-write-checklist__list--free {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.board-write--free {
+  gap: 0.85rem;
+}
+
+.board-write--free .board-write__title {
+  font-size: 1.15rem;
+  font-weight: 780;
+  letter-spacing: -0.02em;
+  min-height: 3rem;
+}
+
+.board-write__textarea--free {
+  min-height: 12rem;
+  line-height: 1.55;
+}
+
+.board-write--free .board-write__section {
+  gap: 0.7rem;
+}

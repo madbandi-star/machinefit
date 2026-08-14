@@ -1,9 +1,9 @@
 {
-  "title": "Machine request write form glanceable redesign",
-  "summary": "Request write page now shows a progress checklist and numbered section cards (photo/info/gym/consent). Gym choice uses compact segments. Submit/create/update logic unchanged.",
-  "git": { "branch": "main", "commit": "753b0f58" },
+  "title": "Free board write form glanceable redesign",
+  "summary": "Free board write now uses a progress checklist and numbered title/body sections matching the machine-request write pattern. Create/cancel logic unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/machine-request-board/MachineRequestWritePage.tsx",
+    "frontend/src/pages/free-board/FreeBoardPage.tsx",
     "frontend/src/styles/community.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
@@ -11,15 +11,14 @@
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "????: progress checklist updates as fields fill",
-    "Photo attach, brand/machine/desc, gym segments, consent still required to submit",
-    "Edit mode still works without photo/consent sections"
+    "????? ???: checklist updates for title/body",
+    "Submit still requires both fields; cancel clears and returns to list"
   ],
   "fastChecks": [
-    "rg -n \"board-write-checklist|board-write__section|requestStepPhoto\" frontend/src/pages/machine-request-board/MachineRequestWritePage.tsx frontend/src/styles/community.css"
+    "rg -n \"board-write--free|freeChecklistLabel|freeStepTitle\" frontend/src/pages/free-board/FreeBoardPage.tsx frontend/src/styles/community.css"
   ],
-  "productionChecks": ["Pages: open machine request write and scan form"],
+  "productionChecks": ["Pages: free board ? ???"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Long stacked fields / tall gym radios hard to scan",
-  "toBe": "Checklist + numbered sections + compact gym chips"
+  "asIs": "Plain stacked title/body fields",
+  "toBe": "Checklist + numbered title/body cards"
 }
