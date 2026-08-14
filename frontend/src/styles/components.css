@@ -984,26 +984,24 @@
 
 .profile-card__power-dd {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.65rem 0.85rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 0.45rem;
   min-width: 0;
 }
 
 .profile-card__power-link {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   align-self: center;
 }
 
 .power-box {
   flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.15rem;
-  max-width: 7.5rem;
-  text-align: right;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
 }
 
 .power-box__btn {

@@ -86,6 +86,12 @@ export function PowerBox() {
     claimMutation.mutate();
   };
 
+  const statusLabel = claimed
+    ? remainingMs > 0
+      ? `${t('points.powerBox.alreadyClaimed')} · ${formatRemaining(remainingMs, t)}`
+      : t('points.powerBox.alreadyClaimed')
+    : t('points.powerBox.openLabel');
+
   return (
     <div className="power-box">
       <button
@@ -95,12 +101,8 @@ export function PowerBox() {
         }`}
         onClick={handleClick}
         disabled={disabled}
-        aria-label={
-          claimed ? t('points.powerBox.alreadyClaimed') : t('points.powerBox.openLabel')
-        }
-        title={
-          claimed ? t('points.powerBox.alreadyClaimed') : t('points.powerBox.openLabel')
-        }
+        aria-label={statusLabel}
+        title={statusLabel}
       >
         <span className="power-box__emoji" aria-hidden>
           {phase === 'spark' ? '✨' : '🎁'}
@@ -111,19 +113,6 @@ export function PowerBox() {
           </span>
         ) : null}
       </button>
-      {claimed ? (
-        <p className="power-box__hint">
-          {t('points.powerBox.alreadyClaimed')}
-          {remainingMs > 0 ? (
-            <>
-              <br />
-              {formatRemaining(remainingMs, t)}
-            </>
-          ) : null}
-        </p>
-      ) : (
-        <p className="power-box__hint power-box__hint--ready">{t('points.powerBox.readyHint')}</p>
-      )}
     </div>
   );
 }
