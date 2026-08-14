@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { BrainCircuit, ChevronRight, Info } from 'lucide-react';
 import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { ROUTES } from '@/constants/routes';
 import './LegalDisclaimerBanner.css';
@@ -28,6 +29,39 @@ export function LegalDisclaimerBanner({
   pageBottom,
 }: LegalDisclaimerBannerProps) {
   const { t } = useTranslation();
+
+  if (variant === 'ai') {
+    return (
+      <aside
+        className={[
+          'legal-disclaimer',
+          'legal-disclaimer--ai-card',
+          compact ? 'legal-disclaimer--compact' : '',
+          pageBottom ? 'legal-disclaimer--page-bottom' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        role="note"
+      >
+        <div className="legal-disclaimer__icon" aria-hidden>
+          <BrainCircuit size={20} strokeWidth={1.75} />
+        </div>
+        <div className="legal-disclaimer__body">
+          <p className="legal-disclaimer__eyebrow">{t('compliance.disclaimer.aiTitle')}</p>
+          <p className="legal-disclaimer__lead">{t('compliance.disclaimer.aiCardBody')}</p>
+          <p className="legal-disclaimer__caution">
+            <Info size={14} strokeWidth={2.25} aria-hidden />
+            <span>{t('compliance.disclaimer.aiCardHighlight')}</span>
+          </p>
+          <Link className="legal-disclaimer__more" to={VARIANT_TO_ROUTE.ai}>
+            {t('compliance.disclaimer.learnMoreCard')}
+            <ChevronRight size={14} strokeWidth={2.25} aria-hidden />
+          </Link>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside
       className={[
@@ -40,7 +74,10 @@ export function LegalDisclaimerBanner({
       role="note"
     >
       <GuideProse text={t(`compliance.disclaimer.${variant}`)} variant="compact" />
-      <Link to={VARIANT_TO_ROUTE[variant]}>{t('compliance.disclaimer.learnMore')}</Link>
+      <Link className="legal-disclaimer__more" to={VARIANT_TO_ROUTE[variant]}>
+        {t('compliance.disclaimer.learnMore')}
+        <ChevronRight size={14} strokeWidth={2.25} aria-hidden />
+      </Link>
     </aside>
   );
 }

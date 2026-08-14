@@ -1,20 +1,17 @@
-﻿# Test handoff — TODAY'S WORKOUT report UI + random share
+﻿# Test handoff — 운동성향 bottom disclaimer UI
 
 ## Summary
-1. 운동 종료 리포트 시트를 네온 라임 시안에 맞게 UI 개편
-2. 공유 PNG는 시안 10종 셔플 백(연속 중복 없음)
+운동성향 하단 AI 면책 UI를 왼쪽 보더+노트박스 스타일에서 아이콘 카드형으로 개선. 문구·라우트 동일.
 
 ## Git
-- Merged to `main` (report UI + share shuffle)
-
-## Changed files
-- `frontend/src/components/home/WorkoutCompleteReport/WorkoutCompleteReportModal.tsx`
-- `frontend/src/styles/workout-complete.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json`
-- `frontend/src/utils/workoutCompleteShareThemes.ts`
-- `frontend/src/utils/workoutCompleteShareCard.ts`
+- Branch: `main`
+- Commit: _(after push)_
 
 ## Test focus
-1. 홈 → 운동 종료 → 리포트 시트 구성(게이지/3통계/POWER/한마디/CTA)
-2. 공유를 여러 번 → PNG 테마가 매번 달라짐
-3. 좁은 폭(~360) 레이아웃
+1. 하단이 `AI 안내` 카드로 보이는지
+2. 의료 문구가 답답한 박스가 아니라 짧은 caution 라인인지
+3. `자세히 보기` → 법적 AI 페이지
+
+## As-is → To-be
+- **As-is:** 회색 왼쪽선 + 초록 테두리 note + 밑줄 자세히
+- **To-be:** DNA 톤 글래스 카드 + 아이콘 + 캐어풀 링크

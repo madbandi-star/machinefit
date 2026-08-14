@@ -368,6 +368,10 @@
   line-height: 1.45;
 }
 
+.dna-page .legal-disclaimer--ai-card {
+  margin-top: 2rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dna-boot__orb,
   .dna-hero,
