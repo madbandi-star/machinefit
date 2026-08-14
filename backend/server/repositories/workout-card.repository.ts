@@ -219,7 +219,7 @@ function mapTemplateRow(row: WorkoutCardTemplateRow): WorkoutCardTemplate {
   };
 }
 
-/** Prefer muscle cover → default cover → machine_images (same chain as machine search). */
+/** Prefer muscle cover → default cover → machine_images → standard type. */
 const PRIMARY_IMAGE_SQL = `COALESCE(
               (
                 SELECT CASE
@@ -249,6 +249,18 @@ const PRIMARY_IMAGE_SQL = `COALESCE(
                 FROM machine_images mi
                 WHERE mi.machine_id = m.id
                 ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                LIMIT 1
+              ),
+              (
+                SELECT CASE
+                  WHEN s.image_url IS NULL THEN NULL
+                  WHEN POSITION('?' IN s.image_url) > 0
+                    THEN s.image_url || '&v=' || COALESCE(s.version, 0)::text
+                  ELSE s.image_url || '?v=' || COALESCE(s.version, 0)::text
+                END
+                FROM standard_machine_images s
+                WHERE s.standard_type_id = m.standard_type_id
+                ORDER BY s.is_primary DESC, s.display_order ASC
                 LIMIT 1
               )
             ) AS primary_image_url`;

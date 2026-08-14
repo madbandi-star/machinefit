@@ -128,6 +128,13 @@ export const QUERY_KEYS = {
     page?: number;
     pageSize?: number;
   }) => ['admin', 'machine-covers', params] as const,
+  adminStandardMachines: (params: Record<string, unknown>) =>
+    ['admin', 'standard-machines', params] as const,
+  adminStandardMachineOptions: ['admin', 'standard-machines', 'options'] as const,
+  adminStandardMachineImages: (id: string) =>
+    ['admin', 'standard-machines', id, 'images'] as const,
+  adminCatalogMachineGallery: (id: string) =>
+    ['admin', 'catalog-machines', id, 'images'] as const,
   motivationMedia: ['motivation-media'] as const,
   userMotivationTracks: ['user', 'motivation-tracks'] as const,
   adminOwnerApplications: ['admin', 'owner-applications'] as const,

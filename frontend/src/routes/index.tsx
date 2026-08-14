@@ -372,6 +372,10 @@ const adminMachineCovers = () =>
   import('@/pages/admin/machine-covers/AdminMachineCoversPage').then((m) => ({
     default: m.AdminMachineCoversPage,
   }));
+const adminStandardMachines = () =>
+  import('@/pages/admin/standard-machines/AdminStandardMachinesPage').then((m) => ({
+    default: m.AdminStandardMachinesPage,
+  }));
 const adminLocations = () =>
   import('@/pages/admin/locations/AdminLocationsPage').then((m) => ({
     default: m.AdminLocationsPage,
@@ -720,6 +724,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_OWNER_APPLICATIONS, element: lazyRoute(adminOwnerApps) },
         { path: ROUTES.ADMIN_TRAINER_APPLICATIONS, element: lazyRoute(adminTrainerApps) },
         { path: ROUTES.ADMIN_BRANDS, element: lazyRoute(adminBrands) },
+        { path: ROUTES.ADMIN_STANDARD_MACHINES, element: lazyRoute(adminStandardMachines) },
         { path: ROUTES.ADMIN_MACHINES, element: lazyRoute(adminMachines) },
         { path: ROUTES.ADMIN_MACHINE_REQUESTS, element: lazyRoute(adminMachineRequests) },
         { path: ROUTES.ADMIN_MACHINE_TIPS, element: lazyRoute(adminMachineTips) },

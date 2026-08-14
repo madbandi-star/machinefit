@@ -7,6 +7,7 @@ export * from './owner.schema.js';
 export * from './trainer.schema.js';
 export * from './admin.schema.js';
 export * from './admin-catalog.schema.js';
+export * from './admin-standard-machine.schema.js';
 export * from './user.schema.js';
 export * from './workout.schema.js';
 export * from './machine-preference.schema.js';

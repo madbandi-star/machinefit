@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/admin.controller.js';
 import * as adminCatalogController from '../controllers/admin-catalog.controller.js';
+import * as adminStandardMachineController from '../controllers/admin-standard-machine.controller.js';
 import * as adminBillingController from '../controllers/admin-billing.controller.js';
 import * as motivationMediaController from '../controllers/motivation-media.controller.js';
 import * as adminMotivationUploadController from '../controllers/admin-motivation-upload.controller.js';
@@ -63,6 +64,80 @@ adminRouter.post(
   adminCatalogController.uploadMachineImage
 );
 adminRouter.delete('/catalog/machines/:id/image', adminCatalogController.clearMachineImage);
+
+/* Standard machine types (공통 머신) + gallery images */
+adminRouter.get(
+  '/catalog/standard-machines/options',
+  adminStandardMachineController.listStandardMachineOptions
+);
+adminRouter.get(
+  '/catalog/standard-machines',
+  adminStandardMachineController.listStandardMachines
+);
+adminRouter.post(
+  '/catalog/standard-machines',
+  adminStandardMachineController.createStandardMachine
+);
+adminRouter.get(
+  '/catalog/standard-machines/:id',
+  adminStandardMachineController.getStandardMachine
+);
+adminRouter.patch(
+  '/catalog/standard-machines/:id',
+  adminStandardMachineController.updateStandardMachine
+);
+adminRouter.patch(
+  '/catalog/standard-machines/:id/active',
+  adminStandardMachineController.setStandardMachineActive
+);
+adminRouter.delete(
+  '/catalog/standard-machines/:id',
+  adminStandardMachineController.deleteStandardMachine
+);
+adminRouter.get(
+  '/catalog/standard-machines/:id/images',
+  adminStandardMachineController.listStandardMachineImages
+);
+adminRouter.post(
+  '/catalog/standard-machines/:id/images',
+  muscleGroupImageUpload,
+  adminStandardMachineController.uploadStandardMachineImage
+);
+adminRouter.put(
+  '/catalog/standard-machines/:id/images/reorder',
+  adminStandardMachineController.reorderStandardMachineImages
+);
+adminRouter.patch(
+  '/catalog/standard-machines/:id/images/:imageId',
+  adminStandardMachineController.updateStandardMachineImage
+);
+adminRouter.delete(
+  '/catalog/standard-machines/:id/images/:imageId',
+  adminStandardMachineController.deleteStandardMachineImage
+);
+
+/* Brand machine multi-image gallery */
+adminRouter.get(
+  '/catalog/machines/:id/images',
+  adminStandardMachineController.listBrandMachineImages
+);
+adminRouter.post(
+  '/catalog/machines/:id/images',
+  muscleGroupImageUpload,
+  adminStandardMachineController.uploadBrandMachineImage
+);
+adminRouter.put(
+  '/catalog/machines/:id/images/reorder',
+  adminStandardMachineController.reorderBrandMachineImages
+);
+adminRouter.patch(
+  '/catalog/machines/:id/images/:imageId',
+  adminStandardMachineController.updateBrandMachineImage
+);
+adminRouter.delete(
+  '/catalog/machines/:id/images/:imageId',
+  adminStandardMachineController.deleteBrandMachineImage
+);
 
 adminRouter.get('/dashboard', adminController.dashboard);
 

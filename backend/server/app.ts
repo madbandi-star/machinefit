@@ -16,6 +16,10 @@ import { storageService } from './services/storage.service.js';
 import { serveMuscleGroupImage } from './controllers/muscle-group-image-media.controller.js';
 import { serveMachineCoverImage } from './controllers/machine-cover-image-media.controller.js';
 import { serveBrandAssetImage } from './controllers/brand-asset-media.controller.js';
+import {
+  serveBrandMachineGalleryImage,
+  serveStandardMachineImage,
+} from './controllers/admin-standard-machine.controller.js';
 import { serveMotivationAudio } from './controllers/motivation-audio-media.controller.js';
 import { serveMotivationCover } from './controllers/motivation-cover-media.controller.js';
 import { serveNoticeAttachment } from './controllers/notice-media.controller.js';
@@ -130,6 +134,22 @@ export function createApp() {
     `${env.API_BASE_PATH}/media/brand-assets/:brandCode/:kind`,
     (req, res, next) => {
       void serveBrandAssetImage(req, res, next);
+    }
+  );
+
+  // Standard machine type representative images.
+  app.get(
+    `${env.API_BASE_PATH}/media/standard-machine-images/:imageId/:kind`,
+    (req, res, next) => {
+      void serveStandardMachineImage(req, res, next);
+    }
+  );
+
+  // Brand machine gallery images (machine_images).
+  app.get(
+    `${env.API_BASE_PATH}/media/machine-images/:imageId/:kind`,
+    (req, res, next) => {
+      void serveBrandMachineGalleryImage(req, res, next);
     }
   );
 

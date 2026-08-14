@@ -39,6 +39,10 @@ import type {
   ToggleActiveInput,
   AdminBrandUpsertInput,
   AdminMachineUpsertInput,
+  AdminStandardMachineUpsertInput,
+  StandardMachineType,
+  StandardMachineImage,
+  BrandMachineGalleryImage,
 } from '@machinefit/shared';
 import { apiClient } from '@/services/http/axios-client';
 import type { ApiResponse } from '@machinefit/shared';
@@ -215,6 +219,152 @@ export const adminApi = {
 
   clearCatalogMachineImage: (id: string) =>
     apiClient.delete<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/image`),
+
+  listCatalogMachineGallery: (id: string) =>
+    apiClient.get<ApiResponse<{ items: BrandMachineGalleryImage[] }>>(
+      `/admin/catalog/machines/${encodeURIComponent(id)}/images`
+    ),
+
+  uploadCatalogMachineGalleryImage: (
+    id: string,
+    file: File,
+    meta?: { imageType?: string; isPrimary?: boolean },
+    onProgress?: (percent: number) => void
+  ) => {
+    const form = new FormData();
+    form.append('file', file);
+    if (meta) form.append('meta', JSON.stringify(meta));
+    return apiClient.post<ApiResponse<BrandMachineGalleryImage>>(
+      `/admin/catalog/machines/${encodeURIComponent(id)}/images`,
+      form,
+      {
+        headers: { 'Content-Type': undefined },
+        timeout: 120_000,
+        onUploadProgress: (event) => {
+          if (!onProgress || !event.total) return;
+          onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+        },
+      }
+    );
+  },
+
+  updateCatalogMachineGalleryImage: (
+    machineId: string,
+    imageId: string,
+    input: { imageType?: string; isPrimary?: boolean; sortOrder?: number }
+  ) =>
+    apiClient.patch<ApiResponse<BrandMachineGalleryImage>>(
+      `/admin/catalog/machines/${encodeURIComponent(machineId)}/images/${encodeURIComponent(imageId)}`,
+      input
+    ),
+
+  reorderCatalogMachineGallery: (id: string, orderedIds: string[]) =>
+    apiClient.put<ApiResponse<{ items: BrandMachineGalleryImage[] }>>(
+      `/admin/catalog/machines/${encodeURIComponent(id)}/images/reorder`,
+      { orderedIds }
+    ),
+
+  deleteCatalogMachineGalleryImage: (machineId: string, imageId: string) =>
+    apiClient.delete<ApiResponse<{ deleted: true }>>(
+      `/admin/catalog/machines/${encodeURIComponent(machineId)}/images/${encodeURIComponent(imageId)}`
+    ),
+
+  listStandardMachines: (params?: {
+    q?: string;
+    muscleGroup?: string;
+    isActive?: 'true' | 'false' | 'all';
+    sort?: 'name' | 'createdAt' | 'sortOrder' | 'code';
+    order?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+  }) =>
+    apiClient.get<ApiResponse<PaginatedResponse<StandardMachineType>>>(
+      '/admin/catalog/standard-machines',
+      { params }
+    ),
+
+  listStandardMachineOptions: (activeOnly = true) =>
+    apiClient.get<
+      ApiResponse<{
+        items: Array<{
+          id: string;
+          code: string;
+          name: Record<string, string>;
+          primaryMuscleGroup: string;
+        }>;
+      }>
+    >('/admin/catalog/standard-machines/options', {
+      params: { activeOnly: activeOnly ? 'true' : 'false' },
+    }),
+
+  createStandardMachine: (input: AdminStandardMachineUpsertInput) =>
+    apiClient.post<ApiResponse<StandardMachineType>>('/admin/catalog/standard-machines', input),
+
+  updateStandardMachine: (id: string, input: AdminStandardMachineUpsertInput) =>
+    apiClient.patch<ApiResponse<StandardMachineType>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}`,
+      input
+    ),
+
+  setStandardMachineActive: (id: string, isActive: boolean) =>
+    apiClient.patch<ApiResponse<StandardMachineType>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}/active`,
+      { isActive }
+    ),
+
+  deleteStandardMachine: (id: string) =>
+    apiClient.delete<ApiResponse<{ deleted: boolean; deactivated: boolean }>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}`
+    ),
+
+  listStandardMachineImages: (id: string) =>
+    apiClient.get<ApiResponse<{ items: StandardMachineImage[] }>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}/images`
+    ),
+
+  uploadStandardMachineImage: (
+    id: string,
+    file: File,
+    meta?: { imageType?: string; isPrimary?: boolean },
+    onProgress?: (percent: number) => void
+  ) => {
+    const form = new FormData();
+    form.append('file', file);
+    if (meta) form.append('meta', JSON.stringify(meta));
+    return apiClient.post<ApiResponse<StandardMachineImage>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}/images`,
+      form,
+      {
+        headers: { 'Content-Type': undefined },
+        timeout: 120_000,
+        onUploadProgress: (event) => {
+          if (!onProgress || !event.total) return;
+          onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+        },
+      }
+    );
+  },
+
+  updateStandardMachineImage: (
+    typeId: string,
+    imageId: string,
+    input: { imageType?: string; isPrimary?: boolean; displayOrder?: number }
+  ) =>
+    apiClient.patch<ApiResponse<StandardMachineImage>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(typeId)}/images/${encodeURIComponent(imageId)}`,
+      input
+    ),
+
+  reorderStandardMachineImages: (id: string, orderedIds: string[]) =>
+    apiClient.put<ApiResponse<{ items: StandardMachineImage[] }>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}/images/reorder`,
+      { orderedIds }
+    ),
+
+  deleteStandardMachineImage: (typeId: string, imageId: string) =>
+    apiClient.delete<ApiResponse<{ deleted: true }>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(typeId)}/images/${encodeURIComponent(imageId)}`
+    ),
 
   listPosts: () =>
     apiClient.get<ApiResponse<Post[]>>('/admin/posts'),

@@ -29,6 +29,14 @@ export interface Machine {
   /** Populated when machines are joined with brands (list/search). */
   brandName?: LocalizedString;
   brandCode?: string;
+  /** Optional FK to MachineFit standard machine type. */
+  standardTypeId?: string | null;
+  /** Standard type code when joined. */
+  standardTypeCode?: string | null;
+  /** Standard type localized name when joined. */
+  standardTypeName?: LocalizedString | null;
+  /** Optional manufacturer model / SKU (not internal MachineFit code). */
+  modelCode?: string | null;
   muscleGroup: string;
   machineType: string;
   /**

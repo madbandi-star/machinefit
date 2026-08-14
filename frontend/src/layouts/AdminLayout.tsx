@@ -45,6 +45,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     labelKey: 'navGroup.catalog',
     items: [
       { to: ROUTES.ADMIN_BRANDS, labelKey: 'brands.nav', icon: 'flag' },
+      { to: ROUTES.ADMIN_STANDARD_MACHINES, labelKey: 'standardMachines.nav', icon: 'machines' },
       { to: ROUTES.ADMIN_MACHINES, labelKey: 'machines', icon: 'machines' },
       { to: ROUTES.ADMIN_MACHINE_REQUESTS, labelKey: 'machineRequests.nav', icon: 'message' },
       { to: ROUTES.ADMIN_MACHINE_TIPS, labelKey: 'machineTips.nav', icon: 'pencil' },

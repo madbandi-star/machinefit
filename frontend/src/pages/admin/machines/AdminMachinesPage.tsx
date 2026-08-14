@@ -63,6 +63,8 @@ type MachineFormState = {
   isActive: boolean;
   /** Admin override for BW estimated load factor; empty = shared default. */
   bodyweightLoadFactor: string;
+  standardTypeId: string;
+  modelCode: string;
 };
 
 const EMPTY_FORM: MachineFormState = {
@@ -77,6 +79,8 @@ const EMPTY_FORM: MachineFormState = {
   sortOrder: '0',
   isActive: true,
   bodyweightLoadFactor: '',
+  standardTypeId: '',
+  modelCode: '',
 };
 
 function isAllowedImage(file: File): boolean {
@@ -104,6 +108,8 @@ function toUpsertInput(form: MachineFormState): AdminMachineUpsertInput {
         : undefined,
     sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
     isActive: form.isActive,
+    standardTypeId: form.standardTypeId.trim() ? form.standardTypeId.trim() : null,
+    modelCode: form.modelCode.trim(),
     bodyweightLoadFactor:
       form.machineType === 'bodyweight'
         ? factorParsed != null && Number.isFinite(factorParsed)
@@ -131,6 +137,8 @@ function fromMachine(machine: Machine): MachineFormState {
     isActive: machine.isActive,
     bodyweightLoadFactor:
       machine.bodyweightLoadFactor == null ? '' : String(machine.bodyweightLoadFactor),
+    standardTypeId: machine.standardTypeId ?? '',
+    modelCode: machine.modelCode ?? '',
   };
 }
 
@@ -296,6 +304,24 @@ export function AdminMachinesPage() {
         order: 'asc',
         isActive: 'all',
       });
+      return res.data.data.items;
+    },
+  });
+
+  const standardOptionsQuery = useQuery({
+    queryKey: QUERY_KEYS.adminStandardMachineOptions,
+    queryFn: async () => {
+      const res = await adminApi.listStandardMachineOptions(true);
+      return res.data.data.items;
+    },
+  });
+
+  const editingId = editor && editor !== 'create' ? editor.id : '';
+  const galleryQuery = useQuery({
+    queryKey: QUERY_KEYS.adminCatalogMachineGallery(editingId),
+    enabled: Boolean(editingId),
+    queryFn: async () => {
+      const res = await adminApi.listCatalogMachineGallery(editingId);
       return res.data.data.items;
     },
   });
@@ -563,8 +589,63 @@ export function AdminMachinesPage() {
     },
   });
 
+  const galleryUploadMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const gallery = galleryQuery.data ?? [];
+      return (
+        await adminApi.uploadCatalogMachineGalleryImage(id, file, {
+          isPrimary: gallery.length === 0,
+        })
+      ).data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.adminCatalogMachineGallery(editingId),
+      });
+      await invalidate();
+      showToast(t('admin:catalogMachines.galleryUploadSuccess'), 'success');
+    },
+    onError: () => showToast(t('admin:error'), 'error'),
+  });
+
+  const galleryPrimaryMutation = useMutation({
+    mutationFn: (imageId: string) =>
+      adminApi.updateCatalogMachineGalleryImage(editingId, imageId, { isPrimary: true }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.adminCatalogMachineGallery(editingId),
+      });
+      await invalidate();
+    },
+  });
+
+  const galleryDeleteMutation = useMutation({
+    mutationFn: (imageId: string) =>
+      adminApi.deleteCatalogMachineGalleryImage(editingId, imageId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.adminCatalogMachineGallery(editingId),
+      });
+      await invalidate();
+      showToast(t('admin:catalogMachines.clearSuccess'), 'success');
+    },
+  });
+
+  const galleryReorderMutation = useMutation({
+    mutationFn: (orderedIds: string[]) =>
+      adminApi.reorderCatalogMachineGallery(editingId, orderedIds),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.adminCatalogMachineGallery(editingId),
+      });
+    },
+  });
+
   const formBusy =
-    saveMutation.isPending || uploadMutation.isPending || clearMutation.isPending;
+    saveMutation.isPending ||
+    uploadMutation.isPending ||
+    clearMutation.isPending ||
+    galleryUploadMutation.isPending;
 
   const dialogRef = useModalAccessibility({
     open: Boolean(editor),
@@ -991,6 +1072,32 @@ export function AdminMachinesPage() {
                       </span>
                     </label>
                   ) : null}
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:catalogMachines.standardType')}</span>
+                    <select
+                      className="input"
+                      value={form.standardTypeId}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, standardTypeId: e.target.value }))
+                      }
+                    >
+                      <option value="">{t('admin:catalogMachines.standardTypeNone')}</option>
+                      {(standardOptionsQuery.data ?? []).map((opt) => (
+                        <option key={opt.id} value={opt.id}>
+                          {getLocalizedName(opt.name, i18n.language, opt.code)} ({opt.code})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:catalogMachines.modelCode')}</span>
+                    <input
+                      className="input"
+                      value={form.modelCode}
+                      placeholder={t('admin:catalogMachines.modelCodePlaceholder')}
+                      onChange={(e) => setForm((f) => ({ ...f, modelCode: e.target.value }))}
+                    />
+                  </label>
                   <label className="admin-catalog-field">
                     <span>{t('admin:catalogMachines.displayOrder')}</span>
                     <input
@@ -1043,21 +1150,113 @@ export function AdminMachinesPage() {
                   {t('admin:catalogMachines.sectionImages')}
                 </h4>
                 {editingMachine ? (
-                  <div className="admin-catalog-images admin-catalog-images--single">
-                    <CatalogImageField
-                      label={t('admin:catalogMachines.primaryImage')}
-                      url={editingMachine.primaryImageUrl}
-                      progress={uploadProgress}
-                      busy={uploadMutation.isPending || clearMutation.isPending}
-                      onUpload={(file) => handleImagePick(file, editingMachine.id)}
-                      onClear={() => clearMutation.mutate(editingMachine.id)}
-                      uploadLabel={t('admin:catalogMachines.upload')}
-                      changeLabel={t('admin:catalogMachines.change')}
-                      clearLabel={t('admin:catalogMachines.clearImage')}
-                      dropLabel={t('admin:catalogMachines.dropHere')}
-                      uploadingLabel={t('admin:catalogMachines.uploading')}
-                    />
-                  </div>
+                  <>
+                    <div className="admin-catalog-images admin-catalog-images--single">
+                      <CatalogImageField
+                        label={t('admin:catalogMachines.primaryImage')}
+                        url={editingMachine.primaryImageUrl}
+                        progress={uploadProgress}
+                        busy={uploadMutation.isPending || clearMutation.isPending}
+                        onUpload={(file) => handleImagePick(file, editingMachine.id)}
+                        onClear={() => clearMutation.mutate(editingMachine.id)}
+                        uploadLabel={t('admin:catalogMachines.upload')}
+                        changeLabel={t('admin:catalogMachines.change')}
+                        clearLabel={t('admin:catalogMachines.clearImage')}
+                        dropLabel={t('admin:catalogMachines.dropHere')}
+                        uploadingLabel={t('admin:catalogMachines.uploading')}
+                      />
+                    </div>
+                    <p className="admin-catalog-section__note">
+                      {t('admin:catalogMachines.galleryHint')}
+                    </p>
+                    <div className="admin-catalog-images">
+                      <label className="btn btn--secondary">
+                        {galleryUploadMutation.isPending
+                          ? t('admin:catalogMachines.uploading')
+                          : t('admin:catalogMachines.galleryUpload')}
+                        <input
+                          type="file"
+                          accept={ACCEPT}
+                          hidden
+                          disabled={galleryUploadMutation.isPending}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = '';
+                            if (!file) return;
+                            if (!isAllowedImage(file)) {
+                              showToast(t('admin:catalogMachines.uploadUnsupported'), 'error');
+                              return;
+                            }
+                            if (file.size > MAX_BYTES) {
+                              showToast(t('admin:catalogMachines.uploadTooLarge'), 'error');
+                              return;
+                            }
+                            galleryUploadMutation.mutate({ id: editingMachine.id, file });
+                          }}
+                        />
+                      </label>
+                      <ul className="admin-catalog-gallery">
+                        {(galleryQuery.data ?? []).map((image, index, arr) => (
+                          <li key={image.id} className="admin-catalog-gallery__item">
+                            <img src={image.imageUrl} alt="" width={64} height={64} />
+                            <div className="admin-catalog-gallery__meta">
+                              <span>
+                                {image.isPrimary
+                                  ? t('admin:catalogMachines.primaryBadge')
+                                  : image.imageType}
+                              </span>
+                              <div className="admin-catalog-gallery__actions">
+                                {!image.isPrimary ? (
+                                  <button
+                                    type="button"
+                                    className="btn btn--sm btn--secondary"
+                                    onClick={() => galleryPrimaryMutation.mutate(image.id)}
+                                  >
+                                    {t('admin:catalogMachines.setPrimary')}
+                                  </button>
+                                ) : null}
+                                <button
+                                  type="button"
+                                  className="btn btn--sm btn--ghost"
+                                  disabled={index === 0}
+                                  onClick={() => {
+                                    const ids = (galleryQuery.data ?? []).map((g) => g.id);
+                                    const tmp = ids[index]!;
+                                    ids[index] = ids[index - 1]!;
+                                    ids[index - 1] = tmp;
+                                    galleryReorderMutation.mutate(ids);
+                                  }}
+                                >
+                                  ↑
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn--sm btn--ghost"
+                                  disabled={index === arr.length - 1}
+                                  onClick={() => {
+                                    const ids = (galleryQuery.data ?? []).map((g) => g.id);
+                                    const tmp = ids[index]!;
+                                    ids[index] = ids[index + 1]!;
+                                    ids[index + 1] = tmp;
+                                    galleryReorderMutation.mutate(ids);
+                                  }}
+                                >
+                                  ↓
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn--sm btn--ghost"
+                                  onClick={() => galleryDeleteMutation.mutate(image.id)}
+                                >
+                                  {t('admin:catalogMachines.clearImage')}
+                                </button>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
                 ) : (
                   <p className="admin-catalog-section__note">
                     {t('admin:catalogMachines.saveBeforeImages')}

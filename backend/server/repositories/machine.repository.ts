@@ -5,6 +5,10 @@ import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
 import { brandAssetMediaUrl } from '../utils/public-api-base.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
 import { supportsMachineCoverMuscleVariants } from '../utils/machine-cover-schema.util.js';
+import {
+  primaryImageCoalesceSql,
+  standardTypePrimaryImageSql,
+} from '../utils/primary-image-sql.js';
 
 const MACHINE_ID_TTL_MS = 30 * 60_000;
 const machineIdByCodeCache = new Map<string, { expiresAt: number; id: string | null }>();
@@ -116,15 +120,9 @@ function filterMockMachinesByBrand(brandCode: string): Machine[] {
   return MOCK_MACHINES.filter((m) => m.brandId === brand.id);
 }
 
-const PRIMARY_IMAGE_SQL = `(
-                SELECT mi.image_url
-                FROM machine_images mi
-                WHERE mi.machine_id = m.id
-                ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                LIMIT 1
-              ) AS primary_image_url`;
+const PRIMARY_IMAGE_SQL = primaryImageCoalesceSql('m');
 
-/** Prefer free-weight muscle-variant cover, then default cover / machine_images. */
+/** Prefer free-weight muscle-variant cover, then default cover / machine_images / standard type. */
 function primaryImageSqlForMuscle(muscleParamIndex: number | null): string {
   if (muscleParamIndex == null) {
     return `COALESCE(
@@ -139,7 +137,8 @@ function primaryImageSqlForMuscle(muscleParamIndex: number | null): string {
            WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
            LIMIT 1
          ),
-         img.image_url
+         img.image_url,
+         ${standardTypePrimaryImageSql('m')}
        ) AS primary_image_url`;
   }
   return `COALESCE(
@@ -165,7 +164,8 @@ function primaryImageSqlForMuscle(muscleParamIndex: number | null): string {
            WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
            LIMIT 1
          ),
-         img.image_url
+         img.image_url,
+         ${standardTypePrimaryImageSql('m')}
        ) AS primary_image_url`;
 }
 
@@ -239,7 +239,7 @@ export const machineRepository = {
     const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
     const primaryImageSelect = muscleVariantsReady
       ? primaryImageSqlForMuscle(muscleParamIndex)
-      : `img.image_url AS primary_image_url`;
+      : `COALESCE(img.image_url, ${standardTypePrimaryImageSql('m')}) AS primary_image_url`;
 
     // List projection: skip tip/how_to blobs — detail page fetches full machine.
     const listPromise = pool.query<
@@ -302,7 +302,7 @@ export const machineRepository = {
         ? muscle
           ? primaryImageSqlForMuscle(2)
           : primaryImageSqlForMuscle(null)
-        : `img.image_url AS primary_image_url`;
+        : `COALESCE(img.image_url, ${standardTypePrimaryImageSql('m')}) AS primary_image_url`;
 
     const result = await pool.query<
       MachineRow & { brand_name: Record<string, string> | null; primary_image_url: string | null }

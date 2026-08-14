@@ -226,6 +226,18 @@ async function enrichTemplateItems(
                   WHERE mi.machine_id = m.id
                   ORDER BY mi.is_primary DESC, mi.sort_order ASC
                   LIMIT 1
+                ),
+                (
+                  SELECT CASE
+                    WHEN s.image_url IS NULL THEN NULL
+                    WHEN POSITION('?' IN s.image_url) > 0
+                      THEN s.image_url || '&v=' || COALESCE(s.version, 0)::text
+                    ELSE s.image_url || '?v=' || COALESCE(s.version, 0)::text
+                  END
+                  FROM standard_machine_images s
+                  WHERE s.standard_type_id = m.standard_type_id
+                  ORDER BY s.is_primary DESC, s.display_order ASC
+                  LIMIT 1
                 )
               ) AS primary_image_url
        FROM machines m

@@ -95,6 +95,10 @@ export const adminMachineUpsertSchema = z.object({
     .optional()
     .default('selectorized'),
   description: localizedOptionalSchema,
+  /** Link to standard machine type; null clears. */
+  standardTypeId: z.union([z.string().uuid(), z.null()]).optional(),
+  /** Manufacturer model / SKU; empty clears. */
+  modelCode: z.union([z.literal(''), z.string().max(120)]).optional(),
   sortOrder: z.number().int().min(0).max(999999).optional().default(0),
   isActive: z.boolean().optional().default(true),
   hasSeat: z.boolean().optional(),

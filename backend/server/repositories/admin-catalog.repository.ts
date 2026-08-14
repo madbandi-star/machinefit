@@ -11,28 +11,10 @@ import type {
 import { getPool } from '../config/database.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
+import { primaryImageCoalesceSql } from '../utils/primary-image-sql.js';
 
 /** Prefer cover URL with version bust so re-uploads are not stuck on immutable browser cache. */
-const PRIMARY_IMAGE_URL_SQL = `COALESCE(
-                (
-                  SELECT CASE
-                    WHEN c.image_url IS NULL THEN NULL
-                    WHEN POSITION('?' IN c.image_url) > 0
-                      THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
-                    ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
-                  END
-                  FROM machine_cover_images c
-                  WHERE c.machine_id = m.id
-                  LIMIT 1
-                ),
-                (
-                  SELECT mi.image_url
-                  FROM machine_images mi
-                  WHERE mi.machine_id = m.id
-                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
-                  LIMIT 1
-                )
-              ) AS primary_image_url`;
+const PRIMARY_IMAGE_URL_SQL = primaryImageCoalesceSql('m');
 
 interface BrandAdminRow {
   id: string;
@@ -58,6 +40,10 @@ interface MachineAdminRow {
   name: Record<string, string>;
   brand_name: Record<string, string> | null;
   brand_code: string | null;
+  standard_type_id?: string | null;
+  standard_type_code?: string | null;
+  standard_type_name?: Record<string, string> | null;
+  model_code?: string | null;
   muscle_group: string;
   machine_type: string;
   description: Record<string, string> | null;
@@ -103,6 +89,10 @@ function mapMachine(row: MachineAdminRow): Machine {
     name: row.name,
     brandName: row.brand_name ?? undefined,
     brandCode: row.brand_code ?? undefined,
+    standardTypeId: row.standard_type_id ?? null,
+    standardTypeCode: row.standard_type_code ?? null,
+    standardTypeName: row.standard_type_name ?? null,
+    modelCode: row.model_code ?? null,
     muscleGroup: row.muscle_group,
     machineType: row.machine_type,
     description: row.description ?? undefined,
@@ -381,9 +371,11 @@ export const adminCatalogRepository = {
 
     const result = await pool.query<MachineAdminRow>(
       `SELECT m.*, b.name AS brand_name, b.code AS brand_code,
+              st.code AS standard_type_code, st.name AS standard_type_name,
               ${PRIMARY_IMAGE_URL_SQL}
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
        ${where}
        ORDER BY ${sortCol} ${sortDir}, m.code ASC
        LIMIT $${idx++} OFFSET $${idx}`,
@@ -401,9 +393,11 @@ export const adminCatalogRepository = {
     if (!pool) return null;
     const result = await pool.query<MachineAdminRow>(
       `SELECT m.*, b.name AS brand_name, b.code AS brand_code,
+              st.code AS standard_type_code, st.name AS standard_type_name,
               ${PRIMARY_IMAGE_URL_SQL}
        FROM machines m
        JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
        WHERE m.id::text = $1 OR m.code = $1`,
       [id]
     );
@@ -424,8 +418,8 @@ export const adminCatalogRepository = {
         `INSERT INTO machines (
            brand_id, code, name, muscle_group, machine_type, description,
            sort_order, is_active, has_seat, has_back_pad, has_foot_plate, has_handle, rom_type,
-           bodyweight_load_factor
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+           bodyweight_load_factor, standard_type_id, model_code
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
          RETURNING id`,
         [
           input.brandId,
@@ -444,6 +438,8 @@ export const adminCatalogRepository = {
           input.machineType === 'bodyweight'
             ? (input.bodyweightLoadFactor ?? null)
             : null,
+          input.standardTypeId ?? null,
+          input.modelCode?.trim() || null,
         ]
       );
       const machineId = result.rows[0].id;
@@ -493,6 +489,8 @@ export const adminCatalogRepository = {
            has_handle = COALESCE($13, has_handle),
            rom_type = COALESCE($14, rom_type),
            bodyweight_load_factor = $15,
+           standard_type_id = $16,
+           model_code = $17,
            updated_at = NOW()
          WHERE id = $1`,
         [
@@ -512,6 +510,12 @@ export const adminCatalogRepository = {
           // undefined → preserve via COALESCE(null, rom_type); '' → clear to null
           input.romType === undefined ? null : input.romType.trim() || null,
           nextFactor,
+          input.standardTypeId === undefined
+            ? existing.standardTypeId ?? null
+            : input.standardTypeId,
+          input.modelCode === undefined
+            ? existing.modelCode ?? null
+            : input.modelCode.trim() || null,
         ]
       );
 
