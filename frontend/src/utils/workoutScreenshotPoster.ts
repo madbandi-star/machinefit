@@ -421,54 +421,74 @@ export async function buildWorkoutScreenshotPoster(input: {
   ctx.moveTo(PAD + sectionTitleW + 16, y - 6);
   ctx.lineTo(PAD + CONTENT_W, y - 6);
   ctx.stroke();
-  y += 18;
+  y += 16;
 
   const FOOTER_TOP = H - 168;
   const listBottom = FOOTER_TOP - 8;
+  const colGap = 12;
+  const cardW = (CONTENT_W - colGap) / 2;
+  const rowGap = 12;
+  const headerH = 70;
+  const tableHead = 22;
+  const setRowH = 24;
+  const padY = 12;
+  const maxSetRowsCap = 5;
 
-  type Plan = { ex: WorkoutPosterExercise; setRows: number; h: number };
-  const plans: Plan[] = [];
-  let used = 0;
-  const cardGap = 12;
+  const cardHeight = (setRows: number) =>
+    headerH + (setRows > 0 ? tableHead + setRows * setRowH : 0) + padY;
 
-  for (let i = 0; i < exercises.length; i += 1) {
-    const ex = exercises[i]!;
-    const maxSets = ex.sets.length;
-    const headerH = 78;
-    const tableHead = 26;
-    const setRowH = 28;
-    const padY = 16;
+  type Cell = { ex: WorkoutPosterExercise; setRows: number };
+  type RowPlan = { cells: Cell[]; h: number };
+  const rows: RowPlan[] = [];
+  let usedH = 0;
+  let shown = 0;
 
-    let setRows = maxSets;
-    let h = headerH + tableHead + setRows * setRowH + padY;
-    const remaining = listBottom - y - used - (plans.length > 0 ? cardGap : 0);
-    const moreReserve = i < exercises.length - 1 ? 36 : 0;
+  while (shown < exercises.length) {
+    const remaining = listBottom - y - usedH - (rows.length > 0 ? rowGap : 0);
+    const moreReserve = shown + 2 < exercises.length ? 32 : 0;
+    if (remaining < headerH + padY + 16 + moreReserve) break;
+
+    const pair = exercises.slice(shown, shown + 2);
+    const desired = pair.map((ex) => Math.min(ex.sets.length, maxSetRowsCap));
+    let setRows = Math.max(...desired, 0);
+    let h = cardHeight(setRows);
 
     if (h + moreReserve > remaining) {
-      const avail = remaining - moreReserve - headerH - tableHead - padY;
-      setRows = Math.max(0, Math.floor(avail / setRowH));
-      h = headerH + (setRows > 0 ? tableHead + setRows * setRowH : 0) + padY;
-      if (h + moreReserve > remaining || remaining < headerH + padY + 20) {
-        break;
+      const avail = remaining - moreReserve - headerH - padY;
+      setRows = Math.max(0, Math.floor((avail - (avail > tableHead ? tableHead : 0)) / setRowH));
+      if (setRows > 0 && headerH + tableHead + setRows * setRowH + padY + moreReserve > remaining) {
+        setRows = Math.max(0, Math.floor((remaining - moreReserve - headerH - tableHead - padY) / setRowH));
       }
+      h = cardHeight(setRows);
+      if (h + moreReserve > remaining) break;
     }
 
-    plans.push({ ex, setRows, h });
-    used += h + (plans.length > 1 ? cardGap : 0);
-    if (setRows < maxSets) break;
-    if (listBottom - y - used < 90) break;
+    rows.push({
+      cells: pair.map((ex) => ({
+        ex,
+        setRows: Math.min(ex.sets.length, setRows),
+      })),
+      h,
+    });
+    usedH += h + (rows.length > 1 ? rowGap : 0);
+    shown += pair.length;
   }
 
-  const hiddenExercises = Math.max(0, exercises.length - plans.length);
+  const hiddenExercises = Math.max(0, exercises.length - shown);
 
-  for (let pi = 0; pi < plans.length; pi += 1) {
-    const { ex, setRows, h } = plans[pi]!;
-    if (pi > 0) y += cardGap;
-    drawCard(ctx, PAD, y, CONTENT_W, h, 18);
+  const drawExerciseCard = (
+    ex: WorkoutPosterExercise,
+    setRows: number,
+    cardX: number,
+    cardY: number,
+    cw: number,
+    ch: number
+  ) => {
+    drawCard(ctx, cardX, cardY, cw, ch, 16);
 
-    const thumbR = 28;
-    const thumbCx = PAD + 28 + thumbR;
-    const thumbCy = y + 28 + thumbR;
+    const thumbR = 22;
+    const thumbCx = cardX + 18 + thumbR;
+    const thumbCy = cardY + 22 + thumbR;
     const thumb = thumbs.get(ex.machineCode);
     ctx.save();
     ctx.beginPath();
@@ -492,7 +512,7 @@ export async function buildWorkoutScreenshotPoster(input: {
     } else {
       ctx.fillStyle = '#1a211a';
       ctx.fill();
-      ctx.font = `800 22px ${FONT}`;
+      ctx.font = `800 18px ${FONT}`;
       ctx.fillStyle = LIME;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -502,59 +522,52 @@ export async function buildWorkoutScreenshotPoster(input: {
     ctx.beginPath();
     ctx.arc(thumbCx, thumbCy, thumbR, 0, Math.PI * 2);
     ctx.strokeStyle = CARD_EDGE;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.25;
     ctx.stroke();
 
-    const textLeft = thumbCx + thumbR + 16;
-    const nameMax = CONTENT_W - (textLeft - PAD) - 160;
+    const textLeft = thumbCx + thumbR + 12;
+    const nameMax = cw - (textLeft - cardX) - 16;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = `800 28px ${FONT_BODY}`;
+    ctx.font = `800 22px ${FONT_BODY}`;
     ctx.fillStyle = TEXT;
-    ctx.fillText(ellipsize(ctx, ex.machineName, nameMax), textLeft, y + 48);
+    ctx.fillText(ellipsize(ctx, ex.machineName, nameMax), textLeft, cardY + 38);
 
     const metaParts = [
       ex.muscleLabel || (ex.volumeKg <= 0 ? labels.bodyweight : null),
       `${ex.setCount} ${labels.setsMeta}`,
     ].filter(Boolean);
-    ctx.font = `600 20px ${FONT}`;
+    ctx.font = `600 16px ${FONT}`;
     ctx.fillStyle = MUTED;
-    ctx.fillText(metaParts.join('  ·  '), textLeft, y + 76);
+    ctx.fillText(ellipsize(ctx, metaParts.join(' · '), nameMax), textLeft, cardY + 60);
 
-    drawKgRight(
-      ctx,
-      formatVolumeKg(ex.volumeKg, locale),
-      PAD + CONTENT_W - 24,
-      y + 56,
-      36
-    );
+    drawKgRight(ctx, formatVolumeKg(ex.volumeKg, locale), cardX + cw - 16, cardY + 62, 26);
 
     if (setRows > 0) {
-      const tableTop = y + 92;
+      const tableTop = cardY + 74;
       ctx.strokeStyle = 'rgba(255,255,255,0.08)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(PAD + 20, tableTop);
-      ctx.lineTo(PAD + CONTENT_W - 20, tableTop);
+      ctx.moveTo(cardX + 14, tableTop);
+      ctx.lineTo(cardX + cw - 14, tableTop);
       ctx.stroke();
 
-      const colSet = PAD + 36;
-      const colReps = PAD + CONTENT_W * 0.42;
-      const colLoad = PAD + CONTENT_W - 36;
+      const colSet = cardX + 18;
+      const colReps = cardX + cw * 0.42;
+      const colLoad = cardX + cw - 18;
 
-      ctx.font = `700 16px ${FONT}`;
+      ctx.font = `700 13px ${FONT}`;
       ctx.fillStyle = MUTED;
       ctx.textAlign = 'left';
-      ctx.fillText(labels.setCol.toUpperCase(), colSet, tableTop + 22);
+      ctx.fillText(labels.setCol.toUpperCase(), colSet, tableTop + 18);
       ctx.textAlign = 'center';
-      ctx.fillText(labels.repsCol.toUpperCase(), colReps, tableTop + 22);
+      ctx.fillText(labels.repsCol.toUpperCase(), colReps, tableTop + 18);
       ctx.textAlign = 'right';
-      ctx.fillText(labels.loadCol.toUpperCase(), colLoad, tableTop + 22);
+      ctx.fillText(labels.loadCol.toUpperCase(), colLoad, tableTop + 18);
 
-      const visibleSets = ex.sets.slice(0, setRows);
-      visibleSets.forEach((row, ri) => {
-        const ry = tableTop + 48 + ri * 28;
-        ctx.font = `700 22px ${FONT}`;
+      ex.sets.slice(0, setRows).forEach((row, ri) => {
+        const ry = tableTop + 40 + ri * setRowH;
+        ctx.font = `700 18px ${FONT}`;
         ctx.fillStyle = TEXT;
         ctx.textAlign = 'left';
         ctx.fillText(String(row.index).padStart(2, '0'), colSet, ry);
@@ -565,27 +578,35 @@ export async function buildWorkoutScreenshotPoster(input: {
 
         ctx.textAlign = 'right';
         if (row.loadKg > 0) {
-          drawKgRight(ctx, formatVolumeKg(row.loadKg, locale), colLoad, ry, 22);
+          drawKgRight(ctx, formatVolumeKg(row.loadKg, locale), colLoad, ry, 18);
         } else {
-          ctx.font = `700 22px ${FONT}`;
+          ctx.font = `700 18px ${FONT}`;
           ctx.fillStyle = MUTED;
           ctx.fillText('—', colLoad, ry);
         }
       });
     }
+  };
 
-    y += h;
+  for (let ri = 0; ri < rows.length; ri += 1) {
+    const row = rows[ri]!;
+    if (ri > 0) y += rowGap;
+    row.cells.forEach((cell, ci) => {
+      const cardX = PAD + ci * (cardW + colGap);
+      drawExerciseCard(cell.ex, cell.setRows, cardX, y, cardW, row.h);
+    });
+    y += row.h;
   }
 
   if (hiddenExercises > 0) {
-    y += 10;
+    y += 8;
     ctx.textAlign = 'center';
-    ctx.font = `600 20px ${FONT_BODY}`;
+    ctx.font = `600 18px ${FONT_BODY}`;
     ctx.fillStyle = MUTED;
     ctx.fillText(
       labels.moreExercises.replace(/\{\{count\}\}/g, String(hiddenExercises)),
       W / 2,
-      Math.min(y + 18, FOOTER_TOP - 8)
+      Math.min(y + 16, FOOTER_TOP - 8)
     );
   }
 
