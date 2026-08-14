@@ -89,3 +89,5 @@ services:
         sync: false
 
 # Deploy hook secret configured — trigger Render redeploy
+
+# KAKAO_JS_KEY env set — redeploy
