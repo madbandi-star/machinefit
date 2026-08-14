@@ -472,16 +472,6 @@
   box-sizing: border-box;
 }
 
-.history-page-premium .history-record-card__header-actions {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.3rem;
-  flex-shrink: 0;
-  width: 100%;
-  margin: 0;
-}
-
 .history-page-premium .history-record-card__hero-aside .history-record-card__title-link {
   display: inline-flex;
   width: fit-content;
