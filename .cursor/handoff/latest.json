@@ -1,24 +1,25 @@
 {
-  "title": "Free board write form glanceable redesign",
-  "summary": "Free board write now uses a progress checklist and numbered title/body sections matching the machine-request write pattern. Create/cancel logic unchanged.",
-  "git": { "branch": "main", "commit": "9e88561e" },
+  "title": "Photo board write form glanceable redesign",
+  "summary": "Photo upload page now has a progress checklist and numbered sections (photos/title/content/tags) with live tag chips. Create/update logic unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/free-board/FreeBoardPage.tsx",
-    "frontend/src/styles/community.css",
+    "frontend/src/pages/photo-board/PhotoPostWritePage.tsx",
+    "frontend/src/styles/photo-board.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
     "frontend/src/i18n/locales/ja/community.json",
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "????? ???: checklist updates for title/body",
-    "Submit still requires both fields; cancel clears and returns to list"
+    "?? ???: checklist updates for photos/title/content/tags",
+    "Create still requires photo+title; reorder/remove still works",
+    "Edit mode shows order controls without new upload dropzone"
   ],
   "fastChecks": [
-    "rg -n \"board-write--free|freeChecklistLabel|freeStepTitle\" frontend/src/pages/free-board/FreeBoardPage.tsx frontend/src/styles/community.css"
+    "rg -n \"photo-write-checklist|photo-write__section|photoStepPhotos\" frontend/src/pages/photo-board/PhotoPostWritePage.tsx frontend/src/styles/photo-board.css"
   ],
-  "productionChecks": ["Pages: free board ? ???"],
+  "productionChecks": ["Pages: photo board ? ?? ???"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Plain stacked title/body fields",
-  "toBe": "Checklist + numbered title/body cards"
+  "asIs": "Dropzone + stacked fields hard to scan",
+  "toBe": "Checklist + numbered photo/title/content/tag sections"
 }

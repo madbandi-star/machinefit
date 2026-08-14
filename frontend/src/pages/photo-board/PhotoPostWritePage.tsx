@@ -163,6 +163,18 @@ export function PhotoPostWritePage() {
     });
   };
 
+  const photoReady = images.length > 0;
+  const titleReady = Boolean(title.trim());
+  const contentReady = Boolean(content.trim());
+  const tagsReady = parseTags(tagsRaw).length > 0;
+  const checklist = [
+    { id: 'photo', label: t('photoStepPhotos'), done: photoReady },
+    { id: 'title', label: t('photoStepTitle'), done: titleReady },
+    { id: 'content', label: t('photoStepContent'), done: contentReady },
+    { id: 'tags', label: t('photoStepTags'), done: tagsReady },
+  ];
+  const checklistDone = checklist.filter((item) => item.done).length;
+
   if (editId && detailQuery.isLoading) {
     return (
       <PageShell title={t('photoEdit')}>
@@ -174,6 +186,33 @@ export function PhotoPostWritePage() {
   return (
     <div className="photo-write-page">
       <PageShell title={editId ? t('photoEdit') : t('photoWrite')} subtitle={t('photoWriteHint')}>
+        <div className="photo-write-checklist" aria-label={t('photoChecklistLabel')}>
+          <div className="photo-write-checklist__head">
+            <p className="photo-write-checklist__title">{t('photoChecklistLabel')}</p>
+            <span className="photo-write-checklist__progress">
+              {checklistDone}/{checklist.length}
+            </span>
+          </div>
+          <ul className="photo-write-checklist__list">
+            {checklist.map((item) => (
+              <li
+                key={item.id}
+                className={[
+                  'photo-write-checklist__item',
+                  item.done ? 'is-done' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <span className="photo-write-checklist__mark" aria-hidden>
+                  {item.done ? '✓' : '·'}
+                </span>
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <form
           className="photo-write"
           onSubmit={(e) => {
@@ -183,140 +222,223 @@ export function PhotoPostWritePage() {
             else createMutation.mutate();
           }}
         >
-          {!editId ? (
-            <section className="photo-write__media" aria-labelledby={fileInputId}>
-              <input
-                ref={fileInputRef}
-                id={fileInputId}
-                className="photo-write__file-input"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                multiple
-                onChange={(e) => {
-                  onPickFiles(e.target.files);
-                  e.currentTarget.value = '';
-                }}
-              />
-              <button
-                type="button"
-                className={`photo-write__dropzone${dragOver ? ' is-dragover' : ''}${
-                  images.length ? ' has-images' : ''
-                }`}
-                disabled={images.length >= 10 || busy}
-                onClick={() => fileInputRef.current?.click()}
-                onDragEnter={(e) => {
-                  e.preventDefault();
-                  if (images.length >= 10) return;
-                  setDragOver(true);
-                }}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  if (images.length >= 10) return;
-                  setDragOver(true);
-                }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragOver(false);
-                  if (images.length >= 10) return;
-                  onPickFiles(e.dataTransfer.files);
-                }}
-              >
-                <span className="photo-write__dropzone-icon" aria-hidden>
-                  <ImagePlus size={28} strokeWidth={1.75} />
-                </span>
-                <span className="photo-write__dropzone-title">{t('photoSelectImages')}</span>
-                <span className="photo-write__dropzone-hint">{t('photoDropHint')}</span>
-              </button>
-              <p className="photo-write__count">
+          <section
+            className={[
+              'photo-write__section',
+              photoReady ? 'is-ready' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            aria-labelledby="photo-step-photos"
+          >
+            <header className="photo-write__section-head">
+              <span className="photo-write__step">1</span>
+              <div>
+                <h3 id="photo-step-photos" className="photo-write__section-title">
+                  {t('photoStepPhotos')}
+                </h3>
+                <p className="photo-write__section-hint">
+                  {editId ? t('photoStepPhotosEditHint') : t('photoStepPhotosHint')}
+                </p>
+              </div>
+              <span className="photo-write__section-status">
                 {t('photoImageCount', { count: images.length, max: 10 })}
-              </p>
-            </section>
-          ) : (
-            <p className="photo-write__count photo-write__count--edit">
-              {t('photoImageCount', { count: images.length, max: 10 })}
-            </p>
-          )}
+              </span>
+            </header>
 
-          {images.length ? (
-            <ul className="photo-write__previews" aria-label={t('photoSelectImages')}>
-              {images.map((img, index) => (
-                <li key={img.id} className="photo-write__preview">
-                  <img src={img.previewUrl} alt="" />
-                  <span className="photo-write__preview-index" aria-hidden>
-                    {index + 1}
+            {!editId ? (
+              <div className="photo-write__media">
+                <input
+                  ref={fileInputRef}
+                  id={fileInputId}
+                  className="photo-write__file-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  onChange={(e) => {
+                    onPickFiles(e.target.files);
+                    e.currentTarget.value = '';
+                  }}
+                />
+                <button
+                  type="button"
+                  className={`photo-write__dropzone${dragOver ? ' is-dragover' : ''}${
+                    images.length ? ' has-images' : ''
+                  }`}
+                  disabled={images.length >= 10 || busy}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    if (images.length >= 10) return;
+                    setDragOver(true);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (images.length >= 10) return;
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragOver(false);
+                    if (images.length >= 10) return;
+                    onPickFiles(e.dataTransfer.files);
+                  }}
+                >
+                  <span className="photo-write__dropzone-icon" aria-hidden>
+                    <ImagePlus size={28} strokeWidth={1.75} />
                   </span>
-                  <div className="photo-write__preview-actions">
-                    <button
-                      type="button"
-                      className="photo-write__preview-btn"
-                      onClick={() => moveImage(index, -1)}
-                      disabled={index === 0}
-                      aria-label={t('photoPrev')}
-                    >
-                      <ChevronLeft size={16} strokeWidth={2.4} />
-                    </button>
-                    <button
-                      type="button"
-                      className="photo-write__preview-btn"
-                      onClick={() => moveImage(index, 1)}
-                      disabled={index === images.length - 1}
-                      aria-label={t('photoNext')}
-                    >
-                      <ChevronRight size={16} strokeWidth={2.4} />
-                    </button>
-                    {!editId ? (
+                  <span className="photo-write__dropzone-title">{t('photoSelectImages')}</span>
+                  <span className="photo-write__dropzone-hint">{t('photoDropHint')}</span>
+                </button>
+              </div>
+            ) : null}
+
+            {images.length ? (
+              <ul className="photo-write__previews" aria-label={t('photoSelectImages')}>
+                {images.map((img, index) => (
+                  <li key={img.id} className="photo-write__preview">
+                    <img src={img.previewUrl} alt="" />
+                    <span className="photo-write__preview-index" aria-hidden>
+                      {index + 1}
+                    </span>
+                    <div className="photo-write__preview-actions">
                       <button
                         type="button"
-                        className="photo-write__preview-btn photo-write__preview-btn--danger"
-                        onClick={() => removeImage(img.id)}
-                        aria-label={t('cancel')}
+                        className="photo-write__preview-btn"
+                        onClick={() => moveImage(index, -1)}
+                        disabled={index === 0}
+                        aria-label={t('photoPrev')}
                       >
-                        <X size={15} strokeWidth={2.5} />
+                        <ChevronLeft size={16} strokeWidth={2.4} />
                       </button>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+                      <button
+                        type="button"
+                        className="photo-write__preview-btn"
+                        onClick={() => moveImage(index, 1)}
+                        disabled={index === images.length - 1}
+                        aria-label={t('photoNext')}
+                      >
+                        <ChevronRight size={16} strokeWidth={2.4} />
+                      </button>
+                      {!editId ? (
+                        <button
+                          type="button"
+                          className="photo-write__preview-btn photo-write__preview-btn--danger"
+                          onClick={() => removeImage(img.id)}
+                          aria-label={t('cancel')}
+                        >
+                          <X size={15} strokeWidth={2.5} />
+                        </button>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="photo-write__empty-photos">{t('photoNoImagesYet')}</p>
+            )}
+          </section>
 
-          <div className="photo-write__fields">
-            <div className="photo-write__field">
-              <label htmlFor="photo-title">{t('postTitle')}</label>
-              <input
-                id="photo-title"
-                className="input"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                maxLength={200}
-                required
-                placeholder={t('postTitle')}
-              />
-            </div>
-            <div className="photo-write__field">
-              <label htmlFor="photo-content">{t('postContent')}</label>
-              <textarea
-                id="photo-content"
-                className="input photo-write__textarea"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={5}
-                maxLength={5000}
-                placeholder={t('postContent')}
-              />
-            </div>
-            <div className="photo-write__field">
-              <label htmlFor="photo-tags">{t('photoTags')}</label>
-              <input
-                id="photo-tags"
-                className="input"
-                value={tagsRaw}
-                onChange={(e) => setTagsRaw(e.target.value)}
-                placeholder={t('photoTagsPlaceholder')}
-              />
-            </div>
-          </div>
+          <section
+            className={[
+              'photo-write__section',
+              titleReady ? 'is-ready' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            aria-labelledby="photo-step-title"
+          >
+            <header className="photo-write__section-head">
+              <span className="photo-write__step">2</span>
+              <div>
+                <h3 id="photo-step-title" className="photo-write__section-title">
+                  {t('photoStepTitle')}
+                </h3>
+                <p className="photo-write__section-hint">{t('photoStepTitleHint')}</p>
+              </div>
+              <span className="photo-write__section-status">
+                {title.length}/200
+              </span>
+            </header>
+            <input
+              id="photo-title"
+              className="input photo-write__title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value.slice(0, 200))}
+              maxLength={200}
+              required
+              placeholder={t('postTitlePlaceholder')}
+            />
+          </section>
+
+          <section
+            className={[
+              'photo-write__section',
+              contentReady ? 'is-ready' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            aria-labelledby="photo-step-content"
+          >
+            <header className="photo-write__section-head">
+              <span className="photo-write__step">3</span>
+              <div>
+                <h3 id="photo-step-content" className="photo-write__section-title">
+                  {t('photoStepContent')}
+                </h3>
+                <p className="photo-write__section-hint">{t('photoStepContentHint')}</p>
+              </div>
+              <span className="photo-write__section-status">
+                {content.length}/5000
+              </span>
+            </header>
+            <textarea
+              id="photo-content"
+              className="input photo-write__textarea"
+              value={content}
+              onChange={(e) => setContent(e.target.value.slice(0, 5000))}
+              rows={5}
+              maxLength={5000}
+              placeholder={t('postContentPlaceholder')}
+            />
+          </section>
+
+          <section
+            className={[
+              'photo-write__section',
+              tagsReady ? 'is-ready' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            aria-labelledby="photo-step-tags"
+          >
+            <header className="photo-write__section-head">
+              <span className="photo-write__step">4</span>
+              <div>
+                <h3 id="photo-step-tags" className="photo-write__section-title">
+                  {t('photoStepTags')}
+                </h3>
+                <p className="photo-write__section-hint">{t('photoStepTagsHint')}</p>
+              </div>
+            </header>
+            <input
+              id="photo-tags"
+              className="input"
+              value={tagsRaw}
+              onChange={(e) => setTagsRaw(e.target.value)}
+              placeholder={t('photoTagsPlaceholder')}
+            />
+            {tagsReady ? (
+              <ul className="photo-write__tag-chips" aria-label={t('photoTags')}>
+                {parseTags(tagsRaw).map((tag) => (
+                  <li key={tag} className="photo-write__tag-chip">
+                    #{tag}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </section>
 
           <div className="photo-write__actions">
             <button
