@@ -241,11 +241,6 @@ export function MyPage() {
             label={tc('templateShare.myTemplates')}
             icon="history"
           />
-          <ListNavLink
-            to={ROUTES.POINTS}
-            label={t('points.myPoints')}
-            icon="trendingUp"
-          />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showAboveMember ? (
             <ListNavLink
