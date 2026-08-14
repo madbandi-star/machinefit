@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: `0e8a89d0`
 
 ## Test focus
 1. 하단이 `AI 안내` 카드로 보이는지
