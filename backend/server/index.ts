@@ -47,6 +47,21 @@ async function bootstrap(): Promise<void> {
     }
   }
 
+  // Visibility check: foundation catalog should have ~80 standard types after 133/134.
+  try {
+    const pool = getPool();
+    if (pool) {
+      const result = await pool.query<{ c: string }>(
+        `SELECT COUNT(*)::text AS c FROM standard_machine_types`
+      );
+      logger.warn('Standard machine types loaded', { count: Number(result.rows[0]?.c ?? 0) });
+    }
+  } catch (err) {
+    logger.warn('Standard machine types table not ready', {
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+
   const app = createApp();
 
   if (!getPool()) {

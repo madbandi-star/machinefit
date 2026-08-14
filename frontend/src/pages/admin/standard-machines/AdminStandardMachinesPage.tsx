@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -132,13 +132,24 @@ export function AdminStandardMachinesPage() {
     [q, muscleGroup, isActive, sort, order, page]
   );
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: QUERY_KEYS.adminStandardMachines(listParams),
     queryFn: async () => {
       const res = await adminApi.listStandardMachines(listParams);
       return res.data.data;
     },
   });
+
+  useEffect(() => {
+    if (!isError) return;
+    const code = getApiErrorCode(error);
+    showToast(
+      code === 'DB_UNAVAILABLE'
+        ? t('admin:standardMachines.dbUnavailable')
+        : t('admin:standardMachines.loadError'),
+      'error'
+    );
+  }, [isError, error, showToast, t]);
 
   const { data: images = [], refetch: refetchImages } = useQuery({
     queryKey: QUERY_KEYS.adminStandardMachineImages(editing?.id ?? ''),
@@ -307,7 +318,11 @@ export function AdminStandardMachinesPage() {
   return (
     <AdminPageShell
       title={t('admin:standardMachines.title')}
-      subtitle={t('admin:standardMachines.subtitle')}
+      subtitle={
+        data?.meta?.total != null
+          ? t('admin:standardMachines.subtitleWithCount', { count: data.meta.total })
+          : t('admin:standardMachines.subtitle')
+      }
     >
       <AdminPanel>
         <div className="admin-catalog-toolbar">
@@ -392,6 +407,13 @@ export function AdminStandardMachinesPage() {
 
         {isLoading ? (
           <Skeleton height={240} />
+        ) : isError ? (
+          <div className="admin-empty">
+            <p>{t('admin:standardMachines.loadError')}</p>
+            <button type="button" className="btn btn--secondary" onClick={() => void refetch()}>
+              {t('admin:standardMachines.refresh')}
+            </button>
+          </div>
         ) : items.length === 0 ? (
           <p className="admin-empty">{t('admin:standardMachines.empty')}</p>
         ) : (

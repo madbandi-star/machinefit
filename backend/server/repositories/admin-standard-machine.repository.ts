@@ -13,7 +13,6 @@ import { AppError } from '../middlewares/error.middleware.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
 import { publicApiBase } from '../utils/public-api-base.js';
-import { versionedUrlSql } from '../utils/primary-image-sql.js';
 
 interface StandardTypeRow {
   id: string;
@@ -162,14 +161,6 @@ function mapGalleryImage(row: GalleryImageRow): BrandMachineGalleryImage {
   };
 }
 
-const PRIMARY_IMAGE_SQL = `(
-  SELECT ${versionedUrlSql('s')}
-  FROM standard_machine_images s
-  WHERE s.standard_type_id = t.id
-  ORDER BY s.is_primary DESC, s.display_order ASC
-  LIMIT 1
-) AS primary_image_url`;
-
 async function replaceMuscleGroups(
   typeId: string,
   primary: string,
@@ -218,23 +209,45 @@ async function loadType(idOrCode: string): Promise<StandardMachineType | null> {
   if (!pool) return null;
   const result = await pool.query<StandardTypeRow>(
     `SELECT t.*,
-            ${PRIMARY_IMAGE_SQL},
-            (SELECT COUNT(*)::int FROM machines m WHERE m.standard_type_id = t.id) AS machine_count,
-            COALESCE(
-              (SELECT array_agg(mg.muscle_group ORDER BY mg.is_primary DESC, mg.sort_order ASC)
-               FROM standard_machine_muscle_groups mg WHERE mg.standard_type_id = t.id),
-              ARRAY[t.primary_muscle_group]
-            ) AS muscle_groups,
-            COALESCE(
-              (SELECT array_agg(a.alias ORDER BY a.alias)
-               FROM standard_machine_aliases a WHERE a.standard_type_id = t.id),
-              ARRAY[]::text[]
-            ) AS aliases
+            (
+              SELECT CASE
+                WHEN s.image_url IS NULL THEN NULL
+                WHEN POSITION('?' IN s.image_url) > 0
+                  THEN s.image_url || '&v=' || COALESCE(s.version, 0)::text
+                ELSE s.image_url || '?v=' || COALESCE(s.version, 0)::text
+              END
+              FROM standard_machine_images s
+              WHERE s.standard_type_id = t.id
+              ORDER BY s.is_primary DESC, s.display_order ASC
+              LIMIT 1
+            ) AS primary_image_url,
+            (SELECT COUNT(*)::int FROM machines m WHERE m.standard_type_id = t.id) AS machine_count
      FROM standard_machine_types t
      WHERE t.id::text = $1 OR t.code = $1`,
     [idOrCode]
   );
-  return result.rows[0] ? mapStandardType(result.rows[0]) : null;
+  const row = result.rows[0];
+  if (!row) return null;
+
+  const muscles = await pool.query<{ muscle_group: string }>(
+    `SELECT muscle_group FROM standard_machine_muscle_groups
+     WHERE standard_type_id = $1
+     ORDER BY is_primary DESC, sort_order ASC`,
+    [row.id]
+  );
+  const aliases = await pool.query<{ alias: string }>(
+    `SELECT alias FROM standard_machine_aliases WHERE standard_type_id = $1 ORDER BY alias`,
+    [row.id]
+  );
+
+  return mapStandardType({
+    ...row,
+    muscle_groups:
+      muscles.rows.length > 0
+        ? muscles.rows.map((r) => r.muscle_group)
+        : [row.primary_muscle_group],
+    aliases: aliases.rows.map((r) => r.alias),
+  });
 }
 
 export const adminStandardMachineRepository = {
@@ -292,18 +305,19 @@ export const adminStandardMachineRepository = {
 
     const result = await pool.query<StandardTypeRow>(
       `SELECT t.*,
-              ${PRIMARY_IMAGE_SQL},
-              (SELECT COUNT(*)::int FROM machines m WHERE m.standard_type_id = t.id) AS machine_count,
-              COALESCE(
-                (SELECT array_agg(mg.muscle_group ORDER BY mg.is_primary DESC, mg.sort_order ASC)
-                 FROM standard_machine_muscle_groups mg WHERE mg.standard_type_id = t.id),
-                ARRAY[t.primary_muscle_group]
-              ) AS muscle_groups,
-              COALESCE(
-                (SELECT array_agg(a.alias ORDER BY a.alias)
-                 FROM standard_machine_aliases a WHERE a.standard_type_id = t.id),
-                ARRAY[]::text[]
-              ) AS aliases
+              (
+                SELECT CASE
+                  WHEN s.image_url IS NULL THEN NULL
+                  WHEN POSITION('?' IN s.image_url) > 0
+                    THEN s.image_url || '&v=' || COALESCE(s.version, 0)::text
+                  ELSE s.image_url || '?v=' || COALESCE(s.version, 0)::text
+                END
+                FROM standard_machine_images s
+                WHERE s.standard_type_id = t.id
+                ORDER BY s.is_primary DESC, s.display_order ASC
+                LIMIT 1
+              ) AS primary_image_url,
+              (SELECT COUNT(*)::int FROM machines m WHERE m.standard_type_id = t.id) AS machine_count
        FROM standard_machine_types t
        ${where}
        ORDER BY ${sortCol} ${order}, t.code ASC
@@ -312,7 +326,13 @@ export const adminStandardMachineRepository = {
     );
 
     return {
-      items: result.rows.map(mapStandardType),
+      items: result.rows.map((row) =>
+        mapStandardType({
+          ...row,
+          muscle_groups: [row.primary_muscle_group],
+          aliases: [],
+        })
+      ),
       meta: buildPaginationMeta(page, limit, total),
     };
   },

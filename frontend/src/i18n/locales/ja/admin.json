@@ -1295,6 +1295,9 @@
       "detail": "Detail",
       "setting": "Settings",
       "other": "Other"
-    }
+    },
+    "subtitleWithCount": "{{count}} standard machine types. Link brand products in Machines.",
+    "loadError": "Could not load standard machines. Refresh and try again.",
+    "dbUnavailable": "Database unavailable. Try again shortly."
   }
 }
