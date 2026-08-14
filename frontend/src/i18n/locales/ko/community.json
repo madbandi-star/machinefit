@@ -335,6 +335,8 @@
     "tagsPlaceholder": "쉼표로 구분",
     "publish": "공개하기",
     "published": "템플릿을 공유관에 공개했습니다.",
+    "emptyTemplate": "운동이 없는 템플릿은 공유할 수 없어요.",
+    "invalidYoutubeUrl": "유튜브 URL 형식을 확인해 주세요. (비워두거나 youtube.com / youtu.be 링크)",
     "shareBlocked": "받아온 템플릿은 다시 공유할 수 없습니다.",
     "apiUnavailable": "템플릿 공유 서버가 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.",
     "templateDeleted": "템플릿을 삭제했습니다.",

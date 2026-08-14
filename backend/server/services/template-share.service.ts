@@ -93,7 +93,9 @@ export const templateShareService = {
     if (!template.payload.length) {
       throw new AppError(400, 'EMPTY_TEMPLATE', 'Template has no items to share');
     }
-    await assertUsageAllowed(userId, 'template_create');
+
+    // Sharing an existing private template should not consume template_create quota.
+    // Still track analytics as template_share / template_create for dashboards.
 
     return templateShareRepository.publish(userId, input, {
       payload: template.payload,

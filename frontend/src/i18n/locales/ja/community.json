@@ -335,6 +335,8 @@
     "tagsPlaceholder": "カンマ区切り",
     "publish": "公開する",
     "published": "テンプレートを共有館に公開しました。",
+    "emptyTemplate": "種目のないテンプレートは共有できません。",
+    "invalidYoutubeUrl": "YouTube URLを確認してください（空欄か youtube.com / youtu.be）",
     "shareBlocked": "受け取ったテンプレートは再共有できません。",
     "apiUnavailable": "テンプレート共有サーバーの準備がまだです。しばらくしてから再度お試しください。",
     "templateDeleted": "テンプレートを削除しました。",

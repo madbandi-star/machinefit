@@ -467,8 +467,29 @@ export const templateShareRepository = {
     }
   ): Promise<TemplateShareDetail> {
     const pool = requirePool();
-    const result = await pool.query<PostRow>(
-      `INSERT INTO template_share_posts (
+
+    const finish = async (row: PostRow): Promise<TemplateShareDetail> => {
+      const author = await pool.query<{ author_name: string }>(
+        `SELECT ${AUTHOR_NAME_SQL} AS author_name FROM users u WHERE u.id = $1`,
+        [userId]
+      );
+      row.author_name = author.rows[0]?.author_name ?? 'User';
+      return withEnrichedItems(mapDetail(row));
+    };
+
+    const rejectIfEmpty = (row: PostRow | undefined): PostRow => {
+      if (!row) {
+        throw new AppError(
+          403,
+          'SHARE_NOT_ALLOWED',
+          'Cannot publish: template share post is owned by another user'
+        );
+      }
+      return row;
+    };
+
+    const withSocialSql = `
+      INSERT INTO template_share_posts (
          author_user_id, source_template_id, title, description, category, difficulty,
          tags, thumbnail_url, youtube_url, youtube_channel_name, instagram_id,
          payload, status, published_at
@@ -492,36 +513,65 @@ export const templateShareRepository = {
          END,
          updated_at = NOW()
        WHERE template_share_posts.author_user_id = $1
-       RETURNING *`,
-      [
-        userId,
-        frozen.sourceTemplateId,
-        input.title,
-        input.description ?? '',
-        input.category,
-        input.difficulty,
-        input.tags ?? [],
-        input.thumbnailUrl ?? null,
+       RETURNING *`;
+
+    const legacySql = `
+      INSERT INTO template_share_posts (
+         author_user_id, source_template_id, title, description, category, difficulty,
+         tags, thumbnail_url, payload, status, published_at
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7::text[], $8, $9::jsonb, 'published', NOW())
+       ON CONFLICT (source_template_id) DO UPDATE SET
+         title = EXCLUDED.title,
+         description = EXCLUDED.description,
+         category = EXCLUDED.category,
+         difficulty = EXCLUDED.difficulty,
+         tags = EXCLUDED.tags,
+         thumbnail_url = EXCLUDED.thumbnail_url,
+         payload = EXCLUDED.payload,
+         status = 'published',
+         published_at = CASE
+           WHEN template_share_posts.status = 'published' THEN template_share_posts.published_at
+           ELSE NOW()
+         END,
+         updated_at = NOW()
+       WHERE template_share_posts.author_user_id = $1
+       RETURNING *`;
+
+    const baseParams = [
+      userId,
+      frozen.sourceTemplateId,
+      input.title,
+      input.description ?? '',
+      input.category,
+      input.difficulty,
+      input.tags ?? [],
+      input.thumbnailUrl ?? null,
+    ];
+
+    try {
+      const result = await pool.query<PostRow>(withSocialSql, [
+        ...baseParams,
         input.youtubeUrl ?? null,
         input.youtubeChannelName ?? null,
         input.instagramId ?? null,
         JSON.stringify(frozen.payload),
-      ]
-    );
-    const row = result.rows[0];
-    if (!row) {
-      throw new AppError(
-        403,
-        'SHARE_NOT_ALLOWED',
-        'Cannot publish: template share post is owned by another user'
-      );
+      ]);
+      return finish(rejectIfEmpty(result.rows[0]));
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      const message = String((err as { message?: string })?.message ?? '');
+      const missingSocialColumn =
+        code === '42703' &&
+        /youtube_url|youtube_channel_name|instagram_id/i.test(message);
+      if (!missingSocialColumn) throw err;
+
+      const legacy = await pool.query<PostRow>(legacySql, [
+        ...baseParams,
+        JSON.stringify(frozen.payload),
+      ]);
+      return finish(rejectIfEmpty(legacy.rows[0]));
     }
-    const author = await pool.query<{ author_name: string }>(
-      `SELECT ${AUTHOR_NAME_SQL} AS author_name FROM users u WHERE u.id = $1`,
-      [userId]
-    );
-    row.author_name = author.rows[0]?.author_name ?? 'User';
-    return withEnrichedItems(mapDetail(row));
   },
 
   async update(
@@ -530,65 +580,87 @@ export const templateShareRepository = {
     input: UpdateTemplateShareInput
   ): Promise<TemplateShareDetail | null> {
     const pool = requirePool();
-    const sets: string[] = [];
-    const params: unknown[] = [];
-    let idx = 1;
 
-    if (input.title !== undefined) {
-      sets.push(`title = $${idx++}`);
-      params.push(input.title);
-    }
-    if (input.description !== undefined) {
-      sets.push(`description = $${idx++}`);
-      params.push(input.description);
-    }
-    if (input.category !== undefined) {
-      sets.push(`category = $${idx++}`);
-      params.push(input.category);
-    }
-    if (input.difficulty !== undefined) {
-      sets.push(`difficulty = $${idx++}`);
-      params.push(input.difficulty);
-    }
-    if (input.tags !== undefined) {
-      sets.push(`tags = $${idx++}::text[]`);
-      params.push(input.tags);
-    }
-    if (input.thumbnailUrl !== undefined) {
-      sets.push(`thumbnail_url = $${idx++}`);
-      params.push(input.thumbnailUrl);
-    }
-    if (input.youtubeUrl !== undefined) {
-      sets.push(`youtube_url = $${idx++}`);
-      params.push(input.youtubeUrl);
-    }
-    if (input.youtubeChannelName !== undefined) {
-      sets.push(`youtube_channel_name = $${idx++}`);
-      params.push(input.youtubeChannelName);
-    }
-    if (input.instagramId !== undefined) {
-      sets.push(`instagram_id = $${idx++}`);
-      params.push(input.instagramId);
-    }
-    if (input.status !== undefined) {
-      sets.push(`status = $${idx++}`);
-      params.push(input.status);
+    const executeUpdate = async (includeSocial: boolean) => {
+      const nextSets: string[] = [];
+      const nextParams: unknown[] = [];
+      let nextIdx = 1;
+
+      if (input.title !== undefined) {
+        nextSets.push(`title = $${nextIdx++}`);
+        nextParams.push(input.title);
+      }
+      if (input.description !== undefined) {
+        nextSets.push(`description = $${nextIdx++}`);
+        nextParams.push(input.description);
+      }
+      if (input.category !== undefined) {
+        nextSets.push(`category = $${nextIdx++}`);
+        nextParams.push(input.category);
+      }
+      if (input.difficulty !== undefined) {
+        nextSets.push(`difficulty = $${nextIdx++}`);
+        nextParams.push(input.difficulty);
+      }
+      if (input.tags !== undefined) {
+        nextSets.push(`tags = $${nextIdx++}::text[]`);
+        nextParams.push(input.tags);
+      }
+      if (input.thumbnailUrl !== undefined) {
+        nextSets.push(`thumbnail_url = $${nextIdx++}`);
+        nextParams.push(input.thumbnailUrl);
+      }
+      if (includeSocial) {
+        if (input.youtubeUrl !== undefined) {
+          nextSets.push(`youtube_url = $${nextIdx++}`);
+          nextParams.push(input.youtubeUrl);
+        }
+        if (input.youtubeChannelName !== undefined) {
+          nextSets.push(`youtube_channel_name = $${nextIdx++}`);
+          nextParams.push(input.youtubeChannelName);
+        }
+        if (input.instagramId !== undefined) {
+          nextSets.push(`instagram_id = $${nextIdx++}`);
+          nextParams.push(input.instagramId);
+        }
+      }
+      if (input.status !== undefined) {
+        nextSets.push(`status = $${nextIdx++}`);
+        nextParams.push(input.status);
+      }
+
+      if (nextSets.length === 0) {
+        return null;
+      }
+
+      nextSets.push('updated_at = NOW()');
+      nextParams.push(id, userId);
+      return pool.query<PostRow>(
+        `UPDATE template_share_posts
+         SET ${nextSets.join(', ')}
+         WHERE id = $${nextIdx} AND author_user_id = $${nextIdx + 1}
+           AND status <> 'removed'
+         RETURNING *`,
+        nextParams
+      );
+    };
+
+    let result;
+    try {
+      result = await executeUpdate(true);
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      const message = String((err as { message?: string })?.message ?? '');
+      const missingSocialColumn =
+        code === '42703' &&
+        /youtube_url|youtube_channel_name|instagram_id/i.test(message);
+      if (!missingSocialColumn) throw err;
+      result = await executeUpdate(false);
     }
 
-    if (sets.length === 0) {
+    if (!result) {
       return this.getById(id, userId, { forAdmin: true });
     }
-
-    sets.push('updated_at = NOW()');
-    params.push(id, userId);
-    const result = await pool.query<PostRow>(
-      `UPDATE template_share_posts
-       SET ${sets.join(', ')}
-       WHERE id = $${idx} AND author_user_id = $${idx + 1}
-         AND status <> 'removed'
-       RETURNING *`,
-      params
-    );
     const row = result.rows[0];
     if (!row) return null;
     const author = await pool.query<{ author_name: string }>(

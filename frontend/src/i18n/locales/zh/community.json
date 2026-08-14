@@ -335,6 +335,8 @@
     "tagsPlaceholder": "用逗号分隔",
     "publish": "发布",
     "published": "已将模板发布到共享馆。",
+    "emptyTemplate": "没有动作的模板无法分享。",
+    "invalidYoutubeUrl": "请检查 YouTube 链接（可留空，或使用 youtube.com / youtu.be）",
     "shareBlocked": "领取的模板不能再次分享。",
     "apiUnavailable": "模板共享服务尚未就绪，请稍后再试。",
     "templateDeleted": "模板已删除。",

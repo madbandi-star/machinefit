@@ -26,7 +26,7 @@ export type TemplateShareListQuery = z.infer<typeof templateShareListQuerySchema
 
 export const publishTemplateShareSchema = z.object({
   templateId: z.string().uuid(),
-  title: z.string().trim().min(1).max(80),
+  title: z.string().trim().min(1).max(120),
   description: z.string().trim().max(2000).default(''),
   category: z.enum(TEMPLATE_SHARE_CATEGORIES).default('general'),
   difficulty: z.enum(TEMPLATE_SHARE_DIFFICULTIES).default('beginner'),
@@ -41,17 +41,20 @@ export const publishTemplateShareSchema = z.object({
       (v) => !v || /^https?:\/\//i.test(v) || v.startsWith('/'),
       'thumbnailUrl must be http(s) or app-relative'
     ),
+  /** Empty or non-YouTube values become null so social fields never block publish. */
   youtubeUrl: z
     .string()
     .trim()
     .max(2000)
     .optional()
     .nullable()
-    .transform((v) => (v && v.length > 0 ? v : null))
-    .refine(
-      (v) => !v || /^https?:\/\/(www\.)?(youtube\.com|youtu\.be|m\.youtube\.com)\//i.test(v),
-      'youtubeUrl must be a YouTube http(s) link'
-    ),
+    .transform((v) => {
+      if (!v) return null;
+      const normalized = /^https?:\/\//i.test(v) ? v : `https://${v}`;
+      return /^https?:\/\/(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\//i.test(normalized)
+        ? normalized
+        : null;
+    }),
   youtubeChannelName: z
     .string()
     .trim()
@@ -67,17 +70,15 @@ export const publishTemplateShareSchema = z.object({
     .nullable()
     .transform((v) => {
       if (!v) return null;
-      return v.replace(/^@+/, '').trim() || null;
-    })
-    .refine(
-      (v) => !v || /^[A-Za-z0-9._]{1,30}$/.test(v),
-      'instagramId must be a valid Instagram handle'
-    ),
+      const handle = v.replace(/^@+/, '').trim();
+      if (!handle) return null;
+      return /^[A-Za-z0-9._]{1,30}$/.test(handle) ? handle : null;
+    }),
 });
 export type PublishTemplateShareInput = z.infer<typeof publishTemplateShareSchema>;
 
 export const updateTemplateShareSchema = z.object({
-  title: z.string().trim().min(1).max(80).optional(),
+  title: z.string().trim().min(1).max(120).optional(),
   description: z.string().trim().max(2000).optional(),
   category: z.enum(TEMPLATE_SHARE_CATEGORIES).optional(),
   difficulty: z.enum(TEMPLATE_SHARE_DIFFICULTIES).optional(),
@@ -89,11 +90,14 @@ export const updateTemplateShareSchema = z.object({
     .max(2000)
     .optional()
     .nullable()
-    .transform((v) => (v == null ? v : v.length > 0 ? v : null))
-    .refine(
-      (v) => v == null || v === '' || /^https?:\/\/(www\.)?(youtube\.com|youtu\.be|m\.youtube\.com)\//i.test(v),
-      'youtubeUrl must be a YouTube http(s) link'
-    ),
+    .transform((v) => {
+      if (v == null) return v;
+      if (!v) return null;
+      const normalized = /^https?:\/\//i.test(v) ? v : `https://${v}`;
+      return /^https?:\/\/(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\//i.test(normalized)
+        ? normalized
+        : null;
+    }),
   youtubeChannelName: z
     .string()
     .trim()
@@ -110,12 +114,10 @@ export const updateTemplateShareSchema = z.object({
     .transform((v) => {
       if (v == null) return v;
       if (!v) return null;
-      return v.replace(/^@+/, '').trim() || null;
-    })
-    .refine(
-      (v) => v == null || v === '' || /^[A-Za-z0-9._]{1,30}$/.test(v),
-      'instagramId must be a valid Instagram handle'
-    ),
+      const handle = v.replace(/^@+/, '').trim();
+      if (!handle) return null;
+      return /^[A-Za-z0-9._]{1,30}$/.test(handle) ? handle : null;
+    }),
   status: z.enum(['published', 'hidden']).optional(),
 });
 export type UpdateTemplateShareInput = z.infer<typeof updateTemplateShareSchema>;

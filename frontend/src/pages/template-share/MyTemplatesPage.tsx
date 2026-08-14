@@ -26,8 +26,11 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getApiErrorCode } from '@/utils/motivationAudio';
+import { resolveApiErrorMessage, getApiValidationFieldSummary } from '@/utils/getApiErrorMessage';
 import '@/styles/components.css';
 import '@/styles/template-share.css';
+
+const TITLE_MAX = 120;
 
 function isTemplateShareApiMissing(error: unknown): boolean {
   if (!axios.isAxiosError(error)) return false;
@@ -35,6 +38,24 @@ function isTemplateShareApiMissing(error: unknown): boolean {
   if (status === 404 || status === 502 || status === 503) return true;
   const body = error.response?.data;
   return typeof body === 'string' && /Cannot (GET|POST)/i.test(body);
+}
+
+function parseShareTags(raw: string): string[] {
+  return raw
+    .split(/[,\s#]+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 12)
+    .map((s) => s.slice(0, 30));
+}
+
+function normalizeYoutubeUrl(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  return /^https?:\/\/(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\//i.test(normalized)
+    ? normalized
+    : null;
 }
 
 export function MyTemplatesPage() {
@@ -79,7 +100,13 @@ export function MyTemplatesPage() {
   );
 
   const publishMutation = useMutation({
-    mutationFn: (body: PublishTemplateShareInput) => templateShareApi.publish(body),
+    mutationFn: async (body: PublishTemplateShareInput) => {
+      if (shareTarget?.sharePostId) {
+        const { templateId: _templateId, ...updateBody } = body;
+        return templateShareApi.update(shareTarget.sharePostId, updateBody);
+      }
+      return templateShareApi.publish(body);
+    },
     onSuccess: async () => {
       setShareTarget(null);
       await queryClient.invalidateQueries({ queryKey: ['template-shares'] });
@@ -94,11 +121,20 @@ export function MyTemplatesPage() {
         showToast(t('templateShare.shareBlocked'), 'error');
         return;
       }
+      if (code === 'EMPTY_TEMPLATE') {
+        showToast(t('templateShare.emptyTemplate'), 'error');
+        return;
+      }
       if (isTemplateShareApiMissing(err)) {
         showToast(t('templateShare.apiUnavailable'), 'error');
         return;
       }
-      showToast(tc('errors.submitFailed'), 'error');
+      const validation = getApiValidationFieldSummary(err);
+      if (validation) {
+        showToast(validation, 'error');
+        return;
+      }
+      showToast(resolveApiErrorMessage(err, tc, 'errors.submitFailed'), 'error');
     },
   });
 
@@ -154,18 +190,24 @@ export function MyTemplatesPage() {
   const onPublish = (e: FormEvent) => {
     e.preventDefault();
     if (!shareTarget) return;
+    const nextTitle = (title.trim() || shareTarget.name).slice(0, TITLE_MAX);
+    if (!nextTitle) {
+      showToast(t('templateShare.fieldTitle'), 'error');
+      return;
+    }
+    const rawYoutube = youtubeUrl.trim();
+    if (rawYoutube && !normalizeYoutubeUrl(rawYoutube)) {
+      showToast(t('templateShare.invalidYoutubeUrl'), 'error');
+      return;
+    }
     publishMutation.mutate({
       templateId: shareTarget.id,
-      title: title.trim() || shareTarget.name,
+      title: nextTitle,
       description: description.trim(),
       category,
       difficulty,
-      tags: tags
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .slice(0, 12),
-      youtubeUrl: youtubeUrl.trim() || null,
+      tags: parseShareTags(tags),
+      youtubeUrl: normalizeYoutubeUrl(rawYoutube),
       youtubeChannelName: youtubeChannelName.trim() || null,
       instagramId: instagramId.trim().replace(/^@+/, '') || null,
     });
@@ -205,7 +247,8 @@ export function MyTemplatesPage() {
                   id="share-title"
                   className="input tpl-share-compose__title"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
+                  maxLength={TITLE_MAX}
                   required
                   autoFocus
                 />
