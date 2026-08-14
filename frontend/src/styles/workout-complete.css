@@ -668,3 +668,175 @@
     justify-content: center;
   }
 }
+
+/* ── End-session confirm (bridge into TODAY'S WORKOUT report) ── */
+
+.wec-overlay {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+.wec-sheet {
+  --wcr-lime: #b8ff3c;
+  --wcr-lime-deep: #9be01f;
+  --wcr-ink: #061208;
+  --wcr-text: #f4f7f0;
+  --wcr-muted: rgba(228, 237, 220, 0.72);
+  --wcr-stroke: rgba(184, 255, 60, 0.22);
+
+  position: relative;
+  width: min(100%, 28rem);
+  margin: 0 auto;
+  padding: 1.15rem 1.15rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  border-radius: 1.35rem 1.35rem 0 0;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--wcr-text);
+  font-family: 'Barlow Condensed', 'Noto Sans KR', system-ui, sans-serif;
+  background:
+    linear-gradient(165deg, rgba(18, 28, 12, 0.92) 0%, rgba(5, 7, 5, 0.97) 55%, #030403 100%),
+    radial-gradient(ellipse at 50% -10%, rgba(184, 255, 60, 0.16), transparent 55%);
+  border: 1px solid rgba(184, 255, 60, 0.16);
+  border-bottom: none;
+  box-shadow:
+    0 -12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  animation: wec-sheet-in 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.wec-sheet__glow {
+  pointer-events: none;
+  position: absolute;
+  inset: -30% -20% auto;
+  height: 70%;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(184, 255, 60, 0.22), transparent 58%),
+    radial-gradient(circle at 90% 40%, rgba(184, 255, 60, 0.08), transparent 42%);
+  z-index: 0;
+  animation: wec-glow-pulse 2.8s ease-in-out infinite;
+}
+
+.wec-sheet > *:not(.wec-sheet__glow) {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes wec-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wec-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.wec-brand {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 16px rgba(184, 255, 60, 0.35);
+}
+
+.wec-kicker {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wcr-lime);
+}
+
+.wec-title {
+  margin: 0 0 0.45rem;
+  font-size: clamp(1.55rem, 5.2vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #fff;
+  word-break: keep-all;
+}
+
+.wec-message {
+  margin: 0 0 1rem;
+  max-width: 28ch;
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--wcr-muted);
+  word-break: keep-all;
+}
+
+.wec-stats {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0.55rem;
+  margin: 0 0 1.15rem;
+}
+
+.wec-stat {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.7rem 0.8rem 0.75rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--wcr-stroke);
+  background: rgba(8, 12, 8, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.wec-stat__label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(228, 237, 220, 0.55);
+}
+
+.wec-stat__value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--wcr-lime);
+  font-variant-numeric: tabular-nums;
+}
+
+.wec-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.wec-btn-end .wcr-btn__stack {
+  text-align: center;
+}
+
+@media (min-width: 720px) {
+  .wec-overlay {
+    align-items: center;
+    padding: 1.25rem;
+  }
+
+  .wec-sheet {
+    border-radius: 1.25rem;
+    border-bottom: 1px solid rgba(184, 255, 60, 0.16);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    animation-name: wcr-in;
+  }
+}

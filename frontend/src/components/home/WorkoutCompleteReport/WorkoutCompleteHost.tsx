@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { WorkoutCompleteReportModal } from '@/components/home/WorkoutCompleteReport/WorkoutCompleteReportModal';
+import { WorkoutEndConfirmSheet } from '@/components/home/WorkoutCompleteReport/WorkoutEndConfirmSheet';
 import { emitWorkoutCompleted } from '@/events/workoutEvents';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
@@ -110,13 +110,9 @@ export function WorkoutCompleteHost() {
 
   return (
     <>
-      <ConfirmDialog
+      <WorkoutEndConfirmSheet
         open={confirmOpen}
-        title={t('workoutComplete.confirmTitle')}
-        message={t('workoutComplete.confirmMessage')}
-        confirmLabel={t('workoutComplete.confirmAction')}
-        cancelLabel={t('actions.cancel')}
-        preventBackdropClose
+        confirming={completing}
         onClose={closeConfirm}
         onConfirm={() => void handleConfirmEnd()}
       />
