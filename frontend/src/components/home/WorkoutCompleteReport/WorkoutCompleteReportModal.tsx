@@ -109,16 +109,42 @@ export function WorkoutCompleteReportModal({
       if (actions) actions.style.visibility = 'hidden';
       // Allow layout to settle with actions hidden before rasterize.
       await new Promise((r) => window.requestAnimationFrame(() => r(undefined)));
+
+      // Capture the full scrollable report (not only the visible viewport).
       const dataUrl = await toPng(node, {
         cacheBust: true,
         pixelRatio: Math.min(2, window.devicePixelRatio || 2),
         backgroundColor: '#050505',
+        width: node.scrollWidth,
+        height: node.scrollHeight,
+        style: {
+          height: `${node.scrollHeight}px`,
+          overflow: 'visible',
+        },
       });
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = `machinefit-todays-workout-${report.dateKey}.png`;
-      a.click();
-      showToast(t('workoutComplete.screenshotSaved'), 'success');
+
+      const { dataUrlToPngBlob, isShareAbortError, savePngBlobToPhotos } = await import(
+        '@/utils/saveImageToPhotos'
+      );
+      try {
+        const blob = await dataUrlToPngBlob(dataUrl);
+        const result = await savePngBlobToPhotos({
+          blob,
+          filename: `machinefit-todays-workout-${report.dateKey}.png`,
+          title: t('workoutComplete.todaysWorkout'),
+          longPressHint: t('workoutComplete.screenshotLongPress'),
+          closeLabel: t('actions.close'),
+        });
+        if (result === 'downloaded') {
+          showToast(t('workoutComplete.screenshotSaved'), 'success');
+        } else if (result === 'preview') {
+          // Long-press preview is self-explanatory; no toast.
+        }
+        // 'shared': OS share sheet (Save Image → Photos) — no extra toast.
+      } catch (shareError) {
+        if (isShareAbortError(shareError)) return;
+        throw shareError;
+      }
     } catch {
       showToast(t('workoutComplete.screenshotFailed'), 'error');
     } finally {
