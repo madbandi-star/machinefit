@@ -1,7 +1,7 @@
 {
   "title": "Photo board write form glanceable redesign",
   "summary": "Photo upload page now has a progress checklist and numbered sections (photos/title/content/tags) with live tag chips. Create/update logic unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "09005b17" },
   "changedFiles": [
     "frontend/src/pages/photo-board/PhotoPostWritePage.tsx",
     "frontend/src/styles/photo-board.css",
