@@ -246,7 +246,6 @@ export function MyPage() {
             label={t('points.myPoints')}
             icon="trendingUp"
           />
-          <ListNavLink to={ROUTES.QA} label={t('myPage.qa')} icon="message" />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showAboveMember ? (
             <ListNavLink
@@ -263,6 +262,18 @@ export function MyPage() {
           {showAboveMember ? (
             <ListNavLink to={ROUTES.PUSH} label={t('myPage.pushCompose')} icon="bell" />
           ) : null}
+        </nav>
+      </section>
+
+      <section className="my-page-section">
+        <h3 className="my-page-section__title">{t('myPage.customerCenter')}</h3>
+        <nav className="list-nav" aria-label={t('myPage.customerCenter')}>
+          <ListNavLink to={ROUTES.QA} label={t('myPage.qa')} icon="message" />
+          <ListNavLink
+            to={ROUTES.PRIVACY_RIGHTS}
+            label={t('compliance.rights.title')}
+            icon="shield"
+          />
         </nav>
       </section>
 
