@@ -296,6 +296,27 @@ export function MachineRequestWritePage() {
     else createMutation.mutate();
   };
 
+  const photoReady = isEdit || images.length > 0;
+  const brandReady = brandMode === 'unknown' || Boolean(brandName.trim());
+  const machineReady = machineMode === 'unknown' || Boolean(machineName.trim());
+  const descriptionReady = descriptionMode === 'unknown' || Boolean(description.trim());
+  const infoReady = brandReady && machineReady && descriptionReady;
+  const gymReady = gymChoiceValid;
+  const consentReady = isEdit || commercialUseConsent;
+
+  const checklist = isEdit
+    ? [
+        { id: 'info', label: t('requestStepInfo'), done: infoReady },
+        { id: 'gym', label: t('requestStepGym'), done: gymReady },
+      ]
+    : [
+        { id: 'photo', label: t('requestStepPhoto'), done: photoReady },
+        { id: 'info', label: t('requestStepInfo'), done: infoReady },
+        { id: 'gym', label: t('requestStepGym'), done: gymReady },
+        { id: 'consent', label: t('requestStepConsent'), done: consentReady },
+      ];
+  const checklistDone = checklist.filter((item) => item.done).length;
+
   const renderTextChoice = (params: {
     legend: string;
     name: string;
@@ -341,7 +362,7 @@ export function MachineRequestWritePage() {
             onChange={(e) => params.onChange(e.target.value)}
             required
             maxLength={params.maxLength}
-            rows={4}
+            rows={3}
             placeholder={params.placeholder}
           />
         ) : (
@@ -370,11 +391,38 @@ export function MachineRequestWritePage() {
   }
 
   return (
-    <div className="community-board-page board-write-page">
+    <div className="community-board-page board-write-page board-write-page--request">
       <PageShell
         title={isEdit ? t('requestEdit') : t('newRequest')}
         subtitle={t('requestWriteHint')}
       >
+        <div className="board-write-checklist" aria-label={t('requestChecklistLabel')}>
+          <div className="board-write-checklist__head">
+            <p className="board-write-checklist__title">{t('requestChecklistLabel')}</p>
+            <span className="board-write-checklist__progress">
+              {checklistDone}/{checklist.length}
+            </span>
+          </div>
+          <ul className="board-write-checklist__list">
+            {checklist.map((item) => (
+              <li
+                key={item.id}
+                className={[
+                  'board-write-checklist__item',
+                  item.done ? 'is-done' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <span className="board-write-checklist__mark" aria-hidden>
+                  {item.done ? '✓' : '·'}
+                </span>
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {!isEdit && similarHit ? (
           <aside className="board-write__similar" role="status">
             <p className="board-write__similar-title">{t('requestSimilarTitle')}</p>
@@ -393,126 +441,188 @@ export function MachineRequestWritePage() {
           </aside>
         ) : null}
 
-        <form className="board-write" onSubmit={handleSubmit}>
+        <form className="board-write board-write--request" onSubmit={handleSubmit}>
           {!isEdit ? (
-            <section className="board-write__media" aria-labelledby={fileInputId}>
-              <input
-                ref={fileInputRef}
-                id={fileInputId}
-                className="photo-write__file-input"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                multiple
-                onChange={(e) => {
-                  onPickFiles(e.target.files);
-                  e.currentTarget.value = '';
-                }}
-              />
-              <button
-                type="button"
-                className={`photo-write__dropzone${dragOver ? ' is-dragover' : ''}${
-                  images.length ? ' has-images' : ''
-                }`}
-                disabled={images.length >= MAX_REQUEST_IMAGES || saving}
-                onClick={() => fileInputRef.current?.click()}
-                onDragEnter={(e) => {
-                  e.preventDefault();
-                  if (images.length >= MAX_REQUEST_IMAGES) return;
-                  setDragOver(true);
-                }}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  if (images.length >= MAX_REQUEST_IMAGES) return;
-                  setDragOver(true);
-                }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragOver(false);
-                  if (images.length >= MAX_REQUEST_IMAGES) return;
-                  onPickFiles(e.dataTransfer.files);
-                }}
-              >
-                <span className="photo-write__dropzone-icon" aria-hidden>
-                  <ImagePlus size={28} strokeWidth={1.75} />
+            <section
+              className={[
+                'board-write__section',
+                photoReady ? 'is-ready' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              aria-labelledby="req-step-photo"
+            >
+              <header className="board-write__section-head">
+                <span className="board-write__step">1</span>
+                <div>
+                  <h3 id="req-step-photo" className="board-write__section-title">
+                    {t('requestStepPhoto')}
+                  </h3>
+                  <p className="board-write__section-hint">{t('requestPhotoHint')}</p>
+                </div>
+                <span className="board-write__section-status">
+                  {t('requestPhotoAttachedCount', {
+                    count: images.length,
+                    max: MAX_REQUEST_IMAGES,
+                  })}
                 </span>
-                <span className="photo-write__dropzone-title">{t('requestPhotoPick')}</span>
-                <span className="photo-write__dropzone-hint">{t('requestDropHint')}</span>
-              </button>
-              <p className="photo-write__count">
-                {t('requestPhotoAttachedCount', {
-                  count: images.length,
-                  max: MAX_REQUEST_IMAGES,
-                })}
-              </p>
-              <p className="board-write__hint">{t('requestPhotoHint')}</p>
+              </header>
 
-              {images.length ? (
-                <ul className="photo-write__previews" aria-label={t('requestPhoto')}>
-                  {images.map((img, index) => (
-                    <li key={img.id} className="photo-write__preview">
-                      <img src={img.previewUrl} alt="" />
-                      <span className="photo-write__preview-index" aria-hidden>
-                        {index + 1}
-                      </span>
-                      <div className="photo-write__preview-actions">
-                        <button
-                          type="button"
-                          className="photo-write__preview-btn photo-write__preview-btn--danger"
-                          onClick={() => removeImage(img.id)}
-                          aria-label={t('requestPhotoRemove')}
-                        >
-                          <X size={15} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+              <div className="board-write__media">
+                <input
+                  ref={fileInputRef}
+                  id={fileInputId}
+                  className="photo-write__file-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  onChange={(e) => {
+                    onPickFiles(e.target.files);
+                    e.currentTarget.value = '';
+                  }}
+                />
+                <button
+                  type="button"
+                  className={`photo-write__dropzone${dragOver ? ' is-dragover' : ''}${
+                    images.length ? ' has-images' : ''
+                  }`}
+                  disabled={images.length >= MAX_REQUEST_IMAGES || saving}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    if (images.length >= MAX_REQUEST_IMAGES) return;
+                    setDragOver(true);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (images.length >= MAX_REQUEST_IMAGES) return;
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragOver(false);
+                    if (images.length >= MAX_REQUEST_IMAGES) return;
+                    onPickFiles(e.dataTransfer.files);
+                  }}
+                >
+                  <span className="photo-write__dropzone-icon" aria-hidden>
+                    <ImagePlus size={28} strokeWidth={1.75} />
+                  </span>
+                  <span className="photo-write__dropzone-title">{t('requestPhotoPick')}</span>
+                  <span className="photo-write__dropzone-hint">{t('requestDropHint')}</span>
+                </button>
+
+                {images.length ? (
+                  <ul className="photo-write__previews" aria-label={t('requestPhoto')}>
+                    {images.map((img, index) => (
+                      <li key={img.id} className="photo-write__preview">
+                        <img src={img.previewUrl} alt="" />
+                        <span className="photo-write__preview-index" aria-hidden>
+                          {index + 1}
+                        </span>
+                        <div className="photo-write__preview-actions">
+                          <button
+                            type="button"
+                            className="photo-write__preview-btn photo-write__preview-btn--danger"
+                            onClick={() => removeImage(img.id)}
+                            aria-label={t('requestPhotoRemove')}
+                          >
+                            <X size={15} strokeWidth={2.5} />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
             </section>
           ) : null}
 
-          <div className="board-write__fields">
-            {renderTextChoice({
-              legend: t('brandName'),
-              name: 'req-brand-choice',
-              mode: brandMode,
-              onModeChange: setBrandMode,
-              inputId: 'req-brand',
-              value: brandName,
-              onChange: setBrandName,
-              maxLength: 100,
-              placeholder: t('brandName'),
-            })}
-            {renderTextChoice({
-              legend: t('machineName'),
-              name: 'req-machine-choice',
-              mode: machineMode,
-              onModeChange: setMachineMode,
-              inputId: 'req-machine',
-              value: machineName,
-              onChange: setMachineName,
-              maxLength: 200,
-              placeholder: t('machineName'),
-            })}
-            {renderTextChoice({
-              legend: t('description'),
-              name: 'req-desc-choice',
-              mode: descriptionMode,
-              onModeChange: setDescriptionMode,
-              inputId: 'req-desc',
-              value: description,
-              onChange: setDescription,
-              maxLength: 2000,
-              multiline: true,
-              placeholder: t('description'),
-            })}
+          <section
+            className={[
+              'board-write__section',
+              infoReady ? 'is-ready' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            aria-labelledby="req-step-info"
+          >
+            <header className="board-write__section-head">
+              <span className="board-write__step">{isEdit ? '1' : '2'}</span>
+              <div>
+                <h3 id="req-step-info" className="board-write__section-title">
+                  {t('requestStepInfo')}
+                </h3>
+                <p className="board-write__section-hint">{t('requestStepInfoHint')}</p>
+              </div>
+            </header>
+            <div className="board-write__fields">
+              {renderTextChoice({
+                legend: t('brandName'),
+                name: 'req-brand-choice',
+                mode: brandMode,
+                onModeChange: setBrandMode,
+                inputId: 'req-brand',
+                value: brandName,
+                onChange: setBrandName,
+                maxLength: 100,
+                placeholder: t('brandName'),
+              })}
+              {renderTextChoice({
+                legend: t('machineName'),
+                name: 'req-machine-choice',
+                mode: machineMode,
+                onModeChange: setMachineMode,
+                inputId: 'req-machine',
+                value: machineName,
+                onChange: setMachineName,
+                maxLength: 200,
+                placeholder: t('machineName'),
+              })}
+              {renderTextChoice({
+                legend: t('description'),
+                name: 'req-desc-choice',
+                mode: descriptionMode,
+                onModeChange: setDescriptionMode,
+                inputId: 'req-desc',
+                value: description,
+                onChange: setDescription,
+                maxLength: 2000,
+                multiline: true,
+                placeholder: t('description'),
+              })}
+            </div>
+          </section>
+
+          <section
+            className={[
+              'board-write__section',
+              gymReady ? 'is-ready' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            aria-labelledby="req-step-gym"
+          >
+            <header className="board-write__section-head">
+              <span className="board-write__step">{isEdit ? '2' : '3'}</span>
+              <div>
+                <h3 id="req-step-gym" className="board-write__section-title">
+                  {t('requestStepGym')}
+                </h3>
+                <p className="board-write__section-hint">{t('requestStepGymHint')}</p>
+              </div>
+            </header>
 
             <fieldset className="board-write__choice">
               <legend className="board-write__choice-legend">{t('requestGymLabel')}</legend>
-              <div className="board-write__option-list">
+              <div
+                className="board-write__segment board-write__segment--wrap"
+                role="radiogroup"
+                aria-label={t('requestGymLabel')}
+              >
                 <label
-                  className={`board-write__option${gymChoiceMode === 'profile' ? ' is-active' : ''}`}
+                  className={`board-write__segment-btn${gymChoiceMode === 'profile' ? ' is-active' : ''}`}
                 >
                   <input
                     type="radio"
@@ -520,23 +630,10 @@ export function MachineRequestWritePage() {
                     checked={gymChoiceMode === 'profile'}
                     onChange={() => setGymChoiceMode('profile')}
                   />
-                  <span className="board-write__option-body">
-                    <span className="board-write__option-title">
-                      {t('requestGymChoiceProfile')}
-                    </span>
-                    {profileGymLabel ? (
-                      <span className="board-write__option-meta">{profileGymLabel}</span>
-                    ) : null}
-                  </span>
+                  <span>{t('requestGymChoiceProfileShort')}</span>
                 </label>
-                {!profileGymLabel && gymChoiceMode === 'profile' ? (
-                  <p className="board-write__hint board-write__hint--warn">
-                    {t('requestGymProfileEmpty')}
-                  </p>
-                ) : null}
-
                 <label
-                  className={`board-write__option${gymChoiceMode === 'custom' ? ' is-active' : ''}`}
+                  className={`board-write__segment-btn${gymChoiceMode === 'custom' ? ' is-active' : ''}`}
                 >
                   <input
                     type="radio"
@@ -544,26 +641,10 @@ export function MachineRequestWritePage() {
                     checked={gymChoiceMode === 'custom'}
                     onChange={() => setGymChoiceMode('custom')}
                   />
-                  <span className="board-write__option-body">
-                    <span className="board-write__option-title">
-                      {t('requestGymChoiceCustom')}
-                    </span>
-                  </span>
+                  <span>{t('requestGymChoiceCustom')}</span>
                 </label>
-                {gymChoiceMode === 'custom' ? (
-                  <input
-                    id="req-gym-custom"
-                    className="input"
-                    value={customGymName}
-                    onChange={(e) => setCustomGymName(e.target.value.slice(0, MAX_GYM_NAME))}
-                    placeholder={t('requestGymCustomPlaceholder')}
-                    maxLength={MAX_GYM_NAME}
-                    required
-                  />
-                ) : null}
-
                 <label
-                  className={`board-write__option${gymChoiceMode === 'unknown' ? ' is-active' : ''}`}
+                  className={`board-write__segment-btn${gymChoiceMode === 'unknown' ? ' is-active' : ''}`}
                 >
                   <input
                     type="radio"
@@ -571,16 +652,56 @@ export function MachineRequestWritePage() {
                     checked={gymChoiceMode === 'unknown'}
                     onChange={() => setGymChoiceMode('unknown')}
                   />
-                  <span className="board-write__option-body">
-                    <span className="board-write__option-title">
-                      {t('requestGymChoiceUnknown')}
-                    </span>
-                  </span>
+                  <span>{t('requestGymChoiceUnknown')}</span>
                 </label>
               </div>
-            </fieldset>
 
-            {!isEdit ? (
+              {gymChoiceMode === 'profile' ? (
+                profileGymLabel ? (
+                  <p className="board-write__profile-gym">{profileGymLabel}</p>
+                ) : (
+                  <p className="board-write__hint board-write__hint--warn">
+                    {t('requestGymProfileEmpty')}
+                  </p>
+                )
+              ) : null}
+
+              {gymChoiceMode === 'custom' ? (
+                <input
+                  id="req-gym-custom"
+                  className="input"
+                  value={customGymName}
+                  onChange={(e) => setCustomGymName(e.target.value.slice(0, MAX_GYM_NAME))}
+                  placeholder={t('requestGymCustomPlaceholder')}
+                  maxLength={MAX_GYM_NAME}
+                  required
+                />
+              ) : null}
+
+              {gymChoiceMode === 'unknown' ? (
+                <p className="board-write__unknown-note">{t('requestGymUnknownLabel')}</p>
+              ) : null}
+            </fieldset>
+          </section>
+
+          {!isEdit ? (
+            <section
+              className={[
+                'board-write__section',
+                consentReady ? 'is-ready' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              aria-labelledby="req-step-consent"
+            >
+              <header className="board-write__section-head">
+                <span className="board-write__step">4</span>
+                <div>
+                  <h3 id="req-step-consent" className="board-write__section-title">
+                    {t('requestStepConsent')}
+                  </h3>
+                </div>
+              </header>
               <div className="board-write__consent">
                 <p className="board-write__consent-text">{t('requestCommercialConsentText')}</p>
                 <label className="board-write__consent-check">
@@ -593,8 +714,8 @@ export function MachineRequestWritePage() {
                   <span>{t('requestCommercialConsentLabel')}</span>
                 </label>
               </div>
-            ) : null}
-          </div>
+            </section>
+          ) : null}
 
           <div className="board-write__actions">
             <button

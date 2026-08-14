@@ -1,25 +1,25 @@
 {
-  "title": "Template share detail: take CTA + comments glanceable",
-  "summary": "Detail page now shows a prominent take-template card early, improved sticky CTA with meta, and card-style comments with composer/avatars. Download/comment APIs unchanged.",
-  "git": { "branch": "main", "commit": "95d488ad" },
+  "title": "Machine request write form glanceable redesign",
+  "summary": "Request write page now shows a progress checklist and numbered section cards (photo/info/gym/consent). Gym choice uses compact segments. Submit/create/update logic unchanged.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
-    "frontend/src/styles/template-share.css",
+    "frontend/src/pages/machine-request-board/MachineRequestWritePage.tsx",
+    "frontend/src/styles/community.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
     "frontend/src/i18n/locales/ja/community.json",
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "Open a hub post ? take card visible above workout list",
-    "Take / already-taken ? my templates still works",
-    "Comments: composer, empty state, list cards, delete own"
+    "????: progress checklist updates as fields fill",
+    "Photo attach, brand/machine/desc, gym segments, consent still required to submit",
+    "Edit mode still works without photo/consent sections"
   ],
   "fastChecks": [
-    "rg -n \"tpl-share-take|tpl-share-comment__avatar|downloadShort\" frontend/src/pages/template-share/TemplateShareDetailPage.tsx frontend/src/styles/template-share.css"
+    "rg -n \"board-write-checklist|board-write__section|requestStepPhoto\" frontend/src/pages/machine-request-board/MachineRequestWritePage.tsx frontend/src/styles/community.css"
   ],
-  "productionChecks": ["Pages: template share detail take + comments UI"],
+  "productionChecks": ["Pages: open machine request write and scan form"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Download buried in sticky bar; flat comment lines",
-  "toBe": "Early take card + sticky meta CTA; glanceable comment cards"
+  "asIs": "Long stacked fields / tall gym radios hard to scan",
+  "toBe": "Checklist + numbered sections + compact gym chips"
 }
