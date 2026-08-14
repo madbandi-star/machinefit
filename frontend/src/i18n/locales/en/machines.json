@@ -253,6 +253,8 @@
     "workoutSavedBadge": "Log saved",
     "workoutUnsavedBadge": "Not saved",
     "filterByDate": "Filter by date",
+    "dateSortNewestFirst": "Newest dates first (tap for oldest)",
+    "dateSortOldestFirst": "Oldest dates first (tap for newest)",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "calendarHint": "Dotted dates have records or plans. Empty dates can also be selected to add a plan.",

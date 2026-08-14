@@ -2,6 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArrowDownUp, ArrowUpDown } from 'lucide-react';
 import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
@@ -200,6 +201,13 @@ export function HistoryListPanel() {
   } | null>(null);
   const [dayMenuOpen, setDayMenuOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [dateSortDir, setDateSortDir] = useState<'desc' | 'asc'>(() => {
+    try {
+      return localStorage.getItem('machinefit.historyDateSort') === 'asc' ? 'asc' : 'desc';
+    } catch {
+      return 'desc';
+    }
+  });
   const [orderOverrides, setOrderOverrides] = useState<Record<string, string[]>>({});
   const [animatingCardId, setAnimatingCardId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -369,7 +377,7 @@ export function HistoryListPanel() {
     const groups = groupRecordCardsByDate(displayCards);
     const orders = displayOrders ?? [];
 
-    return groups.map((group) => {
+    const mapped = groups.map((group) => {
       const overrideKeys = orderOverrides[group.dateKey];
       let items = sortCardsByDisplayOrder(group.items, orders);
 
@@ -394,7 +402,27 @@ export function HistoryListPanel() {
 
       return { dateKey: group.dateKey, items };
     });
-  }, [displayCards, displayOrders, orderOverrides]);
+
+    return mapped.sort((a, b) =>
+      dateSortDir === 'desc'
+        ? b.dateKey.localeCompare(a.dateKey)
+        : a.dateKey.localeCompare(b.dateKey)
+    );
+  }, [displayCards, displayOrders, orderOverrides, dateSortDir]);
+
+  const showDateSort = groupedCards.length > 1;
+
+  const toggleDateSort = () => {
+    setDateSortDir((prev) => {
+      const next = prev === 'desc' ? 'asc' : 'desc';
+      try {
+        localStorage.setItem('machinefit.historyDateSort', next);
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
 
   const defaultExpandedDateKey = useMemo(() => {
     if (!groupedCards.length) return null;
@@ -1125,28 +1153,24 @@ export function HistoryListPanel() {
             <div className="records-list__filters">
               <button
                 type="button"
-                className={`records-list__calendar-trigger${calendarOpen ? ' is-open' : ''}`}
+                className={`records-list__calendar-trigger${calendarOpen ? ' is-open' : ''}${
+                  selectedDate ? ' is-active' : ''
+                }`}
                 aria-haspopup="dialog"
                 aria-expanded={calendarOpen}
+                aria-label={
+                  selectedDate
+                    ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                    : t('machines:history.filterByDate')
+                }
+                title={
+                  selectedDate
+                    ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                    : t('machines:history.filterByDate')
+                }
                 onClick={() => setCalendarOpen(true)}
               >
-                <span className="records-list__calendar-toggle">
-                  <Icon
-                    name="calendar"
-                    size={14}
-                    className="records-list__calendar-icon"
-                  />
-                  <span className="records-list__date-filter-label">
-                    {selectedDate
-                      ? t('machines:history.selectedDateLabel', { date: selectedDate })
-                      : t('machines:history.filterByDate')}
-                  </span>
-                  <Icon
-                    name="chevronDown"
-                    size={16}
-                    className="records-list__calendar-chevron"
-                  />
-                </span>
+                <Icon name="calendar" size={20} className="records-list__calendar-icon" />
               </button>
               {selectedDate ? (
                 <button
@@ -1170,6 +1194,32 @@ export function HistoryListPanel() {
               onClick={() => setDayMenuOpen(true)}
             >
               <Icon name="settings" size={18} />
+            </button>
+          ) : null}
+
+          {showDateSort ? (
+            <button
+              type="button"
+              className={`records-list__date-sort-trigger${
+                dateSortDir === 'asc' ? ' is-asc' : ' is-desc'
+              }`}
+              aria-label={
+                dateSortDir === 'desc'
+                  ? t('machines:history.dateSortNewestFirst')
+                  : t('machines:history.dateSortOldestFirst')
+              }
+              title={
+                dateSortDir === 'desc'
+                  ? t('machines:history.dateSortNewestFirst')
+                  : t('machines:history.dateSortOldestFirst')
+              }
+              onClick={toggleDateSort}
+            >
+              {dateSortDir === 'desc' ? (
+                <ArrowDownUp size={18} strokeWidth={2.25} aria-hidden />
+              ) : (
+                <ArrowUpDown size={18} strokeWidth={2.25} aria-hidden />
+              )}
             </button>
           ) : null}
         </div>

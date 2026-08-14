@@ -93,58 +93,66 @@ body:has(.records-page--history) .layout__content {
 }
 
 .records-list__calendar-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-xs);
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  user-select: none;
-  color: inherit;
-}
-
-.records-list__calendar-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
   flex-shrink: 0;
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
   background: color-mix(in srgb, var(--glass-bg) 80%, transparent);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
   transition:
     border-color 0.15s ease,
     background 0.15s ease,
     color 0.15s ease;
 }
 
-.records-list__calendar-trigger.is-open .records-list__calendar-toggle,
-.records-list__calendar-trigger:hover .records-list__calendar-toggle {
+.records-list__calendar-trigger.is-open,
+.records-list__calendar-trigger.is-active,
+.records-list__calendar-trigger:hover,
+.records-list__calendar-trigger:focus-visible {
   border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   color: var(--color-primary);
 }
 
-.records-list__calendar-trigger.is-open .records-list__calendar-icon,
-.records-list__calendar-trigger.is-open .records-list__date-filter-label,
-.records-list__calendar-trigger.is-open .records-list__calendar-chevron,
-.records-list__calendar-trigger:hover .records-list__calendar-icon,
-.records-list__calendar-trigger:hover .records-list__date-filter-label,
-.records-list__calendar-trigger:hover .records-list__calendar-chevron {
+.records-list__calendar-icon {
+  flex-shrink: 0;
   color: inherit;
 }
 
-.records-list__calendar-chevron {
+.records-list__date-sort-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
+  background: color-mix(in srgb, var(--glass-bg) 80%, transparent);
   color: var(--color-text-muted);
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
-.records-list__calendar-trigger.is-open .records-list__calendar-chevron {
-  transform: rotate(180deg);
+.records-list__date-sort-trigger:hover,
+.records-list__date-sort-trigger:focus-visible,
+.records-list__date-sort-trigger.is-asc {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
 }
 
 .records-list__date-selected {
@@ -1200,8 +1208,8 @@ body:has(.records-page--history) .layout__content {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
+  width: 2.35rem;
+  height: 2.35rem;
   padding: 0;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
@@ -1371,13 +1379,8 @@ body:has(.records-page--history) .layout__content {
 }
 
 .records-list--history .records-list__calendar-trigger {
-  width: auto;
-  justify-content: flex-end;
-}
-
-.records-list__calendar-icon {
-  flex-shrink: 0;
-  color: var(--color-text-muted);
+  width: 2.35rem;
+  justify-content: center;
 }
 
 .records-list__calendar-toggle--static {

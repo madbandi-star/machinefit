@@ -255,8 +255,8 @@
 }
 
 .records-list__day-menu-trigger {
-  width: 2rem;
-  height: 2rem;
+  width: 2.35rem;
+  height: 2.35rem;
   padding: 0;
   border-radius: 0.55rem;
   border: 1px solid color-mix(in srgb, var(--color-border) 88%, transparent);

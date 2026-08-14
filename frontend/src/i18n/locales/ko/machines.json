@@ -253,6 +253,8 @@
     "workoutSavedBadge": "기록 저장됨",
     "workoutUnsavedBadge": "미저장",
     "filterByDate": "일자조회",
+    "dateSortNewestFirst": "기록일자 최신순 (눌러서 오래된순)",
+    "dateSortOldestFirst": "기록일자 오래된순 (눌러서 최신순)",
     "prevMonth": "이전 달",
     "nextMonth": "다음 달",
     "calendarHint": "점이 있는 날짜에 기록이 있습니다. 빈 날짜도 선택해 계획을 추가할 수 있어요.",
