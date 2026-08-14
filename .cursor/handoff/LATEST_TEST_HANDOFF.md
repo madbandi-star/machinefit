@@ -1,17 +1,15 @@
-﻿# Test handoff — 운동성향 bottom disclaimer UI
+﻿# Test handoff — Fortune share footer under advice box
 
 ## Summary
-운동성향 하단 AI 면책 UI를 왼쪽 보더+노트박스 스타일에서 아이콘 카드형으로 개선. 문구·라우트 동일.
+헬창운세 공유 카드의 좌측 로고·우측 해시태그를 카드 맨 아래가 아니라 **한줄조언 박스 바로 아래**로 붙임.
 
 ## Git
 - Branch: `main`
-- Commit: `0e8a89d0`
+- Commit: _(after push)_
 
 ## Test focus
-1. 하단이 `AI 안내` 카드로 보이는지
-2. 의료 문구가 답답한 박스가 아니라 짧은 caution 라인인지
-3. `자세히 보기` → 법적 AI 페이지
+공유 PNG에서 조언 박스 직후 로고(좌)·태그(우) 위치 확인
 
 ## As-is → To-be
-- **As-is:** 회색 왼쪽선 + 초록 테두리 note + 밑줄 자세히
-- **To-be:** DNA 톤 글래스 카드 + 아이콘 + 캐어풀 링크
+- **As-is:** 하단 여백에 떠 있음 (`H - 96`)
+- **To-be:** `quoteY + quoteH + 44`

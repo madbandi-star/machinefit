@@ -1,22 +1,17 @@
 {
-  "title": "Lifter DNA bottom AI disclaimer UI polish",
-  "summary": "Replaced the leftover left-border + GuideProse note box on AI legal disclaimer with a compact icon card (title/body/caution/link). Copy and routes unchanged.",
-  "git": { "branch": "main", "commit": "0e8a89d0" },
-  "changedFiles": [
-    "frontend/src/components/compliance/LegalDisclaimerBanner.tsx",
-    "frontend/src/components/compliance/LegalDisclaimerBanner.css",
-    "frontend/src/pages/lifter-dna/LifterDnaPage.css"
-  ],
+  "title": "Fortune share: logo/tags under one-liner box",
+  "summary": "Helchang fortune share card moves MachineFit lockup and hashtag pills to sit directly under the one-liner advice panel instead of the canvas bottom.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
   "testFocus": [
-    "운동성향 page bottom: AI 안내 card with body + medical caution + 자세히 보기",
-    "No left gray border / no cramped green note box",
-    "Link still goes to legal AI page"
+    "Share 오늘의 헬창운세 — logo left + tags right sit just below the quote/advice box",
+    "Still 1080×1350; content values unchanged"
   ],
   "fastChecks": [
-    "rg -n \"legal-disclaimer--ai-card|aiCardBody\" frontend/src/components/compliance/LegalDisclaimerBanner.tsx frontend/src/components/compliance/LegalDisclaimerBanner.css"
+    "rg -n \"quoteY \\+ quoteH \\+ 44|footerY\" frontend/src/utils/fortuneShareCard.ts"
   ],
-  "productionChecks": ["Pages: open /lifter-dna (or equivalent) and check footer notice"],
+  "productionChecks": ["Pages: fortune share PNG footer placement"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Left border + auto-boxed medical sentence + underlined 자세히",
-  "toBe": "Glass AI notice card aligned with DNA purple/green tone"
+  "asIs": "Logo/tags pinned near canvas bottom (H-96)",
+  "toBe": "Logo/tags directly under one-liner advice box"
 }

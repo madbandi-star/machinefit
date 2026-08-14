@@ -481,8 +481,8 @@ export async function buildFortuneShareCard(input: FortuneShareCardInput): Promi
     }
   }
 
-  // Footer
-  const footerY = H - 96;
+  // Footer — tuck under one-liner advice box (not canvas bottom)
+  const footerY = quoteY + quoteH + 44;
   drawShareBrandLockup(ctx, padX + 4, footerY, FONT, {
     markSize: 28,
     brandSize: 24,
