@@ -1,7 +1,7 @@
 {
   "title": "Template share detail: take CTA + comments glanceable",
   "summary": "Detail page now shows a prominent take-template card early, improved sticky CTA with meta, and card-style comments with composer/avatars. Download/comment APIs unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "95d488ad" },
   "changedFiles": [
     "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
     "frontend/src/styles/template-share.css",
