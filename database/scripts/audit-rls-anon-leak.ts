@@ -85,20 +85,12 @@ async function probeAnonRest(
         rows = text.slice(0, 200);
       }
       const isArray = Array.isArray(rows);
-      const leaked =
-        res.ok && isArray && (rows as unknown[]).length > 0;
-      const grantLeak =
-        res.ok && isArray && (rows as unknown[]).length === 0
-          ? false
-          : res.status === 200 && !isArray
-            ? false
-            : false;
-      // Also treat successful open schema (200 with empty array) as locked-OK when RLS denies rows.
-      // Leak = HTTP 200 with at least one row. 401/403/404/PGRST = locked.
+      // Leak = HTTP 200 with at least one row. Empty 200 / 401 / 403 / PGRST = locked.
+      const leaked = res.ok && isArray && (rows as unknown[]).length > 0;
       results.push({
         table,
         status: res.status,
-        leaked: leaked || grantLeak,
+        leaked,
         detail: leaked
           ? `LEAK rows=${(rows as unknown[]).length}`
           : res.ok
