@@ -10,7 +10,6 @@ import {
   Layers,
   Weight,
 } from 'lucide-react';
-import { toPng } from 'html-to-image';
 import {
   formatVolumeKg,
   formatWorkoutDurationCompact,
@@ -18,6 +17,7 @@ import {
 } from '@machinefit/shared';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import { useUIStore } from '@/store/ui.store';
+import { buildShareHashtags } from '@/utils/shareHashtags';
 import '@/styles/workout-complete.css';
 
 interface WorkoutCompleteReportModalProps {
@@ -100,34 +100,43 @@ export function WorkoutCompleteReportModal({
   if (!open) return null;
 
   const handleScreenshot = async () => {
-    const node = sheetRef.current;
-    if (!node || capturing || !report) return;
+    if (capturing || !report) return;
     setCapturing(true);
-    const actions = node.querySelector<HTMLElement>('.wcr-actions');
-    const prevVisibility = actions?.style.visibility;
     try {
-      if (actions) actions.style.visibility = 'hidden';
-      // Allow layout to settle with actions hidden before rasterize.
-      await new Promise((r) => window.requestAnimationFrame(() => r(undefined)));
+      const { buildWorkoutScreenshotPoster } = await import('@/utils/workoutScreenshotPoster');
+      const { isShareAbortError, savePngBlobToPhotos } = await import('@/utils/saveImageToPhotos');
 
-      // Capture the full scrollable report (not only the visible viewport).
-      const dataUrl = await toPng(node, {
-        cacheBust: true,
-        pixelRatio: Math.min(2, window.devicePixelRatio || 2),
-        backgroundColor: '#050505',
-        width: node.scrollWidth,
-        height: node.scrollHeight,
-        style: {
-          height: `${node.scrollHeight}px`,
-          overflow: 'visible',
+      const hashtags = buildShareHashtags([], t('workoutComplete.shareHashtags'));
+      const blob = await buildWorkoutScreenshotPoster({
+        report,
+        labels: {
+          brand: t('workoutComplete.brand'),
+          titleLead: "TODAY'S",
+          titleAccent: 'WORKOUT',
+          tagline: t('workoutComplete.tagline'),
+          duration: t('workoutComplete.statDuration'),
+          exercises: t('workoutComplete.statExercises'),
+          exercisesSub: t('workoutComplete.statExercisesSub'),
+          sets: t('workoutComplete.statSets'),
+          setsSub: t('workoutComplete.statSetsSub'),
+          volume: t('workoutComplete.statVolume'),
+          volumeSub: t('workoutComplete.statVolumeSub'),
+          powerTitle: t('workoutComplete.powerTitle'),
+          powerEarned: t('workoutComplete.powerEarned', {
+            points: report.power?.earnedToday ?? 0,
+          }),
+          mvpTitle: t('workoutComplete.mvpTitle'),
+          newRecordTitle: t('workoutComplete.newRecordTitle'),
+          recordToday: t('workoutComplete.recordToday'),
+          recordPrev: t('workoutComplete.recordPrev'),
+          oneLinerTitle: t('workoutComplete.oneLinerTitle'),
+          oneLiner: t(`workoutComplete.oneLiner.${report.oneLinerKey}`),
+          keepGoing: t('workoutComplete.keepGoing'),
+          hashtags,
         },
       });
 
-      const { dataUrlToPngBlob, isShareAbortError, savePngBlobToPhotos } = await import(
-        '@/utils/saveImageToPhotos'
-      );
       try {
-        const blob = await dataUrlToPngBlob(dataUrl);
         const result = await savePngBlobToPhotos({
           blob,
           filename: `machinefit-todays-workout-${report.dateKey}.png`,
@@ -137,10 +146,7 @@ export function WorkoutCompleteReportModal({
         });
         if (result === 'downloaded') {
           showToast(t('workoutComplete.screenshotSaved'), 'success');
-        } else if (result === 'preview') {
-          // Long-press preview is self-explanatory; no toast.
         }
-        // 'shared': OS share sheet (Save Image → Photos) — no extra toast.
       } catch (shareError) {
         if (isShareAbortError(shareError)) return;
         throw shareError;
@@ -148,7 +154,6 @@ export function WorkoutCompleteReportModal({
     } catch {
       showToast(t('workoutComplete.screenshotFailed'), 'error');
     } finally {
-      if (actions) actions.style.visibility = prevVisibility ?? '';
       setCapturing(false);
     }
   };
