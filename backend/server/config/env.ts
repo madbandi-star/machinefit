@@ -50,10 +50,17 @@ const envSchema = z.object({
   BACKUP_STORAGE_BUCKET: z.string().default('backup'),
   /** OAuth / social login (optional — endpoints error when unset). */
   GOOGLE_CLIENT_ID: z.string().optional(),
+  /**
+   * Kakao JavaScript key served to the SPA via GET /auth/oauth/client-config.
+   * Do not commit real values; rotate in Kakao Developers + Render env.
+   */
+  KAKAO_JS_KEY: z.string().optional(),
   KAKAO_REST_API_KEY: z.string().optional(),
   /** Optional — required only if Kakao console enables Client Secret. */
   KAKAO_CLIENT_SECRET: z.string().optional(),
   APPLE_CLIENT_ID: z.string().optional(),
+  /** Optional Apple Services ID return URL override for the SPA. */
+  APPLE_REDIRECT_URI: z.string().optional(),
   /** Soft Express request deadline (ms). 0 disables. Default 30s. */
   REQUEST_TIMEOUT_MS: z.coerce.number().int().min(0).default(30_000),
   /** Grace period for in-flight requests on SIGTERM (ms). */

@@ -96,7 +96,7 @@ export function LinkedProvidersSection({ showHeading = true }: LinkedProvidersSe
 
   const connectMutation = useMutation({
     mutationFn: async (provider: AuthProviderCode) => {
-      if (!isOAuthProviderConfigured(provider)) {
+      if (!(await isOAuthProviderConfigured(provider))) {
         throw new OAuthClientError('not configured', 'NOT_CONFIGURED');
       }
       if (provider === 'kakao') {

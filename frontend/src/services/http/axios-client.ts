@@ -1,29 +1,13 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import type { AuthTokens } from '@machinefit/shared';
+import { API_BASE_URL } from '@/config/apiBase';
 import { useAuthStore } from '@/store/auth.store';
 import { clearGymScope } from '@/utils/syncGymScope';
 import { useSettingsStore } from '@/store/settings.store';
 import { clearKakaoOAuthStaging } from '@/utils/oauthClient';
 import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
 
-function normalizeApiBaseUrl(url: string): string {
-  const trimmed = url.replace(/\/+$/, '');
-  return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
-}
-
-const PRODUCTION_API_DEFAULT = 'https://machinefit.onrender.com/api/v1';
-
-function resolveApiBaseUrl(): string {
-  if (import.meta.env.DEV) {
-    return '/api/v1';
-  }
-
-  const configured = import.meta.env.VITE_API_BASE_URL?.trim();
-  return normalizeApiBaseUrl(configured || PRODUCTION_API_DEFAULT);
-}
-
-export const API_BASE_URL = resolveApiBaseUrl();
-
+export { API_BASE_URL };
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },

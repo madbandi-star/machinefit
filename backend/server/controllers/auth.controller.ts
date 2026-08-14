@@ -8,6 +8,7 @@ import {
   isAuthProviderCode,
   type OAuthLoginResult,
 } from '@machinefit/shared';
+import { env } from '../config/env.js';
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { getRequestIp, getRequestUserAgent } from '../utils/request-meta.util.js';
@@ -44,6 +45,23 @@ function requireRefreshToken(
     refreshToken: tokens.refreshToken,
     expiresIn: tokens.expiresIn,
   };
+}
+
+/**
+ * Public OAuth client ids / JS keys for the SPA.
+ * Values live in server env so they are not baked into the GitHub Pages bundle or repo.
+ */
+export async function getOAuthClientConfig(_req: Request, res: Response): Promise<void> {
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  res.json({
+    success: true,
+    data: {
+      googleClientId: env.GOOGLE_CLIENT_ID?.trim() || null,
+      kakaoJsKey: env.KAKAO_JS_KEY?.trim() || null,
+      appleClientId: env.APPLE_CLIENT_ID?.trim() || null,
+      appleRedirectUri: env.APPLE_REDIRECT_URI?.trim() || null,
+    },
+  });
 }
 
 function sendOAuthResult(res: Response, result: OAuthLoginResult): void {

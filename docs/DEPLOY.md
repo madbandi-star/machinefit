@@ -15,7 +15,8 @@ Paid **Always On** (not Free). Idle spin-down does not apply. Closed 2026-08-11.
    Do not prefix with another `npm ci` / `npm install`.
 2. **Start Command**: `npm run start --workspace=backend`
 3. **Node**: `NODE_VERSION=20` (or `.node-version`)
-4. Env: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`, `API_BASE_PATH=/api/v1`, optional `GOOGLE_CLIENT_ID` (omit `PORT` — use Render's)
+4. Env: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `CORS_ORIGIN`, `API_BASE_PATH=/api/v1`,
+   `GOOGLE_CLIENT_ID`, `KAKAO_JS_KEY`, `KAKAO_REST_API_KEY` (omit `PORT` — use Render's)
 5. Push to `main` (backend/shared/database) or Manual Deploy after Clear build cache if needed.
 
 ### Google / social login
@@ -24,8 +25,9 @@ Paid **Always On** (not Free). Idle spin-down does not apply. Closed 2026-08-11.
    - `http://localhost:5173` (local)
    - `https://machine-fit.com`
    - `https://madbandi-star.github.io` (Pages fallback)
-2. Frontend Pages build needs `VITE_GOOGLE_CLIENT_ID` / `VITE_KAKAO_JS_KEY` (see `frontend-deploy.yml`).
-3. Render env needs matching `GOOGLE_CLIENT_ID` and `KAKAO_REST_API_KEY`.
+2. SPA loads OAuth client ids from `GET /api/v1/auth/oauth/client-config` (Render env).
+   Do **not** bake `VITE_GOOGLE_CLIENT_ID` / `VITE_KAKAO_JS_KEY` into the Pages workflow.
+3. Render env needs `GOOGLE_CLIENT_ID`, `KAKAO_JS_KEY`, and `KAKAO_REST_API_KEY`.
    Also set `CORS_ORIGIN=https://machine-fit.com,https://madbandi-star.github.io` and
    `FRONTEND_BASE_URL=https://machine-fit.com/machinefit`.
 4. Kakao Developers:
@@ -39,7 +41,8 @@ Paid **Always On** (not Free). Idle spin-down does not apply. Closed 2026-08-11.
      - `https://madbandi-star.github.io/machinefit/settings/linked-logins`
      - `http://localhost:5173/settings/linked-logins`
    - 동의항목: 닉네임 (이메일은 Biz 앱 필요할 수 있음)
-5. Apply DB migration `091_auth_providers.sql` if not already applied.
+5. Key rotation / leak response: see `docs/SECRET_ROTATION.md`.
+6. Apply DB migration `091_auth_providers.sql` if not already applied.
 
 ### Render Deploy Hook (GitHub Actions)
 

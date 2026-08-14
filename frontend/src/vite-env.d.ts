@@ -13,13 +13,10 @@ interface ImportMetaEnv {
   readonly VITE_SENTRY_TRACES_SAMPLE_RATE?: string;
   /** When true, send browser events in Vite dev (default off). */
   readonly VITE_SENTRY_ENABLE_DEV?: string;
-  /** Google Identity Services client ID (web). */
+  /** Dev-only OAuth fallbacks — production uses GET /auth/oauth/client-config. */
   readonly VITE_GOOGLE_CLIENT_ID?: string;
-  /** Kakao JavaScript key. */
   readonly VITE_KAKAO_JS_KEY?: string;
-  /** Apple Services ID (web). */
   readonly VITE_APPLE_CLIENT_ID?: string;
-  /** Apple Sign In redirect URI (must match Apple Developer config). */
   readonly VITE_APPLE_REDIRECT_URI?: string;
 }
 

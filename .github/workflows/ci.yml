@@ -32,6 +32,9 @@ jobs:
       - name: Unit tests (shared + backend, no DB)
         run: npm test
 
+      - name: Scan for hardcoded leaked OAuth keys
+        run: npm run secrets:scan
+
       - name: Verify migration file integrity
         run: npm run db:verify:files
 

@@ -73,10 +73,17 @@ services:
       - key: POLAR_PREMIUM_PRODUCT_ID
         sync: false
       - key: GOOGLE_CLIENT_ID
-        value: 600013402579-oc4q1psgohjpk3ab3enc10ohb110clmg.apps.googleusercontent.com
+        sync: false
+      # Kakao JavaScript key for SPA (GET /auth/oauth/client-config). Rotate in Kakao console.
+      - key: KAKAO_JS_KEY
+        sync: false
       # Set in Render Dashboard (do not commit the real secret here):
       # KAKAO_REST_API_KEY=<from Kakao Developers REST API key>
       - key: KAKAO_REST_API_KEY
         sync: false
       - key: KAKAO_CLIENT_SECRET
+        sync: false
+      - key: APPLE_CLIENT_ID
+        sync: false
+      - key: APPLE_REDIRECT_URI
         sync: false

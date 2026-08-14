@@ -3,6 +3,7 @@ import {
   oauthCsrfMatches,
   type AuthProviderCode,
 } from '@machinefit/shared';
+import { API_BASE_URL } from '@/config/apiBase';
 
 const KAKAO_OAUTH_INTENT_KEY = 'mf_kakao_oauth_intent';
 const KAKAO_OAUTH_REDIRECT_KEY = 'mf_kakao_oauth_redirect';
@@ -11,6 +12,87 @@ const APPLE_OAUTH_NONCE_KEY = 'mf_apple_oauth_nonce';
 
 /** Prevents double exchange when AuthLanding remounts (layout chrome swap / StrictMode). */
 const consumedKakaoCodes = new Set<string>();
+
+export type OAuthClientPublicConfig = {
+  googleClientId: string | null;
+  kakaoJsKey: string | null;
+  appleClientId: string | null;
+  appleRedirectUri: string | null;
+};
+
+let oauthClientConfigCache: OAuthClientPublicConfig | null = null;
+let oauthClientConfigInflight: Promise<OAuthClientPublicConfig> | null = null;
+
+/**
+ * Local-dev override only. Production builds must not embed these (use server env).
+ */
+function viteOAuthFallback(): OAuthClientPublicConfig {
+  return {
+    googleClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim() || null,
+    kakaoJsKey: import.meta.env.VITE_KAKAO_JS_KEY?.trim() || null,
+    appleClientId: import.meta.env.VITE_APPLE_CLIENT_ID?.trim() || null,
+    appleRedirectUri: import.meta.env.VITE_APPLE_REDIRECT_URI?.trim() || null,
+  };
+}
+
+function mergeOAuthConfig(
+  fromApi: Partial<OAuthClientPublicConfig> | null,
+  fallback: OAuthClientPublicConfig
+): OAuthClientPublicConfig {
+  return {
+    googleClientId: fromApi?.googleClientId?.trim() || fallback.googleClientId,
+    kakaoJsKey: fromApi?.kakaoJsKey?.trim() || fallback.kakaoJsKey,
+    appleClientId: fromApi?.appleClientId?.trim() || fallback.appleClientId,
+    appleRedirectUri: fromApi?.appleRedirectUri?.trim() || fallback.appleRedirectUri,
+  };
+}
+
+/** Prefetch / refresh OAuth client ids from the API (cached ~process lifetime). */
+export async function getOAuthClientConfig(options?: {
+  force?: boolean;
+}): Promise<OAuthClientPublicConfig> {
+  if (!options?.force && oauthClientConfigCache) return oauthClientConfigCache;
+  if (!options?.force && oauthClientConfigInflight) return oauthClientConfigInflight;
+
+  oauthClientConfigInflight = (async () => {
+    const fallback = viteOAuthFallback();
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/oauth/client-config`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) {
+        oauthClientConfigCache = fallback;
+        return fallback;
+      }
+      const body = (await res.json()) as {
+        success?: boolean;
+        data?: Partial<OAuthClientPublicConfig>;
+      };
+      const merged = mergeOAuthConfig(body?.data ?? null, fallback);
+      oauthClientConfigCache = merged;
+      return merged;
+    } catch {
+      oauthClientConfigCache = fallback;
+      return fallback;
+    } finally {
+      oauthClientConfigInflight = null;
+    }
+  })();
+
+  return oauthClientConfigInflight;
+}
+
+export function peekOAuthClientConfig(): OAuthClientPublicConfig | null {
+  return oauthClientConfigCache;
+}
+
+/** Drop cached client config after key rotation / logout. */
+export function clearOAuthClientConfigCache(): void {
+  oauthClientConfigCache = null;
+  oauthClientConfigInflight = null;
+}
 
 function loadScript(src: string, id: string): Promise<void> {
   if (document.getElementById(id)) return Promise.resolve();
@@ -98,10 +180,11 @@ export type OAuthCredentialPayload = {
   nonce?: string;
 };
 
-export function isOAuthProviderConfigured(provider: AuthProviderCode): boolean {
-  if (provider === 'google') return Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim());
-  if (provider === 'kakao') return Boolean(import.meta.env.VITE_KAKAO_JS_KEY?.trim());
-  return Boolean(import.meta.env.VITE_APPLE_CLIENT_ID?.trim());
+export async function isOAuthProviderConfigured(provider: AuthProviderCode): Promise<boolean> {
+  const cfg = await getOAuthClientConfig();
+  if (provider === 'google') return Boolean(cfg.googleClientId);
+  if (provider === 'kakao') return Boolean(cfg.kakaoJsKey);
+  return Boolean(cfg.appleClientId);
 }
 
 /** Absolute redirect URI for Kakao.Auth.authorize — must match Kakao Developers exactly. */
@@ -215,7 +298,7 @@ export function clearKakaoOAuthStaging(): void {
 }
 
 async function ensureKakaoSdk(): Promise<void> {
-  const jsKey = import.meta.env.VITE_KAKAO_JS_KEY?.trim();
+  const { kakaoJsKey: jsKey } = await getOAuthClientConfig();
   if (!jsKey) throw new OAuthClientError('Kakao JS key missing', 'NOT_CONFIGURED');
 
   await loadScript('https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js', 'mf-kakao-sdk');
@@ -254,7 +337,7 @@ async function requestKakaoAuthorize(intent: KakaoOAuthIntent): Promise<never> {
 }
 
 async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim();
+  const { googleClientId: clientId } = await getOAuthClientConfig();
   if (!clientId) throw new OAuthClientError('Google client id missing', 'NOT_CONFIGURED');
 
   await loadScript('https://accounts.google.com/gsi/client', 'mf-google-gsi');
@@ -282,12 +365,12 @@ async function requestGoogleAccessToken(): Promise<{ accessToken: string }> {
 }
 
 async function requestAppleIdToken(): Promise<{ idToken: string; nonce: string }> {
-  const clientId = import.meta.env.VITE_APPLE_CLIENT_ID?.trim();
+  const cfg = await getOAuthClientConfig();
+  const clientId = cfg.appleClientId;
   if (!clientId) throw new OAuthClientError('Apple client id missing', 'NOT_CONFIGURED');
 
   // Must match Apple Services ID Return URLs (include /machinefit/ on Pages).
-  const redirectURI =
-    import.meta.env.VITE_APPLE_REDIRECT_URI?.trim() || getKakaoRedirectUri('/');
+  const redirectURI = cfg.appleRedirectUri || getKakaoRedirectUri('/');
 
   await loadScript(
     'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js',

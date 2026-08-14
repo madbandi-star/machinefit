@@ -14,6 +14,11 @@ import {
 
 export const authRouter = Router();
 
+/** Public SPA OAuth client ids (no secrets — Kakao JS key / Google client id). */
+authRouter.get('/oauth/client-config', (req, res, next) => {
+  void authController.getOAuthClientConfig(req, res).catch(next);
+});
+
 /** Social login — provider path: google | kakao | apple */
 authRouter.post(
   '/google',

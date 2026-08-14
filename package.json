@@ -27,6 +27,7 @@
     "db:verify": "tsx database/scripts/verify-migrations.ts",
     "db:verify:files": "tsx database/scripts/verify-migration-files.ts",
     "db:audit-rls": "tsx database/scripts/audit-rls-anon-leak.ts",
+    "secrets:scan": "node scripts/check-no-hardcoded-secrets.mjs",
     "db:seed": "tsx database/scripts/seed.ts",
     "db:setup": "npm run db:migrate && npm run db:seed",
     "db:migrate:verify": "npm run db:migrate && npm run db:verify",

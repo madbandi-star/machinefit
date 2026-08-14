@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { useAuthStore } from '@/store/auth.store';
 import { restoreSessionFromRefresh } from '@/services/http/axios-client';
 import { clearGymScope } from '@/utils/syncGymScope';
-import { clearKakaoOAuthStaging } from '@/utils/oauthClient';
+import { clearKakaoOAuthStaging, getOAuthClientConfig } from '@/utils/oauthClient';
 import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
 
 const AuthHydrationContext = createContext(false);
@@ -20,6 +20,11 @@ function useRunAuthHydration(): boolean {
   const [sessionReady, setSessionReady] = useState(() =>
     initialSessionReady(useAuthStore.persist.hasHydrated())
   );
+
+  useEffect(() => {
+    // Warm OAuth client ids from the API so login buttons don't wait on first click.
+    void getOAuthClientConfig();
+  }, []);
 
   useEffect(() => {
     const unsub = useAuthStore.persist.onFinishHydration(() => {
