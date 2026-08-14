@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import {
+  ArrowLeft,
+  ExternalLink,
+  Share2,
+  Trash2,
+} from 'lucide-react';
 import type {
   PublishTemplateShareInput,
   TemplateShareCategory,
@@ -118,6 +124,7 @@ export function MyTemplatesPage() {
     setYoutubeUrl('');
     setYoutubeChannelName('');
     setInstagramId('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tpl.sharePostId) {
       void templateShareApi
         .get(tpl.sharePostId)
@@ -137,6 +144,11 @@ export function MyTemplatesPage() {
           /* keep blank social fields if post load fails */
         });
     }
+  };
+
+  const closeShare = () => {
+    if (publishMutation.isPending) return;
+    setShareTarget(null);
   };
 
   const onPublish = (e: FormEvent) => {
@@ -159,207 +171,58 @@ export function MyTemplatesPage() {
     });
   };
 
-  return (
-    <PageShell
-      title={t('templateShare.myTemplates')}
-      subtitle={t('templateShare.myTemplatesSubtitle')}
-    >
-      <div className="tpl-share-page">
-        <Link to={ROUTES.TEMPLATE_SHARE} className="tpl-share-back">
-          {t('templateShare.goHub')}
-        </Link>
+  if (shareTarget) {
+    const isUpdate = Boolean(shareTarget.sharePostId);
+    return (
+      <div className="tpl-share-page tpl-share-compose-page">
+        <PageShell
+          title={
+            isUpdate ? t('templateShare.updateShare') : t('templateShare.shareDialogTitle')
+          }
+          subtitle={t('templateShare.shareDialogHint')}
+        >
+          <button type="button" className="tpl-share-back tpl-share-back--btn" onClick={closeShare}>
+            <ArrowLeft size={16} strokeWidth={2.4} aria-hidden />
+            {t('templateShare.backToMyTemplates')}
+          </button>
 
-        {templatesQuery.isLoading ? <Skeleton count={3} height={72} /> : null}
-        {templatesQuery.isError ? (
-          <QueryErrorMessage onRetry={() => void templatesQuery.refetch()} />
-        ) : null}
+          <aside className="tpl-share-compose__target">
+            <p className="tpl-share-compose__target-label">{t('templateShare.sharingTemplate')}</p>
+            <p className="tpl-share-compose__target-name">{shareTarget.name}</p>
+            <p className="tpl-share-compose__target-meta">
+              {t('templateShare.exerciseCount', { count: shareTarget.items.length })}
+            </p>
+          </aside>
 
-        {!templatesQuery.isLoading && !templatesQuery.isError ? (
-          <>
-            <section className="tpl-share-mine__section">
-              <h3 className="tpl-share-mine__heading">
-                <span>{t('templateShare.sectionMine')}</span>
-                <span className="tpl-share-mine__heading-count">{mine.length}</span>
+          <form className="tpl-share-compose" onSubmit={onPublish}>
+            <section className="tpl-share-compose__section" aria-labelledby="share-basics-title">
+              <h3 id="share-basics-title" className="tpl-share-compose__section-title">
+                {t('templateShare.shareBasics')}
               </h3>
-              {mine.length === 0 ? (
-                <div className="tpl-share-empty-box">
-                  <p className="tpl-share-empty-box__text">{t('templateShare.noMine')}</p>
-                  <div className="tpl-share-empty-box__actions">
-                    <Link to={ROUTES.RECORDS} className="btn btn--primary btn--sm">
-                      {t('templateShare.goRecords')}
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <div className="tpl-share-mine__list">
-                  {mine.map((tpl) => {
-                    const canShare =
-                      tpl.canShare === true ||
-                      (tpl.isOriginal !== false &&
-                        !tpl.sourceSharePostId &&
-                        !tpl.sourceTemplateId);
-                    return (
-                      <div key={tpl.id} className="tpl-share-mine__item">
-                        <div className="tpl-share-mine__meta">
-                          <span className="tpl-share-pill">
-                            {t('templateShare.badgeOriginal')}
-                          </span>
-                          <span className="tpl-share-mine__name">{tpl.name}</span>
-                          <span className="tpl-share-mine__sub">
-                            {t('templateShare.exerciseCount', { count: tpl.items.length })}
-                            {tpl.sharePostId ? ` · ${t('templateShare.alreadyShared')}` : ''}
-                          </span>
-                        </div>
-                        <div className="tpl-share-mine__actions">
-                          {canShare ? (
-                            <button
-                              type="button"
-                              className="btn btn--primary btn--sm"
-                              onClick={() => openShare(tpl)}
-                            >
-                              {tpl.sharePostId
-                                ? t('templateShare.updateShare')
-                                : t('templateShare.share')}
-                            </button>
-                          ) : (
-                            <span className="btn btn--ghost btn--sm tpl-share-mine__disabled">
-                              {t('templateShare.cannotShare')}
-                            </span>
-                          )}
-                          <div className="tpl-share-mine__actions-row">
-                            {tpl.sharePostId ? (
-                              <Link
-                                to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
-                                  ':postId',
-                                  tpl.sharePostId
-                                )}
-                                className="btn btn--secondary btn--sm"
-                              >
-                                {t('templateShare.viewPost')}
-                              </Link>
-                            ) : null}
-                            <button
-                              type="button"
-                              className="btn btn--ghost btn--sm"
-                              onClick={() => setDeleteId(tpl.id)}
-                            >
-                              {tc('actions.delete')}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            <section id="received" className="tpl-share-mine__section">
-              <h3 className="tpl-share-mine__heading">
-                <span>{t('templateShare.sectionReceived')}</span>
-                <span className="tpl-share-mine__heading-count">{received.length}</span>
-              </h3>
-              {received.length === 0 ? (
-                <div className="tpl-share-empty-box">
-                  <p className="tpl-share-empty-box__text">{t('templateShare.noReceived')}</p>
-                  <div className="tpl-share-empty-box__actions">
-                    <Link to={ROUTES.TEMPLATE_SHARE} className="btn btn--primary btn--sm">
-                      {t('templateShare.browseHub')}
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <div className="tpl-share-mine__list">
-                  {received.map((tpl) => (
-                    <div key={tpl.id} className="tpl-share-mine__item">
-                      <div className="tpl-share-mine__meta">
-                        <span className="tpl-share-pill tpl-share-pill--received">
-                          {t('templateShare.badgeReceived')}
-                        </span>
-                        <span className="tpl-share-mine__name">{tpl.name}</span>
-                        <span className="tpl-share-mine__sub">
-                          {t('templateShare.exerciseCount', { count: tpl.items.length })}
-                          {tpl.originTitle
-                            ? ` · ${t('templateShare.originLine', {
-                                title: tpl.originTitle,
-                                author: tpl.originAuthorName || '—',
-                              })}`
-                            : ` · ${t('templateShare.originUnknown')}`}
-                        </span>
-                      </div>
-                      <div className="tpl-share-mine__actions">
-                        <Link to={ROUTES.RECORDS} className="btn btn--primary btn--sm">
-                          {t('templateShare.useInRecords')}
-                        </Link>
-                        {tpl.sourceSharePostId ? (
-                          <Link
-                            to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
-                              ':postId',
-                              tpl.sourceSharePostId
-                            )}
-                            className="btn btn--secondary btn--sm"
-                          >
-                            {t('templateShare.viewOriginal')}
-                          </Link>
-                        ) : null}
-                        <div className="tpl-share-mine__actions-row">
-                          <span className="btn btn--ghost btn--sm tpl-share-mine__disabled">
-                            {t('templateShare.cannotShare')}
-                          </span>
-                          <button
-                            type="button"
-                            className="btn btn--ghost btn--sm"
-                            onClick={() => setDeleteId(tpl.id)}
-                          >
-                            {tc('actions.delete')}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-          </>
-        ) : null}
-      </div>
-
-      {shareTarget ? (
-        <div className="dialog-overlay" role="presentation" onClick={() => setShareTarget(null)}>
-          <div
-            className="dialog card tpl-share-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="tpl-share-dialog-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 id="tpl-share-dialog-title" className="tpl-share-dialog__title">
-              {t('templateShare.shareDialogTitle')}
-            </h3>
-            <p className="tpl-share-dialog__hint">{t('templateShare.shareDialogHint')}</p>
-            <form onSubmit={onPublish}>
-              <div className="form-field">
+              <div className="tpl-share-compose__field">
                 <label htmlFor="share-title">{t('templateShare.fieldTitle')}</label>
                 <input
                   id="share-title"
-                  className="input"
+                  className="input tpl-share-compose__title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
+                  autoFocus
                 />
               </div>
-              <div className="form-field">
+              <div className="tpl-share-compose__field">
                 <label htmlFor="share-desc">{t('templateShare.fieldDescription')}</label>
                 <textarea
                   id="share-desc"
-                  className="input"
-                  rows={3}
+                  className="input tpl-share-compose__textarea"
+                  rows={4}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  placeholder={t('templateShare.descriptionPlaceholder')}
                 />
               </div>
-              <div className="tpl-share-dialog__row">
-                <div className="form-field">
+              <div className="tpl-share-compose__row">
+                <div className="tpl-share-compose__field">
                   <label htmlFor="share-cat">{t('templateShare.fieldCategory')}</label>
                   <select
                     id="share-cat"
@@ -374,7 +237,7 @@ export function MyTemplatesPage() {
                     ))}
                   </select>
                 </div>
-                <div className="form-field">
+                <div className="tpl-share-compose__field">
                   <label htmlFor="share-diff">{t('templateShare.fieldDifficulty')}</label>
                   <select
                     id="share-diff"
@@ -390,7 +253,7 @@ export function MyTemplatesPage() {
                   </select>
                 </div>
               </div>
-              <div className="form-field">
+              <div className="tpl-share-compose__field">
                 <label htmlFor="share-tags">{t('templateShare.fieldTags')}</label>
                 <input
                   id="share-tags"
@@ -400,7 +263,14 @@ export function MyTemplatesPage() {
                   placeholder={t('templateShare.tagsPlaceholder')}
                 />
               </div>
-              <div className="form-field">
+            </section>
+
+            <section className="tpl-share-compose__section" aria-labelledby="share-social-title">
+              <h3 id="share-social-title" className="tpl-share-compose__section-title">
+                {t('templateShare.shareSocial')}
+              </h3>
+              <p className="tpl-share-compose__section-hint">{t('templateShare.shareSocialHint')}</p>
+              <div className="tpl-share-compose__field">
                 <label htmlFor="share-youtube-url">{t('templateShare.fieldYoutubeUrl')}</label>
                 <input
                   id="share-youtube-url"
@@ -412,7 +282,7 @@ export function MyTemplatesPage() {
                   placeholder={t('templateShare.youtubeUrlPlaceholder')}
                 />
               </div>
-              <div className="form-field">
+              <div className="tpl-share-compose__field">
                 <label htmlFor="share-youtube-channel">
                   {t('templateShare.fieldYoutubeChannel')}
                 </label>
@@ -425,7 +295,7 @@ export function MyTemplatesPage() {
                   maxLength={100}
                 />
               </div>
-              <div className="form-field">
+              <div className="tpl-share-compose__field">
                 <label htmlFor="share-instagram">{t('templateShare.fieldInstagramId')}</label>
                 <input
                   id="share-instagram"
@@ -439,26 +309,218 @@ export function MyTemplatesPage() {
                   spellCheck={false}
                 />
               </div>
-              <div className="tpl-share-dialog__actions">
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={() => setShareTarget(null)}
-                >
-                  {tc('actions.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn--primary"
-                  disabled={publishMutation.isPending}
-                >
-                  {t('templateShare.publish')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      ) : null}
+            </section>
+
+            <div className="tpl-share-compose__actions">
+              <button
+                type="submit"
+                className="btn btn--primary tpl-share-compose__submit"
+                disabled={publishMutation.isPending || !title.trim()}
+              >
+                {publishMutation.isPending ? '…' : t('templateShare.publish')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={closeShare}
+                disabled={publishMutation.isPending}
+              >
+                {tc('actions.cancel')}
+              </button>
+            </div>
+          </form>
+        </PageShell>
+      </div>
+    );
+  }
+
+  return (
+    <PageShell
+      title={t('templateShare.myTemplates')}
+      subtitle={t('templateShare.myTemplatesSubtitle')}
+    >
+      <div className="tpl-share-page tpl-share-mine-page">
+        <Link to={ROUTES.TEMPLATE_SHARE} className="tpl-share-hub-link">
+          {t('templateShare.goHub')}
+          <ExternalLink size={14} strokeWidth={2.3} aria-hidden />
+        </Link>
+
+        {templatesQuery.isLoading ? <Skeleton count={3} height={88} /> : null}
+        {templatesQuery.isError ? (
+          <QueryErrorMessage onRetry={() => void templatesQuery.refetch()} />
+        ) : null}
+
+        {!templatesQuery.isLoading && !templatesQuery.isError ? (
+          <>
+            <section className="tpl-mine-section" aria-labelledby="tpl-mine-heading">
+              <header className="tpl-mine-section__head">
+                <h3 id="tpl-mine-heading" className="tpl-mine-section__title">
+                  {t('templateShare.sectionMine')}
+                </h3>
+                <span className="tpl-mine-section__count">{mine.length}</span>
+              </header>
+
+              {mine.length === 0 ? (
+                <div className="tpl-share-empty-box">
+                  <p className="tpl-share-empty-box__text">{t('templateShare.noMine')}</p>
+                  <div className="tpl-share-empty-box__actions">
+                    <Link to={ROUTES.RECORDS} className="btn btn--primary btn--sm">
+                      {t('templateShare.goRecords')}
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <ul className="tpl-mine-list">
+                  {mine.map((tpl) => {
+                    const canShare =
+                      tpl.canShare === true ||
+                      (tpl.isOriginal !== false &&
+                        !tpl.sourceSharePostId &&
+                        !tpl.sourceTemplateId);
+                    const shared = Boolean(tpl.sharePostId);
+                    return (
+                      <li key={tpl.id} className="tpl-mine-card">
+                        <div className="tpl-mine-card__top">
+                          <div className="tpl-mine-card__badges">
+                            <span className="tpl-share-pill">{t('templateShare.badgeOriginal')}</span>
+                            {shared ? (
+                              <span className="tpl-share-pill tpl-share-pill--shared">
+                                {t('templateShare.alreadyShared')}
+                              </span>
+                            ) : null}
+                          </div>
+                          <h4 className="tpl-mine-card__name">{tpl.name}</h4>
+                          <p className="tpl-mine-card__meta">
+                            {t('templateShare.exerciseCount', { count: tpl.items.length })}
+                          </p>
+                        </div>
+
+                        <div className="tpl-mine-card__footer">
+                          {canShare ? (
+                            <button
+                              type="button"
+                              className="btn btn--primary tpl-mine-card__primary"
+                              onClick={() => openShare(tpl)}
+                            >
+                              <Share2 size={16} strokeWidth={2.3} aria-hidden />
+                              {shared
+                                ? t('templateShare.updateShare')
+                                : t('templateShare.share')}
+                            </button>
+                          ) : (
+                            <span className="tpl-mine-card__locked">
+                              {t('templateShare.cannotShare')}
+                            </span>
+                          )}
+                          <div className="tpl-mine-card__links">
+                            {tpl.sharePostId ? (
+                              <Link
+                                to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
+                                  ':postId',
+                                  tpl.sharePostId
+                                )}
+                                className="tpl-mine-card__link"
+                              >
+                                {t('templateShare.viewPost')}
+                              </Link>
+                            ) : null}
+                            <button
+                              type="button"
+                              className="tpl-mine-card__link tpl-mine-card__link--danger"
+                              onClick={() => setDeleteId(tpl.id)}
+                            >
+                              <Trash2 size={13} strokeWidth={2.3} aria-hidden />
+                              {tc('actions.delete')}
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+
+            <section
+              id="received"
+              className="tpl-mine-section"
+              aria-labelledby="tpl-received-heading"
+            >
+              <header className="tpl-mine-section__head">
+                <h3 id="tpl-received-heading" className="tpl-mine-section__title">
+                  {t('templateShare.sectionReceived')}
+                </h3>
+                <span className="tpl-mine-section__count">{received.length}</span>
+              </header>
+
+              {received.length === 0 ? (
+                <div className="tpl-share-empty-box">
+                  <p className="tpl-share-empty-box__text">{t('templateShare.noReceived')}</p>
+                  <div className="tpl-share-empty-box__actions">
+                    <Link to={ROUTES.TEMPLATE_SHARE} className="btn btn--primary btn--sm">
+                      {t('templateShare.browseHub')}
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <ul className="tpl-mine-list">
+                  {received.map((tpl) => (
+                    <li key={tpl.id} className="tpl-mine-card">
+                      <div className="tpl-mine-card__top">
+                        <div className="tpl-mine-card__badges">
+                          <span className="tpl-share-pill tpl-share-pill--received">
+                            {t('templateShare.badgeReceived')}
+                          </span>
+                        </div>
+                        <h4 className="tpl-mine-card__name">{tpl.name}</h4>
+                        <p className="tpl-mine-card__meta">
+                          {t('templateShare.exerciseCount', { count: tpl.items.length })}
+                          {tpl.originTitle
+                            ? ` · ${t('templateShare.originLine', {
+                                title: tpl.originTitle,
+                                author: tpl.originAuthorName || '—',
+                              })}`
+                            : ` · ${t('templateShare.originUnknown')}`}
+                        </p>
+                      </div>
+
+                      <div className="tpl-mine-card__footer">
+                        <Link
+                          to={ROUTES.RECORDS}
+                          className="btn btn--primary tpl-mine-card__primary"
+                        >
+                          {t('templateShare.useInRecords')}
+                        </Link>
+                        <div className="tpl-mine-card__links">
+                          {tpl.sourceSharePostId ? (
+                            <Link
+                              to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
+                                ':postId',
+                                tpl.sourceSharePostId
+                              )}
+                              className="tpl-mine-card__link"
+                            >
+                              {t('templateShare.viewOriginal')}
+                            </Link>
+                          ) : null}
+                          <button
+                            type="button"
+                            className="tpl-mine-card__link tpl-mine-card__link--danger"
+                            onClick={() => setDeleteId(tpl.id)}
+                          >
+                            <Trash2 size={13} strokeWidth={2.3} aria-hidden />
+                            {tc('actions.delete')}
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </>
+        ) : null}
+      </div>
 
       <ConfirmDialog
         open={Boolean(deleteId)}
