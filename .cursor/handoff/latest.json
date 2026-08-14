@@ -1,7 +1,7 @@
 {
   "title": "Search filter chips: visible horizontal scrollbar",
   "summary": "Muscle and brand chip rows now show a thin primary-styled horizontal scrollbar (was hidden) plus edge fades so trailing chips are reachable.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "e1cbce85" },
   "changedFiles": [
     "frontend/src/styles/machines.css",
     "frontend/src/components/machines/FilterChips/FilterChips.tsx",
@@ -9,7 +9,7 @@
   ],
   "testFocus": [
     "??: ???/??? ?? ????? ??",
-    "?? ? ??? ???·?? ??",
+    "?? ? ??? ????? ??",
     "?? ????? ??"
   ],
   "fastChecks": [
