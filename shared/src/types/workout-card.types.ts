@@ -59,6 +59,11 @@ export interface WorkoutCard {
 
 export interface WorkoutCardTemplateItem {
   machineCode: string;
+  /** Display name snapshot (or enriched on read for share detail). */
+  machineName?: string;
+  brandName?: string;
+  /** Resolved cover / catalog image when available. */
+  primaryImageUrl?: string;
   targetMuscleGroup?: TargetMuscleGroup;
   setCount: number;
   setWeightsKg: number[];

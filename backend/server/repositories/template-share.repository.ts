@@ -21,6 +21,7 @@ import {
 import type pg from 'pg';
 import { getPool } from '../config/database.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { pickLocalized } from '../utils/localize.util.js';
 
 function requirePool(): pg.Pool {
   const pool = getPool();
@@ -182,6 +183,100 @@ function mapDetail(row: PostRow): TemplateShareDetail {
   };
 }
 
+interface MachineMetaRow {
+  code: string;
+  name: Record<string, string> | string | null;
+  brand_name: Record<string, string> | string | null;
+  primary_image_url: string | null;
+}
+
+async function enrichTemplateItems(
+  items: WorkoutCardTemplateItem[],
+  locale = 'ko'
+): Promise<WorkoutCardTemplateItem[]> {
+  if (!items.length) return items;
+  const codes = [
+    ...new Set(items.map((item) => item.machineCode).filter((code) => Boolean(code))),
+  ];
+  if (!codes.length) return items;
+
+  const pool = getPool();
+  if (!pool) return items;
+
+  try {
+    const result = await pool.query<MachineMetaRow>(
+      `SELECT m.code,
+              m.name,
+              b.name AS brand_name,
+              COALESCE(
+                (
+                  SELECT CASE
+                    WHEN c.image_url IS NULL THEN NULL
+                    WHEN POSITION('?' IN c.image_url) > 0
+                      THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
+                    ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
+                  END
+                  FROM machine_cover_images c
+                  WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
+                  LIMIT 1
+                ),
+                (
+                  SELECT mi.image_url
+                  FROM machine_images mi
+                  WHERE mi.machine_id = m.id
+                  ORDER BY mi.is_primary DESC, mi.sort_order ASC
+                  LIMIT 1
+                )
+              ) AS primary_image_url
+       FROM machines m
+       LEFT JOIN brands b ON b.id = m.brand_id
+       WHERE m.code = ANY($1::text[])`,
+      [codes]
+    );
+
+    const byCode = new Map(
+      result.rows.map((row) => [
+        row.code,
+        {
+          machineName: pickLocalized(row.name as never, locale) ?? row.code,
+          brandName: row.brand_name
+            ? pickLocalized(row.brand_name as never, locale)
+            : undefined,
+          primaryImageUrl: row.primary_image_url ?? undefined,
+        },
+      ])
+    );
+
+    return items.map((item) => {
+      const meta = byCode.get(item.machineCode);
+      if (!meta) {
+        return {
+          ...item,
+          machineName: item.machineName?.trim() || item.machineCode,
+        };
+      }
+      return {
+        ...item,
+        machineName: item.machineName?.trim() || meta.machineName,
+        brandName: item.brandName?.trim() || meta.brandName,
+        primaryImageUrl: item.primaryImageUrl || meta.primaryImageUrl,
+      };
+    });
+  } catch {
+    return items.map((item) => ({
+      ...item,
+      machineName: item.machineName?.trim() || item.machineCode,
+    }));
+  }
+}
+
+async function withEnrichedItems(detail: TemplateShareDetail): Promise<TemplateShareDetail> {
+  return {
+    ...detail,
+    items: await enrichTemplateItems(detail.items),
+  };
+}
+
 function viewerFlagsSelect(viewerId: string | undefined, startIdx: number): {
   sql: string;
   params: unknown[];
@@ -328,7 +423,7 @@ export const templateShareRepository = {
       params
     );
     const row = result.rows[0];
-    return row ? mapDetail(row) : null;
+    return row ? withEnrichedItems(mapDetail(row)) : null;
   },
 
   async getRawPost(id: string): Promise<{
@@ -426,7 +521,7 @@ export const templateShareRepository = {
       [userId]
     );
     row.author_name = author.rows[0]?.author_name ?? 'User';
-    return mapDetail(row);
+    return withEnrichedItems(mapDetail(row));
   },
 
   async update(
@@ -501,7 +596,7 @@ export const templateShareRepository = {
       [userId]
     );
     row.author_name = author.rows[0]?.author_name ?? 'User';
-    return mapDetail(row);
+    return withEnrichedItems(mapDetail(row));
   },
 
   async adminUpdateStatus(
@@ -523,7 +618,7 @@ export const templateShareRepository = {
       [row.author_user_id]
     );
     row.author_name = author.rows[0]?.author_name ?? 'User';
-    return mapDetail(row);
+    return withEnrichedItems(mapDetail(row));
   },
 
   async adminList(query: TemplateShareAdminListQuery): Promise<{

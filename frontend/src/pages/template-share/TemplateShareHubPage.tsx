@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { AtSign, Video } from 'lucide-react';
 import type { TemplateShareSort } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -145,7 +146,11 @@ export function TemplateShareHubPage() {
                 </p>
                 <div className="tpl-share-empty-box__actions">
                   {hasQuery ? (
-                    <button type="button" className="btn btn--secondary btn--sm" onClick={clearSearch}>
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={clearSearch}
+                    >
                       {t('templateShare.clearSearch')}
                     </button>
                   ) : null}
@@ -158,6 +163,10 @@ export function TemplateShareHubPage() {
               <div className="tpl-share-list">
                 {items.map((item) => {
                   const badge = item.badges?.[0];
+                  const hasSocial =
+                    Boolean(item.youtubeChannelName) ||
+                    Boolean(item.youtubeUrl) ||
+                    Boolean(item.instagramId);
                   return (
                     <Link
                       key={item.id}
@@ -187,18 +196,26 @@ export function TemplateShareHubPage() {
                           {' · '}
                           {t('templateShare.exerciseCount', { count: item.itemCount })}
                         </p>
-                        {item.youtubeChannelName || item.instagramId || item.youtubeUrl ? (
-                          <p className="tpl-share-row__social">
-                            {item.youtubeChannelName
-                              ? item.youtubeChannelName
-                              : item.youtubeUrl
-                                ? t('templateShare.fieldYoutubeUrl')
-                                : null}
-                            {(item.youtubeChannelName || item.youtubeUrl) && item.instagramId
-                              ? ' · '
-                              : null}
-                            {item.instagramId ? `@${item.instagramId}` : null}
-                          </p>
+                        {hasSocial ? (
+                          <div
+                            className="tpl-share-row__social"
+                            aria-label={t('templateShare.creatorLinks')}
+                          >
+                            {item.youtubeChannelName || item.youtubeUrl ? (
+                              <span className="tpl-share-row__social-chip">
+                                <Video size={13} strokeWidth={2.2} aria-hidden />
+                                <span>
+                                  {item.youtubeChannelName || t('templateShare.fieldYoutubeUrl')}
+                                </span>
+                              </span>
+                            ) : null}
+                            {item.instagramId ? (
+                              <span className="tpl-share-row__social-chip">
+                                <AtSign size={13} strokeWidth={2.2} aria-hidden />
+                                <span>@{item.instagramId}</span>
+                              </span>
+                            ) : null}
+                          </div>
                         ) : null}
                         <div className="tpl-share-row__stats">
                           <span>

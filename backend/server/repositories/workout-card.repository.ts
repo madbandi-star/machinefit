@@ -465,6 +465,11 @@ export const workoutCardRepository = {
       const diary = (log?.diary?.trim() || row.diary?.trim() || '') || undefined;
       items.push({
         machineCode: row.machine_code,
+        machineName: pickLocalized(row.machine_name, 'ko') ?? row.machine_code,
+        brandName: row.brand_name
+          ? pickLocalized(row.brand_name, 'ko') ?? undefined
+          : undefined,
+        primaryImageUrl: row.primary_image_url ?? undefined,
         targetMuscleGroup: row.target_muscle_group
           ? (row.target_muscle_group as TargetMuscleGroup)
           : undefined,
