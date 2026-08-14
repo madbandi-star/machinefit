@@ -1,10 +1,10 @@
 {
   "title": "Fortune share: logo/tags under one-liner box",
   "summary": "Helchang fortune share card moves MachineFit lockup and hashtag pills to sit directly under the one-liner advice panel instead of the canvas bottom.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "1aa90d44" },
   "changedFiles": ["frontend/src/utils/fortuneShareCard.ts"],
   "testFocus": [
-    "Share 오늘의 헬창운세 — logo left + tags right sit just below the quote/advice box",
+    "Share ?�늘???�창?�세 ??logo left + tags right sit just below the quote/advice box",
     "Still 1080×1350; content values unchanged"
   ],
   "fastChecks": [
