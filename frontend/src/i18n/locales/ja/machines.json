@@ -253,6 +253,7 @@
     "workoutSavedBadge": "Log saved",
     "workoutUnsavedBadge": "Not saved",
     "filterByDate": "Filter by date",
+    "clearDateFilter": "Show all records",
     "dateSortNewestFirst": "Newest dates first (tap for oldest)",
     "dateSortOldestFirst": "Oldest dates first (tap for newest)",
     "prevMonth": "Previous month",

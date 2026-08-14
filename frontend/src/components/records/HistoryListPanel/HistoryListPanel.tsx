@@ -1156,31 +1156,29 @@ export function HistoryListPanel() {
                 className={`records-list__calendar-trigger${calendarOpen ? ' is-open' : ''}${
                   selectedDate ? ' is-active' : ''
                 }`}
-                aria-haspopup="dialog"
-                aria-expanded={calendarOpen}
+                aria-haspopup={selectedDate ? undefined : 'dialog'}
+                aria-expanded={selectedDate ? undefined : calendarOpen}
                 aria-label={
                   selectedDate
-                    ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                    ? t('machines:history.clearDateFilter')
                     : t('machines:history.filterByDate')
                 }
                 title={
                   selectedDate
-                    ? t('machines:history.selectedDateLabel', { date: selectedDate })
+                    ? t('machines:history.clearDateFilter')
                     : t('machines:history.filterByDate')
                 }
-                onClick={() => setCalendarOpen(true)}
+                onClick={() => {
+                  if (selectedDate) {
+                    setCalendarOpen(false);
+                    handleDateChange('');
+                    return;
+                  }
+                  setCalendarOpen(true);
+                }}
               >
                 <Icon name="calendar" size={20} className="records-list__calendar-icon" />
               </button>
-              {selectedDate ? (
-                <button
-                  type="button"
-                  className="records-list__date-reset"
-                  onClick={() => handleDateChange('')}
-                >
-                  {t('machines:filterAll')}
-                </button>
-              ) : null}
             </div>
           </div>
 

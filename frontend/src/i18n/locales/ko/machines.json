@@ -253,6 +253,7 @@
     "workoutSavedBadge": "기록 저장됨",
     "workoutUnsavedBadge": "미저장",
     "filterByDate": "일자조회",
+    "clearDateFilter": "전체 기록 보기",
     "dateSortNewestFirst": "기록일자 최신순 (눌러서 오래된순)",
     "dateSortOldestFirst": "기록일자 오래된순 (눌러서 최신순)",
     "prevMonth": "이전 달",
