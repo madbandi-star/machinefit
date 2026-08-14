@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import {
+  USERNAME_MAX_CHANGES,
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
   normalizeUsername,
@@ -15,6 +16,7 @@ import { useUIStore } from '@/store/ui.store';
 
 type MemberIdEditorProps = {
   displayName: string;
+  usernameChangeCount?: number;
 };
 
 function mapUsernameError(code: string | undefined, fallback: string): string {
@@ -38,17 +40,26 @@ function mapUsernameError(code: string | undefined, fallback: string): string {
     case 'USERNAME_IMPERSONATION':
     case 'USERNAME_RESERVED':
       return 'myPage.memberIdForbidden';
+    case 'USERNAME_CHANGE_LIMIT':
+      return 'myPage.memberIdChangeLimit';
     default:
       return fallback;
   }
 }
 
-export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
+export function MemberIdEditor({
+  displayName,
+  usernameChangeCount = 0,
+}: MemberIdEditorProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const updateUser = useAuthStore((s) => s.updateUser);
   const showToast = useUIStore((s) => s.showToast);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const used = Math.max(0, Math.min(USERNAME_MAX_CHANGES, usernameChangeCount));
+  const remaining = Math.max(0, USERNAME_MAX_CHANGES - used);
+  const canChange = remaining > 0;
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(displayName);
@@ -84,11 +95,15 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
         ? (error.response?.data as { error?: { code?: string; message?: string } } | undefined)
         : undefined;
       const key = mapUsernameError(payload?.error?.code, 'errors.submitFailed');
-      showToast(t(key), 'error');
+      showToast(t(key, { max: USERNAME_MAX_CHANGES }), 'error');
     },
   });
 
   const openEditor = () => {
+    if (!canChange) {
+      showToast(t('myPage.memberIdChangeLimit', { max: USERNAME_MAX_CHANGES }), 'error');
+      return;
+    }
     setDraft(displayName);
     setEditing(true);
   };
@@ -101,6 +116,10 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
 
   const saveEdit = () => {
     if (mutation.isPending) return;
+    if (!canChange) {
+      showToast(t('myPage.memberIdChangeLimit', { max: USERNAME_MAX_CHANGES }), 'error');
+      return;
+    }
     // Legacy usernames may predate stricter rules — unchanged values stay as-is.
     if (normalizeUsername(draft) === normalizeUsername(displayName)) {
       setEditing(false);
@@ -122,14 +141,28 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
       <dd className="profile-card__member-id">
         <span className="profile-card__member-id-value">{displayName || '—'}</span>
         {displayName ? (
-          <button
-            type="button"
-            className="profile-card__member-id-change"
-            onClick={openEditor}
-            aria-label={t('myPage.changeMemberIdAria')}
-          >
-            {t('myPage.changeMemberId')}
-          </button>
+          canChange ? (
+            <button
+              type="button"
+              className="profile-card__member-id-change"
+              onClick={openEditor}
+              aria-label={t('myPage.changeMemberIdAria')}
+            >
+              {t('myPage.changeMemberId')}
+            </button>
+          ) : (
+            <span className="profile-card__member-id-limit" role="status">
+              {t('myPage.memberIdChangeExhausted', { max: USERNAME_MAX_CHANGES })}
+            </span>
+          )
+        ) : null}
+        {displayName && canChange ? (
+          <p className="profile-card__member-id-remaining">
+            {t('myPage.memberIdChangesRemaining', {
+              remaining,
+              max: USERNAME_MAX_CHANGES,
+            })}
+          </p>
         ) : null}
       </dd>
     );
@@ -161,6 +194,12 @@ export function MemberIdEditor({ displayName }: MemberIdEditorProps) {
       />
       <p className="profile-card__member-id-rules">
         {t('myPage.memberIdRules', { min: USERNAME_MIN_LENGTH, max: USERNAME_MAX_LENGTH })}
+      </p>
+      <p className="profile-card__member-id-remaining">
+        {t('myPage.memberIdChangesRemaining', {
+          remaining,
+          max: USERNAME_MAX_CHANGES,
+        })}
       </p>
       <button
         type="button"

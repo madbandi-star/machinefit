@@ -11,6 +11,8 @@ import { findBlockedContentMatch } from './content-safety.js';
 
 export const USERNAME_MIN_LENGTH = 2;
 export const USERNAME_MAX_LENGTH = 32;
+/** Lifetime self-serve username changes allowed per account (My Page). */
+export const USERNAME_MAX_CHANGES = 3;
 
 /** Fitness-themed Korean prefixes for auto-generated signup usernames. */
 export const USERNAME_RANDOM_PREFIXES = [

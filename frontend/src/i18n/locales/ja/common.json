@@ -888,6 +888,9 @@
     "memberIdPersonalInfo": "Phone- or email-shaped IDs are not allowed.",
     "memberIdForbidden": "That ID is not allowed.",
     "memberIdRules": "{{min}}–{{max}} chars; Korean, letters, numbers, underscore",
+    "memberIdChangesRemaining": "ID変更 残り{{remaining}}/{{max}}回",
+    "memberIdChangeLimit": "IDは最大{{max}}回まで変更できます。",
+    "memberIdChangeExhausted": "変更回数を使い切りました（最大{{max}}回）",
     "qa": "Q&A"
   },
   "lab": {

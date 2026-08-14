@@ -131,7 +131,10 @@ export function MyPage() {
           <dl className="profile-card__fields">
             <div className="profile-card__row profile-card__row--full">
               <dt>{t('myPage.memberId')}</dt>
-              <MemberIdEditor displayName={user?.displayName ?? ''} />
+              <MemberIdEditor
+                displayName={user?.displayName ?? ''}
+                usernameChangeCount={user?.usernameChangeCount ?? 0}
+              />
             </div>
             {showMemberLevel ? (
               <div className="profile-card__row profile-card__row--full">

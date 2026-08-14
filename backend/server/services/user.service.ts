@@ -3,6 +3,7 @@ import {
   LEGAL_DOC_VERSIONS,
   normalizeUsername,
   profileFeatureConsentVersion,
+  USERNAME_MAX_CHANGES,
   usernameUniqueKey,
   validateUsername,
   type UpdateProfileInput,
@@ -17,11 +18,17 @@ function usernameError(code: string, message: string): AppError {
   return new AppError(400, code, message);
 }
 
+export type ApplyUsernameChangeResult = {
+  normalized: string;
+  changed: boolean;
+};
+
 /** Shared gate for self-serve and admin username (display_name) changes. */
 export async function applyUsernameChange(
   userId: string,
-  rawUsername: string
-): Promise<string> {
+  rawUsername: string,
+  options?: { enforceChangeLimit?: boolean }
+): Promise<ApplyUsernameChangeResult> {
   const current = await userRepository.findById(userId);
   if (!current) {
     throw new AppError(404, 'NOT_FOUND', 'User not found');
@@ -31,7 +38,17 @@ export async function applyUsernameChange(
     usernameUniqueKey(normalizeUsername(current.displayName)) ===
     usernameUniqueKey(normalizeUsername(rawUsername))
   ) {
-    return current.displayName;
+    return { normalized: current.displayName, changed: false };
+  }
+  if (options?.enforceChangeLimit !== false) {
+    const used = current.usernameChangeCount ?? 0;
+    if (used >= USERNAME_MAX_CHANGES) {
+      throw new AppError(
+        403,
+        'USERNAME_CHANGE_LIMIT',
+        `Username can be changed at most ${USERNAME_MAX_CHANGES} times`
+      );
+    }
   }
   const validated = validateUsername(rawUsername);
   if (!validated.ok) {
@@ -41,7 +58,7 @@ export async function applyUsernameChange(
   if (taken) {
     throw new AppError(409, 'USERNAME_TAKEN', 'Username is already in use');
   }
-  return validated.normalized;
+  return { normalized: validated.normalized, changed: true };
 }
 
 export const userService = {
@@ -78,8 +95,17 @@ export const userService = {
       ...fieldInput
     } = input;
     const payload: UpdateProfileInput = { ...fieldInput };
+    let incrementUsernameChangeCount = false;
     if (payload.displayName !== undefined) {
-      payload.displayName = await applyUsernameChange(userId, payload.displayName);
+      const result = await applyUsernameChange(userId, payload.displayName, {
+        enforceChangeLimit: true,
+      });
+      if (!result.changed) {
+        delete payload.displayName;
+      } else {
+        payload.displayName = result.normalized;
+        incrementUsernameChangeCount = true;
+      }
     }
     // Age is derived from birthDate only. Drop orphan age fields from older clients
     // so body-metrics saves (height/weight/…) are not rejected by the age gate.
@@ -184,7 +210,10 @@ export const userService = {
     }
 
     try {
-      const user = await userRepository.updateProfile(userId, payload);
+      const user = await userRepository.updateProfile(userId, {
+        ...payload,
+        incrementUsernameChangeCount,
+      });
       if (!user) {
         throw new AppError(404, 'NOT_FOUND', 'User not found');
       }

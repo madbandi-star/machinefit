@@ -17,6 +17,11 @@ export interface User {
    */
   email: string;
   displayName: string;
+  /**
+   * Successful self-serve username changes so far.
+   * Max is USERNAME_MAX_CHANGES (3). Admin renames do not increment.
+   */
+  usernameChangeCount?: number;
   gender?: Gender;
   heightCm?: number;
   weightKg?: number;

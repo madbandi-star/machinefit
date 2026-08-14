@@ -43,6 +43,7 @@ interface UserRow {
   role_code: RoleCode;
   email: string | null;
   display_name: string;
+  username_change_count?: number | null;
   gender: string | null;
   height_cm: string | null;
   weight_kg: string | null;
@@ -91,6 +92,7 @@ function mapUser(row: UserRow): User {
     // Never expose stored email — MachineFit does not collect OAuth emails.
     email: '',
     displayName: row.display_name,
+    usernameChangeCount: Math.max(0, Number(row.username_change_count ?? 0) || 0),
     gender: row.gender as User['gender'],
     heightCm: row.height_cm ? parseFloat(row.height_cm) : undefined,
     weightKg: row.weight_kg ? parseFloat(row.weight_kg) : undefined,
@@ -487,6 +489,8 @@ export const userRepository = {
     userId: string,
     data: {
       displayName?: string;
+      /** When true with displayName, increments username_change_count (self-serve only). */
+      incrementUsernameChangeCount?: boolean;
       gender?: Gender;
       heightCm?: number;
       weightKg?: number;
@@ -512,6 +516,9 @@ export const userRepository = {
     if (data.displayName !== undefined) {
       fields.push(`display_name = $${index++}`);
       values.push(data.displayName);
+      if (data.incrementUsernameChangeCount) {
+        fields.push(`username_change_count = COALESCE(username_change_count, 0) + 1`);
+      }
     }
     if (data.gender !== undefined) {
       fields.push(`gender = $${index++}`);
