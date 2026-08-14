@@ -4,6 +4,7 @@ import {
   type WorkoutCompleteReport,
 } from '@machinefit/shared';
 import { SITE_DOMAIN } from '@/config/site';
+import { isShareAbortError } from '@/utils/saveImageToPhotos';
 import { buildWorkoutCompleteShareCard } from '@/utils/workoutCompleteShareCard';
 import { buildShareHashtags } from '@/utils/shareHashtags';
 
@@ -48,7 +49,8 @@ export async function shareWorkoutCompleteCard(input: {
     URL.revokeObjectURL(url);
     await navigator.clipboard?.writeText(text).catch(() => undefined);
     showToast(shareSavedMessage, 'success');
-  } catch {
+  } catch (error) {
+    if (isShareAbortError(error)) return;
     showToast(errorMessage, 'error');
   }
 }

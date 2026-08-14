@@ -6,6 +6,7 @@ import {
   type FortuneShareCardLabels,
 } from '@/utils/fortuneShareCard';
 import { buildShareHashtags, toShareHashtag } from '@/utils/shareHashtags';
+import { isShareAbortError } from '@/utils/saveImageToPhotos';
 
 export interface ShareFortuneCardParams {
   fortune: FortuneSection;
@@ -71,7 +72,9 @@ export async function shareFortuneCard(params: ShareFortuneCardParams): Promise<
     URL.revokeObjectURL(url);
     await navigator.clipboard?.writeText(text).catch(() => undefined);
     showToast(shareSavedMessage, 'success');
-  } catch {
+  } catch (error) {
+    // User dismissed the OS share sheet — not a failure.
+    if (isShareAbortError(error)) return;
     showToast(errorMessage, 'error');
   }
 }
