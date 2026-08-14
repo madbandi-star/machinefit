@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { ChevronLeft, ChevronRight, ImagePlus, X } from 'lucide-react';
 import { Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -38,11 +39,14 @@ export function PhotoPostWritePage() {
   const user = useAuthStore((s) => s.user);
   const [params] = useSearchParams();
   const editId = params.get('edit') || '';
+  const fileInputId = useId();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tagsRaw, setTagsRaw] = useState('');
   const [images, setImages] = useState<LocalImage[]>([]);
+  const [dragOver, setDragOver] = useState(false);
 
   const detailQuery = useQuery({
     queryKey: QUERY_KEYS.photoBoardPost(editId),
@@ -168,99 +172,166 @@ export function PhotoPostWritePage() {
   }
 
   return (
-    <PageShell title={editId ? t('photoEdit') : t('photoWrite')} subtitle={t('photoWriteHint')}>
-      <form
-        className="card"
-        style={{ padding: '1rem', display: 'grid', gap: '0.85rem' }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!canSubmit || busy) return;
-          if (editId) updateMutation.mutate();
-          else createMutation.mutate();
-        }}
-      >
-        {!editId ? (
-          <div className="form-row">
-            <label htmlFor="photo-files">{t('photoSelectImages')}</label>
-            <input
-              id="photo-files"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              multiple
-              onChange={(e) => onPickFiles(e.target.files)}
-            />
-          </div>
-        ) : null}
+    <div className="photo-write-page">
+      <PageShell title={editId ? t('photoEdit') : t('photoWrite')} subtitle={t('photoWriteHint')}>
+        <form
+          className="photo-write"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!canSubmit || busy) return;
+            if (editId) updateMutation.mutate();
+            else createMutation.mutate();
+          }}
+        >
+          {!editId ? (
+            <section className="photo-write__media" aria-labelledby={fileInputId}>
+              <input
+                ref={fileInputRef}
+                id={fileInputId}
+                className="photo-write__file-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={(e) => {
+                  onPickFiles(e.target.files);
+                  e.currentTarget.value = '';
+                }}
+              />
+              <button
+                type="button"
+                className={`photo-write__dropzone${dragOver ? ' is-dragover' : ''}${
+                  images.length ? ' has-images' : ''
+                }`}
+                disabled={images.length >= 10 || busy}
+                onClick={() => fileInputRef.current?.click()}
+                onDragEnter={(e) => {
+                  e.preventDefault();
+                  if (images.length >= 10) return;
+                  setDragOver(true);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (images.length >= 10) return;
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  if (images.length >= 10) return;
+                  onPickFiles(e.dataTransfer.files);
+                }}
+              >
+                <span className="photo-write__dropzone-icon" aria-hidden>
+                  <ImagePlus size={28} strokeWidth={1.75} />
+                </span>
+                <span className="photo-write__dropzone-title">{t('photoSelectImages')}</span>
+                <span className="photo-write__dropzone-hint">{t('photoDropHint')}</span>
+              </button>
+              <p className="photo-write__count">
+                {t('photoImageCount', { count: images.length, max: 10 })}
+              </p>
+            </section>
+          ) : (
+            <p className="photo-write__count photo-write__count--edit">
+              {t('photoImageCount', { count: images.length, max: 10 })}
+            </p>
+          )}
 
-        {images.length ? (
-          <div className="photo-write__previews">
-            {images.map((img, index) => (
-              <div key={img.id} className="photo-write__preview">
-                <img src={img.previewUrl} alt="" />
-                <div className="photo-write__preview-actions">
-                  <button type="button" onClick={() => moveImage(index, -1)} disabled={index === 0}>
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => moveImage(index, 1)}
-                    disabled={index === images.length - 1}
-                  >
-                    →
-                  </button>
-                  {!editId ? (
-                    <button type="button" onClick={() => removeImage(img.id)}>
-                      ✕
+          {images.length ? (
+            <ul className="photo-write__previews" aria-label={t('photoSelectImages')}>
+              {images.map((img, index) => (
+                <li key={img.id} className="photo-write__preview">
+                  <img src={img.previewUrl} alt="" />
+                  <span className="photo-write__preview-index" aria-hidden>
+                    {index + 1}
+                  </span>
+                  <div className="photo-write__preview-actions">
+                    <button
+                      type="button"
+                      className="photo-write__preview-btn"
+                      onClick={() => moveImage(index, -1)}
+                      disabled={index === 0}
+                      aria-label={t('photoPrev')}
+                    >
+                      <ChevronLeft size={16} strokeWidth={2.4} />
                     </button>
-                  ) : null}
-                </div>
-              </div>
-            ))}
+                    <button
+                      type="button"
+                      className="photo-write__preview-btn"
+                      onClick={() => moveImage(index, 1)}
+                      disabled={index === images.length - 1}
+                      aria-label={t('photoNext')}
+                    >
+                      <ChevronRight size={16} strokeWidth={2.4} />
+                    </button>
+                    {!editId ? (
+                      <button
+                        type="button"
+                        className="photo-write__preview-btn photo-write__preview-btn--danger"
+                        onClick={() => removeImage(img.id)}
+                        aria-label={t('cancel')}
+                      >
+                        <X size={15} strokeWidth={2.5} />
+                      </button>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          <div className="photo-write__fields">
+            <div className="photo-write__field">
+              <label htmlFor="photo-title">{t('postTitle')}</label>
+              <input
+                id="photo-title"
+                className="input"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={200}
+                required
+                placeholder={t('postTitle')}
+              />
+            </div>
+            <div className="photo-write__field">
+              <label htmlFor="photo-content">{t('postContent')}</label>
+              <textarea
+                id="photo-content"
+                className="input photo-write__textarea"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={5}
+                maxLength={5000}
+                placeholder={t('postContent')}
+              />
+            </div>
+            <div className="photo-write__field">
+              <label htmlFor="photo-tags">{t('photoTags')}</label>
+              <input
+                id="photo-tags"
+                className="input"
+                value={tagsRaw}
+                onChange={(e) => setTagsRaw(e.target.value)}
+                placeholder={t('photoTagsPlaceholder')}
+              />
+            </div>
           </div>
-        ) : null}
 
-        <div className="form-row">
-          <label htmlFor="photo-title">{t('postTitle')}</label>
-          <input
-            id="photo-title"
-            className="input"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            maxLength={200}
-            required
-          />
-        </div>
-        <div className="form-row">
-          <label htmlFor="photo-content">{t('postContent')}</label>
-          <textarea
-            id="photo-content"
-            className="input"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={5}
-            maxLength={5000}
-          />
-        </div>
-        <div className="form-row">
-          <label htmlFor="photo-tags">{t('photoTags')}</label>
-          <input
-            id="photo-tags"
-            className="input"
-            value={tagsRaw}
-            onChange={(e) => setTagsRaw(e.target.value)}
-            placeholder={t('photoTagsPlaceholder')}
-          />
-        </div>
-
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button type="submit" className="btn btn--primary" disabled={!canSubmit || busy}>
-            {busy ? '…' : editId ? t('photoSave') : t('submit')}
-          </button>
-          <Link to={ROUTES.PHOTO_BOARD} className="btn btn--secondary">
-            {t('cancel')}
-          </Link>
-        </div>
-      </form>
-    </PageShell>
+          <div className="photo-write__actions">
+            <button
+              type="submit"
+              className="btn btn--primary photo-write__submit"
+              disabled={!canSubmit || busy}
+            >
+              {busy ? '…' : editId ? t('photoSave') : t('submit')}
+            </button>
+            <Link to={ROUTES.PHOTO_BOARD} className="btn btn--secondary">
+              {t('cancel')}
+            </Link>
+          </div>
+        </form>
+      </PageShell>
+    </div>
   );
 }

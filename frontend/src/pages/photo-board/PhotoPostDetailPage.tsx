@@ -2,6 +2,16 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Flag,
+  Heart,
+  MessageCircle,
+  Pencil,
+  Share2,
+  Trash2,
+} from 'lucide-react';
 import { Role, hasMinRole, type PhotoPostComment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -228,7 +238,7 @@ export function PhotoPostDetailPage() {
             <div className="photo-comment__actions">
               <button
                 type="button"
-                className="btn btn--primary"
+                className="photo-comment__action photo-comment__action--primary"
                 disabled={updateCommentMutation.isPending || !editContent.trim()}
                 onClick={() =>
                   updateCommentMutation.mutate({
@@ -241,7 +251,7 @@ export function PhotoPostDetailPage() {
               </button>
               <button
                 type="button"
-                className="btn btn--secondary"
+                className="photo-comment__action"
                 onClick={() => {
                   setEditingId(null);
                   setEditContent('');
@@ -257,7 +267,7 @@ export function PhotoPostDetailPage() {
             <div className="photo-comment__actions">
               <button
                 type="button"
-                className="btn btn--secondary photo-comment__reply"
+                className="photo-comment__action"
                 onClick={() => startReply(item.id)}
               >
                 {t('photoReply')}
@@ -265,7 +275,7 @@ export function PhotoPostDetailPage() {
               {canEditComment ? (
                 <button
                   type="button"
-                  className="btn btn--secondary"
+                  className="photo-comment__action"
                   onClick={() => startEdit(item)}
                 >
                   {t('editComment')}
@@ -274,7 +284,7 @@ export function PhotoPostDetailPage() {
               {canDeleteComment ? (
                 <button
                   type="button"
-                  className="btn btn--secondary"
+                  className="photo-comment__action photo-comment__action--danger"
                   disabled={deleteCommentMutation.isPending}
                   onClick={() => handleDeleteComment(item.id)}
                 >
@@ -301,41 +311,13 @@ export function PhotoPostDetailPage() {
   return (
     <div className="photo-detail">
       <PageShell
-        title={t('photoBoard')}
+        title={post.title}
         action={
-          <Link to={ROUTES.PHOTO_BOARD} className="btn btn--secondary photo-detail__back-top">
+          <Link to={ROUTES.PHOTO_BOARD} className="photo-detail__back-top">
             {t('photoBackList')}
           </Link>
         }
       >
-        <header className="photo-detail__header">
-          <h2 className="photo-detail__title">{post.title}</h2>
-          <p className="photo-detail__meta">
-            <Link
-              to={`${ROUTES.PHOTO_BOARD}?authorId=${post.userId}`}
-              className="photo-detail__author"
-            >
-              {post.authorName || '—'}
-            </Link>
-            <span className="photo-detail__sep" aria-hidden>
-              ·
-            </span>
-            <time dateTime={post.createdAt}>{formattedDate}</time>
-            <span className="photo-detail__sep" aria-hidden>
-              ·
-            </span>
-            <span>
-              {t('photoViews')} {post.viewCount}
-            </span>
-            <span className="photo-detail__sep" aria-hidden>
-              ·
-            </span>
-            <span>
-              {t('comments')} {post.commentCount}
-            </span>
-          </p>
-        </header>
-
         <div
           className="photo-detail__gallery"
           onTouchStart={(e) => {
@@ -372,7 +354,7 @@ export function PhotoPostDetailPage() {
                 onClick={() => go(-1)}
                 aria-label={t('photoPrev')}
               >
-                ‹
+                <ChevronLeft size={22} strokeWidth={2.4} />
               </button>
               <button
                 type="button"
@@ -380,68 +362,110 @@ export function PhotoPostDetailPage() {
                 onClick={() => go(1)}
                 aria-label={t('photoNext')}
               >
-                ›
+                <ChevronRight size={22} strokeWidth={2.4} />
               </button>
+              <div className="photo-detail__pager" aria-hidden>
+                {index + 1} / {images.length}
+              </div>
             </>
           ) : null}
         </div>
+
         {images.length > 1 ? (
           <div className="photo-detail__dots" aria-hidden>
             {images.map((image, i) => (
-              <span
+              <button
                 key={image.id}
+                type="button"
                 className={`photo-detail__dot${i === index ? ' is-active' : ''}`}
+                onClick={() => setIndex(i)}
+                aria-label={`${i + 1}`}
               />
             ))}
           </div>
         ) : null}
 
-        <div className="photo-detail__actions">
+        <header className="photo-detail__header">
+          <p className="photo-detail__meta">
+            <Link
+              to={`${ROUTES.PHOTO_BOARD}?authorId=${post.userId}`}
+              className="photo-detail__author"
+            >
+              {post.authorName || '—'}
+            </Link>
+            <span className="photo-detail__sep" aria-hidden>
+              ·
+            </span>
+            <time dateTime={post.createdAt}>{formattedDate}</time>
+            <span className="photo-detail__sep" aria-hidden>
+              ·
+            </span>
+            <span>
+              {t('photoViews')} {post.viewCount}
+            </span>
+          </p>
+        </header>
+
+        <div className="photo-detail__toolbar">
           <button
             type="button"
-            className="btn btn--secondary"
+            className={`photo-detail__tool${post.likedByMe ? ' is-liked' : ''}`}
             onClick={() => requireAuth(() => likeMutation.mutate())}
             disabled={likeMutation.isPending}
           >
-            {post.likedByMe ? '♥' : '♡'} {post.likeCount}
+            <Heart
+              size={18}
+              strokeWidth={2.2}
+              fill={post.likedByMe ? 'currentColor' : 'none'}
+              aria-hidden
+            />
+            <span>{post.likeCount}</span>
           </button>
-          <button type="button" className="btn btn--secondary" onClick={() => void share()}>
-            {t('photoShare')}
+          <button type="button" className="photo-detail__tool" onClick={() => void share()}>
+            <Share2 size={18} strokeWidth={2.2} aria-hidden />
+            <span>{t('photoShare')}</span>
           </button>
           <button
             type="button"
-            className="btn btn--secondary"
+            className="photo-detail__tool"
             onClick={() =>
               requireAuth(() => {
                 if (window.confirm(t('photoReportConfirm'))) reportMutation.mutate();
               })
             }
           >
-            {t('photoReport')}
+            <Flag size={17} strokeWidth={2.2} aria-hidden />
+            <span>{t('photoReport')}</span>
           </button>
           {canEdit ? (
             <>
               <Link
                 to={`${ROUTES.PHOTO_BOARD_WRITE}?edit=${post.id}`}
-                className="btn btn--secondary"
+                className="photo-detail__tool"
               >
-                {t('photoEdit')}
+                <Pencil size={17} strokeWidth={2.2} aria-hidden />
+                <span>{t('photoEdit')}</span>
               </Link>
               <button
                 type="button"
-                className="btn btn--secondary"
+                className="photo-detail__tool photo-detail__tool--danger"
                 onClick={() => {
                   if (!window.confirm(t('confirmDelete'))) return;
                   deleteMutation.mutate();
                 }}
               >
-                {t('deletePost')}
+                <Trash2 size={17} strokeWidth={2.2} aria-hidden />
+                <span>{t('deletePost')}</span>
               </button>
             </>
           ) : null}
         </div>
 
-        {post.content ? <p className="photo-detail__content">{post.content}</p> : null}
+        {post.content ? (
+          <section className="photo-detail__body">
+            <p className="photo-detail__content">{post.content}</p>
+          </section>
+        ) : null}
 
         {post.tags.length ? (
           <div className="photo-detail__tags">
@@ -459,21 +483,26 @@ export function PhotoPostDetailPage() {
 
         <section className="photo-detail__comments" aria-label={t('comments')}>
           <div className="photo-detail__comments-head">
+            <MessageCircle size={16} strokeWidth={2.2} aria-hidden />
             <h3 className="photo-detail__comments-title">{t('comments')}</h3>
             <span className="photo-detail__comments-count">{comments.length}</span>
           </div>
 
           <div className="photo-detail__comment-list">
-            {commentThreads.map(({ root, replies }) => (
-              <div key={root.id} className="photo-comment-thread">
-                {renderComment(root)}
-                {replies.length ? (
-                  <div className="photo-comment-thread__replies">
-                    {replies.map((item) => renderComment(item, true))}
-                  </div>
-                ) : null}
-              </div>
-            ))}
+            {commentThreads.length === 0 ? (
+              <p className="photo-detail__comments-empty">{t('writeComment')}</p>
+            ) : (
+              commentThreads.map(({ root, replies }) => (
+                <div key={root.id} className="photo-comment-thread">
+                  {renderComment(root)}
+                  {replies.length ? (
+                    <div className="photo-comment-thread__replies">
+                      {replies.map((item) => renderComment(item, true))}
+                    </div>
+                  ) : null}
+                </div>
+              ))
+            )}
           </div>
 
           <form
@@ -488,11 +517,7 @@ export function PhotoPostDetailPage() {
             {replyTarget ? (
               <div className="photo-detail__replying">
                 <span>{t('replyingTo', { name: replyTarget.authorName || '—' })}</span>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={() => setReplyTo(null)}
-                >
+                <button type="button" className="photo-comment__action" onClick={() => setReplyTo(null)}>
                   {t('cancel')}
                 </button>
               </div>

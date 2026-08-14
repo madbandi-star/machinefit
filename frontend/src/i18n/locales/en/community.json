@@ -143,6 +143,8 @@
   "photoWrite": "New photo post",
   "photoWriteHint": "Add 1–10 photos, title, content, and tags",
   "photoSelectImages": "Select photos",
+  "photoDropHint": "Tap or drag images here",
+  "photoImageCount": "{{count}} / {{max}}",
   "photoTags": "Tags",
   "photoTagsPlaceholder": "e.g. workout legday",
   "photoSave": "Save",

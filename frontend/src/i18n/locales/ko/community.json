@@ -143,6 +143,8 @@
   "photoWrite": "사진 올리기",
   "photoWriteHint": "사진 1~10장, 제목·내용·태그를 입력하세요",
   "photoSelectImages": "사진 선택",
+  "photoDropHint": "탭하거나 이미지를 끌어다 놓으세요",
+  "photoImageCount": "{{count}} / {{max}}장",
   "photoTags": "태그",
   "photoTagsPlaceholder": "예: workout legday",
   "photoSave": "저장",
