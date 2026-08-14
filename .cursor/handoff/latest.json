@@ -1,7 +1,7 @@
 {
   "title": "Free board write form glanceable redesign",
   "summary": "Free board write now uses a progress checklist and numbered title/body sections matching the machine-request write pattern. Create/cancel logic unchanged.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "9e88561e" },
   "changedFiles": [
     "frontend/src/pages/free-board/FreeBoardPage.tsx",
     "frontend/src/styles/community.css",
