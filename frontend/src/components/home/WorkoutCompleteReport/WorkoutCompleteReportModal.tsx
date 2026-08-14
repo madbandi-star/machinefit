@@ -3,13 +3,14 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   CalendarDays,
+  Camera,
   Dumbbell,
   Flame,
   Heart,
   Layers,
-  Share2,
   Weight,
 } from 'lucide-react';
+import { toPng } from 'html-to-image';
 import {
   formatVolumeKg,
   formatWorkoutDurationCompact,
@@ -17,10 +18,6 @@ import {
 } from '@machinefit/shared';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import { useUIStore } from '@/store/ui.store';
-import {
-  buildWorkoutShareCaption,
-  shareWorkoutCompleteCard,
-} from '@/utils/shareWorkoutCompleteCard';
 import '@/styles/workout-complete.css';
 
 interface WorkoutCompleteReportModalProps {
@@ -92,8 +89,8 @@ export function WorkoutCompleteReportModal({
 }: WorkoutCompleteReportModalProps) {
   const { t, i18n } = useTranslation('common');
   const showToast = useUIStore((s) => s.showToast);
-  const [sharing, setSharing] = useState(false);
-  const dialogRef = useModalAccessibility({ open, onClose });
+  const [capturing, setCapturing] = useState(false);
+  const sheetRef = useModalAccessibility({ open, onClose });
 
   const dateLabel = useMemo(
     () => (report ? formatReportDate(report.dateKey, i18n.language || 'ko') : ''),
@@ -102,29 +99,31 @@ export function WorkoutCompleteReportModal({
 
   if (!open) return null;
 
-  const handleShare = async () => {
-    if (!report || sharing) return;
-    setSharing(true);
+  const handleScreenshot = async () => {
+    const node = sheetRef.current;
+    if (!node || capturing || !report) return;
+    setCapturing(true);
+    const actions = node.querySelector<HTMLElement>('.wcr-actions');
+    const prevVisibility = actions?.style.visibility;
     try {
-      await shareWorkoutCompleteCard({
-        report,
-        labels: {
-          title: t('workoutComplete.todaysWorkout'),
-          exercises: t('workoutComplete.statExercises'),
-          sets: t('workoutComplete.statSets'),
-          volume: t('workoutComplete.statVolume'),
-          power: t('workoutComplete.powerLabel'),
-          newRecord: t('workoutComplete.newRecordTitle'),
-          keepGoing: t('workoutComplete.keepGoing'),
-          shareHashtags: t('workoutComplete.shareHashtags'),
-        },
-        shareText: buildWorkoutShareCaption(report, t),
-        showToast,
-        shareSavedMessage: t('workoutComplete.shareSaved'),
-        errorMessage: t('errors.submitFailed'),
+      if (actions) actions.style.visibility = 'hidden';
+      // Allow layout to settle with actions hidden before rasterize.
+      await new Promise((r) => window.requestAnimationFrame(() => r(undefined)));
+      const dataUrl = await toPng(node, {
+        cacheBust: true,
+        pixelRatio: Math.min(2, window.devicePixelRatio || 2),
+        backgroundColor: '#050505',
       });
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `machinefit-todays-workout-${report.dateKey}.png`;
+      a.click();
+      showToast(t('workoutComplete.screenshotSaved'), 'success');
+    } catch {
+      showToast(t('workoutComplete.screenshotFailed'), 'error');
     } finally {
-      setSharing(false);
+      if (actions) actions.style.visibility = prevVisibility ?? '';
+      setCapturing(false);
     }
   };
 
@@ -133,7 +132,7 @@ export function WorkoutCompleteReportModal({
   return (
     <div className="dialog-overlay wcr-overlay" role="presentation">
       <div
-        ref={dialogRef}
+        ref={sheetRef}
         className="wcr-sheet"
         role="dialog"
         aria-modal="true"
@@ -297,14 +296,14 @@ export function WorkoutCompleteReportModal({
               <button
                 type="button"
                 className="wcr-btn wcr-btn--share"
-                onClick={() => void handleShare()}
-                disabled={sharing}
+                onClick={() => void handleScreenshot()}
+                disabled={capturing}
               >
-                <Share2 size={18} strokeWidth={2.4} aria-hidden="true" />
+                <Camera size={18} strokeWidth={2.4} aria-hidden="true" />
                 <span className="wcr-btn__stack">
-                  <span className="wcr-btn__primary">{t('workoutComplete.share')}</span>
-                  {t('workoutComplete.shareEn') !== t('workoutComplete.share') ? (
-                    <span className="wcr-btn__secondary">{t('workoutComplete.shareEn')}</span>
+                  <span className="wcr-btn__primary">{t('workoutComplete.screenshot')}</span>
+                  {t('workoutComplete.screenshotEn') !== t('workoutComplete.screenshot') ? (
+                    <span className="wcr-btn__secondary">{t('workoutComplete.screenshotEn')}</span>
                   ) : null}
                 </span>
               </button>
