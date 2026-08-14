@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,9 @@ import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/components.css';
 import '@/styles/community.css';
+
+const TITLE_MAX = 200;
+const CONTENT_MAX = 5000;
 
 export function FreeBoardPage() {
   const { t } = useTranslation('community');
@@ -40,7 +43,7 @@ export function FreeBoardPage() {
 
   const createMutation = useMutation({
     mutationFn: () =>
-      communityApi.createPost({ boardType: 'free', title, content }),
+      communityApi.createPost({ boardType: 'free', title: title.trim(), content: content.trim() }),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.posts });
       setShowForm(false);
@@ -62,6 +65,11 @@ export function FreeBoardPage() {
     onSettled: () => setDeletingPostId(null),
   });
 
+  const canSubmit = useMemo(
+    () => Boolean(title.trim() && content.trim()) && !createMutation.isPending,
+    [title, content, createMutation.isPending]
+  );
+
   const handleDeletePost = (postId: string) => {
     if (!window.confirm(t('confirmDelete'))) return;
     setDeletingPostId(postId);
@@ -75,13 +83,87 @@ export function FreeBoardPage() {
       return;
     }
     setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelWrite = () => {
+    setShowForm(false);
+    setTitle('');
+    setContent('');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    if (!canSubmit) return;
     createMutation.mutate();
   };
+
+  if (showForm) {
+    return (
+      <div className="community-board-page board-write-page">
+        <PageShell title={t('newPost')} subtitle={t('freeWriteHint')}>
+          <form className="board-write" onSubmit={handleSubmit}>
+            <div className="board-write__fields">
+              <div className="board-write__field">
+                <div className="board-write__label-row">
+                  <label htmlFor="post-title">{t('postTitle')}</label>
+                  <span className="board-write__counter" aria-hidden>
+                    {title.length}/{TITLE_MAX}
+                  </span>
+                </div>
+                <input
+                  id="post-title"
+                  className="input board-write__title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value.slice(0, TITLE_MAX))}
+                  maxLength={TITLE_MAX}
+                  required
+                  placeholder={t('postTitlePlaceholder')}
+                  autoFocus
+                />
+              </div>
+              <div className="board-write__field">
+                <div className="board-write__label-row">
+                  <label htmlFor="post-content">{t('postContent')}</label>
+                  <span className="board-write__counter" aria-hidden>
+                    {content.length}/{CONTENT_MAX}
+                  </span>
+                </div>
+                <textarea
+                  id="post-content"
+                  className="input board-write__textarea"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value.slice(0, CONTENT_MAX))}
+                  maxLength={CONTENT_MAX}
+                  required
+                  rows={10}
+                  placeholder={t('postContentPlaceholder')}
+                />
+              </div>
+            </div>
+
+            <div className="board-write__actions">
+              <button
+                type="submit"
+                className="btn btn--primary board-write__submit"
+                disabled={!canSubmit}
+              >
+                {createMutation.isPending ? '…' : t('submit')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={handleCancelWrite}
+                disabled={createMutation.isPending}
+              >
+                {t('cancel')}
+              </button>
+            </div>
+          </form>
+        </PageShell>
+      </div>
+    );
+  }
 
   return (
     <div className="community-board-page">
@@ -96,40 +178,6 @@ export function FreeBoardPage() {
           </div>
         }
       >
-        {showForm && (
-          <form className="card community-board-page__form" onSubmit={handleSubmit}>
-            <div className="form-row">
-              <label htmlFor="post-title">{t('postTitle')}</label>
-              <input
-                id="post-title"
-                className="input"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                maxLength={200}
-                required
-              />
-            </div>
-            <div className="form-row">
-              <label htmlFor="post-content">{t('postContent')}</label>
-              <textarea
-                id="post-content"
-                className="input"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-              />
-            </div>
-            <div className="community-board-page__form-actions">
-              <button type="submit" className="btn btn--primary" disabled={createMutation.isPending}>
-                {t('submit')}
-              </button>
-              <button type="button" className="btn btn--secondary" onClick={() => setShowForm(false)}>
-                {t('cancel')}
-              </button>
-            </div>
-          </form>
-        )}
-
         {isLoading ? (
           <BoardIndexSkeleton rows={8} />
         ) : data?.items.length ? (

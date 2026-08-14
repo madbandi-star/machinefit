@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { ImagePlus, X } from 'lucide-react';
 import {
   MACHINE_REQUEST_UNKNOWN_VALUE,
   type MachineRequestGymChoiceMode,
@@ -73,6 +74,8 @@ export function MachineRequestWritePage() {
   const user = useAuthStore((s) => s.user);
   const showToast = useUIStore((s) => s.showToast);
   const { activeGym, gyms } = useActiveGym();
+  const fileInputId = useId();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [brandMode, setBrandMode] = useState<MachineRequestTextChoiceMode>('custom');
   const [machineMode, setMachineMode] = useState<MachineRequestTextChoiceMode>('custom');
@@ -82,6 +85,7 @@ export function MachineRequestWritePage() {
   const [machineName, setMachineName] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<LocalImage[]>([]);
+  const [dragOver, setDragOver] = useState(false);
   const [commercialUseConsent, setCommercialUseConsent] = useState(false);
   const [gymChoiceMode, setGymChoiceMode] = useState<MachineRequestGymChoiceMode>('profile');
   const [customGymName, setCustomGymName] = useState('');
@@ -158,10 +162,8 @@ export function MachineRequestWritePage() {
       setSimilarQuery(null);
       return;
     }
-    const brand =
-      brandMode === 'custom' ? brandName.trim() : '';
-    const machine =
-      machineMode === 'custom' ? machineName.trim() : '';
+    const brand = brandMode === 'custom' ? brandName.trim() : '';
+    const machine = machineMode === 'custom' ? machineName.trim() : '';
     if (!brand && !machine) {
       setSimilarQuery(null);
       return;
@@ -304,28 +306,43 @@ export function MachineRequestWritePage() {
     onChange: (value: string) => void;
     maxLength: number;
     multiline?: boolean;
+    placeholder?: string;
   }) => (
-    <fieldset className="form-row community-board-page__gym-choice">
-      <legend>{params.legend}</legend>
-      <label className="checkbox-label">
-        <input
-          type="radio"
-          name={params.name}
-          checked={params.mode === 'custom'}
-          onChange={() => params.onModeChange('custom')}
-        />
-        <span>{t('requestFieldChoiceCustom')}</span>
-      </label>
-      {params.mode === 'custom' &&
-        (params.multiline ? (
+    <fieldset className="board-write__choice">
+      <div className="board-write__choice-head">
+        <legend className="board-write__choice-legend">{params.legend}</legend>
+        <div className="board-write__segment" role="radiogroup" aria-label={params.legend}>
+          <label className={`board-write__segment-btn${params.mode === 'custom' ? ' is-active' : ''}`}>
+            <input
+              type="radio"
+              name={params.name}
+              checked={params.mode === 'custom'}
+              onChange={() => params.onModeChange('custom')}
+            />
+            <span>{t('requestFieldChoiceCustom')}</span>
+          </label>
+          <label className={`board-write__segment-btn${params.mode === 'unknown' ? ' is-active' : ''}`}>
+            <input
+              type="radio"
+              name={params.name}
+              checked={params.mode === 'unknown'}
+              onChange={() => params.onModeChange('unknown')}
+            />
+            <span>{t('requestFieldChoiceUnknown')}</span>
+          </label>
+        </div>
+      </div>
+      {params.mode === 'custom' ? (
+        params.multiline ? (
           <textarea
             id={params.inputId}
-            className="input"
+            className="input board-write__textarea"
             value={params.value}
             onChange={(e) => params.onChange(e.target.value)}
             required
             maxLength={params.maxLength}
             rows={4}
+            placeholder={params.placeholder}
           />
         ) : (
           <input
@@ -335,17 +352,12 @@ export function MachineRequestWritePage() {
             onChange={(e) => params.onChange(e.target.value)}
             required
             maxLength={params.maxLength}
+            placeholder={params.placeholder}
           />
-        ))}
-      <label className="checkbox-label">
-        <input
-          type="radio"
-          name={params.name}
-          checked={params.mode === 'unknown'}
-          onChange={() => params.onModeChange('unknown')}
-        />
-        <span>{t('requestFieldChoiceUnknown')}</span>
-      </label>
+        )
+      ) : (
+        <p className="board-write__unknown-note">{t('requestFieldUnknownLabel')}</p>
+      )}
     </fieldset>
   );
 
@@ -358,149 +370,220 @@ export function MachineRequestWritePage() {
   }
 
   return (
-    <div className="photo-board-page community-board-page">
+    <div className="community-board-page board-write-page">
       <PageShell
         title={isEdit ? t('requestEdit') : t('newRequest')}
-        subtitle={t('machineRequestsSubtitle')}
+        subtitle={t('requestWriteHint')}
       >
         {!isEdit && similarHit ? (
-          <div className="photo-detail__feedback" role="status" style={{ marginBottom: '0.75rem' }}>
-            <strong>{t('requestSimilarTitle')}</strong>
-            <div style={{ marginTop: '0.35rem' }}>
-              <Link
-                to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
-                  ':requestId',
-                  similarHit.sampleRequestId
-                )}
-              >
-                {t('requestWantThisInstead')}
-              </Link>
+          <aside className="board-write__similar" role="status">
+            <p className="board-write__similar-title">{t('requestSimilarTitle')}</p>
+            <Link
+              to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(
+                ':requestId',
+                similarHit.sampleRequestId
+              )}
+              className="board-write__similar-link"
+            >
+              {t('requestWantThisInstead')}
               {similarHit.voteCount > 0
                 ? ` · ${t('requestWantThisCount', { count: similarHit.voteCount })}`
-                : null}
-            </div>
-          </div>
+                : ''}
+            </Link>
+          </aside>
         ) : null}
 
-        <form className="card community-board-page__form" onSubmit={handleSubmit}>
-          {renderTextChoice({
-            legend: t('brandName'),
-            name: 'req-brand-choice',
-            mode: brandMode,
-            onModeChange: setBrandMode,
-            inputId: 'req-brand',
-            value: brandName,
-            onChange: setBrandName,
-            maxLength: 100,
-          })}
-          {renderTextChoice({
-            legend: t('machineName'),
-            name: 'req-machine-choice',
-            mode: machineMode,
-            onModeChange: setMachineMode,
-            inputId: 'req-machine',
-            value: machineName,
-            onChange: setMachineName,
-            maxLength: 200,
-          })}
-          {renderTextChoice({
-            legend: t('description'),
-            name: 'req-desc-choice',
-            mode: descriptionMode,
-            onModeChange: setDescriptionMode,
-            inputId: 'req-desc',
-            value: description,
-            onChange: setDescription,
-            maxLength: 2000,
-            multiline: true,
-          })}
-
-          <fieldset className="form-row community-board-page__gym-choice">
-            <legend>{t('requestGymLabel')}</legend>
-            <label className="checkbox-label">
-              <input
-                type="radio"
-                name="req-gym-choice"
-                checked={gymChoiceMode === 'profile'}
-                onChange={() => setGymChoiceMode('profile')}
-              />
-              <span>
-                {t('requestGymChoiceProfile')}
-                {profileGymLabel ? ` — ${profileGymLabel}` : ''}
-              </span>
-            </label>
-            {!profileGymLabel && gymChoiceMode === 'profile' && (
-              <p className="community-board-page__hint">{t('requestGymProfileEmpty')}</p>
-            )}
-            <label className="checkbox-label">
-              <input
-                type="radio"
-                name="req-gym-choice"
-                checked={gymChoiceMode === 'custom'}
-                onChange={() => setGymChoiceMode('custom')}
-              />
-              <span>{t('requestGymChoiceCustom')}</span>
-            </label>
-            {gymChoiceMode === 'custom' && (
-              <input
-                id="req-gym-custom"
-                className="input"
-                value={customGymName}
-                onChange={(e) => setCustomGymName(e.target.value.slice(0, MAX_GYM_NAME))}
-                placeholder={t('requestGymCustomPlaceholder')}
-                maxLength={MAX_GYM_NAME}
-                required
-              />
-            )}
-            <label className="checkbox-label">
-              <input
-                type="radio"
-                name="req-gym-choice"
-                checked={gymChoiceMode === 'unknown'}
-                onChange={() => setGymChoiceMode('unknown')}
-              />
-              <span>{t('requestGymChoiceUnknown')}</span>
-            </label>
-          </fieldset>
-
+        <form className="board-write" onSubmit={handleSubmit}>
           {!isEdit ? (
-            <>
-              <div className="form-row">
-                <label htmlFor="req-photos">{t('requestPhoto')}</label>
-                <input
-                  id="req-photos"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  multiple
-                  onChange={(e) => {
-                    onPickFiles(e.target.files);
-                    e.target.value = '';
-                  }}
-                />
-                <p className="community-board-page__hint">{t('requestPhotoHint')}</p>
-                {images.length > 0 && (
-                  <div className="community-board-page__previews" aria-label={t('requestPhoto')}>
-                    {images.map((img) => (
-                      <div key={img.id} className="community-board-page__preview">
-                        <img src={img.previewUrl} alt="" />
+            <section className="board-write__media" aria-labelledby={fileInputId}>
+              <input
+                ref={fileInputRef}
+                id={fileInputId}
+                className="photo-write__file-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={(e) => {
+                  onPickFiles(e.target.files);
+                  e.currentTarget.value = '';
+                }}
+              />
+              <button
+                type="button"
+                className={`photo-write__dropzone${dragOver ? ' is-dragover' : ''}${
+                  images.length ? ' has-images' : ''
+                }`}
+                disabled={images.length >= MAX_REQUEST_IMAGES || saving}
+                onClick={() => fileInputRef.current?.click()}
+                onDragEnter={(e) => {
+                  e.preventDefault();
+                  if (images.length >= MAX_REQUEST_IMAGES) return;
+                  setDragOver(true);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (images.length >= MAX_REQUEST_IMAGES) return;
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  if (images.length >= MAX_REQUEST_IMAGES) return;
+                  onPickFiles(e.dataTransfer.files);
+                }}
+              >
+                <span className="photo-write__dropzone-icon" aria-hidden>
+                  <ImagePlus size={28} strokeWidth={1.75} />
+                </span>
+                <span className="photo-write__dropzone-title">{t('requestPhotoPick')}</span>
+                <span className="photo-write__dropzone-hint">{t('requestDropHint')}</span>
+              </button>
+              <p className="photo-write__count">
+                {t('requestPhotoAttachedCount', {
+                  count: images.length,
+                  max: MAX_REQUEST_IMAGES,
+                })}
+              </p>
+              <p className="board-write__hint">{t('requestPhotoHint')}</p>
+
+              {images.length ? (
+                <ul className="photo-write__previews" aria-label={t('requestPhoto')}>
+                  {images.map((img, index) => (
+                    <li key={img.id} className="photo-write__preview">
+                      <img src={img.previewUrl} alt="" />
+                      <span className="photo-write__preview-index" aria-hidden>
+                        {index + 1}
+                      </span>
+                      <div className="photo-write__preview-actions">
                         <button
                           type="button"
-                          className="btn btn--secondary btn--sm"
+                          className="photo-write__preview-btn photo-write__preview-btn--danger"
                           onClick={() => removeImage(img.id)}
+                          aria-label={t('requestPhotoRemove')}
                         >
-                          {t('requestPhotoRemove')}
+                          <X size={15} strokeWidth={2.5} />
                         </button>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </section>
+          ) : null}
 
-              <div className="community-board-page__consent">
-                <p className="community-board-page__consent-text">
-                  {t('requestCommercialConsentText')}
-                </p>
-                <label className="checkbox-label">
+          <div className="board-write__fields">
+            {renderTextChoice({
+              legend: t('brandName'),
+              name: 'req-brand-choice',
+              mode: brandMode,
+              onModeChange: setBrandMode,
+              inputId: 'req-brand',
+              value: brandName,
+              onChange: setBrandName,
+              maxLength: 100,
+              placeholder: t('brandName'),
+            })}
+            {renderTextChoice({
+              legend: t('machineName'),
+              name: 'req-machine-choice',
+              mode: machineMode,
+              onModeChange: setMachineMode,
+              inputId: 'req-machine',
+              value: machineName,
+              onChange: setMachineName,
+              maxLength: 200,
+              placeholder: t('machineName'),
+            })}
+            {renderTextChoice({
+              legend: t('description'),
+              name: 'req-desc-choice',
+              mode: descriptionMode,
+              onModeChange: setDescriptionMode,
+              inputId: 'req-desc',
+              value: description,
+              onChange: setDescription,
+              maxLength: 2000,
+              multiline: true,
+              placeholder: t('description'),
+            })}
+
+            <fieldset className="board-write__choice">
+              <legend className="board-write__choice-legend">{t('requestGymLabel')}</legend>
+              <div className="board-write__option-list">
+                <label
+                  className={`board-write__option${gymChoiceMode === 'profile' ? ' is-active' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name="req-gym-choice"
+                    checked={gymChoiceMode === 'profile'}
+                    onChange={() => setGymChoiceMode('profile')}
+                  />
+                  <span className="board-write__option-body">
+                    <span className="board-write__option-title">
+                      {t('requestGymChoiceProfile')}
+                    </span>
+                    {profileGymLabel ? (
+                      <span className="board-write__option-meta">{profileGymLabel}</span>
+                    ) : null}
+                  </span>
+                </label>
+                {!profileGymLabel && gymChoiceMode === 'profile' ? (
+                  <p className="board-write__hint board-write__hint--warn">
+                    {t('requestGymProfileEmpty')}
+                  </p>
+                ) : null}
+
+                <label
+                  className={`board-write__option${gymChoiceMode === 'custom' ? ' is-active' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name="req-gym-choice"
+                    checked={gymChoiceMode === 'custom'}
+                    onChange={() => setGymChoiceMode('custom')}
+                  />
+                  <span className="board-write__option-body">
+                    <span className="board-write__option-title">
+                      {t('requestGymChoiceCustom')}
+                    </span>
+                  </span>
+                </label>
+                {gymChoiceMode === 'custom' ? (
+                  <input
+                    id="req-gym-custom"
+                    className="input"
+                    value={customGymName}
+                    onChange={(e) => setCustomGymName(e.target.value.slice(0, MAX_GYM_NAME))}
+                    placeholder={t('requestGymCustomPlaceholder')}
+                    maxLength={MAX_GYM_NAME}
+                    required
+                  />
+                ) : null}
+
+                <label
+                  className={`board-write__option${gymChoiceMode === 'unknown' ? ' is-active' : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name="req-gym-choice"
+                    checked={gymChoiceMode === 'unknown'}
+                    onChange={() => setGymChoiceMode('unknown')}
+                  />
+                  <span className="board-write__option-body">
+                    <span className="board-write__option-title">
+                      {t('requestGymChoiceUnknown')}
+                    </span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            {!isEdit ? (
+              <div className="board-write__consent">
+                <p className="board-write__consent-text">{t('requestCommercialConsentText')}</p>
+                <label className="board-write__consent-check">
                   <input
                     type="checkbox"
                     checked={commercialUseConsent}
@@ -510,16 +593,16 @@ export function MachineRequestWritePage() {
                   <span>{t('requestCommercialConsentLabel')}</span>
                 </label>
               </div>
-            </>
-          ) : null}
+            ) : null}
+          </div>
 
-          <div className="community-board-page__form-actions">
+          <div className="board-write__actions">
             <button
               type="submit"
-              className="btn btn--primary"
+              className="btn btn--primary board-write__submit"
               disabled={!canSubmit || saving}
             >
-              {t('submit')}
+              {saving ? '…' : isEdit ? t('requestSaveEdit') : t('submit')}
             </button>
             <Link
               to={
