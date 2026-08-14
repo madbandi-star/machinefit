@@ -85,9 +85,11 @@
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 0.3rem;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
   min-height: 2.4rem;
-  padding: 0.35rem 0.7rem 0.35rem 0.85rem;
+  padding: 0;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
   background: color-mix(in srgb, var(--color-surface, #fff) 72%, transparent);
@@ -97,13 +99,6 @@
 .home-fortune-card__toggle:hover .home-fortune-card__fold {
   border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-}
-
-.home-fortune-card__fold-label {
-  font-size: 0.92rem;
-  font-weight: 750;
-  letter-spacing: 0.01em;
-  line-height: 1;
 }
 
 .home-fortune-card__chevron {

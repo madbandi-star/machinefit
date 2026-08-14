@@ -77,6 +77,7 @@ function FortuneCardShell({
         className="home-fortune-card__toggle"
         aria-expanded={expanded}
         aria-controls="home-fortune-card-body"
+        aria-label={expanded ? t('common:collapse') : t('common:expand')}
         onClick={onToggle}
       >
         <span className="home-fortune-card__toggle-main">
