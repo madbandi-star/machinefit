@@ -38,23 +38,17 @@
   padding-bottom: 0.85rem;
 }
 
-.home-fortune-card__header {
+.home-fortune-card__toggle {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-start;
-  gap: 0.25rem;
-}
-
-.home-fortune-card__toggle {
-  display: flex;
-  flex: 1;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  min-width: 0;
+  width: 100%;
+  min-height: 2.85rem;
   margin: 0;
-  padding: 0.15rem 0;
+  padding: 0.2rem 0;
   border: 0;
   background: transparent;
   color: inherit;
@@ -63,7 +57,6 @@
 }
 
 .home-fortune-card__toggle:focus-visible,
-.home-fortune-card__hide:focus-visible,
 .home-fortune-card__share:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
   outline-offset: 3px;
@@ -88,38 +81,41 @@
   text-overflow: ellipsis;
 }
 
-.home-fortune-card__chevron {
+.home-fortune-card__fold {
   display: inline-flex;
   flex-shrink: 0;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.4rem;
+  padding: 0.35rem 0.7rem 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+  background: color-mix(in srgb, var(--color-surface, #fff) 72%, transparent);
+  color: var(--color-text);
+}
+
+.home-fortune-card__toggle:hover .home-fortune-card__fold {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.home-fortune-card__fold-label {
+  font-size: 0.92rem;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.home-fortune-card__chevron {
+  display: block;
+  flex-shrink: 0;
+  color: var(--color-text);
   transition: transform 0.18s ease;
   transform: rotate(0deg);
 }
 
 .home-fortune-card__chevron.is-open {
   transform: rotate(180deg);
-}
-
-.home-fortune-card__hide {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  margin: -0.15rem -0.2rem 0 0;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-text-muted);
-  cursor: pointer;
-}
-
-.home-fortune-card__hide:hover {
-  color: var(--color-text);
-  background: color-mix(in srgb, var(--color-text) 8%, transparent);
 }
 
 .home-fortune-card__body-wrap {

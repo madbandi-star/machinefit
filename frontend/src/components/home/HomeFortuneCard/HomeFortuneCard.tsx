@@ -1,8 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Share2, X } from 'lucide-react';
+import { ChevronDown, Share2 } from 'lucide-react';
 import { fortuneApi } from '@/api/fortune.api';
 import {
   keywordEmoji,
@@ -20,7 +20,6 @@ import { shareFortuneCard } from '@/utils/shareFortuneCard';
 import { isAllGymsId } from '@machinefit/shared';
 
 const EXPANDED_KEY = 'machinefit.homeFortuneExpanded';
-const HIDDEN_DATE_KEY = 'machinefit.homeFortuneHiddenDate';
 
 function readExpandedPreference(): boolean {
   try {
@@ -35,22 +34,6 @@ function readExpandedPreference(): boolean {
 function writeExpandedPreference(expanded: boolean) {
   try {
     localStorage.setItem(EXPANDED_KEY, expanded ? '1' : '0');
-  } catch {
-    /* ignore quota / private mode */
-  }
-}
-
-function isHiddenForDate(dateKey: string): boolean {
-  try {
-    return localStorage.getItem(HIDDEN_DATE_KEY) === dateKey;
-  } catch {
-    return false;
-  }
-}
-
-function hideForDate(dateKey: string) {
-  try {
-    localStorage.setItem(HIDDEN_DATE_KEY, dateKey);
   } catch {
     /* ignore quota / private mode */
   }
@@ -76,14 +59,12 @@ function FortuneCardShell({
   className,
   expanded,
   onToggle,
-  onDismiss,
   peek,
   children,
 }: {
   className: string;
   expanded: boolean;
   onToggle: () => void;
-  onDismiss?: () => void;
   peek?: ReactNode;
   children: ReactNode;
 }) {
@@ -91,42 +72,33 @@ function FortuneCardShell({
 
   return (
     <section className={className}>
-      <div className="home-fortune-card__header">
-        <button
-          type="button"
-          className="home-fortune-card__toggle"
-          aria-expanded={expanded}
-          aria-controls="home-fortune-card-body"
-          aria-label={expanded ? t('common:collapse') : t('common:expand')}
-          onClick={onToggle}
-        >
-          <span className="home-fortune-card__toggle-main">
-            <span className="home-fortune-card__eyebrow">
-              <span aria-hidden>🔥</span> {t('fortune:title')}
-            </span>
-            {!expanded && peek ? (
-              <span className="home-fortune-card__peek">{peek}</span>
-            ) : null}
+      <button
+        type="button"
+        className="home-fortune-card__toggle"
+        aria-expanded={expanded}
+        aria-controls="home-fortune-card-body"
+        onClick={onToggle}
+      >
+        <span className="home-fortune-card__toggle-main">
+          <span className="home-fortune-card__eyebrow">
+            <span aria-hidden>🔥</span> {t('fortune:title')}
           </span>
-          <span
+          {!expanded && peek ? (
+            <span className="home-fortune-card__peek">{peek}</span>
+          ) : null}
+        </span>
+        <span className="home-fortune-card__fold">
+          <span className="home-fortune-card__fold-label">
+            {expanded ? t('common:collapse') : t('common:expand')}
+          </span>
+          <ChevronDown
             className={`home-fortune-card__chevron${expanded ? ' is-open' : ''}`}
+            size={22}
+            strokeWidth={2.5}
             aria-hidden
-          >
-            ▾
-          </span>
-        </button>
-        {onDismiss ? (
-          <button
-            type="button"
-            className="home-fortune-card__hide"
-            onClick={onDismiss}
-            aria-label={t('fortune:dismissToday')}
-            title={t('fortune:dismissToday')}
-          >
-            <X size={16} strokeWidth={2.25} aria-hidden />
-          </button>
-        ) : null}
-      </div>
+          />
+        </span>
+      </button>
       {expanded ? (
         <div id="home-fortune-card-body" className="home-fortune-card__body-wrap">
           {children}
@@ -144,12 +116,7 @@ export function HomeFortuneCard() {
   const { activeMemberId } = useActiveMember();
   const today = getTodayDateKey();
   const [expanded, setExpanded] = useState(readExpandedPreference);
-  const [hiddenToday, setHiddenToday] = useState(() => isHiddenForDate(today));
   const [sharing, setSharing] = useState(false);
-
-  useEffect(() => {
-    setHiddenToday(isHiddenForDate(today));
-  }, [today]);
 
   const toggleExpanded = () => {
     setExpanded((prev) => {
@@ -157,11 +124,6 @@ export function HomeFortuneCard() {
       writeExpandedPreference(next);
       return next;
     });
-  };
-
-  const dismissForToday = () => {
-    hideForDate(today);
-    setHiddenToday(true);
   };
 
   const gymId =
@@ -181,10 +143,7 @@ export function HomeFortuneCard() {
     },
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
-    enabled: !hiddenToday,
   });
-
-  if (hiddenToday) return null;
 
   if (isLoading) {
     return (
@@ -192,7 +151,6 @@ export function HomeFortuneCard() {
         className="home-fortune-card home-fortune-card--loading"
         expanded={expanded}
         onToggle={toggleExpanded}
-        onDismiss={dismissForToday}
       >
         <p className="home-fortune-card__muted" aria-busy="true">
           …
@@ -207,7 +165,6 @@ export function HomeFortuneCard() {
         className="home-fortune-card"
         expanded={expanded}
         onToggle={toggleExpanded}
-        onDismiss={dismissForToday}
       >
         <p className="home-fortune-card__muted" aria-live="polite">
           {t('loadError')}
@@ -222,7 +179,6 @@ export function HomeFortuneCard() {
         className="home-fortune-card home-fortune-card--gate"
         expanded={expanded}
         onToggle={toggleExpanded}
-        onDismiss={dismissForToday}
         peek={<span aria-hidden>🔮</span>}
       >
         <p className="home-fortune-card__gate-emoji" aria-hidden>
@@ -283,7 +239,6 @@ export function HomeFortuneCard() {
       className={`home-fortune-card home-fortune-card--ready home-fortune-card--${tone}`}
       expanded={expanded}
       onToggle={toggleExpanded}
-      onDismiss={dismissForToday}
       peek={
         <>
           <span aria-hidden>{emoji}</span> {fortune.keywordTitle}
