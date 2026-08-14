@@ -158,10 +158,50 @@
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  overflow-y: hidden;
+  padding: 0.1rem 0.15rem 0.55rem;
   margin: 1rem 0;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color:
+    color-mix(in srgb, var(--color-primary) 55%, var(--color-border))
+    color-mix(in srgb, var(--color-bg-secondary) 70%, transparent);
+}
+
+.filter-chips-scroller {
+  position: relative;
+  margin: 0 -0.15rem;
+}
+
+.filter-chips-scroller::before,
+.filter-chips-scroller::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0.55rem;
+  width: 1.1rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.filter-chips-scroller::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--color-bg) 92%, transparent),
+    transparent
+  );
+}
+
+.filter-chips-scroller::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--color-bg) 92%, transparent),
+    transparent
+  );
 }
 
 .filter-section {
@@ -179,7 +219,7 @@
 
 .filter-section .filter-chips {
   margin-top: 0;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.35rem;
 }
 
 .filter-section--brand {
@@ -188,7 +228,7 @@
 
 .filter-chips--brand {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0.35rem;
   align-items: center;
 }
 
@@ -543,11 +583,38 @@
 }
 
 .filter-chips::-webkit-scrollbar {
-  display: none;
+  height: 7px;
+  display: block;
+}
+
+.filter-chips::-webkit-scrollbar-track {
+  margin-inline: 0.35rem;
+  background: color-mix(in srgb, var(--color-bg-secondary) 75%, transparent);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
+.filter-chips::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-primary) 45%, var(--color-border)),
+    color-mix(in srgb, var(--color-primary) 72%, #fff)
+  );
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-bg) 35%, transparent);
+}
+
+.filter-chips::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-primary) 85%, #fff);
+}
+
+.filter-chips::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .filter-chip {
   flex-shrink: 0;
+  scroll-snap-align: start;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;

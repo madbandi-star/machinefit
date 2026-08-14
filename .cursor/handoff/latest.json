@@ -1,25 +1,22 @@
 {
-  "title": "Photo board write form glanceable redesign",
-  "summary": "Photo upload page now has a progress checklist and numbered sections (photos/title/content/tags) with live tag chips. Create/update logic unchanged.",
-  "git": { "branch": "main", "commit": "09005b17" },
+  "title": "Search filter chips: visible horizontal scrollbar",
+  "summary": "Muscle and brand chip rows now show a thin primary-styled horizontal scrollbar (was hidden) plus edge fades so trailing chips are reachable.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/photo-board/PhotoPostWritePage.tsx",
-    "frontend/src/styles/photo-board.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/styles/machines.css",
+    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
   ],
   "testFocus": [
-    "?? ???: checklist updates for photos/title/content/tags",
-    "Create still requires photo+title; reorder/remove still works",
-    "Edit mode shows order controls without new upload dropzone"
+    "??: ???/??? ?? ????? ??",
+    "?? ? ??? ???·?? ??",
+    "?? ????? ??"
   ],
   "fastChecks": [
-    "rg -n \"photo-write-checklist|photo-write__section|photoStepPhotos\" frontend/src/pages/photo-board/PhotoPostWritePage.tsx frontend/src/styles/photo-board.css"
+    "rg -n \"filter-chips-scroller|scrollbar-width: thin|::-webkit-scrollbar\" frontend/src/styles/machines.css"
   ],
-  "productionChecks": ["Pages: photo board ? ?? ???"],
+  "productionChecks": ["Pages: /search muscle+brand chip scroll"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Dropzone + stacked fields hard to scan",
-  "toBe": "Checklist + numbered photo/title/content/tag sections"
+  "asIs": "overflow-x auto but scrollbar hidden ? right chips unreachable",
+  "toBe": "Visible thin themed scrollbar + edge fades"
 }

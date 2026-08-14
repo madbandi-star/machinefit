@@ -148,24 +148,26 @@ export function BrandFilterChips({ brands, value, onChange }: BrandFilterChipsPr
       <h2 id="search-brand-section-title" className="filter-section__title">
         {sectionTitle}
       </h2>
-      <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
-        <button
-          type="button"
-          className={`filter-chip filter-chip--brand${value === null ? ' filter-chip--active' : ''}`}
-          onClick={() => onChange(null)}
-          aria-pressed={value === null}
-        >
-          <span className="filter-chip__label">{t('filterAll')}</span>
-        </button>
-        {orderedBrands.map((brand) => (
-          <BrandLogoChip
-            key={brand.code}
-            brand={brand}
-            label={brandChipLabel(brand, i18n.language, shortLabels)}
-            active={value === brand.code}
-            onSelect={() => onChange(brand.code)}
-          />
-        ))}
+      <div className="filter-chips-scroller">
+        <div className="filter-chips filter-chips--brand" role="group" aria-label={t('filterByBrand')}>
+          <button
+            type="button"
+            className={`filter-chip filter-chip--brand${value === null ? ' filter-chip--active' : ''}`}
+            onClick={() => onChange(null)}
+            aria-pressed={value === null}
+          >
+            <span className="filter-chip__label">{t('filterAll')}</span>
+          </button>
+          {orderedBrands.map((brand) => (
+            <BrandLogoChip
+              key={brand.code}
+              brand={brand}
+              label={brandChipLabel(brand, i18n.language, shortLabels)}
+              active={value === brand.code}
+              onSelect={() => onChange(brand.code)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
