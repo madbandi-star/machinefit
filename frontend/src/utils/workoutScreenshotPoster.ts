@@ -1,15 +1,15 @@
 /**
- * Premium TODAY'S WORKOUT screenshot poster (1080×1920 story).
- * Tight editorial grid with per-exercise rows — not a DOM raster.
+ * Premium TODAY'S WORKOUT screenshot poster — Instagram 4:5 (1080×1350).
+ * Dark graphite + neon lime. No cinematic gym bg / purple bloom.
  */
 import {
   formatVolumeKg,
   formatWorkoutDateDots,
   formatWorkoutDurationCompact,
   type WorkoutCompleteReport,
-  type WorkoutDayExerciseMetric,
 } from '@machinefit/shared';
 import { drawShareBrandLockup } from '@/utils/shareBrandFooter';
+import type { WorkoutPosterExercise } from '@/utils/workoutPosterExerciseDetails';
 
 export type WorkoutScreenshotLabels = {
   brand: string;
@@ -17,41 +17,41 @@ export type WorkoutScreenshotLabels = {
   titleAccent: string;
   tagline: string;
   duration: string;
-  /** Localized short labels (single language). */
   exercisesLabel: string;
   setsLabel: string;
   volumeLabel: string;
   powerTitle: string;
-  powerEarned: string;
   mvpTitle: string;
   newRecordTitle: string;
   exerciseListTitle: string;
-  setsCol: string;
-  volumeCol: string;
-  /** Must include {{count}} placeholder. */
+  setsMeta: string;
+  setCol: string;
+  repsCol: string;
+  loadCol: string;
   moreExercises: string;
   oneLinerTitle: string;
   oneLiner: string;
   keepGoing: string;
   hashtags: string;
+  bodyweight: string;
 };
 
 const W = 1080;
-const H = 1920;
+const H = 1350;
 const LIME = '#b8ff3c';
-const TEXT = '#f4f7f0';
-const MUTED = 'rgba(228, 237, 220, 0.68)';
-const RULE = 'rgba(184, 255, 60, 0.22)';
-const PANEL = 'rgba(6, 10, 6, 0.64)';
+const TEXT = '#f2f5ef';
+const MUTED = 'rgba(220, 230, 214, 0.62)';
+const LINE = 'rgba(184, 255, 60, 0.16)';
+const CARD = '#121612';
+const CARD_EDGE = 'rgba(184, 255, 60, 0.2)';
+const BG_TOP = '#0b0d0b';
+const BG_BOT = '#050605';
 const FONT =
   '"Barlow Condensed", "Pretendard Variable", Pretendard, "Noto Sans KR", system-ui, sans-serif';
 const FONT_BODY = '"Noto Sans KR", Pretendard, system-ui, sans-serif';
 
-const PAD = 64;
+const PAD = 56;
 const CONTENT_W = W - PAD * 2;
-const COL_SETS_X = PAD + CONTENT_W - 210;
-const COL_VOL_X = PAD + CONTENT_W - 8;
-const NAME_MAX_W = CONTENT_W - 290;
 
 function roundRect(
   ctx: CanvasRenderingContext2D,
@@ -71,44 +71,6 @@ function roundRect(
   ctx.closePath();
 }
 
-function resolveBgUrl(): string {
-  const base = String(import.meta.env.BASE_URL ?? '/');
-  const normalized = base.endsWith('/') ? base : `${base}/`;
-  return `${normalized}assets/share/workout/cinematic-gym.png`;
-}
-
-async function loadImage(url: string): Promise<HTMLImageElement | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.decoding = 'async';
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
-}
-
-function drawCover(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  width: number,
-  height: number
-) {
-  const ir = img.naturalWidth / img.naturalHeight;
-  const cr = width / height;
-  let sx = 0;
-  let sy = 0;
-  let sw = img.naturalWidth;
-  let sh = img.naturalHeight;
-  if (ir > cr) {
-    sw = img.naturalHeight * cr;
-    sx = (img.naturalWidth - sw) / 2;
-  } else {
-    sh = img.naturalWidth / cr;
-    sy = (img.naturalHeight - sh) / 2;
-  }
-  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, width, height);
-}
-
 function ellipsize(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
   const t = text.trim();
   if (!t) return '';
@@ -124,16 +86,16 @@ function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
   maxWidth: number,
-  maxLines = 3
+  maxLines = 2
 ): string[] {
-  const normalized = text.trim().replace(/\s+/g, ' ');
+  const normalized = text
+    .trim()
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/\s+/g, ' ');
   if (!normalized) return [''];
 
-  const cleaned = normalized.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
-  const source = cleaned || normalized;
-
-  const hasSpaces = /\s/.test(source);
-  const tokens = hasSpaces ? source.split(/\s+/).filter(Boolean) : Array.from(source);
+  const hasSpaces = /\s/.test(normalized);
+  const tokens = hasSpaces ? normalized.split(/\s+/).filter(Boolean) : Array.from(normalized);
   const lines: string[] = [];
   let current = '';
   const joiner = hasSpaces ? ' ' : '';
@@ -160,325 +122,505 @@ function wrapText(
   return lines.slice(0, maxLines);
 }
 
-async function paintAtmosphere(ctx: CanvasRenderingContext2D) {
-  const img = await loadImage(resolveBgUrl());
-  if (img) {
-    drawCover(ctx, img, W, H);
-  } else {
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, '#0a1208');
-    g.addColorStop(0.5, '#050705');
-    g.addColorStop(1, '#020302');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-  }
+async function loadImage(url: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.decoding = 'async';
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
 
-  const veil = ctx.createLinearGradient(0, 0, 0, H);
-  veil.addColorStop(0, 'rgba(2,6,2,0.74)');
-  veil.addColorStop(0.2, 'rgba(0,0,0,0.48)');
-  veil.addColorStop(0.55, 'rgba(0,0,0,0.7)');
-  veil.addColorStop(1, 'rgba(0,0,0,0.93)');
-  ctx.fillStyle = veil;
+function paintBackground(ctx: CanvasRenderingContext2D) {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, BG_TOP);
+  g.addColorStop(1, BG_BOT);
+  ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
 
-  const bloom = ctx.createRadialGradient(W * 0.78, 100, 8, W * 0.78, 140, 380);
-  bloom.addColorStop(0, 'rgba(184,255,60,0.16)');
+  const bloom = ctx.createRadialGradient(W * 0.85, 0, 20, W * 0.85, 40, 380);
+  bloom.addColorStop(0, 'rgba(184,255,60,0.07)');
   bloom.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = bloom;
   ctx.fillRect(0, 0, W, H);
+
+  ctx.save();
+  ctx.globalAlpha = 0.03;
+  for (let i = 0; i < 1600; i += 1) {
+    const x = (i * 97) % W;
+    const y = (i * 53) % H;
+    ctx.fillStyle = i % 2 === 0 ? '#fff' : '#000';
+    ctx.fillRect(x, y, 1, 1);
+  }
+  ctx.restore();
 }
 
-function drawHairline(ctx: CanvasRenderingContext2D, y: number) {
-  ctx.strokeStyle = RULE;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(PAD, y);
-  ctx.lineTo(PAD + CONTENT_W, y);
+function drawCard(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r = 18
+) {
+  roundRect(ctx, x, y, w, h, r);
+  const g = ctx.createLinearGradient(x, y, x, y + h);
+  g.addColorStop(0, '#161b16');
+  g.addColorStop(1, CARD);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.strokeStyle = CARD_EDGE;
+  ctx.lineWidth = 1.25;
   ctx.stroke();
 }
 
-function drawSectionLabel(ctx: CanvasRenderingContext2D, label: string, y: number) {
+function drawBolt(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = LIME;
+  ctx.beginPath();
+  ctx.moveTo(size * 0.55, 0);
+  ctx.lineTo(size * 0.18, size * 0.52);
+  ctx.lineTo(size * 0.48, size * 0.52);
+  ctx.lineTo(size * 0.35, size);
+  ctx.lineTo(size * 0.82, size * 0.42);
+  ctx.lineTo(size * 0.52, size * 0.42);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawCrown(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = LIME;
+  ctx.beginPath();
+  ctx.moveTo(0, size * 0.72);
+  ctx.lineTo(0, size * 0.28);
+  ctx.lineTo(size * 0.28, size * 0.48);
+  ctx.lineTo(size * 0.5, size * 0.12);
+  ctx.lineTo(size * 0.72, size * 0.48);
+  ctx.lineTo(size, size * 0.28);
+  ctx.lineTo(size, size * 0.72);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillRect(0, size * 0.72, size, size * 0.16);
+  ctx.restore();
+}
+
+function drawKgLeft(
+  ctx: CanvasRenderingContext2D,
+  num: string,
+  x: number,
+  y: number,
+  numSize: number
+) {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
-  ctx.font = `700 22px ${FONT}`;
+  ctx.font = `800 ${numSize}px ${FONT}`;
   ctx.fillStyle = LIME;
-  const text = label.toUpperCase();
-  ctx.fillText(text, PAD, y);
-  const lw = ctx.measureText(text).width;
-  ctx.strokeStyle = RULE;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(PAD + lw + 18, y - 6);
-  ctx.lineTo(PAD + CONTENT_W, y - 6);
-  ctx.stroke();
+  ctx.fillText(num, x, y);
+  const nw = ctx.measureText(num).width;
+  ctx.font = `700 ${Math.round(numSize * 0.48)}px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  ctx.fillText('kg', x + nw + 8, y);
 }
 
-function sortExercises(list: WorkoutDayExerciseMetric[]): WorkoutDayExerciseMetric[] {
-  return [...list].sort((a, b) => b.volumeKg - a.volumeKg || b.setCount - a.setCount);
+function drawKgRight(
+  ctx: CanvasRenderingContext2D,
+  num: string,
+  x: number,
+  y: number,
+  numSize: number
+) {
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = `700 ${Math.round(numSize * 0.48)}px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  const unitW = ctx.measureText('kg').width;
+  ctx.fillText('kg', x, y);
+  ctx.font = `800 ${numSize}px ${FONT}`;
+  ctx.fillStyle = LIME;
+  ctx.fillText(num, x - unitW - 8, y);
 }
 
 /**
- * Build a Photos-ready poster for the screenshot button.
+ * Build a Photos / Instagram-ready poster.
  */
 export async function buildWorkoutScreenshotPoster(input: {
   report: WorkoutCompleteReport;
   labels: WorkoutScreenshotLabels;
+  exercises?: WorkoutPosterExercise[];
+  locale?: string;
 }): Promise<Blob> {
-  const { report, labels } = input;
+  const { report, labels, locale = 'ko' } = input;
+  const exercises =
+    input.exercises && input.exercises.length > 0
+      ? input.exercises
+      : report.summary.exercises.map((ex) => ({
+          machineCode: ex.machineCode,
+          machineName: ex.machineName,
+          muscleLabel: null as string | null,
+          setCount: ex.setCount,
+          volumeKg: ex.volumeKg,
+          imageUrl: null as string | null,
+          sets: Array.from({ length: Math.min(ex.setCount, 6) }, (_, i) => ({
+            index: i + 1,
+            reps: null as number | null,
+            loadKg: 0,
+          })),
+        }));
+
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
 
-  await paintAtmosphere(ctx);
+  paintBackground(ctx);
   if (typeof document !== 'undefined' && document.fonts?.ready) {
     await document.fonts.ready.catch(() => undefined);
   }
 
-  const cx = W / 2;
-  let y = 86;
+  const thumbs = new Map<string, HTMLImageElement>();
+  await Promise.all(
+    exercises.slice(0, 8).map(async (ex) => {
+      if (!ex.imageUrl) return;
+      const img = await loadImage(ex.imageUrl);
+      if (img) thumbs.set(ex.machineCode, img);
+    })
+  );
 
-  // Header
+  let y = 72;
+
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left';
-  ctx.font = `800 26px ${FONT}`;
-  ctx.fillStyle = '#fff';
+  ctx.font = `700 22px ${FONT}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.78)';
   ctx.fillText(labels.brand.toUpperCase(), PAD, y);
 
   ctx.textAlign = 'right';
-  ctx.font = `600 24px ${FONT}`;
-  ctx.fillStyle = LIME;
+  ctx.font = `600 20px ${FONT}`;
+  ctx.fillStyle = 'rgba(184,255,60,0.55)';
   ctx.fillText(labels.tagline, PAD + CONTENT_W, y);
 
-  y += 56;
+  y += 52;
   ctx.textAlign = 'left';
-  ctx.font = `800 76px ${FONT}`;
+  ctx.font = `800 72px ${FONT}`;
   const leadW = ctx.measureText(`${labels.titleLead} `).width;
   ctx.fillStyle = '#fff';
   ctx.fillText(labels.titleLead, PAD, y);
   ctx.fillStyle = LIME;
   ctx.fillText(labels.titleAccent, PAD + leadW, y);
 
-  y += 38;
-  ctx.font = `600 26px ${FONT}`;
+  y += 34;
+  ctx.font = `600 24px ${FONT}`;
   ctx.fillStyle = MUTED;
   ctx.fillText(formatWorkoutDateDots(report.dateKey), PAD, y);
 
-  // Duration + summary on one aligned band
-  y += 70;
-  const duration = formatWorkoutDurationCompact(report.summary.durationMs);
-  ctx.font = `800 108px ${FONT}`;
-  ctx.fillStyle = LIME;
-  ctx.shadowColor = 'rgba(184,255,60,0.3)';
-  ctx.shadowBlur = 16;
-  ctx.fillText(duration, PAD, y);
-  ctx.shadowBlur = 0;
-
-  const durW = ctx.measureText(duration).width;
-  ctx.font = `700 26px ${FONT}`;
-  ctx.fillStyle = MUTED;
-  ctx.fillText(labels.duration.toUpperCase(), PAD + durW + 24, y - 10);
-
-  // Right-aligned summary stack (fixed label / value columns)
-  const sumLabelX = PAD + CONTENT_W - 300;
-  const summaryLines: Array<[string, string]> = [
-    [labels.exercisesLabel, String(report.summary.exerciseCount)],
-    [labels.setsLabel, String(report.summary.setCount)],
-    [labels.volumeLabel, `${formatVolumeKg(report.summary.totalVolumeKg)} kg`],
-  ];
-  summaryLines.forEach(([label, value], i) => {
-    const sy = y - 58 + i * 34;
-    ctx.textAlign = 'left';
-    ctx.font = `600 22px ${FONT_BODY}`;
-    ctx.fillStyle = MUTED;
-    ctx.fillText(label, sumLabelX, sy);
-    ctx.textAlign = 'right';
-    ctx.font = `800 30px ${FONT}`;
-    ctx.fillStyle = TEXT;
-    ctx.fillText(value, COL_VOL_X, sy);
-  });
-  ctx.textAlign = 'left';
-
   y += 28;
-  drawHairline(ctx, y);
+  const gridGap = 14;
+  const cellW = (CONTENT_W - gridGap) / 2;
+  const cellH = 118;
+  const duration = formatWorkoutDurationCompact(report.summary.durationMs);
+  const grid: Array<{ label: string; value: string; lime: boolean; kg?: boolean }> = [
+    { label: labels.duration, value: duration, lime: true },
+    { label: labels.exercisesLabel, value: String(report.summary.exerciseCount), lime: false },
+    { label: labels.setsLabel, value: String(report.summary.setCount), lime: false },
+    {
+      label: labels.volumeLabel,
+      value: formatVolumeKg(report.summary.totalVolumeKg, locale),
+      lime: true,
+      kg: true,
+    },
+  ];
 
-  // Highlights (compact, above list so list fills remaining height)
-  const highlightBits: string[] = [];
-  if (report.power) {
-    const earned = report.power.earnedToday > 0 ? ` · ${labels.powerEarned}` : '';
-    highlightBits.push(`${labels.powerTitle}  ${report.power.balance}${earned}`);
-  }
-  if (report.mvp) {
-    highlightBits.push(`${labels.mvpTitle}  ${report.mvp.machineName} · ${report.mvp.valueLabel}`);
-  } else if (report.newRecord) {
-    highlightBits.push(
-      `${labels.newRecordTitle}  ${report.newRecord.machineName}  (+${formatVolumeKg(report.newRecord.deltaKg)} kg)`
-    );
-  }
+  grid.forEach((cell, i) => {
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    const cx = PAD + col * (cellW + gridGap);
+    const cy = y + row * (cellH + gridGap);
+    drawCard(ctx, cx, cy, cellW, cellH, 16);
 
-  y += 36;
-  if (highlightBits.length > 0) {
-    const stripH = 20 + highlightBits.length * 40;
-    roundRect(ctx, PAD, y, CONTENT_W, stripH, 12);
-    ctx.fillStyle = 'rgba(184,255,60,0.08)';
-    ctx.fill();
-    ctx.strokeStyle = RULE;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.fillStyle = LIME;
-    ctx.fillRect(PAD, y + 10, 4, stripH - 20);
+    ctx.textAlign = 'left';
+    ctx.font = `600 20px ${FONT}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText(cell.label.toUpperCase(), cx + 22, cy + 34);
 
-    highlightBits.forEach((line, i) => {
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.font = `700 26px ${FONT}`;
-      ctx.fillStyle = TEXT;
-      ctx.fillText(ellipsize(ctx, line, CONTENT_W - 40), PAD + 22, y + 22 + i * 40);
-    });
-    y += stripH + 28;
-  }
+    if (cell.kg) {
+      drawKgLeft(ctx, cell.value, cx + 22, cy + 88, 48);
+    } else {
+      ctx.font = `800 48px ${FONT}`;
+      ctx.fillStyle = cell.lime ? LIME : TEXT;
+      ctx.fillText(cell.value, cx + 22, cy + 88);
+    }
+  });
+  y += cellH * 2 + gridGap + 22;
 
-  // Fixed bottom blocks: quote + keepGoing + footer
-  const FOOTER_Y = H - 150;
-  const quotePreviewFont = `600 28px ${FONT_BODY}`;
-  ctx.font = quotePreviewFont;
-  const quoteLines = wrapText(ctx, labels.oneLiner, CONTENT_W - 40, 2);
-  const quoteBlockH = 48 + quoteLines.length * 36;
-  const keepGoingH = 48;
-  const gapBeforeQuote = 24;
-  const listEndY = FOOTER_Y - keepGoingH - quoteBlockH - gapBeforeQuote;
+  const halfW = (CONTENT_W - gridGap) / 2;
+  const highlightH = 132;
+  drawCard(ctx, PAD, y, halfW, highlightH, 16);
+  drawCard(ctx, PAD + halfW + gridGap, y, halfW, highlightH, 16);
 
-  // Exercise list fills middle
-  drawSectionLabel(ctx, labels.exerciseListTitle, y);
-  y += 26;
-
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `700 20px ${FONT}`;
-  ctx.fillStyle = MUTED;
+  drawBolt(ctx, PAD + 22, y + 22, 22);
   ctx.textAlign = 'left';
-  ctx.fillText(labels.exercisesLabel.toUpperCase(), PAD + 8, y);
-  ctx.textAlign = 'right';
-  ctx.fillText(labels.setsCol.toUpperCase(), COL_SETS_X, y);
-  ctx.fillText(labels.volumeCol.toUpperCase(), COL_VOL_X, y);
-  y += 12;
-  drawHairline(ctx, y);
-  y += 8;
+  ctx.font = `700 18px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  ctx.fillText(labels.powerTitle.toUpperCase(), PAD + 52, y + 40);
+  const powerVal = report.power ? String(report.power.balance) : '—';
+  ctx.font = `800 52px ${FONT}`;
+  ctx.fillStyle = LIME;
+  ctx.fillText(powerVal, PAD + 22, y + 100);
+  ctx.font = `800 52px ${FONT}`;
+  const powerNumW = ctx.measureText(powerVal).width;
+  ctx.font = `700 18px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  ctx.fillText('POWER', PAD + 22 + powerNumW + 12, y + 92);
 
-  const exercises = sortExercises(report.summary.exercises);
-  const minRowH = 52;
-  const moreH = 36;
-  const listBudget = Math.max(minRowH + 16, listEndY - y);
-  let maxRowsBySpace = Math.max(1, Math.floor((listBudget - 12) / minRowH));
-  if (exercises.length > maxRowsBySpace) {
-    maxRowsBySpace = Math.max(1, Math.floor((listBudget - 12 - moreH) / minRowH));
+  const mvpX = PAD + halfW + gridGap;
+  drawCrown(ctx, mvpX + 22, y + 22, 22);
+  ctx.font = `700 18px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  const mvpTitle = report.mvp
+    ? labels.mvpTitle
+    : report.newRecord
+      ? labels.newRecordTitle
+      : labels.mvpTitle;
+  ctx.fillText(mvpTitle.toUpperCase(), mvpX + 52, y + 40);
+
+  const mvpName = report.mvp?.machineName ?? report.newRecord?.machineName ?? '—';
+  const mvpValue = report.mvp?.valueLabel
+    ?? (report.newRecord
+      ? `${formatVolumeKg(report.newRecord.todayVolumeKg, locale)} kg`
+      : '');
+  ctx.font = `800 28px ${FONT_BODY}`;
+  ctx.fillStyle = TEXT;
+  ctx.fillText(ellipsize(ctx, mvpName, halfW - 44), mvpX + 22, y + 78);
+  if (mvpValue) {
+    const mv = mvpValue.replace(/\s*kg$/i, '').trim();
+    if (/kg/i.test(mvpValue)) {
+      drawKgLeft(ctx, mv, mvpX + 22, y + 112, 28);
+    } else {
+      ctx.font = `700 24px ${FONT}`;
+      ctx.fillStyle = LIME;
+      ctx.fillText(mvpValue, mvpX + 22, y + 112);
+    }
   }
-  const visible = exercises.slice(0, maxRowsBySpace);
-  const hidden = Math.max(0, exercises.length - visible.length);
-  const rowsPad = 10;
-  const moreSpace = hidden > 0 ? moreH : 0;
-  const panelH = listBudget;
-  const rowH =
-    visible.length > 0
-      ? Math.max(minRowH, Math.floor((panelH - rowsPad * 2 - moreSpace) / visible.length))
-      : minRowH;
+  y += highlightH + 26;
 
-  roundRect(ctx, PAD, y, CONTENT_W, panelH, 14);
-  ctx.fillStyle = PANEL;
-  ctx.fill();
-  ctx.strokeStyle = RULE;
+  ctx.textAlign = 'left';
+  ctx.font = `700 22px ${FONT}`;
+  ctx.fillStyle = LIME;
+  ctx.fillText(labels.exerciseListTitle.toUpperCase(), PAD, y);
+  const sectionTitleW = ctx.measureText(labels.exerciseListTitle.toUpperCase()).width;
+  ctx.strokeStyle = LINE;
   ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(PAD + sectionTitleW + 16, y - 6);
+  ctx.lineTo(PAD + CONTENT_W, y - 6);
   ctx.stroke();
+  y += 18;
 
-  let rowY = y + rowsPad;
-  const nameSize = rowH >= 70 ? 34 : 30;
-  const valueSize = rowH >= 70 ? 32 : 28;
+  const FOOTER_TOP = H - 168;
+  const listBottom = FOOTER_TOP - 8;
 
-  visible.forEach((ex, i) => {
-    const mid = rowY + rowH / 2;
-    if (i % 2 === 1) {
-      ctx.fillStyle = 'rgba(184,255,60,0.045)';
-      ctx.fillRect(PAD + 2, rowY, CONTENT_W - 4, rowH);
+  type Plan = { ex: WorkoutPosterExercise; setRows: number; h: number };
+  const plans: Plan[] = [];
+  let used = 0;
+  const cardGap = 12;
+
+  for (let i = 0; i < exercises.length; i += 1) {
+    const ex = exercises[i]!;
+    const maxSets = ex.sets.length;
+    const headerH = 78;
+    const tableHead = 26;
+    const setRowH = 28;
+    const padY = 16;
+
+    let setRows = maxSets;
+    let h = headerH + tableHead + setRows * setRowH + padY;
+    const remaining = listBottom - y - used - (plans.length > 0 ? cardGap : 0);
+    const moreReserve = i < exercises.length - 1 ? 36 : 0;
+
+    if (h + moreReserve > remaining) {
+      const avail = remaining - moreReserve - headerH - tableHead - padY;
+      setRows = Math.max(0, Math.floor(avail / setRowH));
+      h = headerH + (setRows > 0 ? tableHead + setRows * setRowH : 0) + padY;
+      if (h + moreReserve > remaining || remaining < headerH + padY + 20) {
+        break;
+      }
     }
 
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
-    ctx.font = `700 ${nameSize}px ${FONT_BODY}`;
-    ctx.fillStyle = TEXT;
-    ctx.fillText(ellipsize(ctx, ex.machineName, NAME_MAX_W), PAD + 20, mid);
-
-    ctx.textAlign = 'right';
-    ctx.font = `700 ${valueSize}px ${FONT}`;
-    ctx.fillStyle = MUTED;
-    ctx.fillText(`${ex.setCount} ${labels.setsCol}`, COL_SETS_X, mid);
-
-    ctx.font = `800 ${valueSize + 2}px ${FONT}`;
-    ctx.fillStyle = LIME;
-    ctx.fillText(`${formatVolumeKg(ex.volumeKg)} kg`, COL_VOL_X, mid);
-
-    rowY += rowH;
-  });
-
-  if (hidden > 0) {
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `600 24px ${FONT_BODY}`;
-    ctx.fillStyle = MUTED;
-    ctx.fillText(
-      labels.moreExercises.replace(/\{\{count\}\}/g, String(hidden)),
-      cx,
-      y + panelH - moreH / 2 - 4
-    );
-  } else if (visible.length === 0) {
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `600 28px ${FONT_BODY}`;
-    ctx.fillStyle = MUTED;
-    ctx.fillText('—', cx, y + panelH / 2);
+    plans.push({ ex, setRows, h });
+    used += h + (plans.length > 1 ? cardGap : 0);
+    if (setRows < maxSets) break;
+    if (listBottom - y - used < 90) break;
   }
 
-  // Quote anchored above footer
-  let qy = FOOTER_Y - keepGoingH - quoteBlockH;
-  roundRect(ctx, PAD, qy, CONTENT_W, quoteBlockH, 12);
-  ctx.fillStyle = PANEL;
-  ctx.fill();
+  const hiddenExercises = Math.max(0, exercises.length - plans.length);
 
+  for (let pi = 0; pi < plans.length; pi += 1) {
+    const { ex, setRows, h } = plans[pi]!;
+    if (pi > 0) y += cardGap;
+    drawCard(ctx, PAD, y, CONTENT_W, h, 18);
+
+    const thumbR = 28;
+    const thumbCx = PAD + 28 + thumbR;
+    const thumbCy = y + 28 + thumbR;
+    const thumb = thumbs.get(ex.machineCode);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(thumbCx, thumbCy, thumbR, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    if (thumb) {
+      const ir = thumb.naturalWidth / Math.max(1, thumb.naturalHeight);
+      let dw = thumbR * 2;
+      let dh = thumbR * 2;
+      let dx = thumbCx - thumbR;
+      let dy = thumbCy - thumbR;
+      if (ir > 1) {
+        dw = thumbR * 2 * ir;
+        dx = thumbCx - dw / 2;
+      } else {
+        dh = (thumbR * 2) / Math.max(ir, 0.01);
+        dy = thumbCy - dh / 2;
+      }
+      ctx.drawImage(thumb, dx, dy, dw, dh);
+    } else {
+      ctx.fillStyle = '#1a211a';
+      ctx.fill();
+      ctx.font = `800 22px ${FONT}`;
+      ctx.fillStyle = LIME;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ex.machineName.slice(0, 1).toUpperCase(), thumbCx, thumbCy + 1);
+    }
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(thumbCx, thumbCy, thumbR, 0, Math.PI * 2);
+    ctx.strokeStyle = CARD_EDGE;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    const textLeft = thumbCx + thumbR + 16;
+    const nameMax = CONTENT_W - (textLeft - PAD) - 160;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = `800 28px ${FONT_BODY}`;
+    ctx.fillStyle = TEXT;
+    ctx.fillText(ellipsize(ctx, ex.machineName, nameMax), textLeft, y + 48);
+
+    const metaParts = [
+      ex.muscleLabel || (ex.volumeKg <= 0 ? labels.bodyweight : null),
+      `${ex.setCount} ${labels.setsMeta}`,
+    ].filter(Boolean);
+    ctx.font = `600 20px ${FONT}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText(metaParts.join('  ·  '), textLeft, y + 76);
+
+    drawKgRight(
+      ctx,
+      formatVolumeKg(ex.volumeKg, locale),
+      PAD + CONTENT_W - 24,
+      y + 56,
+      36
+    );
+
+    if (setRows > 0) {
+      const tableTop = y + 92;
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(PAD + 20, tableTop);
+      ctx.lineTo(PAD + CONTENT_W - 20, tableTop);
+      ctx.stroke();
+
+      const colSet = PAD + 36;
+      const colReps = PAD + CONTENT_W * 0.42;
+      const colLoad = PAD + CONTENT_W - 36;
+
+      ctx.font = `700 16px ${FONT}`;
+      ctx.fillStyle = MUTED;
+      ctx.textAlign = 'left';
+      ctx.fillText(labels.setCol.toUpperCase(), colSet, tableTop + 22);
+      ctx.textAlign = 'center';
+      ctx.fillText(labels.repsCol.toUpperCase(), colReps, tableTop + 22);
+      ctx.textAlign = 'right';
+      ctx.fillText(labels.loadCol.toUpperCase(), colLoad, tableTop + 22);
+
+      const visibleSets = ex.sets.slice(0, setRows);
+      visibleSets.forEach((row, ri) => {
+        const ry = tableTop + 48 + ri * 28;
+        ctx.font = `700 22px ${FONT}`;
+        ctx.fillStyle = TEXT;
+        ctx.textAlign = 'left';
+        ctx.fillText(String(row.index).padStart(2, '0'), colSet, ry);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = MUTED;
+        ctx.fillText(row.reps != null ? String(row.reps) : '—', colReps, ry);
+
+        ctx.textAlign = 'right';
+        if (row.loadKg > 0) {
+          drawKgRight(ctx, formatVolumeKg(row.loadKg, locale), colLoad, ry, 22);
+        } else {
+          ctx.font = `700 22px ${FONT}`;
+          ctx.fillStyle = MUTED;
+          ctx.fillText('—', colLoad, ry);
+        }
+      });
+    }
+
+    y += h;
+  }
+
+  if (hiddenExercises > 0) {
+    y += 10;
+    ctx.textAlign = 'center';
+    ctx.font = `600 20px ${FONT_BODY}`;
+    ctx.fillStyle = MUTED;
+    ctx.fillText(
+      labels.moreExercises.replace(/\{\{count\}\}/g, String(hiddenExercises)),
+      W / 2,
+      Math.min(y + 18, FOOTER_TOP - 8)
+    );
+  }
+
+  const fy = FOOTER_TOP;
   ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
-  ctx.font = `700 20px ${FONT}`;
-  ctx.fillStyle = LIME;
-  ctx.fillText(labels.oneLinerTitle.toUpperCase(), PAD + 22, qy + 28);
+  ctx.font = `700 18px ${FONT}`;
+  ctx.fillStyle = MUTED;
+  ctx.fillText(labels.oneLinerTitle, PAD, fy);
 
-  ctx.font = quotePreviewFont;
+  ctx.font = `600 26px ${FONT_BODY}`;
   ctx.fillStyle = TEXT;
+  const quoteLines = wrapText(ctx, labels.oneLiner, CONTENT_W - 280, 2);
   quoteLines.forEach((line, i) => {
-    ctx.fillText(line, PAD + 22, qy + 64 + i * 36);
+    ctx.fillText(line, PAD, fy + 34 + i * 30);
   });
 
-  qy += quoteBlockH + 34;
-  ctx.font = `800 34px ${FONT}`;
+  ctx.font = `800 28px ${FONT}`;
   ctx.fillStyle = LIME;
-  ctx.fillText(labels.keepGoing, PAD, qy);
+  ctx.textAlign = 'right';
+  ctx.fillText(labels.keepGoing, PAD + CONTENT_W, fy + 34);
 
-  drawShareBrandLockup(ctx, PAD, H - 96, FONT, {
-    markSize: 28,
-    brandSize: 24,
-    domainSize: 16,
+  drawShareBrandLockup(ctx, PAD, H - 78, FONT, {
+    markSize: 24,
+    brandSize: 20,
+    domainSize: 14,
   });
 
   const tags = labels.hashtags.split(/\s+/).filter(Boolean).slice(0, 3);
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
-  ctx.font = `700 22px ${FONT}`;
-  ctx.fillStyle = LIME;
+  ctx.font = `600 18px ${FONT}`;
+  ctx.fillStyle = 'rgba(184,255,60,0.7)';
   tags.forEach((tag, i) => {
-    ctx.fillText(tag, PAD + CONTENT_W, H - 114 + i * 26);
+    ctx.fillText(tag, PAD + CONTENT_W, H - 96 + i * 22);
   });
-
-  roundRect(ctx, 18, 18, W - 36, H - 36, 24);
-  ctx.strokeStyle = 'rgba(184,255,60,0.14)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {

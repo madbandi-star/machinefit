@@ -2113,9 +2113,12 @@
     "progressMore": "多い",
     "progressLess": "少ない",
     "exerciseListTitle": "今日の種目",
-    "exerciseSetsCol": "セット",
+    "exerciseSetsCol": "SETS",
     "exerciseVolumeCol": "ボリューム",
     "moreExercises": "+{{count}}種目",
+    "posterSetCol": "SET",
+    "posterRepsCol": "REPS",
+    "posterLoadCol": "LOAD",
     "oneLinerTitle": "今日の一言",
     "oneLiner": {
       "high_volume": "今日は本気だった。💪",

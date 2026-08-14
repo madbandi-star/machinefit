@@ -2113,9 +2113,12 @@
     "progressMore": "更多",
     "progressLess": "更少",
     "exerciseListTitle": "今日动作",
-    "exerciseSetsCol": "组",
+    "exerciseSetsCol": "SETS",
     "exerciseVolumeCol": "容量",
     "moreExercises": "+{{count}}项",
+    "posterSetCol": "SET",
+    "posterRepsCol": "REPS",
+    "posterLoadCol": "LOAD",
     "oneLinerTitle": "今日一句",
     "oneLiner": {
       "high_volume": "今天练得很狠。💪",

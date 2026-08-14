@@ -17,6 +17,7 @@ import {
 } from '@machinefit/shared';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import { useUIStore } from '@/store/ui.store';
+import { useWorkoutCompleteStore } from '@/store/workoutComplete.store';
 import { buildShareHashtags } from '@/utils/shareHashtags';
 import '@/styles/workout-complete.css';
 
@@ -87,8 +88,9 @@ export function WorkoutCompleteReportModal({
   loading,
   onClose,
 }: WorkoutCompleteReportModalProps) {
-  const { t, i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation(['common', 'machines']);
   const showToast = useUIStore((s) => s.showToast);
+  const posterSource = useWorkoutCompleteStore((s) => s.posterSource);
   const [capturing, setCapturing] = useState(false);
   const sheetRef = useModalAccessibility({ open, onClose });
 
@@ -105,10 +107,37 @@ export function WorkoutCompleteReportModal({
     try {
       const { buildWorkoutScreenshotPoster } = await import('@/utils/workoutScreenshotPoster');
       const { isShareAbortError, savePngBlobToPhotos } = await import('@/utils/saveImageToPhotos');
+      const { buildWorkoutPosterExercises } = await import('@/utils/workoutPosterExerciseDetails');
+      const { resolveRecordMachineImageUrl } = await import('@/utils/catalogAssets');
 
       const hashtags = buildShareHashtags([], t('workoutComplete.shareHashtags'));
+      const locale = i18n.language?.startsWith('ko') ? 'ko' : 'en';
+
+      const imageByMachine: Record<string, string | null> = {};
+      for (const ex of report.summary.exercises) {
+        imageByMachine[ex.machineCode] =
+          resolveRecordMachineImageUrl(ex.machineCode, {
+            targetMuscleGroup: ex.targetMuscleGroup,
+          }) ?? null;
+      }
+
+      const exercises = buildWorkoutPosterExercises({
+        exercises: report.summary.exercises,
+        logs: posterSource?.todayLogs ?? [],
+        repsByMachine: posterSource?.repsByMachine,
+        imageByMachine,
+        muscleLabel: (group) => {
+          if (!group) return null;
+          const key = `muscleGroups.${group}`;
+          const label = t(key, { ns: 'machines', defaultValue: '' });
+          return label && label !== key ? label : group;
+        },
+      });
+
       const blob = await buildWorkoutScreenshotPoster({
         report,
+        exercises,
+        locale,
         labels: {
           brand: t('workoutComplete.brand'),
           titleLead: "TODAY'S",
@@ -119,19 +148,19 @@ export function WorkoutCompleteReportModal({
           setsLabel: t('workoutComplete.statSetsSub'),
           volumeLabel: t('workoutComplete.statVolumeSub'),
           powerTitle: t('workoutComplete.powerTitle'),
-          powerEarned: t('workoutComplete.powerEarned', {
-            points: report.power?.earnedToday ?? 0,
-          }),
           mvpTitle: t('workoutComplete.mvpTitle'),
           newRecordTitle: t('workoutComplete.newRecordTitle'),
           exerciseListTitle: t('workoutComplete.exerciseListTitle'),
-          setsCol: t('workoutComplete.exerciseSetsCol'),
-          volumeCol: t('workoutComplete.exerciseVolumeCol'),
+          setsMeta: t('workoutComplete.exerciseSetsCol'),
+          setCol: t('workoutComplete.posterSetCol'),
+          repsCol: t('workoutComplete.posterRepsCol'),
+          loadCol: t('workoutComplete.posterLoadCol'),
           moreExercises: t('workoutComplete.moreExercises'),
           oneLinerTitle: t('workoutComplete.oneLinerTitle'),
           oneLiner: t(`workoutComplete.oneLiner.${report.oneLinerKey}`),
           keepGoing: t('workoutComplete.keepGoing'),
           hashtags,
+          bodyweight: t('brandBodyweightShort', { ns: 'machines', defaultValue: 'BW' }),
         },
       });
 

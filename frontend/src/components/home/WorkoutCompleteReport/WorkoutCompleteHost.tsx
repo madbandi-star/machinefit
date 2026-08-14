@@ -69,7 +69,7 @@ export function WorkoutCompleteHost() {
           ? { gymId: activeGymId, memberId: activeMemberId }
           : undefined;
 
-      const built = await fetchWorkoutCompleteReport({
+      const { report: built, todayLogs, repsByMachine } = await fetchWorkoutCompleteReport({
         gymId: activeGymId,
         memberId: activeMemberId,
         dateKey,
@@ -82,7 +82,7 @@ export function WorkoutCompleteHost() {
         built.summary.durationMs = durationMs;
       }
 
-      openReport(built);
+      openReport(built, { todayLogs, repsByMachine });
       emitWorkoutCompleted({ report: built });
     } catch {
       showToast(t('errors.loadFailed'), 'error');

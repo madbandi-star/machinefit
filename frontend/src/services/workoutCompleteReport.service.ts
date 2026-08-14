@@ -6,6 +6,7 @@ import {
 import { historyApi, machinePreferenceApi, workoutLogApi } from '@/api';
 import { pointsApi } from '@/api/points.api';
 import { shiftDateKey } from '@/utils/historyDate';
+import type { PosterRepsContext } from '@/utils/workoutPosterExerciseDetails';
 
 const WORKOUT_POWER_ACTIONS = new Set([
   'workout_log_save',
@@ -34,6 +35,13 @@ function isSameSeoulDay(iso: string, dayKey: string): boolean {
   }
 }
 
+export type WorkoutCompleteFetchResult = {
+  report: WorkoutCompleteReport;
+  /** Existing today logs — display enrichment for screenshot poster only. */
+  todayLogs: WorkoutLog[];
+  repsByMachine?: Record<string, PosterRepsContext | undefined>;
+};
+
 export async function fetchWorkoutCompleteReport(input: {
   gymId: string;
   memberId?: string | null;
@@ -41,7 +49,7 @@ export async function fetchWorkoutCompleteReport(input: {
   durationMs: number;
   locale?: string;
   preferenceScope?: { gymId: string; memberId: string };
-}): Promise<WorkoutCompleteReport> {
+}): Promise<WorkoutCompleteFetchResult> {
   const { gymId, memberId, dateKey, durationMs, locale, preferenceScope } = input;
   const fromPrior = shiftDateKey(dateKey, -30);
 
@@ -71,7 +79,17 @@ export async function fetchWorkoutCompleteReport(input: {
     ...new Set([...todayLogs, ...priorLogs].map((l) => l.machineCode)),
   ];
 
-  let contexts: Record<string, { adjustedWeight?: number | null; recommendedWeight?: number | null; adjustedReps?: number | null; recommendedReps?: number | null }> | undefined;
+  let contexts:
+    | Record<
+        string,
+        {
+          adjustedWeight?: number | null;
+          recommendedWeight?: number | null;
+          adjustedReps?: number | null;
+          recommendedReps?: number | null;
+        }
+      >
+    | undefined;
 
   if (preferenceScope && machineCodes.length > 0) {
     try {
@@ -124,7 +142,7 @@ export async function fetchWorkoutCompleteReport(input: {
 
   const balance = pointsRes?.data.data.balance ?? 0;
 
-  return buildWorkoutCompleteReport({
+  const report = buildWorkoutCompleteReport({
     dateKey,
     durationMs,
     todayLogs,
@@ -133,4 +151,18 @@ export async function fetchWorkoutCompleteReport(input: {
     power: { balance, earnedToday },
     locale: locale?.startsWith('ko') ? 'ko' : 'en',
   });
+
+  const repsByMachine: Record<string, PosterRepsContext | undefined> | undefined = contexts
+    ? Object.fromEntries(
+        Object.entries(contexts).map(([code, ctx]) => [
+          code,
+          {
+            adjustedReps: ctx.adjustedReps,
+            recommendedReps: ctx.recommendedReps,
+          },
+        ])
+      )
+    : undefined;
+
+  return { report, todayLogs, repsByMachine };
 }

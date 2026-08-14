@@ -2107,9 +2107,12 @@
     "progressMore": "더 많은",
     "progressLess": "더 적은",
     "exerciseListTitle": "오늘의 운동",
-    "exerciseSetsCol": "세트",
+    "exerciseSetsCol": "SETS",
     "exerciseVolumeCol": "볼륨",
     "moreExercises": "+{{count}}개 더",
+    "posterSetCol": "SET",
+    "posterRepsCol": "REPS",
+    "posterLoadCol": "LOAD",
     "oneLinerTitle": "오늘의 한마디",
     "oneLiner": {
       "high_volume": "오늘은 제대로 조졌습니다. 💪",

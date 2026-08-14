@@ -2157,9 +2157,12 @@
     "progressMore": "More",
     "progressLess": "Less",
     "exerciseListTitle": "Today's exercises",
-    "exerciseSetsCol": "sets",
+    "exerciseSetsCol": "SETS",
     "exerciseVolumeCol": "volume",
     "moreExercises": "+{{count}} more",
+    "posterSetCol": "SET",
+    "posterRepsCol": "REPS",
+    "posterLoadCol": "LOAD",
     "oneLinerTitle": "Today's line",
     "oneLiner": {
       "high_volume": "You went hard today. 💪",
