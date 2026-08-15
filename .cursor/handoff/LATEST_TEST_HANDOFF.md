@@ -1,16 +1,16 @@
-# Test handoff ? 검색 필터 횡스크롤바
+# Test handoff ? 기록 도구 버튼 색 통일
 
 ## Summary
-검색 근육군·브랜드 칩 행의 숨겨진 스크롤바를 보이게 하고, 가장자리 페이드로 더 있음 힌트 추가.
+기록 툴바 도구(설정) 버튼이 시트 CSS 오버라이드로 달력·정렬과 색이 달랐음. 오버라이드 제거로 `records.css` 공통 스타일 사용.
 
 ## Git
 - Branch: `main`
-- Commit: _e1cbce85_
+- Commit: _(after push)_
 
 ## Test focus
-1. 횡스크롤바 보임
-2. 우측 끝 칩 선택 가능
+1. 달력 / 도구 / 정렬 기본·호버 색 동일
+2. 도구 메뉴 열린 상태도 프라이머리 톤
 
 ## As-is → To-be
-- **As-is:** 스크롤바 `display:none`
-- **To-be:** 얇은 프라이머리 톤 횡스크롤바
+- **As-is:** 도구만 surface/border 톤
+- **To-be:** 달력·정렬과 동일 glass + primary

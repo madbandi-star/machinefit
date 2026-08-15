@@ -253,26 +253,3 @@
   grid-template-columns: 1fr 1.2fr;
   gap: 0.45rem;
 }
-
-.records-list__day-menu-trigger {
-  width: 2.35rem;
-  height: 2.35rem;
-  padding: 0;
-  border-radius: 0.55rem;
-  border: 1px solid color-mix(in srgb, var(--color-border) 88%, transparent);
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-
-.records-list__day-menu-trigger:hover,
-.records-list__day-menu-trigger:focus-visible {
-  color: var(--color-text);
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-}
