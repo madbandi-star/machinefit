@@ -17,6 +17,8 @@ import { InstallPromptBanner } from '@/components/pwa/InstallPromptBanner/Instal
 import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
 import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { Seo } from '@/seo/Seo';
+import { organizationJsonLd, websiteJsonLd } from '@/seo/jsonLd';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
@@ -64,7 +66,18 @@ export function HomePage() {
     isAuthenticated && hasMinRole(user?.roleCode, Role.PREMIUM_MEMBER);
 
   if (!treatAsAuthed) {
-    return <AuthLandingScreen />;
+    return (
+      <>
+        <Seo
+          title="MachineFit | 헬스장 머신 운동과 운동기록"
+          description="헬스장 머신별 맞춤 세팅과 운동 기록을 MachineFit에서 관리하세요. 브랜드·머신 검색부터 추천 중량까지."
+          path="/"
+          titleAbsolute
+          jsonLd={[organizationJsonLd(), websiteJsonLd()]}
+        />
+        <AuthLandingScreen />
+      </>
+    );
   }
 
   if (!authReady || !isAuthenticated) {
@@ -77,6 +90,13 @@ export function HomePage() {
 
   return (
     <div className="home-page">
+      <Seo
+        title="MachineFit | 헬스장 머신 운동과 운동기록"
+        description="헬스장 머신별 맞춤 세팅과 운동 기록을 MachineFit에서 관리하세요. 브랜드·머신 검색부터 추천 중량까지."
+        path="/"
+        titleAbsolute
+        jsonLd={[organizationJsonLd(), websiteJsonLd()]}
+      />
       <HomeNoticeBanner />
       <HomePlannedWorkoutCard />
 

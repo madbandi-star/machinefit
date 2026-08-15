@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { HomePage } from '@/pages/home/HomePage';
 import { RouterErrorElement } from '@/routes/RouterErrorElement';
 import { OpsTelemetryBridge } from '@/components/ops/OpsTelemetryBridge';
+import { SeoRouteSync } from '@/seo/SeoRouteSync';
 import { isChunkLoadError, recoverFromChunkError } from '@/utils/chunkLoadRecovery';
 
 function PageFallback() {
@@ -25,6 +26,7 @@ function RootOutlet() {
   return (
     <>
       <OpsTelemetryBridge />
+      <SeoRouteSync />
       <Outlet />
     </>
   );

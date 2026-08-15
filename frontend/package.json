@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node ../scripts/i18n-audit.mjs && tsc --noEmit && vite build",
+    "build": "node ../scripts/generate-sitemap.mjs && node ../scripts/seo-validate.mjs && node ../scripts/i18n-audit.mjs && tsc --noEmit && vite build",
+    "seo:sitemap": "node ../scripts/generate-sitemap.mjs",
+    "seo:validate": "node ../scripts/generate-sitemap.mjs && node ../scripts/seo-validate.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

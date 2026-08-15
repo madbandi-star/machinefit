@@ -28,6 +28,9 @@ import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
+import { Seo } from '@/seo/Seo';
+import { breadcrumbJsonLd, webPageJsonLd } from '@/seo/jsonLd';
+import { resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/components.css';
 import '@/styles/machines.css';
 import '@/styles/records.css';
@@ -156,8 +159,55 @@ export function MachineDetailPage() {
     Boolean(activeMemberId) &&
     !isAllGymsId(activeGymId ?? '');
 
+  const machineName = getLocalizedName(machine.name, i18n.language, machine.code);
+  const brandName = machine.brandName
+    ? getLocalizedName(machine.brandName, i18n.language, machine.brandCode || '')
+    : '';
+  const descText = machine.description
+    ? getLocalizedName(machine.description, i18n.language, '')
+    : '';
+  const seoTitle = brandName ? `${brandName} ${machineName} 사용법` : `${machineName} 사용법`;
+  const seoDescription =
+    descText ||
+    `${brandName ? `${brandName} ` : ''}${machineName}의 운동 부위와 머신 사용 팁을 MachineFit에서 확인하고 운동을 기록하세요.`;
+  const seoPath = `/machines/${encodeURIComponent(machine.code)}`;
+  const seoImage =
+    resolveRecordMachineImageUrl(machine.code, {
+      primaryImageUrl: machine.primaryImageUrl,
+      targetMuscleGroup: muscleParam,
+    }) || undefined;
+  const hasQuery = Boolean(muscleParam || logDateParam || planDateParam);
+
   return (
     <div className="machine-detail-page">
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        path={seoPath}
+        robots={hasQuery ? 'noindex,follow' : 'index,follow'}
+        image={seoImage}
+        type="article"
+        jsonLd={[
+          webPageJsonLd({
+            name: seoTitle,
+            description: seoDescription,
+            path: seoPath,
+          }),
+          breadcrumbJsonLd([
+            { name: '홈', path: '/' },
+            { name: '머신', path: '/machines' },
+            ...(machine.brandCode
+              ? [
+                  {
+                    name: brandName || machine.brandCode,
+                    path: `/brands/${encodeURIComponent(machine.brandCode)}`,
+                  },
+                ]
+              : []),
+            { name: machineName, path: seoPath },
+          ]),
+        ]}
+      />
       {/* Cover image at top for every brand (same layout as free-weight). */}
       <MachineHero machine={machine} selectedMuscle={muscleParam} />
       {!isPlanAddMode && !isFreeWeight && machineCode && isAuthenticated ? (

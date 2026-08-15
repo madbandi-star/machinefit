@@ -1,0 +1,50 @@
+User-agent: *
+# Production SPA lives under /machinefit/ (Vite base + GitHub Pages)
+
+Allow: /machinefit/$
+Allow: /machinefit/machines
+Allow: /machinefit/brands
+Allow: /machinefit/gyms$
+Allow: /machinefit/community$
+Allow: /machinefit/community/notices$
+Allow: /machinefit/terms
+Allow: /machinefit/privacy
+Allow: /machinefit/security
+Allow: /machinefit/refund
+Allow: /machinefit/legal/
+Allow: /machinefit/location-policy
+Allow: /machinefit/community-policy
+Allow: /machinefit/copyright
+Allow: /machinefit/support$
+
+# Auth / account / private
+Disallow: /machinefit/login
+Disallow: /machinefit/auth/
+Disallow: /machinefit/my-page/
+Disallow: /machinefit/settings/
+Disallow: /machinefit/admin/
+Disallow: /machinefit/owner/
+Disallow: /machinefit/fortune/
+Disallow: /machinefit/records
+Disallow: /machinefit/history
+Disallow: /machinefit/favorites
+Disallow: /machinefit/recommend/
+Disallow: /machinefit/friends/
+Disallow: /machinefit/push
+Disallow: /machinefit/notifications
+Disallow: /machinefit/easy/
+Disallow: /machinefit/scan
+Disallow: /machinefit/qr/
+Disallow: /machinefit/equipment/
+Disallow: /machinefit/trade/
+Disallow: /machinefit/online-pt/
+Disallow: /machinefit/growth-analysis
+Disallow: /machinefit/report-machine
+Disallow: /machinefit/trainer/
+Disallow: /machinefit/community/requests
+Disallow: /machinefit/community/free
+Disallow: /machinefit/community/photo
+Disallow: /machinefit/community/templates
+Disallow: /machinefit/community/posts
+
+Sitemap: https://machine-fit.com/machinefit/sitemap.xml

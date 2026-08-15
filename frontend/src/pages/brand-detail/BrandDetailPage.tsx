@@ -12,6 +12,8 @@ import { brandApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
 import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import { safeHttpUrl } from '@/utils/safeHttpUrl';
+import { Seo } from '@/seo/Seo';
+import { brandCollectionJsonLd, breadcrumbJsonLd } from '@/seo/jsonLd';
 import '@/styles/machines.css';
 
 export function BrandDetailPage() {
@@ -53,9 +55,32 @@ export function BrandDetailPage() {
     ? getLocalizedName(brand.description, i18n.language, '')
     : '';
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
+  const seoPath = `/brands/${encodeURIComponent(brand.code)}`;
+  const seoTitle = `${name} 머신`;
+  const seoDescription =
+    description ||
+    `${name} 헬스장 머신 목록과 사용 팁을 MachineFit에서 확인하세요.`;
 
   return (
     <PageShell title={name} subtitle={t('brandDetail.subtitle', { code: brand.code })}>
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        path={seoPath}
+        image={logoUrl || undefined}
+        jsonLd={[
+          brandCollectionJsonLd({
+            name: seoTitle,
+            description: seoDescription,
+            path: seoPath,
+          }),
+          breadcrumbJsonLd([
+            { name: '홈', path: '/' },
+            { name: '브랜드', path: '/brands' },
+            { name, path: seoPath },
+          ]),
+        ]}
+      />
       <LegalDisclaimerBanner variant="trademark" compact />
       <div className="brand-detail__header">
         {logoUrl ? (
