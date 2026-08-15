@@ -21,6 +21,7 @@ import { getApiErrorCode } from '@/utils/motivationAudio';
 import { getApiValidationFieldSummary } from '@/utils/getApiErrorMessage';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import '@/styles/admin.css';
+import '@/styles/admin-standard-machines.css';
 
 const PAGE_SIZE = 40;
 const ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
@@ -105,6 +106,7 @@ export function AdminStandardMachinesPage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
 
+  const [draftQ, setDraftQ] = useState('');
   const [q, setQ] = useState('');
   const [muscleGroup, setMuscleGroup] = useState('');
   const [isActive, setIsActive] = useState<ActiveFilter>('all');
@@ -132,7 +134,7 @@ export function AdminStandardMachinesPage() {
     [q, muscleGroup, isActive, sort, order, page]
   );
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
     queryKey: QUERY_KEYS.adminStandardMachines(listParams),
     queryFn: async () => {
       const res = await adminApi.listStandardMachines(listParams);
@@ -265,9 +267,23 @@ export function AdminStandardMachinesPage() {
     },
   });
 
-  useModalAccessibility({
+  const formBusy =
+    saveMutation.isPending ||
+    uploadMutation.isPending ||
+    setPrimaryMutation.isPending ||
+    deleteImageMutation.isPending ||
+    reorderMutation.isPending;
+
+  const closeForm = useCallback(() => {
+    if (formBusy) return;
+    setFormOpen(false);
+  }, [formBusy]);
+
+  const dialogRef = useModalAccessibility({
     open: formOpen,
-    onClose: () => setFormOpen(false),
+    onClose: closeForm,
+    closeOnEscape: !formBusy,
+    initialFocusSelector: editing ? '#admin-standard-machine-name-ko' : '#admin-standard-machine-code',
   });
 
   function openCreate() {
@@ -313,7 +329,26 @@ export function AdminStandardMachinesPage() {
   }
 
   const items = data?.items ?? [];
+  const total = data?.meta.total ?? 0;
   const totalPages = data?.meta.totalPages ?? 1;
+
+  const pageStats = useMemo(() => {
+    let withImage = 0;
+    let active = 0;
+    let linked = 0;
+    for (const item of items) {
+      if (item.primaryImageUrl) withImage += 1;
+      if (item.isActive) active += 1;
+      linked += item.machineCount ?? 0;
+    }
+    return {
+      withImage,
+      active,
+      inactive: items.length - active,
+      linked,
+      noImage: items.length - withImage,
+    };
+  }, [items]);
 
   return (
     <AdminPageShell
@@ -324,394 +359,513 @@ export function AdminStandardMachinesPage() {
           : t('admin:standardMachines.subtitle')
       }
     >
-      <AdminPanel>
-        <div className="admin-catalog-toolbar">
-          <label className="form-field">
-            <span>{t('admin:standardMachines.search')}</span>
-            <input
-              className="input"
-              value={q}
-              placeholder={t('admin:standardMachines.searchPlaceholder')}
-              onChange={(e) => {
-                setQ(e.target.value);
-                setPage(1);
-              }}
-            />
-          </label>
-          <label className="form-field">
-            <span>{t('admin:standardMachines.muscleGroup')}</span>
-            <select
-              className="input"
-              value={muscleGroup}
-              onChange={(e) => {
-                setMuscleGroup(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">{t('admin:standardMachines.allMuscles')}</option>
-              {MUSCLE_OPTIONS.map((group) => (
-                <option key={group} value={group}>
-                  {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="form-field">
-            <span>{t('admin:standardMachines.filterActive')}</span>
-            <select
-              className="input"
-              value={isActive}
-              onChange={(e) => {
-                setIsActive(e.target.value as ActiveFilter);
-                setPage(1);
-              }}
-            >
-              <option value="all">{t('admin:standardMachines.filterAll')}</option>
-              <option value="true">{t('admin:active')}</option>
-              <option value="false">{t('admin:inactive')}</option>
-            </select>
-          </label>
-          <label className="form-field">
-            <span>{t('admin:standardMachines.sort')}</span>
-            <select
-              className="input"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-            >
-              <option value="sortOrder">{t('admin:standardMachines.sortOrder')}</option>
-              <option value="name">{t('admin:standardMachines.sortName')}</option>
-              <option value="code">{t('admin:standardMachines.sortCode')}</option>
-              <option value="createdAt">{t('admin:standardMachines.sortCreated')}</option>
-            </select>
-          </label>
-          <label className="form-field">
-            <span>{t('admin:standardMachines.order')}</span>
-            <select
-              className="input"
-              value={order}
-              onChange={(e) => setOrder(e.target.value as 'asc' | 'desc')}
-            >
-              <option value="asc">{t('admin:standardMachines.orderAsc')}</option>
-              <option value="desc">{t('admin:standardMachines.orderDesc')}</option>
-            </select>
-          </label>
-          <div className="admin-catalog-toolbar__actions">
-            <button type="button" className="btn btn--secondary" onClick={() => void invalidate()}>
-              {t('admin:standardMachines.refresh')}
-            </button>
-            <button type="button" className="btn btn--primary" onClick={openCreate}>
-              {t('admin:standardMachines.create')}
-            </button>
+      <div className="asm-page">
+        <div className="asm-stats" aria-label={t('admin:standardMachines.statsLabel')}>
+          <div className="asm-stat">
+            <span className="asm-stat__value">{total}</span>
+            <span className="asm-stat__label">{t('admin:standardMachines.statTotal')}</span>
+          </div>
+          <div className="asm-stat">
+            <span className="asm-stat__value">{pageStats.withImage}</span>
+            <span className="asm-stat__label">{t('admin:standardMachines.statWithImage')}</span>
+          </div>
+          <div className="asm-stat">
+            <span className="asm-stat__value">{pageStats.noImage}</span>
+            <span className="asm-stat__label">{t('admin:standardMachines.statNoImage')}</span>
+          </div>
+          <div className="asm-stat">
+            <span className="asm-stat__value">{pageStats.linked}</span>
+            <span className="asm-stat__label">{t('admin:standardMachines.statLinked')}</span>
           </div>
         </div>
 
-        {isLoading ? (
-          <Skeleton height={240} />
-        ) : isError ? (
-          <div className="admin-empty">
-            <p>{t('admin:standardMachines.loadError')}</p>
-            <button type="button" className="btn btn--secondary" onClick={() => void refetch()}>
-              {t('admin:standardMachines.refresh')}
-            </button>
+        <form
+          className="asm-toolbar"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setPage(1);
+            setQ(draftQ.trim());
+          }}
+        >
+          <div className="asm-toolbar__row">
+            <input
+              className="input asm-toolbar__search"
+              value={draftQ}
+              placeholder={t('admin:standardMachines.searchPlaceholder')}
+              aria-label={t('admin:standardMachines.search')}
+              onChange={(e) => setDraftQ(e.target.value)}
+            />
+            <div className="asm-toolbar__actions">
+              <button type="submit" className="btn btn--secondary">
+                {t('admin:standardMachines.search')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary"
+                disabled={isFetching}
+                onClick={() => void refetch()}
+              >
+                {t('admin:standardMachines.refresh')}
+              </button>
+              <button type="button" className="btn btn--primary" onClick={openCreate}>
+                {t('admin:standardMachines.create')}
+              </button>
+            </div>
           </div>
-        ) : items.length === 0 ? (
-          <p className="admin-empty">{t('admin:standardMachines.empty')}</p>
-        ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>{t('admin:standardMachines.image')}</th>
-                  <th>{t('admin:standardMachines.code')}</th>
-                  <th>{t('admin:standardMachines.name')}</th>
-                  <th>{t('admin:standardMachines.muscleGroup')}</th>
-                  <th>{t('admin:standardMachines.machinesCount')}</th>
-                  <th>{t('admin:standardMachines.status')}</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr key={item.id}>
-                    <td>
+
+          <div
+            className="asm-segments"
+            role="group"
+            aria-label={t('admin:standardMachines.filterActive')}
+          >
+            {(
+              [
+                ['all', t('admin:standardMachines.filterAll')],
+                ['true', t('admin:active')],
+                ['false', t('admin:inactive')],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={`asm-segment${isActive === value ? ' is-active' : ''}`}
+                aria-pressed={isActive === value}
+                onClick={() => {
+                  setIsActive(value);
+                  setPage(1);
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div
+            className="asm-chips"
+            role="group"
+            aria-label={t('admin:standardMachines.muscleGroup')}
+          >
+            <button
+              type="button"
+              className={`asm-chip${muscleGroup === '' ? ' is-active' : ''}`}
+              aria-pressed={muscleGroup === ''}
+              onClick={() => {
+                setMuscleGroup('');
+                setPage(1);
+              }}
+            >
+              {t('admin:standardMachines.allMuscles')}
+            </button>
+            {MUSCLE_OPTIONS.map((group) => (
+              <button
+                key={group}
+                type="button"
+                className={`asm-chip${muscleGroup === group ? ' is-active' : ''}`}
+                aria-pressed={muscleGroup === group}
+                onClick={() => {
+                  setMuscleGroup(group);
+                  setPage(1);
+                }}
+              >
+                {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
+              </button>
+            ))}
+          </div>
+
+          <div className="asm-toolbar__row">
+            <div className="asm-toolbar__sort">
+              <select
+                className="input"
+                value={sort}
+                aria-label={t('admin:standardMachines.sort')}
+                onChange={(e) => {
+                  setSort(e.target.value as SortKey);
+                  setPage(1);
+                }}
+              >
+                <option value="sortOrder">{t('admin:standardMachines.sortOrder')}</option>
+                <option value="name">{t('admin:standardMachines.sortName')}</option>
+                <option value="code">{t('admin:standardMachines.sortCode')}</option>
+                <option value="createdAt">{t('admin:standardMachines.sortCreated')}</option>
+              </select>
+              <select
+                className="input"
+                value={order}
+                aria-label={t('admin:standardMachines.order')}
+                onChange={(e) => {
+                  setOrder(e.target.value as 'asc' | 'desc');
+                  setPage(1);
+                }}
+              >
+                <option value="asc">{t('admin:standardMachines.orderAsc')}</option>
+                <option value="desc">{t('admin:standardMachines.orderDesc')}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+
+        <AdminPanel count={total} countLabel={t('admin:listCount', { count: total })}>
+          {isLoading ? (
+            <Skeleton height={280} />
+          ) : isError ? (
+            <div className="asm-empty">
+              <p>{t('admin:standardMachines.loadError')}</p>
+              <button type="button" className="btn btn--secondary" onClick={() => void refetch()}>
+                {t('admin:standardMachines.refresh')}
+              </button>
+            </div>
+          ) : items.length === 0 ? (
+            <div className="asm-empty">
+              <p>{t('admin:standardMachines.empty')}</p>
+              <button type="button" className="btn btn--primary" onClick={openCreate}>
+                {t('admin:standardMachines.create')}
+              </button>
+            </div>
+          ) : (
+            <div className="asm-grid">
+              {items.map((item) => {
+                const name = getLocalizedName(item.name, i18n.language, item.code);
+                const muscleLabel = t(`machines:muscleGroups.${item.primaryMuscleGroup}`, {
+                  defaultValue: item.primaryMuscleGroup,
+                });
+                const toggling =
+                  activeMutation.isPending && activeMutation.variables?.id === item.id;
+                return (
+                  <article
+                    key={item.id}
+                    className={`asm-card${item.isActive ? '' : ' is-inactive'}`}
+                  >
+                    <button
+                      type="button"
+                      className="asm-card__media"
+                      onClick={() => openEdit(item)}
+                      aria-label={t('admin:standardMachines.editNamed', { name })}
+                    >
                       {item.primaryImageUrl ? (
-                        <img
-                          src={item.primaryImageUrl}
-                          alt=""
-                          className="admin-catalog-thumb"
-                          width={48}
-                          height={48}
-                        />
+                        <img src={item.primaryImageUrl} alt="" loading="lazy" />
                       ) : (
-                        <span className="admin-catalog-thumb admin-catalog-thumb--empty">—</span>
+                        <span className="asm-card__placeholder">
+                          {t('admin:standardMachines.noImage')}
+                        </span>
                       )}
-                    </td>
-                    <td>
-                      <code>{item.code}</code>
-                    </td>
-                    <td>{getLocalizedName(item.name, i18n.language, item.code)}</td>
-                    <td>
-                      {t(`machines:muscleGroups.${item.primaryMuscleGroup}`, {
-                        defaultValue: item.primaryMuscleGroup,
-                      })}
-                    </td>
-                    <td>{item.machineCount ?? 0}</td>
-                    <td>
-                      <button
-                        type="button"
-                        className={`btn btn--sm ${item.isActive ? 'btn--secondary' : 'btn--ghost'}`}
-                        onClick={() =>
-                          activeMutation.mutate({ id: item.id, next: !item.isActive })
-                        }
-                      >
-                        {item.isActive ? t('admin:active') : t('admin:inactive')}
-                      </button>
-                    </td>
-                    <td className="admin-table__actions">
+                      <span className="asm-card__badges">
+                        <span className="asm-muscle-pill">{muscleLabel}</span>
+                        <span
+                          className={`admin-status-pill${item.isActive ? ' is-active' : ' is-inactive'}`}
+                        >
+                          {item.isActive ? t('admin:active') : t('admin:inactive')}
+                        </span>
+                      </span>
+                    </button>
+                    <div className="asm-card__body">
+                      <div className="asm-card__title-row">
+                        <h3 className="asm-card__title">{name}</h3>
+                      </div>
+                      <p className="asm-card__meta">
+                        <code>{item.code}</code>
+                        {' · '}
+                        {t('admin:standardMachines.machinesCountLabel', {
+                          count: item.machineCount ?? 0,
+                        })}
+                        {' · '}
+                        #{item.sortOrder ?? 0}
+                      </p>
+                    </div>
+                    <div className="asm-card__actions">
                       <button
                         type="button"
                         className="btn btn--sm btn--secondary"
                         onClick={() => openEdit(item)}
+                        disabled={toggling || deleteMutation.isPending}
                       >
                         {t('admin:standardMachines.edit')}
                       </button>
                       <button
                         type="button"
+                        className="btn btn--sm btn--secondary"
+                        disabled={toggling || deleteMutation.isPending}
+                        onClick={() =>
+                          activeMutation.mutate({ id: item.id, next: !item.isActive })
+                        }
+                      >
+                        {toggling
+                          ? t('admin:processing')
+                          : item.isActive
+                            ? t('admin:disable')
+                            : t('admin:enable')}
+                      </button>
+                      <button
+                        type="button"
                         className="btn btn--sm btn--ghost"
+                        disabled={toggling || deleteMutation.isPending}
                         onClick={() => setPendingDelete(item)}
                       >
                         {t('admin:standardMachines.delete')}
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
 
-        {totalPages > 1 ? (
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-        ) : null}
-      </AdminPanel>
+          {totalPages > 1 ? (
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          ) : null}
+        </AdminPanel>
+      </div>
 
       {formOpen ? (
-        <div className="admin-catalog-drawer" role="dialog" aria-modal="true">
-          <div className="admin-catalog-drawer__panel">
-            <header className="admin-catalog-drawer__header">
-              <h3 id="admin-standard-machine-title">
-                {editing
-                  ? t('admin:standardMachines.edit')
-                  : t('admin:standardMachines.create')}
-              </h3>
-              <button
-                type="button"
-                className="btn btn--ghost"
-                onClick={() => setFormOpen(false)}
-              >
-                {t('admin:standardMachines.close')}
-              </button>
+        <div
+          className="dialog-overlay"
+          role="presentation"
+          onClick={() => {
+            if (!formBusy) closeForm();
+          }}
+        >
+          <div
+            ref={dialogRef}
+            className="dialog card admin-catalog-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-standard-machine-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className="admin-catalog-dialog__header">
+              <div className="admin-catalog-dialog__top">
+                <div>
+                  <button
+                    type="button"
+                    className="admin-catalog-dialog__back"
+                    onClick={closeForm}
+                    disabled={formBusy}
+                  >
+                    <span aria-hidden="true">←</span>
+                    {t('admin:standardMachines.backToList')}
+                  </button>
+                  <h3 id="admin-standard-machine-title" className="admin-catalog-dialog__title">
+                    {editing
+                      ? t('admin:standardMachines.edit')
+                      : t('admin:standardMachines.create')}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn--secondary admin-catalog-dialog__close"
+                  onClick={closeForm}
+                  disabled={formBusy}
+                  aria-label={t('admin:standardMachines.close')}
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="admin-catalog-dialog__hint">{t('admin:standardMachines.formHint')}</p>
             </header>
 
-            <p className="admin-catalog-hint">{t('admin:standardMachines.formHint')}</p>
-
-            <section className="admin-catalog-section">
-              <h4 className="admin-catalog-section__title">
-                {t('admin:standardMachines.sectionBasic')}
-              </h4>
-              <div className="admin-catalog-fields">
-                <label className="admin-catalog-field admin-catalog-field--full">
-                  <span>{t('admin:standardMachines.code')}</span>
-                  <input
-                    className="input"
-                    value={form.code}
-                    disabled={Boolean(editing)}
-                    onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field">
-                  <span>{t('admin:standardMachines.nameKo')}</span>
-                  <input
-                    className="input"
-                    value={form.nameKo}
-                    onChange={(e) => setForm((f) => ({ ...f, nameKo: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field">
-                  <span>{t('admin:standardMachines.nameEn')}</span>
-                  <input
-                    className="input"
-                    value={form.nameEn}
-                    onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field">
-                  <span>{t('admin:standardMachines.muscleGroup')}</span>
-                  <select
-                    className="input"
-                    value={form.primaryMuscleGroup}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, primaryMuscleGroup: e.target.value }))
-                    }
-                  >
-                    {MUSCLE_OPTIONS.map((group) => (
-                      <option key={group} value={group}>
-                        {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="admin-catalog-field">
-                  <span>{t('admin:standardMachines.displayOrder')}</span>
-                  <input
-                    className="input"
-                    value={form.sortOrder}
-                    onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field admin-catalog-field--full">
-                  <span>{t('admin:standardMachines.aliases')}</span>
-                  <textarea
-                    className="input"
-                    rows={2}
-                    value={form.aliases}
-                    placeholder={t('admin:standardMachines.aliasesPlaceholder')}
-                    onChange={(e) => setForm((f) => ({ ...f, aliases: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field admin-catalog-field--full">
-                  <span>{t('admin:standardMachines.descriptionKo')}</span>
-                  <textarea
-                    className="input"
-                    rows={2}
-                    value={form.descriptionKo}
-                    onChange={(e) => setForm((f) => ({ ...f, descriptionKo: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field admin-catalog-field--full">
-                  <span>{t('admin:standardMachines.descriptionEn')}</span>
-                  <textarea
-                    className="input"
-                    rows={2}
-                    value={form.descriptionEn}
-                    onChange={(e) => setForm((f) => ({ ...f, descriptionEn: e.target.value }))}
-                  />
-                </label>
-                <label className="admin-catalog-field admin-catalog-check">
-                  <input
-                    type="checkbox"
-                    checked={form.isActive}
-                    onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
-                  />
-                  <span>{t('admin:active')}</span>
-                </label>
-              </div>
-            </section>
-
-            <section className="admin-catalog-section">
-              <h4 className="admin-catalog-section__title">
-                {t('admin:standardMachines.sectionImages')}
-              </h4>
-              {!editing ? (
-                <p className="admin-catalog-hint">{t('admin:standardMachines.saveBeforeImages')}</p>
-              ) : (
-                <>
-                  <div
-                    className={`admin-catalog-dropzone${dragOver ? ' is-dragover' : ''}`}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setDragOver(true);
-                    }}
-                    onDragLeave={() => setDragOver(false)}
-                    onDrop={onDrop}
-                  >
-                    <p>{t('admin:standardMachines.dropHere')}</p>
-                    <button
-                      type="button"
-                      className="btn btn--secondary"
-                      onClick={() => fileRef.current?.click()}
-                      disabled={uploadMutation.isPending}
-                    >
-                      {uploadMutation.isPending
-                        ? `${t('admin:standardMachines.uploading')} ${uploadProgress}%`
-                        : t('admin:standardMachines.upload')}
-                    </button>
+            <div className="admin-catalog-sections">
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:standardMachines.sectionBasic')}
+                </h4>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:standardMachines.code')}</span>
                     <input
-                      ref={fileRef}
-                      type="file"
-                      accept={ACCEPT}
-                      hidden
-                      onChange={(e) => handleFiles(e.target.files)}
+                      id="admin-standard-machine-code"
+                      className="input"
+                      value={form.code}
+                      disabled={Boolean(editing)}
+                      onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
                     />
-                  </div>
-                  <ul className="admin-catalog-gallery">
-                    {images.map((image, index) => (
-                      <li key={image.id} className="admin-catalog-gallery__item">
-                        <img src={image.imageUrl} alt="" width={72} height={72} />
-                        <div className="admin-catalog-gallery__meta">
-                          <span>
-                            {image.isPrimary
-                              ? t('admin:standardMachines.primaryBadge')
-                              : IMAGE_TYPES.includes(
-                                    image.imageType as (typeof IMAGE_TYPES)[number]
-                                  )
-                                ? t(`admin:standardMachines.imageTypes.${image.imageType}`)
-                                : image.imageType}
-                          </span>
-                          <div className="admin-catalog-gallery__actions">
-                            {!image.isPrimary ? (
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:standardMachines.nameKo')}</span>
+                    <input
+                      id="admin-standard-machine-name-ko"
+                      className="input"
+                      value={form.nameKo}
+                      onChange={(e) => setForm((f) => ({ ...f, nameKo: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:standardMachines.nameEn')}</span>
+                    <input
+                      className="input"
+                      value={form.nameEn}
+                      onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:standardMachines.muscleGroup')}</span>
+                    <select
+                      className="input"
+                      value={form.primaryMuscleGroup}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, primaryMuscleGroup: e.target.value }))
+                      }
+                    >
+                      {MUSCLE_OPTIONS.map((group) => (
+                        <option key={group} value={group}>
+                          {t(`machines:muscleGroups.${group}`, { defaultValue: group })}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-catalog-field">
+                    <span>{t('admin:standardMachines.displayOrder')}</span>
+                    <input
+                      className="input"
+                      value={form.sortOrder}
+                      onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:standardMachines.aliases')}</span>
+                    <textarea
+                      className="input"
+                      rows={2}
+                      value={form.aliases}
+                      placeholder={t('admin:standardMachines.aliasesPlaceholder')}
+                      onChange={(e) => setForm((f) => ({ ...f, aliases: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:standardMachines.descriptionKo')}</span>
+                    <textarea
+                      className="input"
+                      rows={2}
+                      value={form.descriptionKo}
+                      onChange={(e) => setForm((f) => ({ ...f, descriptionKo: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:standardMachines.descriptionEn')}</span>
+                    <textarea
+                      className="input"
+                      rows={2}
+                      value={form.descriptionEn}
+                      onChange={(e) => setForm((f) => ({ ...f, descriptionEn: e.target.value }))}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-check">
+                    <input
+                      type="checkbox"
+                      checked={form.isActive}
+                      onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
+                    />
+                    <span>{t('admin:active')}</span>
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:standardMachines.sectionImages')}
+                </h4>
+                {!editing ? (
+                  <p className="admin-catalog-section__note">
+                    {t('admin:standardMachines.saveBeforeImages')}
+                  </p>
+                ) : (
+                  <>
+                    <div
+                      className={`admin-catalog-dropzone${dragOver ? ' is-dragover' : ''}`}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setDragOver(true);
+                      }}
+                      onDragLeave={() => setDragOver(false)}
+                      onDrop={onDrop}
+                    >
+                      <p>{t('admin:standardMachines.dropHere')}</p>
+                      <button
+                        type="button"
+                        className="btn btn--secondary"
+                        onClick={() => fileRef.current?.click()}
+                        disabled={uploadMutation.isPending}
+                      >
+                        {uploadMutation.isPending
+                          ? `${t('admin:standardMachines.uploading')} ${uploadProgress}%`
+                          : t('admin:standardMachines.upload')}
+                      </button>
+                      <input
+                        ref={fileRef}
+                        type="file"
+                        accept={ACCEPT}
+                        hidden
+                        onChange={(e) => handleFiles(e.target.files)}
+                      />
+                    </div>
+                    <ul className="asm-gallery">
+                      {images.map((image, index) => (
+                        <li key={image.id} className="asm-gallery__item">
+                          <img src={image.imageUrl} alt="" width={72} height={72} />
+                          <div className="asm-gallery__meta">
+                            <span className="asm-gallery__label">
+                              {image.isPrimary
+                                ? t('admin:standardMachines.primaryBadge')
+                                : IMAGE_TYPES.includes(
+                                      image.imageType as (typeof IMAGE_TYPES)[number]
+                                    )
+                                  ? t(`admin:standardMachines.imageTypes.${image.imageType}`)
+                                  : image.imageType}
+                            </span>
+                            <div className="asm-gallery__actions">
+                              {!image.isPrimary ? (
+                                <button
+                                  type="button"
+                                  className="btn btn--sm btn--secondary"
+                                  onClick={() => setPrimaryMutation.mutate(image)}
+                                >
+                                  {t('admin:standardMachines.setPrimary')}
+                                </button>
+                              ) : null}
                               <button
                                 type="button"
-                                className="btn btn--sm btn--secondary"
-                                onClick={() => setPrimaryMutation.mutate(image)}
+                                className="btn btn--sm btn--ghost"
+                                disabled={index === 0}
+                                onClick={() => moveImage(index, -1)}
                               >
-                                {t('admin:standardMachines.setPrimary')}
+                                ↑
                               </button>
-                            ) : null}
-                            <button
-                              type="button"
-                              className="btn btn--sm btn--ghost"
-                              disabled={index === 0}
-                              onClick={() => moveImage(index, -1)}
-                            >
-                              ↑
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn--sm btn--ghost"
-                              disabled={index === images.length - 1}
-                              onClick={() => moveImage(index, 1)}
-                            >
-                              ↓
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn--sm btn--ghost"
-                              onClick={() => deleteImageMutation.mutate(image.id)}
-                            >
-                              {t('admin:standardMachines.clearImage')}
-                            </button>
+                              <button
+                                type="button"
+                                className="btn btn--sm btn--ghost"
+                                disabled={index === images.length - 1}
+                                onClick={() => moveImage(index, 1)}
+                              >
+                                ↓
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn--sm btn--ghost"
+                                onClick={() => deleteImageMutation.mutate(image.id)}
+                              >
+                                {t('admin:standardMachines.clearImage')}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </section>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </section>
+            </div>
 
-            <footer className="admin-catalog-drawer__footer">
+            <footer className="admin-catalog-dialog__actions">
               <button
                 type="button"
                 className="btn btn--ghost"
-                onClick={() => setFormOpen(false)}
+                onClick={closeForm}
+                disabled={formBusy}
               >
                 {t('admin:standardMachines.cancel')}
               </button>
               <button
                 type="button"
                 className="btn btn--primary"
-                disabled={saveMutation.isPending || !form.code.trim() || !form.nameKo.trim()}
+                disabled={formBusy || !form.code.trim() || !form.nameKo.trim()}
                 onClick={() => saveMutation.mutate()}
               >
                 {saveMutation.isPending

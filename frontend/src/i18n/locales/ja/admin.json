@@ -1298,6 +1298,15 @@
     },
     "subtitleWithCount": "{{count}} standard machine types. Link brand products in Machines.",
     "loadError": "Could not load standard machines. Refresh and try again.",
-    "dbUnavailable": "Database unavailable. Try again shortly."
+    "dbUnavailable": "Database unavailable. Try again shortly.",
+    "statsLabel": "List summary",
+    "statTotal": "Total",
+    "statWithImage": "With photo",
+    "statNoImage": "No photo",
+    "statLinked": "Linked (this page)",
+    "noImage": "No photo",
+    "machinesCountLabel": "{{count}} linked",
+    "backToList": "Back to list",
+    "editNamed": "Edit {{name}}"
   }
 }

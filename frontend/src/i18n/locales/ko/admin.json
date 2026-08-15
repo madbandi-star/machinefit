@@ -1298,6 +1298,15 @@
     },
     "subtitleWithCount": "표준 머신 유형 {{count}}개. 브랜드별 실제 기구는 기구 관리에서 연결하세요.",
     "loadError": "공통 머신 목록을 불러오지 못했어요. 새로고침 후 다시 시도해 주세요.",
-    "dbUnavailable": "데이터베이스에 연결할 수 없어요. 잠시 후 다시 시도해 주세요."
+    "dbUnavailable": "데이터베이스에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.",
+    "statsLabel": "목록 요약",
+    "statTotal": "전체",
+    "statWithImage": "대표사진 있음",
+    "statNoImage": "대표사진 없음",
+    "statLinked": "연결 기구(이 페이지)",
+    "noImage": "사진 없음",
+    "machinesCountLabel": "연결 {{count}}대",
+    "backToList": "목록으로",
+    "editNamed": "{{name}} 수정"
   }
 }
