@@ -5,7 +5,7 @@
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _d8e51a92_
 
 ## Test focus
 1. 달력 / 도구 / 정렬 기본·호버 색 동일
