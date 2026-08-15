@@ -144,7 +144,7 @@
 }
 
 .history-calendar-dialog__body .history-calendar--muscle-summaries {
-  --hc-day-h: 4.55rem;
+  --hc-day-h: 6.1rem;
 }
 
 .history-calendar-dialog__body .history-calendar--muscle-summaries .history-calendar__day,
@@ -172,7 +172,7 @@
 
 @media (max-width: 430px) {
   .history-calendar-dialog__body .history-calendar--muscle-summaries {
-    --hc-day-h: 4.7rem;
+    --hc-day-h: 6.35rem;
   }
 
   .history-calendar-dialog__body .history-calendar {

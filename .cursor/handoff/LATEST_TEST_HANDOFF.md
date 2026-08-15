@@ -1,17 +1,16 @@
-# Test handoff — Calendar muscle labels mobile fix
+# Test handoff — Calendar muscle max 4 lines
 
 ## Summary
-Mobile calendar showed counts only because muscle names flex-shrunk to zero. Compact inline labels + fixed day height + max 2 lines.
+Under-date muscle summary max lines raised from 2 to 4; fixed cell height increased accordingly.
 
 ## Git
 - Branch: `main`
-- Commit: _23c756fd_
+- Commit: _(after push)_
 
 ## Test focus
-1. Mobile: muscle name visible with count
-2. Multi-muscle days do not stretch the month grid
-3. Desktop still OK
+1. Up to 4 muscle rows visible
+2. Grid height still uniform
 
 ## As-is → To-be
-- **As-is:** Mobile count-only; uneven tall cells
-- **To-be:** Name+count; uniform fixed cells
+- **As-is:** Max 2 lines
+- **To-be:** Max 4 lines

@@ -11,7 +11,7 @@ import {
   type MuscleGroupCount,
 } from '@/utils/historyDate';
 
-const MAX_CALENDAR_MUSCLE_ROWS = 2;
+const MAX_CALENDAR_MUSCLE_ROWS = 4;
 
 interface HistoryDateCalendarProps {
   datesWithData: Set<string>;

@@ -1,22 +1,21 @@
 {
-  "title": "Records calendar muscle labels: mobile + fixed cell height",
-  "summary": "Fix mobile calendar where muscle names collapsed to 0 width (only counts visible). Use compact inline labels, fixed uniform day height, and max 2 summary lines so multi-muscle days do not break the grid.",
-  "git": { "branch": "main", "commit": "23c756fd" },
+  "title": "Calendar muscle rows: max 4 lines",
+  "summary": "Records calendar muscle summary under each date now allows up to 4 lines (was 2), with taller fixed cell height so the grid stays uniform.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
     "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Mobile: calendar day shows muscle NAME + count (not count-only)",
-    "Days with 3+ muscles: 1 line + +N, grid height stays uniform",
-    "Desktop still readable; empty days same cell size"
+    "Calendar day can show up to 4 muscle lines",
+    "5+ muscles still shows +N; cell height stays uniform"
   ],
   "fastChecks": [
-    "rg -n \"hc-day-h|MAX_CALENDAR_MUSCLE_ROWS|day-muscle-count\" frontend/src/components/records frontend/src/styles/records.css"
+    "rg -n \"MAX_CALENDAR_MUSCLE_ROWS = 4|hc-day-h: 6\" frontend/src"
   ],
-  "productionChecks": ["Pages mobile: /records open calendar"],
+  "productionChecks": ["Pages: /records calendar 4 muscle lines"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Mobile: name flex-shrunk away; tall uneven cells",
-  "toBe": "Compact name+count; fixed height; max 2 lines"
+  "asIs": "Max 2 muscle lines under date",
+  "toBe": "Max 4 muscle lines under date"
 }
