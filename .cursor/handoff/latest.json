@@ -1,25 +1,20 @@
 {
-  "title": "Records calendar: muscle + count under dates",
-  "summary": "History calendar dialog now shows each day's muscle groups and per-muscle exercise counts under the date number, derived from filtered record cards.",
-  "git": { "branch": "main", "commit": "a4d1d8d3" },
+  "title": "Deduplicate brand in branded machine labels",
+  "summary": "formatBrandedMachineLabel no longer prefixes brand when the machine name already starts with it (common/standard equipment), fixing repeated names on records cards.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/historyDate.ts",
-    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/styles/records.css"
+    "frontend/src/utils/freeWeightDisplay.ts",
+    "frontend/src/utils/freeWeightDisplay.test.ts"
   ],
   "testFocus": [
-    "Records: open calendar — days with workouts show muscle labels + counts under day number",
-    "Multiple muscle groups on one day stack; 4+ shows +N",
-    "Empty / future days still usable; My Page calendar unchanged (no muscle prop)"
+    "Records card: common machine shows brand once (e.g. Arsenal Strength 45 Leg Press)",
+    "Brand still prefixed when machine name has no brand (Cybex · Leg Curl)"
   ],
   "fastChecks": [
-    "rg -n \"dateMuscleCounts|collectMuscleGroupCountsInOrder|history-calendar__day-muscle\" frontend/src"
+    "cd frontend && npx vitest run src/utils/freeWeightDisplay.test.ts"
   ],
-  "productionChecks": ["Pages: /records calendar muscle lines"],
+  "productionChecks": ["Pages: /records common-equipment card titles"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Calendar days only showed dot or total count",
-  "toBe": "Under date: muscle name + exercise count per group"
+  "asIs": "Brand · Brand Machine Name",
+  "toBe": "Brand Machine Name (no duplicate prefix)"
 }

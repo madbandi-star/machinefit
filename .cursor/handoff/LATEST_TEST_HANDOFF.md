@@ -1,17 +1,16 @@
-# Test handoff — Records calendar muscle counts
+# Test handoff — Deduplicate brand in machine labels
 
 ## Summary
-Records calendar dialog shows muscle group + per-group exercise counts under each date number.
+Common/standard machines whose names already include the brand no longer get `Brand ·` prefixed again on records (and other branded label surfaces).
 
 ## Git
 - Branch: `main`
-- Commit: _a4d1d8d3_
+- Commit: _(after push)_
 
 ## Test focus
-1. Open calendar on records — workout days show muscles + counts
-2. Multi-muscle days stack; overflow shows +N
-3. My Page calendar still dots only
+1. Records: common equipment title shows brand once
+2. Non-prefixed machine names still get `Brand · Name`
 
 ## As-is → To-be
-- **As-is:** Dot / total count only
-- **To-be:** Under date: muscle + count lines
+- **As-is:** Arsenal Strength · Arsenal Strength 45 Leg Press
+- **To-be:** Arsenal Strength 45 Leg Press
