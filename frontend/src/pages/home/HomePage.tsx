@@ -18,7 +18,8 @@ import { GymSelector } from '@/components/gyms/GymSelector/GymSelector';
 import { MemberSelector } from '@/components/gyms/MemberSelector/MemberSelector';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Seo } from '@/seo/Seo';
-import { organizationJsonLd, websiteJsonLd } from '@/seo/jsonLd';
+import { homeBrandJsonLd } from '@/seo/jsonLd';
+import { SEO_HOME_DESCRIPTION, SEO_HOME_TITLE } from '@/seo/siteSeo';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
@@ -69,11 +70,11 @@ export function HomePage() {
     return (
       <>
         <Seo
-          title="MachineFit | 헬스장 머신 운동과 운동기록"
-          description="헬스장 머신별 맞춤 세팅과 운동 기록을 MachineFit에서 관리하세요. 브랜드·머신 검색부터 추천 중량까지."
+          title={SEO_HOME_TITLE}
+          description={SEO_HOME_DESCRIPTION}
           path="/"
           titleAbsolute
-          jsonLd={[organizationJsonLd(), websiteJsonLd()]}
+          jsonLd={homeBrandJsonLd()}
         />
         <AuthLandingScreen />
       </>
@@ -91,11 +92,11 @@ export function HomePage() {
   return (
     <div className="home-page">
       <Seo
-        title="MachineFit | 헬스장 머신 운동과 운동기록"
-        description="헬스장 머신별 맞춤 세팅과 운동 기록을 MachineFit에서 관리하세요. 브랜드·머신 검색부터 추천 중량까지."
+        title={SEO_HOME_TITLE}
+        description={SEO_HOME_DESCRIPTION}
         path="/"
         titleAbsolute
-        jsonLd={[organizationJsonLd(), websiteJsonLd()]}
+        jsonLd={homeBrandJsonLd()}
       />
       <HomeNoticeBanner />
       <HomePlannedWorkoutCard />

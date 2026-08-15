@@ -3,7 +3,12 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { applyPageSeo } from '@/seo/applyPageSeo';
 import { resolveSeoPathPolicy } from '@/seo/routeSeoPolicy';
-import { stripQueryAndHash } from '@/seo/siteSeo';
+import {
+  SEO_HOME_DESCRIPTION,
+  SEO_SITE_NAME,
+  stripQueryAndHash,
+  titleIncludesBrand,
+} from '@/seo/siteSeo';
 
 /**
  * Applies default SEO for the current route.
@@ -25,14 +30,13 @@ export function SeoRouteSync() {
   useEffect(() => {
     const path = stripQueryAndHash(location.pathname) || '/';
     const policy = resolveSeoPathPolicy(path, location.search);
+    const defaultTitle = policy.defaultTitle || SEO_SITE_NAME;
     applyPageSeo({
-      title: policy.defaultTitle || 'MachineFit',
-      description:
-        policy.defaultDescription ||
-        '헬스장 머신 맞춤 세팅과 운동 기록 — MachineFit (machine-fit.com)',
+      title: defaultTitle,
+      description: policy.defaultDescription || SEO_HOME_DESCRIPTION,
       path,
       robots: policy.robots,
-      titleAbsolute: Boolean(policy.defaultTitle?.includes('MachineFit')),
+      titleAbsolute: titleIncludesBrand(defaultTitle),
     });
   }, [location.pathname, location.search]);
 

@@ -59,7 +59,7 @@ export function BrandDetailPage() {
   const seoTitle = `${name} 머신`;
   const seoDescription =
     description ||
-    `${name} 헬스장 머신 목록과 사용 팁을 MachineFit에서 확인하세요.`;
+    `${name} 헬스장 머신 목록과 사용 팁을 머신핏에서 확인하세요.`;
 
   return (
     <PageShell title={name} subtitle={t('brandDetail.subtitle', { code: brand.code })}>

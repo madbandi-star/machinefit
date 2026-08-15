@@ -297,7 +297,7 @@ export function MachineSearchPage() {
     <div className="machine-search">
       <Seo
         title="헬스장 머신 검색"
-        description="해머 스트렝스, 사이벡스, 라이프 피트니스, 테크노짐 등 헬스장 머신을 검색하고 맞춤 세팅을 확인하세요."
+        description="머신핏에서 해머 스트렝스, 사이벡스, 라이프 피트니스, 테크노짐 등 헬스장 머신을 검색하고 맞춤 세팅을 확인하세요."
         path="/machines"
         robots={
           searchParams.toString() ? 'noindex,follow' : 'index,follow'

@@ -101,15 +101,17 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/api\//],
       },
       manifest: {
-        name: 'MachineFit',
-        short_name: 'MachineFit',
-        description: 'Global fitness machine fitting platform',
+        name: '머신핏 (MachineFit)',
+        short_name: '머신핏',
+        description:
+          '머신핏 — 헬스 머신·프리웨이트·맨몸운동 기록과 볼륨 분석 피트니스 서비스',
         theme_color: '#111827',
         background_color: '#111827',
         display: 'standalone',
         start_url: '/machinefit/',
         scope: '/machinefit/',
         id: '/machinefit/',
+        lang: 'ko',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

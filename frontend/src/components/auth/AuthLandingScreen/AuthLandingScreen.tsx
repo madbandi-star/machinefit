@@ -67,12 +67,18 @@ export function AuthLandingScreen() {
       </div>
 
       <header className="auth-landing__header">
-        <img className="auth-landing__logo" src={MARK_SRC} alt="" width={72} height={72} />
-        <p className="auth-landing__brand">MachineFit</p>
+        <img
+          className="auth-landing__logo"
+          src={MARK_SRC}
+          alt=""
+          width={72}
+          height={72}
+        />
+        <h1 className="auth-landing__brand">{t('auth.landingBrand')}</h1>
         <p className="auth-landing__slogan">{t('auth.landingSlogan')}</p>
       </header>
 
-      <h1 className="auth-landing__headline">
+      <p className="auth-landing__headline">
         <span className="auth-landing__headline-line">{t('auth.landingHeadline1')}</span>
         <span className="auth-landing__headline-line">{t('auth.landingHeadline2')}</span>
         <span className="auth-landing__headline-line">
@@ -83,7 +89,7 @@ export function AuthLandingScreen() {
             }}
           />
         </span>
-      </h1>
+      </p>
 
       <p className="auth-landing__subhead">{t('auth.landingSubhead')}</p>
 

@@ -2,38 +2,81 @@
 <html lang="ko" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="%BASE_URL%favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%app-icon.svg" />
     <link rel="apple-touch-icon" href="%BASE_URL%icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="헬스장 머신별 맞춤 세팅과 운동 기록을 MachineFit에서 관리하세요. 브랜드·머신 검색부터 추천 중량까지 — machine-fit.com"
+      content="머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다."
     />
     <meta name="robots" content="index,follow" />
+    <!-- Naver Search Advisor site verification (issued token — do not invent replacements) -->
     <meta name="naver-site-verification" content="f7aebd3da05ff83a17ecf0e9a0e84cad2cbba904" />
+    <!--
+      Google Search Console: when you receive a meta verification token, add:
+      <meta name="google-site-verification" content="PASTE_TOKEN_HERE" />
+    -->
     <meta name="theme-color" content="#000000" />
+    <meta name="application-name" content="머신핏" />
+    <meta name="apple-mobile-web-app-title" content="머신핏" />
     <link rel="canonical" href="https://machine-fit.com/machinefit/" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="MachineFit" />
-    <meta property="og:title" content="MachineFit | 헬스장 머신 운동과 운동기록" />
+    <meta property="og:site_name" content="머신핏" />
+    <meta property="og:title" content="머신핏 | 헬스 머신 운동 기록·분석" />
     <meta
       property="og:description"
-      content="헬스장 머신 맞춤 세팅과 운동 기록 앱 · machine-fit.com"
+      content="머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다."
     />
     <meta property="og:url" content="https://machine-fit.com/machinefit/" />
     <meta property="og:image" content="https://machine-fit.com/machinefit/icon-512.png" />
     <meta property="og:locale" content="ko_KR" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="MachineFit | 헬스장 머신 운동과 운동기록" />
+    <meta name="twitter:title" content="머신핏 | 헬스 머신 운동 기록·분석" />
     <meta
       name="twitter:description"
-      content="Personalized gym machine settings and workout logging · machine-fit.com"
+      content="머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다."
     />
     <meta name="twitter:image" content="https://machine-fit.com/machinefit/icon-512.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <title>MachineFit | 헬스장 머신 운동과 운동기록</title>
+    <title>머신핏 | 헬스 머신 운동 기록·분석</title>
+    <script type="application/ld+json" id="mf-seo-json-ld">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "name": "머신핏",
+            "alternateName": "MachineFit",
+            "url": "https://machine-fit.com/",
+            "logo": "https://machine-fit.com/machinefit/icon-512.png"
+          },
+          {
+            "@type": "WebSite",
+            "name": "머신핏",
+            "alternateName": "MachineFit",
+            "url": "https://machine-fit.com/",
+            "inLanguage": ["ko", "en", "ja", "zh"]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "머신핏",
+            "alternateName": "MachineFit",
+            "url": "https://machine-fit.com/machinefit/",
+            "applicationCategory": "HealthApplication",
+            "operatingSystem": "Web",
+            "description": "머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "KRW"
+            }
+          }
+        ]
+      }
+    </script>
     <style id="mf-app-frame-v14">
       /* iPhone 15 Pro Max frame + dark paint before CSS bundle (avoids white/navy FOUC) */
       :root {

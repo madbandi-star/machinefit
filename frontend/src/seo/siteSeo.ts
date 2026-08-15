@@ -1,11 +1,31 @@
 /**
  * Production SEO helpers for the Vite SPA (GitHub Pages base `/machinefit/`).
- * Canonical host: https://machine-fit.com/machinefit/...
+ *
+ * Brand:
+ * - KO: 머신핏
+ * - EN: MachineFit
+ * - Marketing origin: https://machine-fit.com/ (301 → /machinefit/)
+ * - App / page canonicals: https://machine-fit.com/machinefit/...
  */
 import { SITE_APP_URL, SITE_DOMAIN, SITE_URL } from '@machinefit/shared';
 
-export const SEO_SITE_NAME = 'MachineFit';
+/** Official Korean brand name (primary for titles / OG site_name). */
+export const SEO_SITE_NAME = '머신핏';
+
+/** Official English brand name. */
+export const SEO_SITE_NAME_EN = 'MachineFit';
+
+/** Combined display when both languages help disambiguation. */
+export const SEO_SITE_NAME_FULL = '머신핏(MachineFit)';
+
 export const SEO_THEME_COLOR = '#000000';
+
+/** Home document title — Korean brand first, concise product phrase. */
+export const SEO_HOME_TITLE = '머신핏 | 헬스 머신 운동 기록·분석';
+
+/** Home meta description — factual product summary with brand + core terms. */
+export const SEO_HOME_DESCRIPTION =
+  '머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다.';
 
 /** Absolute default OG / Twitter image (exists in public/). */
 export const SEO_DEFAULT_IMAGE = `${SITE_APP_URL}/icon-512.png`;
@@ -22,7 +42,7 @@ export type PageSeoInput = {
   type?: 'website' | 'article';
   /** JSON-LD object or array; omitted clears previous JSON-LD from this helper. */
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>> | null;
-  /** When true, do not append " | MachineFit" if already present. */
+  /** When true, do not append " | 머신핏" if already present. */
   titleAbsolute?: boolean;
 };
 
@@ -33,9 +53,14 @@ export function absoluteAppUrl(path = '/'): string {
   return `${SITE_APP_URL}${clean}`.replace(/\/+$/, '');
 }
 
+/** True when title already contains the brand (KO or EN). */
+export function titleIncludesBrand(title: string): boolean {
+  return /머신핏|machinefit/i.test(title);
+}
+
 export function formatDocumentTitle(title: string, absolute = false): string {
   const trimmed = title.trim();
-  if (absolute || /machinefit/i.test(trimmed)) return trimmed;
+  if (absolute || titleIncludesBrand(trimmed)) return trimmed;
   return `${trimmed} | ${SEO_SITE_NAME}`;
 }
 

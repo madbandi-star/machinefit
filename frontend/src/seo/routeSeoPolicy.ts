@@ -51,9 +51,9 @@ const INDEX_RULES: Rule[] = [
     match: (p) => p === '/',
     policy: {
       robots: 'index,follow',
-      defaultTitle: 'MachineFit | 헬스장 머신 운동과 운동기록',
+      defaultTitle: '머신핏 | 헬스 머신 운동 기록·분석',
       defaultDescription:
-        '헬스장 머신별 맞춤 세팅과 운동 기록을 MachineFit에서 관리하세요. 브랜드·머신 검색부터 추천 중량까지.',
+        '머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다.',
     },
   },
   {
@@ -62,7 +62,7 @@ const INDEX_RULES: Rule[] = [
       robots: 'index,follow',
       defaultTitle: '헬스장 머신 검색',
       defaultDescription:
-        '해머 스트렝스, 사이벡스, 라이프 피트니스, 테크노짐 등 헬스장 머신을 검색하고 맞춤 세팅을 확인하세요.',
+        '머신핏에서 해머 스트렝스, 사이벡스, 라이프 피트니스, 테크노짐 등 헬스장 머신을 검색하고 맞춤 세팅을 확인하세요.',
     },
   },
   {
@@ -70,7 +70,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '머신 상세',
-      defaultDescription: '헬스장 머신 사용법과 맞춤 세팅을 MachineFit에서 확인하세요.',
+      defaultDescription: '헬스장 머신 사용법과 맞춤 세팅을 머신핏에서 확인하세요.',
     },
   },
   {
@@ -79,7 +79,7 @@ const INDEX_RULES: Rule[] = [
       robots: 'index,follow',
       defaultTitle: '헬스 머신 브랜드',
       defaultDescription:
-        'Hammer Strength, Cybex, Life Fitness, Technogym 등 헬스장 머신 브랜드를 MachineFit에서 살펴보세요.',
+        'Hammer Strength, Cybex, Life Fitness, Technogym 등 헬스장 머신 브랜드를 머신핏에서 살펴보세요.',
     },
   },
   {
@@ -87,7 +87,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '브랜드 머신',
-      defaultDescription: '브랜드별 헬스장 머신 목록과 세팅 가이드를 MachineFit에서 확인하세요.',
+      defaultDescription: '브랜드별 헬스장 머신 목록과 세팅 가이드를 머신핏에서 확인하세요.',
     },
   },
   {
@@ -95,7 +95,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '헬스장 찾기',
-      defaultDescription: '내 주변 헬스장을 찾고 MachineFit으로 운동을 기록하세요.',
+      defaultDescription: '내 주변 헬스장을 찾고 머신핏으로 운동을 기록하세요.',
     },
   },
   {
@@ -112,7 +112,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '약관 및 정책',
-      defaultDescription: 'MachineFit 서비스 이용약관과 개인정보 처리방침 등 법적 고지입니다.',
+      defaultDescription: '머신핏 서비스 이용약관과 개인정보 처리방침 등 법적 고지입니다.',
     },
   },
   {
@@ -120,7 +120,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '커뮤니티',
-      defaultDescription: 'MachineFit 커뮤니티 — 머신 요청, 공지, 템플릿 공유 허브.',
+      defaultDescription: '머신핏 커뮤니티 — 머신 요청, 공지, 템플릿 공유 허브.',
     },
   },
   {
@@ -128,7 +128,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '공지사항',
-      defaultDescription: 'MachineFit 서비스 공지사항을 확인하세요.',
+      defaultDescription: '머신핏 서비스 공지사항을 확인하세요.',
     },
   },
   {
@@ -136,7 +136,7 @@ const INDEX_RULES: Rule[] = [
     policy: {
       robots: 'index,follow',
       defaultTitle: '고객 지원',
-      defaultDescription: 'MachineFit 고객 지원 및 문의 안내입니다.',
+      defaultDescription: '머신핏 고객 지원 및 문의 안내입니다.',
     },
   },
 ];

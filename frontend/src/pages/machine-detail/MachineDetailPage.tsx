@@ -169,7 +169,7 @@ export function MachineDetailPage() {
   const seoTitle = brandName ? `${brandName} ${machineName} 사용법` : `${machineName} 사용법`;
   const seoDescription =
     descText ||
-    `${brandName ? `${brandName} ` : ''}${machineName}의 운동 부위와 머신 사용 팁을 MachineFit에서 확인하고 운동을 기록하세요.`;
+    `${brandName ? `${brandName} ` : ''}${machineName}의 운동 부위와 머신 사용 팁을 머신핏에서 확인하고 운동을 기록하세요.`;
   const seoPath = `/machines/${encodeURIComponent(machine.code)}`;
   const seoImage =
     resolveRecordMachineImageUrl(machine.code, {

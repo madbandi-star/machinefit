@@ -32,7 +32,10 @@ if (fs.existsSync(sitemap)) ok('sitemap.xml exists');
 else fail('sitemap.xml missing');
 
 const robotsText = fs.existsSync(robots) ? fs.readFileSync(robots, 'utf8') : '';
-if (robotsText.includes('Sitemap: https://machine-fit.com/machinefit/sitemap.xml')) {
+if (
+  robotsText.includes('Sitemap: https://machine-fit.com/sitemap.xml') ||
+  robotsText.includes('Sitemap: https://machine-fit.com/machinefit/sitemap.xml')
+) {
   ok('robots.txt sitemap URL uses production domain');
 } else fail('robots.txt sitemap URL incorrect');
 
@@ -76,6 +79,19 @@ if (html.includes('rel="canonical"')) ok('index.html has canonical');
 else fail('index.html missing canonical');
 if (html.includes('og:image')) ok('index.html has og:image');
 else fail('index.html missing og:image');
+if (html.includes('<title>머신핏')) ok('index.html title leads with 머신핏');
+else fail('index.html title should lead with 머신핏');
+if (html.includes('application/ld+json')) ok('index.html has JSON-LD');
+else fail('index.html missing JSON-LD');
+if (html.includes('naver-site-verification')) ok('index.html has Naver verification');
+else fail('index.html missing Naver verification');
+if (html.includes('SeatFit') || html.includes('seatfit')) {
+  fail('index.html still mentions SeatFit');
+} else ok('index.html has no SeatFit remnants');
+
+const faviconIco = path.join(fe, 'public/favicon.ico');
+if (fs.existsSync(faviconIco)) ok('favicon.ico exists');
+else fail('favicon.ico missing');
 
 for (const f of [
   'siteSeo.ts',
@@ -88,6 +104,17 @@ for (const f of [
   if (fs.existsSync(path.join(seoDir, f))) ok(`seo module ${f}`);
   else fail(`missing seo module ${f}`);
 }
+
+const siteSeo = fs.readFileSync(path.join(seoDir, 'siteSeo.ts'), 'utf8');
+if (siteSeo.includes("SEO_SITE_NAME = '머신핏'")) ok('SEO_SITE_NAME is 머신핏');
+else fail('SEO_SITE_NAME should be 머신핏');
+
+const jsonLd = fs.readFileSync(path.join(seoDir, 'jsonLd.ts'), 'utf8');
+if (jsonLd.includes('softwareApplicationJsonLd') || jsonLd.includes('WebApplication')) {
+  ok('JSON-LD includes WebApplication');
+} else fail('JSON-LD missing WebApplication');
+if (jsonLd.includes('alternateName')) ok('JSON-LD has alternateName MachineFit');
+else fail('JSON-LD missing alternateName');
 
 if (failed) {
   console.error(`\nSEO validation FAILED (${failed})`);

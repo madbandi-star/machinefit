@@ -15,7 +15,7 @@ export function Header() {
   return (
     <header className="header">
       <div className="header__brand">
-        <Link to={ROUTES.HOME} className="header__logo">
+        <Link to={ROUTES.HOME} className="header__logo" aria-label="머신핏">
           <img
             className="header__logo-mark"
             src={`${import.meta.env.BASE_URL}assets/brand/machinefit-mark.svg`}

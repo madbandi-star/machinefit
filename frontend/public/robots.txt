@@ -1,5 +1,6 @@
 User-agent: *
-# Production SPA lives under /machinefit/ (Vite base + GitHub Pages)
+# Production SPA lives under /machinefit/ (Vite base + GitHub Pages).
+# Googlebot / Naver Yeti inherit this group — CSS/JS under /machinefit/ are not blocked.
 
 Allow: /machinefit/$
 Allow: /machinefit/machines
@@ -47,4 +48,5 @@ Disallow: /machinefit/community/photo
 Disallow: /machinefit/community/templates
 Disallow: /machinefit/community/posts
 
+Sitemap: https://machine-fit.com/sitemap.xml
 Sitemap: https://machine-fit.com/machinefit/sitemap.xml

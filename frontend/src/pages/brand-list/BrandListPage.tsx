@@ -24,13 +24,13 @@ export function BrandListPage() {
     <PageShell title={t('nav.brands')}>
       <Seo
         title="헬스 머신 브랜드"
-        description="Hammer Strength, Cybex, Life Fitness, Technogym 등 헬스장 머신 브랜드를 MachineFit에서 살펴보세요."
+        description="Hammer Strength, Cybex, Life Fitness, Technogym 등 헬스장 머신 브랜드를 머신핏에서 살펴보세요."
         path="/brands"
         jsonLd={[
           brandCollectionJsonLd({
             name: '헬스 머신 브랜드',
             description:
-              'Hammer Strength, Cybex, Life Fitness, Technogym 등 헬스장 머신 브랜드를 MachineFit에서 살펴보세요.',
+              'Hammer Strength, Cybex, Life Fitness, Technogym 등 헬스장 머신 브랜드를 머신핏에서 살펴보세요.',
             path: '/brands',
           }),
           breadcrumbJsonLd([
