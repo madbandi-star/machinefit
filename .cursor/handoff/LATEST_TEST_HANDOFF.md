@@ -5,7 +5,7 @@ Muscle summary under dates: max 3 lines sorted by exercise count (desc), then +N
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _0bb12915_
 
 ## Test focus
 1. Max 3 muscle chips

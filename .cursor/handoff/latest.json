@@ -1,7 +1,7 @@
 {
   "title": "Calendar muscles: top 3 by count + +N",
   "summary": "Date calendar muscle chips show at most 3 groups sorted by exercise count desc, with +N for the rest; cell height tightened.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "0bb12915" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/styles/records.css",
