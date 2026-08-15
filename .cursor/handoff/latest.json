@@ -1,7 +1,7 @@
 {
   "title": "Records calendar muscle labels: mobile + fixed cell height",
   "summary": "Fix mobile calendar where muscle names collapsed to 0 width (only counts visible). Use compact inline labels, fixed uniform day height, and max 2 summary lines so multi-muscle days do not break the grid.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "23c756fd" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",

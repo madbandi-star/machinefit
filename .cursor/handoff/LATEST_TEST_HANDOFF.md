@@ -5,7 +5,7 @@ Mobile calendar showed counts only because muscle names flex-shrunk to zero. Com
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _23c756fd_
 
 ## Test focus
 1. Mobile: muscle name visible with count
