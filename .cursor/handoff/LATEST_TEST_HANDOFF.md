@@ -5,7 +5,7 @@ Hint shortened and placed beside title; bottom Close removed; muscle summary = 4
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _58a21569_
 
 ## Test focus
 1. Hint beside 일자조회

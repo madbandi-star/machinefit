@@ -1,7 +1,7 @@
 {
   "title": "Calendar dialog hint, no footer close, 4+N muscles",
   "summary": "Date-filter dialog: shortened hint beside title, removed bottom Close, muscle lines show up to 4 groups then +N (5th line).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "58a21569" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
