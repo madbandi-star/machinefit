@@ -1,16 +1,16 @@
-# Test handoff ? ±â·Ï µµ±¸ ¹öÆ° »ö ÅëÀÏ
+# Test handoff â€” Records tools button color
 
 ## Summary
-±â·Ï Åø¹Ù µµ±¸(¼³Á¤) ¹öÆ°ÀÌ ½ÃÆ® CSS ¿À¹ö¶óÀÌµå·Î ´Ş·Â¡¤Á¤·Ä°ú »öÀÌ ´Ş¶úÀ½. ¿À¹ö¶óÀÌµå Á¦°Å·Î `records.css` °øÅë ½ºÅ¸ÀÏ »ç¿ë.
+Records toolbar tools (settings) button mismatched calendar/sort due to a sheet CSS override. Override removed so shared `records.css` styles apply.
 
 ## Git
 - Branch: `main`
-- Commit: _d8e51a92_
+- Commit: `d8e51a92`
 
 ## Test focus
-1. ´Ş·Â / µµ±¸ / Á¤·Ä ±âº»¡¤È£¹ö »ö µ¿ÀÏ
-2. µµ±¸ ¸Ş´º ¿­¸° »óÅÂµµ ÇÁ¶óÀÌ¸Ó¸® Åæ
+1. Calendar / tools / sort default + hover colors match
+2. Tools menu open state uses primary tone
 
-## As-is ¡æ To-be
-- **As-is:** µµ±¸¸¸ surface/border Åæ
-- **To-be:** ´Ş·Â¡¤Á¤·Ä°ú µ¿ÀÏ glass + primary
+## As-is â†’ To-be
+- **As-is:** Tools alone used surface/border tones
+- **To-be:** Same glass + primary as calendar/sort

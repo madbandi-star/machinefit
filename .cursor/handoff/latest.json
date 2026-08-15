@@ -1,22 +1,19 @@
 {
-  "title": "Search filter chips: visible horizontal scrollbar",
-  "summary": "Muscle and brand chip rows now show a thin primary-styled horizontal scrollbar (was hidden) plus edge fades so trailing chips are reachable.",
-  "git": { "branch": "main", "commit": "e1cbce85" },
+  "title": "Records toolbar: match tools button color",
+  "summary": "Removed HistoryDayActionsSheet.css override so the tools (settings) button uses the same glass/primary styles as calendar and date-sort triggers.",
+  "git": { "branch": "main", "commit": "d8e51a92" },
   "changedFiles": [
-    "frontend/src/styles/machines.css",
-    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
+    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css"
   ],
   "testFocus": [
-    "??: ???/??? ?? ????? ??",
-    "?? ? ??? ????? ??",
-    "?? ????? ??"
+    "Records: calendar / tools / sort icon buttons match default and hover colors",
+    "Tools sheet open (aria-expanded) uses primary tone"
   ],
   "fastChecks": [
-    "rg -n \"filter-chips-scroller|scrollbar-width: thin|::-webkit-scrollbar\" frontend/src/styles/machines.css"
+    "rg -n \"records-list__day-menu-trigger\" frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css || echo \"no override (ok)\""
   ],
-  "productionChecks": ["Pages: /search muscle+brand chip scroll"],
+  "productionChecks": ["Pages: /records toolbar icon colors"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "overflow-x auto but scrollbar hidden ? right chips unreachable",
-  "toBe": "Visible thin themed scrollbar + edge fades"
+  "asIs": "Tools button used surface/border colors (sheet CSS override)",
+  "toBe": "Same glass muted + primary hover as calendar/sort"
 }
