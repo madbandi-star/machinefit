@@ -1,20 +1,22 @@
 {
-  "title": "Deduplicate brand in branded machine labels",
-  "summary": "formatBrandedMachineLabel no longer prefixes brand when the machine name already starts with it (common/standard equipment), fixing repeated names on records cards.",
-  "git": { "branch": "main", "commit": "2ab0b034" },
+  "title": "Records calendar muscle labels: mobile + fixed cell height",
+  "summary": "Fix mobile calendar where muscle names collapsed to 0 width (only counts visible). Use compact inline labels, fixed uniform day height, and max 2 summary lines so multi-muscle days do not break the grid.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/utils/freeWeightDisplay.ts",
-    "frontend/src/utils/freeWeightDisplay.test.ts"
+    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Records card: common machine shows brand once (e.g. Arsenal Strength 45 Leg Press)",
-    "Brand still prefixed when machine name has no brand (Cybex · Leg Curl)"
+    "Mobile: calendar day shows muscle NAME + count (not count-only)",
+    "Days with 3+ muscles: 1 line + +N, grid height stays uniform",
+    "Desktop still readable; empty days same cell size"
   ],
   "fastChecks": [
-    "cd frontend && npx vitest run src/utils/freeWeightDisplay.test.ts"
+    "rg -n \"hc-day-h|MAX_CALENDAR_MUSCLE_ROWS|day-muscle-count\" frontend/src/components/records frontend/src/styles/records.css"
   ],
-  "productionChecks": ["Pages: /records common-equipment card titles"],
+  "productionChecks": ["Pages mobile: /records open calendar"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Brand · Brand Machine Name",
-  "toBe": "Brand Machine Name (no duplicate prefix)"
+  "asIs": "Mobile: name flex-shrunk away; tall uneven cells",
+  "toBe": "Compact name+count; fixed height; max 2 lines"
 }

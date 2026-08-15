@@ -11,7 +11,7 @@ import {
   type MuscleGroupCount,
 } from '@/utils/historyDate';
 
-const MAX_CALENDAR_MUSCLE_ROWS = 3;
+const MAX_CALENDAR_MUSCLE_ROWS = 2;
 
 interface HistoryDateCalendarProps {
   datesWithData: Set<string>;
@@ -194,7 +194,10 @@ export function HistoryDateCalendar({
           const isFutureEmpty = planHints && allowEmptySelect && !hasData && cell.dateKey > todayKey;
           const parsed = parseDateKey(cell.dateKey);
           const isWeekend = new Date(parsed.year, parsed.monthIndex, cell.day).getDay() % 6 === 0;
-          const visibleMuscles = muscleRows.slice(0, MAX_CALENDAR_MUSCLE_ROWS);
+          const visibleMuscles =
+            muscleRows.length <= MAX_CALENDAR_MUSCLE_ROWS
+              ? muscleRows
+              : muscleRows.slice(0, MAX_CALENDAR_MUSCLE_ROWS - 1);
           const hiddenMuscleCount = muscleRows.length - visibleMuscles.length;
           const muscleAria =
             hasMuscles
@@ -240,14 +243,15 @@ export function HistoryDateCalendar({
               <span className="history-calendar__day-num">{cell.day}</span>
               {hasMuscles ? (
                 <span className="history-calendar__day-muscles" aria-hidden>
-                  {visibleMuscles.map((row) => (
-                    <span key={row.group} className="history-calendar__day-muscle">
-                      <span className="history-calendar__day-muscle-name">
-                        {t(`muscleGroups.${row.group}`, { defaultValue: row.group })}
+                  {visibleMuscles.map((row) => {
+                    const label = t(`muscleGroups.${row.group}`, { defaultValue: row.group });
+                    return (
+                      <span key={row.group} className="history-calendar__day-muscle">
+                        {label}
+                        <span className="history-calendar__day-muscle-count">{row.count}</span>
                       </span>
-                      <span className="history-calendar__day-muscle-count">{row.count}</span>
-                    </span>
-                  ))}
+                    );
+                  })}
                   {hiddenMuscleCount > 0 ? (
                     <span className="history-calendar__day-muscle history-calendar__day-muscle--more">
                       +{hiddenMuscleCount}

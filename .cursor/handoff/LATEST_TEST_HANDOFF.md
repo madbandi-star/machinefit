@@ -1,16 +1,17 @@
-# Test handoff — Deduplicate brand in machine labels
+# Test handoff — Calendar muscle labels mobile fix
 
 ## Summary
-Common/standard machines whose names already include the brand no longer get `Brand ·` prefixed again on records (and other branded label surfaces).
+Mobile calendar showed counts only because muscle names flex-shrunk to zero. Compact inline labels + fixed day height + max 2 lines.
 
 ## Git
 - Branch: `main`
-- Commit: _2ab0b034_
+- Commit: _(after push)_
 
 ## Test focus
-1. Records: common equipment title shows brand once
-2. Non-prefixed machine names still get `Brand · Name`
+1. Mobile: muscle name visible with count
+2. Multi-muscle days do not stretch the month grid
+3. Desktop still OK
 
 ## As-is → To-be
-- **As-is:** Arsenal Strength · Arsenal Strength 45 Leg Press
-- **To-be:** Arsenal Strength 45 Leg Press
+- **As-is:** Mobile count-only; uneven tall cells
+- **To-be:** Name+count; uniform fixed cells
