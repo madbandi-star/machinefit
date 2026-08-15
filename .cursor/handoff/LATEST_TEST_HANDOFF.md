@@ -5,7 +5,7 @@ Date-filter calendar redesigned for glanceability: sheet layout, inline Today, m
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _a12e69d3_
 
 ## Test focus
 1. Toolbar: month + N일 운동 + 오늘

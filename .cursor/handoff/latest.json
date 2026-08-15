@@ -1,7 +1,7 @@
 {
   "title": "Records date calendar UI/UX glanceability polish",
   "summary": "Redesigned the date-filter calendar sheet: clearer month toolbar with inline Today + workout-day count, stronger workout-day cells, muscle rows as readable chips with total badge, and a flatter dialog chrome.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a12e69d3" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
