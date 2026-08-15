@@ -1,19 +1,25 @@
 {
-  "title": "Records toolbar: match tools button color",
-  "summary": "Removed HistoryDayActionsSheet.css override so the tools (settings) button uses the same glass/primary styles as calendar and date-sort triggers.",
-  "git": { "branch": "main", "commit": "d8e51a92" },
+  "title": "Records calendar: muscle + count under dates",
+  "summary": "History calendar dialog now shows each day's muscle groups and per-muscle exercise counts under the date number, derived from filtered record cards.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css"
+    "frontend/src/utils/historyDate.ts",
+    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "Records: calendar / tools / sort icon buttons match default and hover colors",
-    "Tools sheet open (aria-expanded) uses primary tone"
+    "Records: open calendar — days with workouts show muscle labels + counts under day number",
+    "Multiple muscle groups on one day stack; 4+ shows +N",
+    "Empty / future days still usable; My Page calendar unchanged (no muscle prop)"
   ],
   "fastChecks": [
-    "rg -n \"records-list__day-menu-trigger\" frontend/src/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet.css || echo \"no override (ok)\""
+    "rg -n \"dateMuscleCounts|collectMuscleGroupCountsInOrder|history-calendar__day-muscle\" frontend/src"
   ],
-  "productionChecks": ["Pages: /records toolbar icon colors"],
+  "productionChecks": ["Pages: /records calendar muscle lines"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Tools button used surface/border colors (sheet CSS override)",
-  "toBe": "Same glass muted + primary hover as calendar/sort"
+  "asIs": "Calendar days only showed dot or total count",
+  "toBe": "Under date: muscle name + exercise count per group"
 }

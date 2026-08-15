@@ -143,8 +143,22 @@
   border-radius: 16px;
 }
 
+.history-calendar-dialog__body .history-calendar__day--with-muscles {
+  width: 100%;
+  min-height: 4.35rem;
+  padding: 0.32rem 0.14rem 0.36rem;
+}
+
+.history-calendar-dialog__body .history-calendar--muscle-summaries .history-calendar__day {
+  min-height: 4.35rem;
+}
+
 .history-calendar-dialog__body .history-calendar__day-num {
   font-size: 1rem;
+}
+
+.history-calendar-dialog__body .history-calendar__day-muscle {
+  font-size: 0.6rem;
 }
 
 .history-calendar-dialog__body .history-calendar__legend {

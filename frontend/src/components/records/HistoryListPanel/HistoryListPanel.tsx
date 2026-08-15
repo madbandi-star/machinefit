@@ -19,6 +19,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import {
+  collectMuscleGroupCountsInOrder,
   collectMuscleGroupsInOrder,
   formatHistoryDateHeader,
   formatHistoryDateHeaderWithMuscles,
@@ -370,6 +371,21 @@ export function HistoryListPanel() {
       counts.set(card.logDate, (counts.get(card.logDate) ?? 0) + 1);
     }
     return counts;
+  }, [filteredAllCards]);
+
+  const dateMuscleCounts = useMemo(() => {
+    const byDate = new Map<string, typeof filteredAllCards>();
+    for (const card of filteredAllCards) {
+      const list = byDate.get(card.logDate);
+      if (list) list.push(card);
+      else byDate.set(card.logDate, [card]);
+    }
+    const summaries = new Map<string, ReturnType<typeof collectMuscleGroupCountsInOrder>>();
+    for (const [dateKey, cards] of byDate) {
+      const rows = collectMuscleGroupCountsInOrder(cards);
+      if (rows.length) summaries.set(dateKey, rows);
+    }
+    return summaries;
   }, [filteredAllCards]);
 
   const groupedCards = useMemo(() => {
@@ -1444,6 +1460,7 @@ export function HistoryListPanel() {
         open={calendarOpen}
         datesWithData={datesWithData}
         dateCounts={dateCounts}
+        dateMuscleCounts={dateMuscleCounts}
         selectedDate={selectedDate}
         locale={i18n.language}
         allowEmptySelect

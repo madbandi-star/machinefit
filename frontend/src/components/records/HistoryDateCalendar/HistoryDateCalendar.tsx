@@ -8,12 +8,17 @@ import {
   getTodayDateKey,
   getWeekdayLabels,
   parseDateKey,
+  type MuscleGroupCount,
 } from '@/utils/historyDate';
+
+const MAX_CALENDAR_MUSCLE_ROWS = 3;
 
 interface HistoryDateCalendarProps {
   datesWithData: Set<string>;
   /** Optional per-date counts (plans + records). Falls back to a dot when missing. */
   dateCounts?: Map<string, number>;
+  /** Optional per-date muscle group + exercise counts shown under the day number. */
+  dateMuscleCounts?: Map<string, MuscleGroupCount[]>;
   selectedDate: string;
   onSelect: (dateKey: string) => void;
   locale: string;
@@ -33,6 +38,7 @@ interface HistoryDateCalendarProps {
 export function HistoryDateCalendar({
   datesWithData,
   dateCounts,
+  dateMuscleCounts,
   selectedDate,
   onSelect,
   locale,
@@ -91,7 +97,15 @@ export function HistoryDateCalendar({
     viewMonthIndex === parseDateKey(todayKey).monthIndex;
 
   return (
-    <div className="history-calendar" aria-label={t('history.filterByDate')}>
+    <div
+      className={[
+        'history-calendar',
+        dateMuscleCounts && 'history-calendar--muscle-summaries',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      aria-label={t('history.filterByDate')}
+    >
       <div className="history-calendar__toolbar">
         <div className="history-calendar__header">
           <button
@@ -171,13 +185,26 @@ export function HistoryDateCalendar({
       >
         {cells.map((cell) => {
           const count = dateCounts?.get(cell.dateKey) ?? 0;
-          const hasData = datesWithData.has(cell.dateKey) || count > 0;
+          const muscleRows = dateMuscleCounts?.get(cell.dateKey) ?? [];
+          const hasMuscles = muscleRows.length > 0;
+          const hasData = datesWithData.has(cell.dateKey) || count > 0 || hasMuscles;
           const isSelected = selectedDate === cell.dateKey;
           const isToday = cell.dateKey === todayKey;
           const canSelect = hasData || allowEmptySelect;
           const isFutureEmpty = planHints && allowEmptySelect && !hasData && cell.dateKey > todayKey;
           const parsed = parseDateKey(cell.dateKey);
           const isWeekend = new Date(parsed.year, parsed.monthIndex, cell.day).getDay() % 6 === 0;
+          const visibleMuscles = muscleRows.slice(0, MAX_CALENDAR_MUSCLE_ROWS);
+          const hiddenMuscleCount = muscleRows.length - visibleMuscles.length;
+          const muscleAria =
+            hasMuscles
+              ? muscleRows
+                  .map(
+                    (row) =>
+                      `${t(`muscleGroups.${row.group}`, { defaultValue: row.group })} ${row.count}`
+                  )
+                  .join(', ')
+              : '';
 
           return (
             <button
@@ -185,6 +212,7 @@ export function HistoryDateCalendar({
               type="button"
               className={[
                 'history-calendar__day',
+                hasMuscles && 'history-calendar__day--with-muscles',
                 !cell.inCurrentMonth && 'history-calendar__day--outside',
                 hasData ? 'history-calendar__day--has-data' : 'history-calendar__day--empty',
                 allowEmptySelect && !hasData && 'history-calendar__day--selectable',
@@ -197,7 +225,7 @@ export function HistoryDateCalendar({
                 .join(' ')}
               disabled={!canSelect}
               aria-pressed={isSelected}
-              aria-label={cell.dateKey}
+              aria-label={muscleAria ? `${cell.dateKey}, ${muscleAria}` : cell.dateKey}
               onPointerDown={(e) => {
                 // Keep parent <details> from swallowing the first tap on mobile.
                 e.stopPropagation();
@@ -210,7 +238,23 @@ export function HistoryDateCalendar({
               }}
             >
               <span className="history-calendar__day-num">{cell.day}</span>
-              {hasData ? (
+              {hasMuscles ? (
+                <span className="history-calendar__day-muscles" aria-hidden>
+                  {visibleMuscles.map((row) => (
+                    <span key={row.group} className="history-calendar__day-muscle">
+                      <span className="history-calendar__day-muscle-name">
+                        {t(`muscleGroups.${row.group}`, { defaultValue: row.group })}
+                      </span>
+                      <span className="history-calendar__day-muscle-count">{row.count}</span>
+                    </span>
+                  ))}
+                  {hiddenMuscleCount > 0 ? (
+                    <span className="history-calendar__day-muscle history-calendar__day-muscle--more">
+                      +{hiddenMuscleCount}
+                    </span>
+                  ) : null}
+                </span>
+              ) : hasData ? (
                 count > 1 ? (
                   <span className="history-calendar__day-count" aria-hidden>
                     {count > 9 ? '9+' : count}

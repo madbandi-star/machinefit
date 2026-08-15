@@ -1,16 +1,17 @@
-# Test handoff — Records tools button color
+# Test handoff — Records calendar muscle counts
 
 ## Summary
-Records toolbar tools (settings) button mismatched calendar/sort due to a sheet CSS override. Override removed so shared `records.css` styles apply.
+Records calendar dialog shows muscle group + per-group exercise counts under each date number.
 
 ## Git
 - Branch: `main`
-- Commit: `d8e51a92`
+- Commit: _(after push)_
 
 ## Test focus
-1. Calendar / tools / sort default + hover colors match
-2. Tools menu open state uses primary tone
+1. Open calendar on records — workout days show muscles + counts
+2. Multi-muscle days stack; overflow shows +N
+3. My Page calendar still dots only
 
 ## As-is → To-be
-- **As-is:** Tools alone used surface/border tones
-- **To-be:** Same glass + primary as calendar/sort
+- **As-is:** Dot / total count only
+- **To-be:** Under date: muscle + count lines

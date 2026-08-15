@@ -4,12 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import { HistoryDateCalendar } from '@/components/records/HistoryDateCalendar/HistoryDateCalendar';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
+import type { MuscleGroupCount } from '@/utils/historyDate';
 import './HistoryDateCalendarDialog.css';
 
 export interface HistoryDateCalendarDialogProps {
   open: boolean;
   datesWithData: Set<string>;
   dateCounts?: Map<string, number>;
+  dateMuscleCounts?: Map<string, MuscleGroupCount[]>;
   selectedDate: string;
   locale: string;
   allowEmptySelect?: boolean;
@@ -22,6 +24,7 @@ export function HistoryDateCalendarDialog({
   open,
   datesWithData,
   dateCounts,
+  dateMuscleCounts,
   selectedDate,
   locale,
   allowEmptySelect = true,
@@ -69,6 +72,7 @@ export function HistoryDateCalendarDialog({
           <HistoryDateCalendar
             datesWithData={datesWithData}
             dateCounts={dateCounts}
+            dateMuscleCounts={dateMuscleCounts}
             selectedDate={selectedDate}
             onSelect={onSelect}
             locale={locale}

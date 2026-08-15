@@ -78,6 +78,30 @@ export function collectMuscleGroupsInOrder<
   return groups;
 }
 
+export type MuscleGroupCount = { group: string; count: number };
+
+/** Ordered unique muscle groups with per-group exercise (card) counts. */
+export function collectMuscleGroupCountsInOrder<
+  T extends { muscleGroup?: string; machineCode?: string; targetMuscleGroup?: string },
+>(items: T[]): MuscleGroupCount[] {
+  const order: string[] = [];
+  const counts = new Map<string, number>();
+
+  for (const item of items) {
+    const group = item.machineCode
+      ? getHistoryMuscleGroup(item.machineCode, item.muscleGroup, item.targetMuscleGroup)
+      : item.muscleGroup;
+    if (!group) continue;
+    if (!counts.has(group)) {
+      order.push(group);
+      counts.set(group, 0);
+    }
+    counts.set(group, (counts.get(group) ?? 0) + 1);
+  }
+
+  return order.map((group) => ({ group, count: counts.get(group) ?? 0 }));
+}
+
 export function formatMuscleGroupSummary(
   groups: string[],
   translateMuscleGroup: (group: string) => string
