@@ -54,10 +54,12 @@ export function HistoryDateCalendarDialog({
       >
         <header className="history-calendar-dialog__header">
           <div className="history-calendar-dialog__heading">
-            <h2 id={titleId} className="history-calendar-dialog__title">
-              {t('machines:history.filterByDate')}
-            </h2>
-            <p className="history-calendar-dialog__hint">{t('machines:history.calendarHint')}</p>
+            <div className="history-calendar-dialog__title-row">
+              <h2 id={titleId} className="history-calendar-dialog__title">
+                {t('machines:history.filterByDate')}
+              </h2>
+              <p className="history-calendar-dialog__hint">{t('machines:history.calendarHint')}</p>
+            </div>
           </div>
           <button
             type="button"
@@ -80,6 +82,7 @@ export function HistoryDateCalendarDialog({
             allowEmptySelect={allowEmptySelect}
             onVisibleMonthChange={onVisibleMonthChange}
             onAfterSelect={onClose}
+            presentation="sheet"
           />
         </div>
       </div>

@@ -262,6 +262,7 @@
     "calendarHintPlan": "미래 날짜를 누르거나 날짜를 직접 고르세요.",
     "planPickAnyDate": "날짜 직접 선택",
     "goToday": "오늘",
+    "calendarMonthWorkoutDays": "{{count}}일 운동",
     "calendarLegendToday": "오늘",
     "calendarLegendHasData": "기록 있음",
     "calendarLegendPlan": "계획 추가",

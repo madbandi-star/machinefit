@@ -33,6 +33,8 @@ interface HistoryDateCalendarProps {
   onVisibleMonthChange?: (year: number, monthIndex: number) => void;
   /** Called after a day is chosen (e.g. close parent `<details>`). */
   onAfterSelect?: () => void;
+  /** Sheet presentation for the records date-filter dialog. */
+  presentation?: 'default' | 'sheet';
 }
 
 export function HistoryDateCalendar({
@@ -46,6 +48,7 @@ export function HistoryDateCalendar({
   showPlanHints,
   onVisibleMonthChange,
   onAfterSelect,
+  presentation = 'default',
 }: HistoryDateCalendarProps) {
   const planHints = showPlanHints ?? allowEmptySelect;
   const { t } = useTranslation('machines');
@@ -72,6 +75,17 @@ export function HistoryDateCalendar({
   );
   const weekdayLabels = useMemo(() => getWeekdayLabels(locale), [locale]);
 
+  const monthWorkoutDays = useMemo(() => {
+    let n = 0;
+    for (const cell of cells) {
+      if (!cell.inCurrentMonth) continue;
+      const count = dateCounts?.get(cell.dateKey) ?? 0;
+      const muscles = dateMuscleCounts?.get(cell.dateKey)?.length ?? 0;
+      if (datesWithData.has(cell.dateKey) || count > 0 || muscles > 0) n += 1;
+    }
+    return n;
+  }, [cells, dateCounts, dateMuscleCounts, datesWithData]);
+
   const pickDate = (dateKey: string) => {
     onSelect(dateKey);
     onAfterSelect?.();
@@ -92,15 +106,17 @@ export function HistoryDateCalendar({
     pickDate(todayKey);
   };
 
-  const viewingTodayMonth =
+  const onTodayAlready =
     viewYear === parseDateKey(todayKey).year &&
-    viewMonthIndex === parseDateKey(todayKey).monthIndex;
+    viewMonthIndex === parseDateKey(todayKey).monthIndex &&
+    selectedDate === todayKey;
 
   return (
     <div
       className={[
         'history-calendar',
         dateMuscleCounts && 'history-calendar--muscle-summaries',
+        presentation === 'sheet' && 'history-calendar--sheet',
       ]
         .filter(Boolean)
         .join(' ')}
@@ -133,7 +149,28 @@ export function HistoryDateCalendar({
             >
               {formatMonthLabel(viewYear, viewMonthIndex, locale)}
             </span>
+            {dateMuscleCounts ? (
+              <span className="history-calendar__month-meta">
+                {t('history.calendarMonthWorkoutDays', {
+                  count: monthWorkoutDays,
+                  defaultValue: `${monthWorkoutDays}일 운동`,
+                })}
+              </span>
+            ) : null}
           </div>
+          <button
+            type="button"
+            className={[
+              'history-calendar__chip history-calendar__chip--today',
+              onTodayAlready && 'is-active',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={goTodayMonth}
+            aria-current={onTodayAlready ? 'date' : undefined}
+          >
+            {t('history.goToday')}
+          </button>
           <button
             type="button"
             className="history-calendar__nav"
@@ -143,18 +180,6 @@ export function HistoryDateCalendar({
             <Icon name="chevronRight" size={18} className="history-calendar__nav-icon" />
           </button>
         </div>
-
-        {!viewingTodayMonth || selectedDate !== todayKey ? (
-          <div className="history-calendar__quick">
-            <button
-              type="button"
-              className="history-calendar__chip"
-              onClick={goTodayMonth}
-            >
-              {t('history.goToday')}
-            </button>
-          </div>
-        ) : null}
       </div>
 
       <div className="history-calendar__weekdays">
@@ -196,15 +221,14 @@ export function HistoryDateCalendar({
           const isWeekend = new Date(parsed.year, parsed.monthIndex, cell.day).getDay() % 6 === 0;
           const visibleMuscles = muscleRows.slice(0, MAX_CALENDAR_MUSCLE_LABELS);
           const hiddenMuscleCount = Math.max(0, muscleRows.length - visibleMuscles.length);
-          const muscleAria =
-            hasMuscles
-              ? muscleRows
-                  .map(
-                    (row) =>
-                      `${t(`muscleGroups.${row.group}`, { defaultValue: row.group })} ${row.count}`
-                  )
-                  .join(', ')
-              : '';
+          const muscleAria = hasMuscles
+            ? muscleRows
+                .map(
+                  (row) =>
+                    `${t(`muscleGroups.${row.group}`, { defaultValue: row.group })} ${row.count}`
+                )
+                .join(', ')
+            : '';
 
           return (
             <button
@@ -227,7 +251,6 @@ export function HistoryDateCalendar({
               aria-pressed={isSelected}
               aria-label={muscleAria ? `${cell.dateKey}, ${muscleAria}` : cell.dateKey}
               onPointerDown={(e) => {
-                // Keep parent <details> from swallowing the first tap on mobile.
                 e.stopPropagation();
               }}
               onClick={(e) => {
@@ -237,14 +260,21 @@ export function HistoryDateCalendar({
                 pickDate(cell.dateKey);
               }}
             >
-              <span className="history-calendar__day-num">{cell.day}</span>
+              <span className="history-calendar__day-head">
+                <span className="history-calendar__day-num">{cell.day}</span>
+                {hasMuscles && count > 0 ? (
+                  <span className="history-calendar__day-total" aria-hidden>
+                    {count > 9 ? '9+' : count}
+                  </span>
+                ) : null}
+              </span>
               {hasMuscles ? (
                 <span className="history-calendar__day-muscles" aria-hidden>
                   {visibleMuscles.map((row) => {
                     const label = t(`muscleGroups.${row.group}`, { defaultValue: row.group });
                     return (
                       <span key={row.group} className="history-calendar__day-muscle">
-                        {label}
+                        <span className="history-calendar__day-muscle-name">{label}</span>
                         <span className="history-calendar__day-muscle-count">{row.count}</span>
                       </span>
                     );

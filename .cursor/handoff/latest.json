@@ -1,11 +1,11 @@
 {
-  "title": "Calendar dialog hint, no footer close, 4+N muscles",
-  "summary": "Date-filter dialog: shortened hint beside title, removed bottom Close, muscle lines show up to 4 groups then +N (5th line).",
-  "git": { "branch": "main", "commit": "58a21569" },
+  "title": "Records date calendar UI/UX glanceability polish",
+  "summary": "Redesigned the date-filter calendar sheet: clearer month toolbar with inline Today + workout-day count, stronger workout-day cells, muscle rows as readable chips with total badge, and a flatter dialog chrome.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
-    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/styles/records.css",
     "frontend/src/i18n/locales/ko/machines.json",
     "frontend/src/i18n/locales/en/machines.json",
@@ -13,14 +13,15 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Hint text next to 일자조회; no bottom Close button",
-    "Up to 4 muscle lines; 5+ shows +N as 5th line"
+    "Records calendar: month meta shows workout-day count; Today inline",
+    "Workout days visually stronger; muscle chips readable on mobile",
+    "Still 4 muscle lines + +N; empty days selectable; X closes"
   ],
   "fastChecks": [
-    "rg -n \"MAX_CALENDAR_MUSCLE_LABELS|history-calendar-dialog__heading|calendarHint\" frontend/src"
+    "rg -n \"presentation=\\\"sheet\\\"|day-total|calendarMonthWorkoutDays|history-calendar--sheet\" frontend/src"
   ],
-  "productionChecks": ["Pages: /records calendar dialog"],
+  "productionChecks": ["Pages mobile+desktop: /records calendar"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Long hint below title; footer Close; max 4 lines with old overflow",
-  "toBe": "Short hint beside title; X only; 4 muscles + optional +N"
+  "asIs": "Dense nested panel; hard-to-scan muscle text",
+  "toBe": "Sheet chrome; scannable chips; month summary"
 }
