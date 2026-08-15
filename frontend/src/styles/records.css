@@ -473,7 +473,7 @@ body:has(.records-page--history) .layout__content {
 }
 
 .history-calendar--muscle-summaries {
-  --hc-day-h: 6.1rem;
+  --hc-day-h: 5.35rem;
 }
 
 .history-calendar--muscle-summaries .history-calendar__day {
@@ -821,7 +821,7 @@ body:has(.records-page--history) .layout__content {
 }
 
 .history-calendar--sheet.history-calendar--muscle-summaries {
-  --hc-day-h: 6.55rem;
+  --hc-day-h: 5.75rem;
 }
 
 .history-calendar--sheet .history-calendar__grid {

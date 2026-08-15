@@ -1,27 +1,21 @@
 {
-  "title": "Records date calendar UI/UX glanceability polish",
-  "summary": "Redesigned the date-filter calendar sheet: clearer month toolbar with inline Today + workout-day count, stronger workout-day cells, muscle rows as readable chips with total badge, and a flatter dialog chrome.",
-  "git": { "branch": "main", "commit": "a12e69d3" },
+  "title": "Calendar muscles: top 3 by count + +N",
+  "summary": "Date calendar muscle chips show at most 3 groups sorted by exercise count desc, with +N for the rest; cell height tightened.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
     "frontend/src/styles/records.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css"
   ],
   "testFocus": [
-    "Records calendar: month meta shows workout-day count; Today inline",
-    "Workout days visually stronger; muscle chips readable on mobile",
-    "Still 4 muscle lines + +N; empty days selectable; X closes"
+    "Calendar: max 3 muscle lines; 4+ shows +N",
+    "Lines ordered by highest exercise count first"
   ],
   "fastChecks": [
-    "rg -n \"presentation=\\\"sheet\\\"|day-total|calendarMonthWorkoutDays|history-calendar--sheet\" frontend/src"
+    "rg -n \"MAX_CALENDAR_MUSCLE_LABELS = 3|rankedMuscles|b.count - a.count\" frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx"
   ],
-  "productionChecks": ["Pages mobile+desktop: /records calendar"],
+  "productionChecks": ["Pages: /records calendar muscle order"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Dense nested panel; hard-to-scan muscle text",
-  "toBe": "Sheet chrome; scannable chips; month summary"
+  "asIs": "4 muscle lines in first-seen order",
+  "toBe": "3 lines by count desc + +N"
 }

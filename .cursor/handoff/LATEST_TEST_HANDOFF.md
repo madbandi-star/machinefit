@@ -1,17 +1,16 @@
-# Test handoff — Calendar UI/UX polish
+# Test handoff — Calendar top-3 muscles by count
 
 ## Summary
-Date-filter calendar redesigned for glanceability: sheet layout, inline Today, month workout-day count, stronger workout cells, muscle chips.
+Muscle summary under dates: max 3 lines sorted by exercise count (desc), then +N.
 
 ## Git
 - Branch: `main`
-- Commit: _a12e69d3_
+- Commit: _(after push)_
 
 ## Test focus
-1. Toolbar: month + N일 운동 + 오늘
-2. Muscle chips readable on mobile
-3. 4 lines + +N still works
+1. Max 3 muscle chips
+2. Highest count first
 
 ## As-is → To-be
-- **As-is:** Nested drab calendar; tiny centered muscle text
-- **To-be:** Clear sheet; chip rows; month summary
+- **As-is:** 4 lines, encounter order
+- **To-be:** 3 lines by count desc + +N

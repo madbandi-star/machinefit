@@ -11,7 +11,7 @@ import {
   type MuscleGroupCount,
 } from '@/utils/historyDate';
 
-const MAX_CALENDAR_MUSCLE_LABELS = 4;
+const MAX_CALENDAR_MUSCLE_LABELS = 3;
 
 interface HistoryDateCalendarProps {
   datesWithData: Set<string>;
@@ -219,10 +219,14 @@ export function HistoryDateCalendar({
           const isFutureEmpty = planHints && allowEmptySelect && !hasData && cell.dateKey > todayKey;
           const parsed = parseDateKey(cell.dateKey);
           const isWeekend = new Date(parsed.year, parsed.monthIndex, cell.day).getDay() % 6 === 0;
-          const visibleMuscles = muscleRows.slice(0, MAX_CALENDAR_MUSCLE_LABELS);
-          const hiddenMuscleCount = Math.max(0, muscleRows.length - visibleMuscles.length);
+          const rankedMuscles = [...muscleRows].sort((a, b) => {
+            if (b.count !== a.count) return b.count - a.count;
+            return a.group.localeCompare(b.group);
+          });
+          const visibleMuscles = rankedMuscles.slice(0, MAX_CALENDAR_MUSCLE_LABELS);
+          const hiddenMuscleCount = Math.max(0, rankedMuscles.length - visibleMuscles.length);
           const muscleAria = hasMuscles
-            ? muscleRows
+            ? rankedMuscles
                 .map(
                   (row) =>
                     `${t(`muscleGroups.${row.group}`, { defaultValue: row.group })} ${row.count}`
