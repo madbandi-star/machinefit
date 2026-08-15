@@ -95,9 +95,40 @@ const envSchema = z.object({
   POLAR_RETURN_URL: z.string().optional(),
 });
 
-export const env = envSchema.parse({
+/**
+ * Strip accidental `KEY=value` pastes from Render/dashboard env values.
+ * e.g. GOOGLE_CLIENT_ID set to `GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com`
+ * would otherwise break Google OAuth with invalid_client.
+ */
+function sanitizeEnvAssignment(raw: string | undefined, envKey: string): string | undefined {
+  if (raw == null) return undefined;
+  let v = String(raw).trim();
+  if (!v) return undefined;
+  const prefix = `${envKey}=`;
+  if (v.startsWith(prefix)) {
+    v = v.slice(prefix.length).trim();
+  }
+  // Also strip wrapping quotes from copy-paste
+  if (
+    (v.startsWith('"') && v.endsWith('"')) ||
+    (v.startsWith("'") && v.endsWith("'"))
+  ) {
+    v = v.slice(1, -1).trim();
+  }
+  return v || undefined;
+}
+
+const rawEnv = {
   ...process.env,
   SUPABASE_URL: derivedSupabaseUrl,
-});
+  GOOGLE_CLIENT_ID: sanitizeEnvAssignment(process.env.GOOGLE_CLIENT_ID, 'GOOGLE_CLIENT_ID'),
+  KAKAO_JS_KEY: sanitizeEnvAssignment(process.env.KAKAO_JS_KEY, 'KAKAO_JS_KEY'),
+  KAKAO_REST_API_KEY: sanitizeEnvAssignment(process.env.KAKAO_REST_API_KEY, 'KAKAO_REST_API_KEY'),
+  KAKAO_CLIENT_SECRET: sanitizeEnvAssignment(process.env.KAKAO_CLIENT_SECRET, 'KAKAO_CLIENT_SECRET'),
+  APPLE_CLIENT_ID: sanitizeEnvAssignment(process.env.APPLE_CLIENT_ID, 'APPLE_CLIENT_ID'),
+  APPLE_REDIRECT_URI: sanitizeEnvAssignment(process.env.APPLE_REDIRECT_URI, 'APPLE_REDIRECT_URI'),
+};
+
+export const env = envSchema.parse(rawEnv);
 
 export type Env = z.infer<typeof envSchema>;

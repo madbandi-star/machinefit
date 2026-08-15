@@ -32,6 +32,11 @@ APPLE_CLIENT_ID=<optional>
 APPLE_REDIRECT_URI=<optional>
 ```
 
+> **Do not paste `KEY=value` into the Value field.** Render already has the key name.
+> Wrong: `GOOGLE_CLIENT_ID=6000….apps.googleusercontent.com`  
+> Right: `6000….apps.googleusercontent.com`  
+> A prefixed value causes Google `401 invalid_client` / “OAuth client was not found”.
+
 Then **Manual Deploy** (or restart) so the process picks up env. SPA clients refresh
 the config within ~60s (`Cache-Control`) or on next full page load.
 

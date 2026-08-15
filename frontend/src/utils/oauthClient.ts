@@ -40,11 +40,35 @@ function mergeOAuthConfig(
   fallback: OAuthClientPublicConfig
 ): OAuthClientPublicConfig {
   return {
-    googleClientId: fromApi?.googleClientId?.trim() || fallback.googleClientId,
-    kakaoJsKey: fromApi?.kakaoJsKey?.trim() || fallback.kakaoJsKey,
+    googleClientId: sanitizeOAuthClientValue(
+      fromApi?.googleClientId?.trim() || fallback.googleClientId,
+      'GOOGLE_CLIENT_ID'
+    ),
+    kakaoJsKey: sanitizeOAuthClientValue(
+      fromApi?.kakaoJsKey?.trim() || fallback.kakaoJsKey,
+      'KAKAO_JS_KEY'
+    ),
     appleClientId: fromApi?.appleClientId?.trim() || fallback.appleClientId,
     appleRedirectUri: fromApi?.appleRedirectUri?.trim() || fallback.appleRedirectUri,
   };
+}
+
+/** Defend against mis-copied Render values like `GOOGLE_CLIENT_ID=xxx`. */
+function sanitizeOAuthClientValue(
+  raw: string | null | undefined,
+  envKey: string
+): string | null {
+  if (!raw) return null;
+  let v = raw.trim();
+  const prefix = `${envKey}=`;
+  if (v.startsWith(prefix)) v = v.slice(prefix.length).trim();
+  if (
+    (v.startsWith('"') && v.endsWith('"')) ||
+    (v.startsWith("'") && v.endsWith("'"))
+  ) {
+    v = v.slice(1, -1).trim();
+  }
+  return v || null;
 }
 
 /** Prefetch / refresh OAuth client ids from the API (cached ~process lifetime). */
