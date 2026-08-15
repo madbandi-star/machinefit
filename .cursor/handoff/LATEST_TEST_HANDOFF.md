@@ -5,7 +5,7 @@ Common/standard machines whose names already include the brand no longer get `Br
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _2ab0b034_
 
 ## Test focus
 1. Records: common equipment title shows brand once

@@ -1,7 +1,7 @@
 {
   "title": "Deduplicate brand in branded machine labels",
   "summary": "formatBrandedMachineLabel no longer prefixes brand when the machine name already starts with it (common/standard equipment), fixing repeated names on records cards.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "2ab0b034" },
   "changedFiles": [
     "frontend/src/utils/freeWeightDisplay.ts",
     "frontend/src/utils/freeWeightDisplay.test.ts"
