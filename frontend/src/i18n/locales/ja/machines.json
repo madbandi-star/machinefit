@@ -258,7 +258,7 @@
     "dateSortOldestFirst": "Oldest dates first (tap for newest)",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "calendarHint": "Only dotted dates have history records.",
+    "calendarHint": "空の日付も選んで計画を追加できます。",
     "clearAll": "Clear All",
     "remove": "Remove",
     "openDetailAria": "{{name}}の詳細記録を開く",

@@ -449,7 +449,7 @@ body:has(.records-page--history) .layout__content {
 }
 
 .history-calendar--muscle-summaries {
-  --hc-day-h: 5.65rem;
+  --hc-day-h: 6.35rem;
 }
 
 .history-calendar--muscle-summaries .history-calendar__day {

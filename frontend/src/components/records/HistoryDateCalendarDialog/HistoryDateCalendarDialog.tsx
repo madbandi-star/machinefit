@@ -53,9 +53,12 @@ export function HistoryDateCalendarDialog({
         onClick={(e) => e.stopPropagation()}
       >
         <header className="history-calendar-dialog__header">
-          <h2 id={titleId} className="history-calendar-dialog__title">
-            {t('machines:history.filterByDate')}
-          </h2>
+          <div className="history-calendar-dialog__heading">
+            <h2 id={titleId} className="history-calendar-dialog__title">
+              {t('machines:history.filterByDate')}
+            </h2>
+            <p className="history-calendar-dialog__hint">{t('machines:history.calendarHint')}</p>
+          </div>
           <button
             type="button"
             className="history-calendar-dialog__close"
@@ -65,8 +68,6 @@ export function HistoryDateCalendarDialog({
             <Icon name="close" size={22} />
           </button>
         </header>
-
-        <p className="history-calendar-dialog__hint">{t('machines:history.calendarHint')}</p>
 
         <div className="history-calendar-dialog__body">
           <HistoryDateCalendar
@@ -81,16 +82,6 @@ export function HistoryDateCalendarDialog({
             onAfterSelect={onClose}
           />
         </div>
-
-        <footer className="history-calendar-dialog__footer">
-          <button
-            type="button"
-            className="btn btn--secondary btn--block history-calendar-dialog__close-bottom"
-            onClick={onClose}
-          >
-            {t('common:actions.close')}
-          </button>
-        </footer>
       </div>
     </div>,
     document.body

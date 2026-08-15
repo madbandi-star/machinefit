@@ -1,16 +1,17 @@
-# Test handoff — Calendar muscle max 4 lines
+# Test handoff — Calendar dialog polish + 4/+N muscles
 
 ## Summary
-Under-date muscle summary max lines raised from 2 to 4; fixed cell height increased accordingly.
+Hint shortened and placed beside title; bottom Close removed; muscle summary = 4 labels max, then +N.
 
 ## Git
 - Branch: `main`
-- Commit: _e48d28fa_
+- Commit: _(after push)_
 
 ## Test focus
-1. Up to 4 muscle rows visible
-2. Grid height still uniform
+1. Hint beside 일자조회
+2. No footer Close
+3. 5+ muscles: 4 lines + +N
 
 ## As-is → To-be
-- **As-is:** Max 2 lines
-- **To-be:** Max 4 lines
+- **As-is:** Long hint below; footer Close
+- **To-be:** Short hint inline; X only; 4+N muscle lines

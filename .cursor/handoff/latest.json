@@ -1,21 +1,26 @@
 {
-  "title": "Calendar muscle rows: max 4 lines",
-  "summary": "Records calendar muscle summary under each date now allows up to 4 lines (was 2), with taller fixed cell height so the grid stays uniform.",
-  "git": { "branch": "main", "commit": "e48d28fa" },
+  "title": "Calendar dialog hint, no footer close, 4+N muscles",
+  "summary": "Date-filter dialog: shortened hint beside title, removed bottom Close, muscle lines show up to 4 groups then +N (5th line).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
+    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",
-    "frontend/src/styles/records.css"
+    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
+    "frontend/src/styles/records.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Calendar day can show up to 4 muscle lines",
-    "5+ muscles still shows +N; cell height stays uniform"
+    "Hint text next to 일자조회; no bottom Close button",
+    "Up to 4 muscle lines; 5+ shows +N as 5th line"
   ],
   "fastChecks": [
-    "rg -n \"MAX_CALENDAR_MUSCLE_ROWS = 4|hc-day-h: 6\" frontend/src"
+    "rg -n \"MAX_CALENDAR_MUSCLE_LABELS|history-calendar-dialog__heading|calendarHint\" frontend/src"
   ],
-  "productionChecks": ["Pages: /records calendar 4 muscle lines"],
+  "productionChecks": ["Pages: /records calendar dialog"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Max 2 muscle lines under date",
-  "toBe": "Max 4 muscle lines under date"
+  "asIs": "Long hint below title; footer Close; max 4 lines with old overflow",
+  "toBe": "Short hint beside title; X only; 4 muscles + optional +N"
 }

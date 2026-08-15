@@ -258,7 +258,7 @@
     "dateSortOldestFirst": "Oldest dates first (tap for newest)",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "calendarHint": "Only dotted dates have history records.",
+    "calendarHint": "也可以选择空白日期来添加计划。",
     "clearAll": "Clear All",
     "remove": "Remove",
     "openDetailAria": "打开{{name}}的详细记录",

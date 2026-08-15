@@ -258,7 +258,7 @@
     "dateSortOldestFirst": "Oldest dates first (tap for newest)",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "calendarHint": "Dotted dates have records or plans. Empty dates can also be selected to add a plan.",
+    "calendarHint": "Empty dates can also be selected to add a plan.",
     "calendarHintPlan": "Tap a future date or pick any date.",
     "planPickAnyDate": "Pick date",
     "goToday": "Today",
