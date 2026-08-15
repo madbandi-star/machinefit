@@ -1,7 +1,7 @@
 {
   "title": "Calendar muscle rows: max 4 lines",
   "summary": "Records calendar muscle summary under each date now allows up to 4 lines (was 2), with taller fixed cell height so the grid stays uniform.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "e48d28fa" },
   "changedFiles": [
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
     "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css",

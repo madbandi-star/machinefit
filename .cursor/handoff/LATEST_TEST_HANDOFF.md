@@ -5,7 +5,7 @@ Under-date muscle summary max lines raised from 2 to 4; fixed cell height increa
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _e48d28fa_
 
 ## Test focus
 1. Up to 4 muscle rows visible
