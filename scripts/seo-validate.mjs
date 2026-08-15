@@ -85,6 +85,10 @@ if (html.includes('application/ld+json')) ok('index.html has JSON-LD');
 else fail('index.html missing JSON-LD');
 if (html.includes('naver-site-verification')) ok('index.html has Naver verification');
 else fail('index.html missing Naver verification');
+if (html.includes('google-site-verification')) ok('index.html has Google verification');
+else fail('index.html missing Google verification');
+if (html.includes('PASTE_TOKEN_HERE')) fail('index.html still has placeholder GSC token');
+else ok('index.html has no GSC placeholder token');
 if (html.includes('SeatFit') || html.includes('seatfit')) {
   fail('index.html still mentions SeatFit');
 } else ok('index.html has no SeatFit remnants');
