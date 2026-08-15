@@ -1,7 +1,7 @@
 {
   "title": "Records calendar: muscle + count under dates",
   "summary": "History calendar dialog now shows each day's muscle groups and per-muscle exercise counts under the date number, derived from filtered record cards.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a4d1d8d3" },
   "changedFiles": [
     "frontend/src/utils/historyDate.ts",
     "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",

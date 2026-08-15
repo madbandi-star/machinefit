@@ -5,7 +5,7 @@ Records calendar dialog shows muscle group + per-group exercise counts under eac
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _a4d1d8d3_
 
 ## Test focus
 1. Open calendar on records — workout days show muscles + counts
