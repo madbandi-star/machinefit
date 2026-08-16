@@ -155,7 +155,7 @@ export function ProfileDataConsentBlock({
     };
 
   const toggleAll = () => {
-    onChange(allOn ? emptyProfileConsentChecks(variant) : fullyChecked(variant));
+    onChange(() => (allOn ? emptyProfileConsentChecks(variant) : fullyChecked(variant)));
   };
 
   return (

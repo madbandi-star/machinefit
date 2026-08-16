@@ -1,31 +1,28 @@
 {
-  "title": "Sync self gym member name with username",
-  "summary": "Home member chip showed stale gym_members.name (머신러너3107) after username change to 사레레. Self members now follow displayName in UI, and username updates sync is_self member names in DB.",
+  "title": "Fix birth profile consent save CONSENT_REQUIRED",
+  "summary": "Settings birth/body/location saves always send feature consent attestation after the checkbox gate, so Pages/Render version skew no longer rejects saves with CONSENT_REQUIRED after the user checked all items.",
   "git": {
     "branch": "main",
-    "commit": "bca537b0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/gyms/MemberSelector/MemberSelector.tsx",
-    "backend/server/repositories/gym-member.repository.ts",
-    "backend/server/services/user.service.ts",
-    "backend/server/repositories/admin.repository.ts"
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
   ],
   "testFocus": [
-    "Home: next to default gym, self member shows account displayName",
-    "Rename username → self gym member name updates",
-    "사레레 account already backfilled in DB"
+    "Settings > birth profile: check all required consents > Save succeeds",
+    "Already-agreed birth block: Save still works and re-records consent version"
   ],
   "fastChecks": [
-    "rg -n \"syncSelfMemberNames|accountDisplayName\" backend/server/repositories/gym-member.repository.ts backend/server/services/user.service.ts frontend/src/components/gyms/MemberSelector/MemberSelector.tsx"
+    "rg -n \"birthProfileConsent: true|bodyMetricsConsent: true|locationGymConsent: true\" frontend/src/pages/settings/SettingsPage.tsx"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Render backend redeploy (username sync)"
+    "Hard refresh settings birth section and save"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Self member label stayed at old username after rename",
-  "toBe": "Self member label tracks displayName; DB synced on rename"
+  "asIs": "Checked all birth consents but save failed with personal-data consent toast",
+  "toBe": "Save sends birthProfileConsent and records successfully"
 }

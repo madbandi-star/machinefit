@@ -1,21 +1,20 @@
-# Test handoff — Sync self gym member name with username
+# Test handoff — Fix birth profile consent save
 
 ## Summary
-Home member chip showed stale `gym_members.name` after username change. Self members now follow `displayName` in the UI, and username updates sync `is_self` member names in DB. 사레레 already backfilled.
+Settings birth/body/location saves always send feature consent attestation after the checkbox gate, fixing CONSENT_REQUIRED when FE thought consent was already done (or omitted the flag) under version skew.
 
 ## Git
 - Branch: `main`
-- Commit: `bca537b0`
+- Commit: pending
 
 ## Test focus
-1. Home → gym row right chip shows account username for self.
-2. Rename username → self member label updates.
-3. Non-self members still show their own names.
+1. Settings → 생년월일·탄생시 → 전체 선택 → 저장 → success.
+2. If already-agreed banner shows, Save still works.
 
 ## Fast checks
 ```bash
-rg -n "syncSelfMemberNames|accountDisplayName" backend/server/repositories/gym-member.repository.ts backend/server/services/user.service.ts frontend/src/components/gyms/MemberSelector/MemberSelector.tsx
+rg -n "birthProfileConsent: true|bodyMetricsConsent: true|locationGymConsent: true" frontend/src/pages/settings/SettingsPage.tsx
 ```
 
 ## Deploy
-Frontend Pages + **Render backend** (sync on rename).
+Frontend Pages only.

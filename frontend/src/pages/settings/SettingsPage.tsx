@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import type { ExperienceLevel, Gender, LocationVisibility, WorkoutGoal } from '@machinefit/shared';
 import {
   FREE_OPEN_MEMBER_FEATURES_MIN_ROLE,
@@ -281,9 +282,7 @@ export function SettingsPage() {
 
   const locationGymSaveMutation = useMutation({
     mutationFn: async () => {
-      const consentPayload = locationGymConsentDone
-        ? {}
-        : { locationGymConsent: true as const };
+      const consentPayload = { locationGymConsent: true as const };
       if (locationDraft.countryCode) {
         await locationApi.upsertMine({
           countryCode: locationDraft.countryCode,
@@ -420,8 +419,17 @@ export function SettingsPage() {
       void queryClient.invalidateQueries({ queryKey: ['fortune'] });
       showToast(t('settings.birthProfileSaved'), 'success');
     },
-    onError: (error) =>
-      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error'),
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        const code = (error.response?.data as { error?: { code?: string } } | undefined)?.error
+          ?.code;
+        if (code === 'CONSENT_REQUIRED') {
+          showToast(t('settings.consentBirthRequiredToast'), 'error');
+          return;
+        }
+      }
+      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error');
+    },
   });
 
   const restParts = restDurationParts(restDurationSeconds);
@@ -515,7 +523,8 @@ export function SettingsPage() {
                 unitWeight: draftUnitWeight,
                 experienceLevel,
                 workoutGoal,
-                ...(bodyMetricsConsentDone ? {} : { bodyMetricsConsent: true as const }),
+                // Always attest on save so Pages/Render version skew still records consent.
+                bodyMetricsConsent: true as const,
               });
             }}
             disabled={mutation.isPending}
@@ -571,7 +580,9 @@ export function SettingsPage() {
                 birthDate: birthDate.trim() || null,
                 birthTime: birthTimeUnknown ? null : birthTime.trim() || null,
                 birthTimeUnknown,
-                ...(birthProfileConsentDone ? {} : { birthProfileConsent: true as const }),
+                // Always attest on save so "already agreed" UI + server version skew
+                // still records birth_profile (avoids CONSENT_REQUIRED after full check).
+                birthProfileConsent: true as const,
               });
             }}
             disabled={birthMutation.isPending}
