@@ -1,7 +1,10 @@
 {
   "title": "Home recent/favorites horizontal scroll",
   "summary": "Recent machines and favorites use search-style horizontal scroll with edge fades and a thin scrollbar; item caps removed so long lists scroll.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": {
+    "branch": "main",
+    "commit": "4250ffbc"
+  },
   "changedFiles": [
     "frontend/src/styles/home.css",
     "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
@@ -16,8 +19,12 @@
     "rg -n \"home-scroll-row-scroller\" frontend/src/styles/home.css frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
     "rg -n \"slice\\(0, 8\\)\" frontend/src/components/home/RecentMachinesRow frontend/src/components/home/FavoriteMachinesRow || true"
   ],
-  "productionChecks": ["Pages home: recent/favorites horizontal scroll"],
-  "deploy": { "expected": "GitHub Pages FE success" },
+  "productionChecks": [
+    "Pages home: recent/favorites horizontal scroll"
+  ],
+  "deploy": {
+    "expected": "GitHub Pages FE success"
+  },
   "asIs": "Hidden scrollbar, 8-item cap, weak scroll affordance",
   "toBe": "Filter-chips-style scroller with fades; full list scrolls horizontally"
 }

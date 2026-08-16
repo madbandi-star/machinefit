@@ -5,7 +5,7 @@ Home recent machines and favorites match search muscle-chip horizontal scroll (e
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: 4250ffbc
 
 ## Changed files
 - `frontend/src/styles/home.css`
@@ -13,7 +13,7 @@ Home recent machines and favorites match search muscle-chip horizontal scroll (e
 - `frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx`
 
 ## Test focus
-1. Many recent/favorite cards ¡æ horizontal scroll works
+1. Many recent/favorite cards ï¿½ï¿½ horizontal scroll works
 2. Edge fades + thin scrollbar like search filters
 3. More than 8 items can appear
 
@@ -23,6 +23,6 @@ rg -n "home-scroll-row-scroller" frontend/src/styles/home.css frontend/src/compo
 rg -n "slice\\(0, 8\\)" frontend/src/components/home/RecentMachinesRow frontend/src/components/home/FavoriteMachinesRow || true
 ```
 
-## As-is ¡æ To-be
+## As-is ï¿½ï¿½ To-be
 - **As-is:** Cap at 8, scrollbar hidden
 - **To-be:** Search-style horizontal scroller for full rows
