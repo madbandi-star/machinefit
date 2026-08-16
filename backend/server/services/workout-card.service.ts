@@ -1180,8 +1180,8 @@ export const workoutCardService = {
             ko: '운동 계획 알림',
           },
           {
-            en: `You have ${count} planned workout(s) scheduled for today.`,
-            ko: `오늘 예정된 운동이 ${count}개 있습니다.`,
+            en: '🔥🔥🔥 You have a workout planned for today. 🔥🔥🔥',
+            ko: '🔥🔥🔥오늘 예정된 운동이 있습니다.🔥🔥🔥',
           },
           {
             kind: 'workout_card_reminder',

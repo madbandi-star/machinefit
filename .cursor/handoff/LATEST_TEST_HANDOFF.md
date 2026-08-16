@@ -1,28 +1,27 @@
-# Home recent/favorites horizontal scroll
+# Workout plan reminder copy update
 
 ## Summary
-Home recent machines and favorites match search muscle-chip horizontal scroll (edge fades + thin scrollbar). Removed the 8-item cap so long lists scroll sideways.
+Workout plan reminder body changed to `???오늘 예정된 운동이 있습니다.???` (no count).
 
 ## Git
 - branch: `main`
-- commit: 4250ffbc
+- commit: pending
 
 ## Changed files
-- `frontend/src/styles/home.css`
-- `frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx`
-- `frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx`
+- `backend/server/services/workout-card.service.ts`
 
 ## Test focus
-1. Many recent/favorite cards 占쏙옙 horizontal scroll works
-2. Edge fades + thin scrollbar like search filters
-3. More than 8 items can appear
+1. New Korean copy (and EN equivalent)
+2. Reminder still once/day when eligible
 
 ## Fast checks
 ```bash
-rg -n "home-scroll-row-scroller" frontend/src/styles/home.css frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx
-rg -n "slice\\(0, 8\\)" frontend/src/components/home/RecentMachinesRow frontend/src/components/home/FavoriteMachinesRow || true
+rg -n "오늘 예정된 운동이 있습니다" backend/server/services/workout-card.service.ts
 ```
 
-## As-is 占쏙옙 To-be
-- **As-is:** Cap at 8, scrollbar hidden
-- **To-be:** Search-style horizontal scroller for full rows
+## As-is → To-be
+- **As-is:** `오늘 예정된 운동이 N개 있습니다.`
+- **To-be:** `???오늘 예정된 운동이 있습니다.???`
+
+## Note
+Backend change ? Render redeploy required for production.

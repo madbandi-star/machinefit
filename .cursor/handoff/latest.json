@@ -1,30 +1,19 @@
 {
-  "title": "Home recent/favorites horizontal scroll",
-  "summary": "Recent machines and favorites use search-style horizontal scroll with edge fades and a thin scrollbar; item caps removed so long lists scroll.",
-  "git": {
-    "branch": "main",
-    "commit": "4250ffbc"
-  },
+  "title": "Workout plan reminder copy update",
+  "summary": "Changed Korean/English workout plan reminder body to fire-emoji framing without plan count.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/styles/home.css",
-    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
-    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx"
+    "backend/server/services/workout-card.service.ts"
   ],
   "testFocus": [
-    "Home recent/favorites: swipe/scroll horizontally when many cards",
-    "Edge fades + thin scrollbar visible like search muscle chips",
-    "More than 8 favorites/recent machines appear in the row"
+    "Reminder body is ???????? ??? ??? ????.??????",
+    "Still one reminder per user per day when eligible plans exist"
   ],
   "fastChecks": [
-    "rg -n \"home-scroll-row-scroller\" frontend/src/styles/home.css frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
-    "rg -n \"slice\\(0, 8\\)\" frontend/src/components/home/RecentMachinesRow frontend/src/components/home/FavoriteMachinesRow || true"
+    "rg -n \"?? ??? ??? ????\" backend/server/services/workout-card.service.ts"
   ],
-  "productionChecks": [
-    "Pages home: recent/favorites horizontal scroll"
-  ],
-  "deploy": {
-    "expected": "GitHub Pages FE success"
-  },
-  "asIs": "Hidden scrollbar, 8-item cap, weak scroll affordance",
-  "toBe": "Filter-chips-style scroller with fades; full list scrolls horizontally"
+  "productionChecks": ["After Render redeploy: next reminder uses new copy"],
+  "deploy": { "expected": "FE Pages no-op; Render backend needed" },
+  "asIs": "?? ??? ??? N? ????.",
+  "toBe": "???????? ??? ??? ????.??????"
 }
