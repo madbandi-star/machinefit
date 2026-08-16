@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { opsApi } from '@/api/ops.api';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
+import '@/styles/admin-glance.css';
 import '@/styles/admin-ops.css';
 
 type TabId =
@@ -104,6 +105,25 @@ function speedClass(ms: number): string {
   return 'is-red';
 }
 
+function sevPill(severity: string | undefined): string {
+  const s = (severity ?? '').toLowerCase();
+  if (s === 'critical' || s === 'error' || s === 'high' || s === 'fatal') return 'ag-pill--danger';
+  if (s === 'warn' || s === 'warning' || s === 'medium') return 'ag-pill--warn';
+  if (s === 'ok' || s === 'info' || s === 'low') return 'ag-pill--on';
+  return 'ag-pill--off';
+}
+
+function isFailSeverity(severity: string | undefined): boolean {
+  const s = (severity ?? '').toLowerCase();
+  return s === 'critical' || s === 'error' || s === 'high' || s === 'fatal';
+}
+
+function statusPill(color: OpsStatusColor | string | undefined): string {
+  if (color === 'green') return 'ag-pill--on';
+  if (color === 'red') return 'ag-pill--danger';
+  return 'ag-pill--warn';
+}
+
 export function AdminOpsPage() {
   const { t } = useTranslation('admin');
   const showToast = useUIStore((s) => s.showToast);
@@ -114,6 +134,7 @@ export function AdminOpsPage() {
   const [logKind, setLogKind] = useState('');
   const [logQ, setLogQ] = useState('');
   const [reportPeriod, setReportPeriod] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const dashQ = useQuery({
     queryKey: ['admin-ops-dashboard', range],
@@ -245,6 +266,26 @@ export function AdminOpsPage() {
     );
   }
 
+  const errorCount = errorsQ.data?.length ?? kpi?.errorCountToday ?? 0;
+  const alertCount = (alertsQ.data ?? d?.openAlerts ?? []).length;
+  const ranges: OpsRange[] = ['today', '7d', '30d', '90d', '1y'];
+  const rangeLabel = (r: OpsRange) =>
+    r === 'today'
+      ? t('ops.rangeToday')
+      : r === '7d'
+        ? t('ops.range7d')
+        : r === '30d'
+          ? t('ops.range30d')
+          : r === '90d'
+            ? t('ops.range90d')
+            : t('ops.range1y');
+
+  const tabBadge = (id: TabId): number | null => {
+    if (id === 'errors') return errorCount;
+    if (id === 'alerts') return alertCount;
+    return null;
+  };
+
   return (
     <AdminPageShell
       title={t('ops.title')}
@@ -255,69 +296,94 @@ export function AdminOpsPage() {
         </span>
       }
     >
-      <div className="admin-ops">
-        <div className="admin-ops__filters">
-          <label>
-            {t('ops.range')}{' '}
-            <select value={range} onChange={(e) => setRange(e.target.value as OpsRange)}>
-              <option value="today">{t('ops.rangeToday')}</option>
-              <option value="7d">{t('ops.range7d')}</option>
-              <option value="30d">{t('ops.range30d')}</option>
-              <option value="90d">{t('ops.range90d')}</option>
-              <option value="1y">{t('ops.range1y')}</option>
-            </select>
-          </label>
+      <div className="admin-ops ag">
+        <div className="ag-toolbar">
+          <div className="ag-chips" role="group" aria-label={t('ops.range')}>
+            {ranges.map((r) => (
+              <button
+                key={r}
+                type="button"
+                className={`ag-chip${range === r ? ' is-active' : ''}`}
+                onClick={() => setRange(r)}
+              >
+                {rangeLabel(r)}
+              </button>
+            ))}
+          </div>
+          <nav className="ag-chips" aria-label={t('ops.title')}>
+            {TABS.map((id) => {
+              const count = tabBadge(id);
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  className={`ag-chip${tab === id ? ' is-active' : ''}`}
+                  onClick={() => {
+                    setTab(id);
+                    setExpandedId(null);
+                  }}
+                >
+                  {t(`ops.tabs.${id}`)}
+                  {count != null && count > 0 ? (
+                    <span className="ag-chip__count">{count}</span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </nav>
         </div>
-
-        <nav className="admin-ops__tabs" aria-label={t('ops.title')}>
-          {TABS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              className={`admin-ops__tab${tab === id ? ' is-active' : ''}`}
-              onClick={() => setTab(id)}
-            >
-              {t(`ops.tabs.${id}`)}
-            </button>
-          ))}
-        </nav>
 
         {tab === 'overview' && kpi && health && (
           <>
-            <section className="admin-ops__kpi-grid" aria-label={t('ops.kpi')}>
-              <div className="admin-ops__kpi">
-                <div className="admin-ops__kpi-label">{t('ops.currentOnline')}</div>
-                <div className="admin-ops__kpi-value">{fmtNum(kpi.currentOnline)}</div>
-              </div>
-              <div className="admin-ops__kpi">
-                <div className="admin-ops__kpi-label">{t('ops.todaySignups')}</div>
-                <div className="admin-ops__kpi-value">{fmtNum(kpi.todaySignups)}</div>
-              </div>
-              <div className="admin-ops__kpi">
-                <div className="admin-ops__kpi-label">DAU</div>
-                <div className="admin-ops__kpi-value">{fmtNum(kpi.dau)}</div>
-              </div>
-              <div className="admin-ops__kpi">
-                <div className="admin-ops__kpi-label">{t('ops.apiAvg')}</div>
-                <div className={`admin-ops__kpi-value ${speedClass(kpi.apiAvgMs ?? 0)}`}>
-                  <span className={`admin-ops__status ${speedClass(kpi.apiAvgMs ?? 0)}`}>
-                    {fmtMs(kpi.apiAvgMs)}
-                  </span>
-                </div>
-              </div>
-              <div className="admin-ops__kpi">
-                <div className="admin-ops__kpi-label">{t('ops.serverStatus')}</div>
-                <div className="admin-ops__kpi-value">
-                  <span className={`admin-ops__status ${statusClass(kpi.serverStatus)}`}>
-                    <span className="admin-ops__dot" />
-                    {kpi.serverStatus}
-                  </span>
-                </div>
-              </div>
-              <div className="admin-ops__kpi">
-                <div className="admin-ops__kpi-label">{t('ops.errorsToday')}</div>
-                <div className="admin-ops__kpi-value">{fmtNum(kpi.errorCountToday)}</div>
-              </div>
+            <section className="ag-kpis" aria-label={t('ops.kpi')}>
+              <button type="button" className="ag-kpi" onClick={() => setTab('users')}>
+                <span className="ag-kpi__value">{fmtNum(kpi.currentOnline)}</span>
+                <span className="ag-kpi__label">{t('ops.currentOnline')}</span>
+              </button>
+              <button type="button" className="ag-kpi" onClick={() => setTab('users')}>
+                <span className="ag-kpi__value">{fmtNum(kpi.todaySignups)}</span>
+                <span className="ag-kpi__label">{t('ops.todaySignups')}</span>
+              </button>
+              <button type="button" className="ag-kpi" onClick={() => setTab('users')}>
+                <span className="ag-kpi__value">{fmtNum(kpi.dau)}</span>
+                <span className="ag-kpi__label">DAU</span>
+              </button>
+              <button
+                type="button"
+                className={`ag-kpi${speedClass(kpi.apiAvgMs ?? 0) === 'is-red' ? ' is-danger' : speedClass(kpi.apiAvgMs ?? 0) === 'is-yellow' ? ' is-warn' : ''}`}
+                onClick={() => setTab('api')}
+              >
+                <span className="ag-kpi__value">{fmtMs(kpi.apiAvgMs)}</span>
+                <span className="ag-kpi__label">{t('ops.apiAvg')}</span>
+              </button>
+              <button
+                type="button"
+                className={`ag-kpi${statusClass(kpi.serverStatus) === 'is-red' ? ' is-danger' : statusClass(kpi.serverStatus) === 'is-yellow' ? ' is-warn' : ''}`}
+                onClick={() => setTab('server')}
+              >
+                <span className="ag-kpi__value">{kpi.serverStatus}</span>
+                <span className="ag-kpi__label">{t('ops.serverStatus')}</span>
+              </button>
+              <button
+                type="button"
+                className={`ag-kpi${(kpi.errorCountToday ?? 0) > 0 ? ' is-danger' : ''}`}
+                onClick={() => setTab('errors')}
+              >
+                <span className="ag-kpi__value">{fmtNum(kpi.errorCountToday)}</span>
+                <span className="ag-kpi__label">{t('ops.errorsToday')}</span>
+              </button>
+              <button
+                type="button"
+                className={`ag-kpi${alertCount > 0 ? ' is-warn' : ''}`}
+                onClick={() => setTab('alerts')}
+              >
+                <span className="ag-kpi__value">{fmtNum(alertCount)}</span>
+                <span className="ag-kpi__label">{t('ops.tabs.alerts')}</span>
+              </button>
+              <button type="button" className="ag-kpi" onClick={() => setTab('server')}>
+                <span className="ag-kpi__value">{health.server}</span>
+                <span className="ag-kpi__label">{t('ops.healthPanel')}</span>
+              </button>
             </section>
 
             <section className="admin-ops__charts">
@@ -466,47 +532,68 @@ export function AdminOpsPage() {
         )}
 
         {tab === 'errors' && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.unresolvedErrors')}</h2>
-            <div className="admin-table-wrap">
-              <table className="admin-ops__table">
-                <thead>
-                  <tr>
-                    <th>{t('ops.severity')}</th>
-                    <th>{t('ops.errorTitle')}</th>
-                    <th>{t('ops.count')}</th>
-                    <th>{t('ops.firstSeen')}</th>
-                    <th>{t('ops.lastSeen')}</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
-                  {(errorsQ.data ?? []).map((e) => (
-                    <tr key={e.id}>
-                      <td>
-                        <span className={`admin-ops__sev is-${e.severity}`}>{e.severity}</span>
-                      </td>
-                      <td>
-                        <div>{e.title}</div>
-                        <div className="admin-ops__mono">{e.sampleUrl}</div>
-                      </td>
-                      <td>{e.occurrenceCount}</td>
-                      <td>{new Date(e.firstSeenAt).toLocaleString()}</td>
-                      <td>{new Date(e.lastSeenAt).toLocaleString()}</td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => resolveErr.mutate(e.id)}
-                        >
-                          {t('ops.resolve')}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            {(errorsQ.data ?? []).length === 0 ? (
+              <p className="ag-empty">{t('ops.unresolvedErrors')}</p>
+            ) : (
+              <div className="ag-queue">
+                {(errorsQ.data ?? []).map((e) => {
+                  const open = expandedId === e.id;
+                  return (
+                    <article
+                      key={e.id}
+                      className={[
+                        'ag-card',
+                        isFailSeverity(e.severity) ? 'is-fail' : 'is-warn',
+                        open ? 'is-selected' : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      <button
+                        type="button"
+                        className="ag-card__main"
+                        onClick={() =>
+                          setExpandedId((prev) => (prev === e.id ? null : e.id))
+                        }
+                      >
+                        <span className="ag-card__identity">
+                          <span className="ag-card__title">{e.title}</span>
+                          <span className="ag-card__meta">
+                            {t('ops.count')}: {e.occurrenceCount} ·{' '}
+                            {fmtDateTime(e.lastSeenAt)}
+                          </span>
+                        </span>
+                        <span className={`ag-pill ${sevPill(e.severity)}`}>{e.severity}</span>
+                        <span className="ag-metrics">{e.occurrenceCount}</span>
+                        <span className="ag-card__chevron" aria-hidden>
+                          {open ? '▾' : '▸'}
+                        </span>
+                      </button>
+                      {open ? (
+                        <div className="ag-card__detail">
+                          <p className="ag-card__excerpt admin-ops__mono">{e.sampleUrl}</p>
+                          <p className="ag-card__excerpt">
+                            {t('ops.firstSeen')}: {fmtDateTime(e.firstSeenAt)} ·{' '}
+                            {t('ops.lastSeen')}: {fmtDateTime(e.lastSeenAt)}
+                          </p>
+                          <div className="ag-card__actions">
+                            <button
+                              type="button"
+                              className="btn btn--secondary"
+                              onClick={() => resolveErr.mutate(e.id)}
+                            >
+                              {t('ops.resolve')}
+                            </button>
+                          </div>
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
+            )}
           </section>
         )}
 
@@ -565,155 +652,162 @@ export function AdminOpsPage() {
         )}
 
         {tab === 'api' && (
-          <section className="admin-panel">
-            <div className="admin-ops__filters">
-              <label>
-                {t('ops.range')}{' '}
-                <select
-                  value={apiRange}
-                  onChange={(e) => setApiRange(e.target.value as OpsRange)}
-                >
-                  <option value="today">{t('ops.rangeToday')}</option>
-                  <option value="7d">{t('ops.range7d')}</option>
-                  <option value="30d">{t('ops.range30d')}</option>
-                </select>
-              </label>
+          <section className="ag-panel">
+            <div className="ag-toolbar">
+              <div className="ag-chips" role="group" aria-label={t('ops.range')}>
+                {(['today', '7d', '30d'] as OpsRange[]).map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`ag-chip${apiRange === r ? ' is-active' : ''}`}
+                    onClick={() => setApiRange(r)}
+                  >
+                    {rangeLabel(r)}
+                  </button>
+                ))}
+              </div>
             </div>
             <h2 className="admin-panel__title">{t('ops.slowApis')}</h2>
-            <div className="admin-table-wrap">
-              <table className="admin-ops__table">
-                <thead>
-                  <tr>
-                    <th>API</th>
-                    <th>Avg</th>
-                    <th>P95</th>
-                    <th>P99</th>
-                    <th>{t('ops.calls')}</th>
-                    <th>{t('ops.failRate')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {apiSorted.slow.map((a) => (
-                    <tr key={`s-${a.method}-${a.routeKey}`}>
-                      <td className="admin-ops__mono">
+            <div className="ag-queue">
+              {apiSorted.slow.map((a) => (
+                <article key={`s-${a.method}-${a.routeKey}`} className="ag-card">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title admin-ops__mono">
                         {a.method} {a.routeKey}
-                      </td>
-                      <td className={`admin-ops__status ${a.speedColor}`}>{fmtMs(a.avgMs)}</td>
-                      <td>{fmtMs(a.p95Ms)}</td>
-                      <td>{fmtMs(a.p99Ms)}</td>
-                      <td>{a.callCount}</td>
-                      <td>{fmtPct(a.failRate)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>
+                      <span className="ag-card__meta">
+                        P95 {fmtMs(a.p95Ms)} · P99 {fmtMs(a.p99Ms)} · {t('ops.calls')}{' '}
+                        {a.callCount}
+                      </span>
+                    </span>
+                    <span className={`ag-pill ${statusPill(a.speedColor)}`}>{fmtMs(a.avgMs)}</span>
+                    <span className="ag-metrics">{fmtPct(a.failRate)}</span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
+              ))}
             </div>
             <h2 className="admin-panel__title">{t('ops.failApis')}</h2>
-            <ul className="admin-ops__list">
+            <div className="ag-queue">
               {apiSorted.fail.map((a) => (
-                <li key={`f-${a.method}-${a.routeKey}`}>
-                  <span className="admin-ops__mono">
-                    {a.method} {a.routeKey}
-                  </span>
-                  <span className="admin-ops__list-meta">{fmtPct(a.failRate)}</span>
-                </li>
+                <article key={`f-${a.method}-${a.routeKey}`} className="ag-card is-warn">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title admin-ops__mono">
+                        {a.method} {a.routeKey}
+                      </span>
+                      <span className="ag-card__meta">
+                        {fmtMs(a.avgMs)} · {t('ops.calls')} {a.callCount}
+                      </span>
+                    </span>
+                    <span className="ag-pill ag-pill--danger">{fmtPct(a.failRate)}</span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
               ))}
-            </ul>
+            </div>
             <h2 className="admin-panel__title">{t('ops.hotApis')}</h2>
-            <ul className="admin-ops__list">
+            <div className="ag-queue">
               {apiSorted.hot.map((a) => (
-                <li key={`h-${a.method}-${a.routeKey}`}>
-                  <span className="admin-ops__mono">
-                    {a.method} {a.routeKey}
-                  </span>
-                  <span className="admin-ops__list-meta">{a.callCount}</span>
-                </li>
+                <article key={`h-${a.method}-${a.routeKey}`} className="ag-card">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title admin-ops__mono">
+                        {a.method} {a.routeKey}
+                      </span>
+                      <span className="ag-card__meta">{fmtMs(a.avgMs)}</span>
+                    </span>
+                    <span className="ag-pill ag-pill--off">{a.callCount}</span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
               ))}
-            </ul>
+            </div>
           </section>
         )}
 
         {tab === 'users' && kpi && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.userStats')}</h2>
-            <div className="admin-stats">
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.currentOnline)}</div>
-                <div className="admin-stat__label">{t('ops.currentOnline')}</div>
+            <section className="ag-kpis" aria-label={t('ops.userStats')}>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.currentOnline)}</span>
+                <span className="ag-kpi__label">{t('ops.currentOnline')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.todayVisitors)}</div>
-                <div className="admin-stat__label">{t('ops.todayVisitors')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.todayVisitors)}</span>
+                <span className="ag-kpi__label">{t('ops.todayVisitors')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.weekVisitors)}</div>
-                <div className="admin-stat__label">{t('ops.weekVisitors')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.weekVisitors)}</span>
+                <span className="ag-kpi__label">{t('ops.weekVisitors')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.monthVisitors)}</div>
-                <div className="admin-stat__label">{t('ops.monthVisitors')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.monthVisitors)}</span>
+                <span className="ag-kpi__label">{t('ops.monthVisitors')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.totalMembers)}</div>
-                <div className="admin-stat__label">{t('ops.totalMembers')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.totalMembers)}</span>
+                <span className="ag-kpi__label">{t('ops.totalMembers')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.todaySignups)}</div>
-                <div className="admin-stat__label">{t('ops.todaySignups')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.todaySignups)}</span>
+                <span className="ag-kpi__label">{t('ops.todaySignups')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.weekSignups)}</div>
-                <div className="admin-stat__label">{t('ops.weekSignups')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.weekSignups)}</span>
+                <span className="ag-kpi__label">{t('ops.weekSignups')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.monthSignups)}</div>
-                <div className="admin-stat__label">{t('ops.monthSignups')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.monthSignups)}</span>
+                <span className="ag-kpi__label">{t('ops.monthSignups')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.todayLogins)}</div>
-                <div className="admin-stat__label">{t('ops.todayLogins')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.todayLogins)}</span>
+                <span className="ag-kpi__label">{t('ops.todayLogins')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.dau)}</div>
-                <div className="admin-stat__label">DAU</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.dau)}</span>
+                <span className="ag-kpi__label">DAU</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.wau)}</div>
-                <div className="admin-stat__label">WAU</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.wau)}</span>
+                <span className="ag-kpi__label">WAU</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.mau)}</div>
-                <div className="admin-stat__label">MAU</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.mau)}</span>
+                <span className="ag-kpi__label">MAU</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtPct(kpi.stickiness)}</div>
-                <div className="admin-stat__label">Stickiness</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtPct(kpi.stickiness)}</span>
+                <span className="ag-kpi__label">Stickiness</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtPct(kpi.retentionD1)}</div>
-                <div className="admin-stat__label">Retention D1</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtPct(kpi.retentionD1)}</span>
+                <span className="ag-kpi__label">Retention D1</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtPct(kpi.retentionD7)}</div>
-                <div className="admin-stat__label">Retention D7</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtPct(kpi.retentionD7)}</span>
+                <span className="ag-kpi__label">Retention D7</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtPct(kpi.retentionD30)}</div>
-                <div className="admin-stat__label">Retention D30</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtPct(kpi.retentionD30)}</span>
+                <span className="ag-kpi__label">Retention D30</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.freeMembers)}</div>
-                <div className="admin-stat__label">{t('ops.freeMembers')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.freeMembers)}</span>
+                <span className="ag-kpi__label">{t('ops.freeMembers')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtNum(kpi.paidMembers)}</div>
-                <div className="admin-stat__label">{t('ops.paidMembers')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtNum(kpi.paidMembers)}</span>
+                <span className="ag-kpi__label">{t('ops.paidMembers')}</span>
               </div>
-              <div className="admin-stat">
-                <div className="admin-stat__value">{fmtPct(kpi.premiumConversionRate)}</div>
-                <div className="admin-stat__label">{t('ops.premiumRate')}</div>
+              <div className="ag-kpi">
+                <span className="ag-kpi__value">{fmtPct(kpi.premiumConversionRate)}</span>
+                <span className="ag-kpi__label">{t('ops.premiumRate')}</span>
               </div>
-            </div>
+            </section>
             <div className="admin-ops__charts" style={{ marginTop: '1rem' }}>
               <div className="admin-ops__chart">
                 <h3 className="admin-ops__chart-title">DAU / Visitors</h3>
@@ -728,53 +822,76 @@ export function AdminOpsPage() {
         )}
 
         {tab === 'pages' && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.topPages')}</h2>
-            <ul className="admin-ops__list">
+            <div className="ag-queue">
               {pageSorted.popular.map((p) => (
-                <li key={`p-${p.pathKey}`}>
-                  <span className="admin-ops__mono">{p.pathKey}</span>
-                  <span className="admin-ops__list-meta">
-                    PV {p.pageViews} · UV {p.uniqueVisitors} ·{' '}
-                    {fmtNum(p.avgDwellMs / 1000, 1)}s
-                  </span>
-                </li>
+                <article key={`p-${p.pathKey}`} className="ag-card">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title admin-ops__mono">{p.pathKey}</span>
+                      <span className="ag-card__meta">
+                        UV {p.uniqueVisitors} · {fmtNum(p.avgDwellMs / 1000, 1)}s
+                      </span>
+                    </span>
+                    <span className="ag-pill ag-pill--off">PV {p.pageViews}</span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
               ))}
-            </ul>
+            </div>
             <h2 className="admin-panel__title">{t('ops.dwellTop')}</h2>
-            <ul className="admin-ops__list">
+            <div className="ag-queue">
               {pageSorted.dwell.map((p) => (
-                <li key={`d-${p.pathKey}`}>
-                  <span className="admin-ops__mono">{p.pathKey}</span>
-                  <span className="admin-ops__list-meta">{fmtNum(p.avgDwellMs / 1000, 1)}s</span>
-                </li>
+                <article key={`d-${p.pathKey}`} className="ag-card">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title admin-ops__mono">{p.pathKey}</span>
+                      <span className="ag-card__meta">PV {p.pageViews}</span>
+                    </span>
+                    <span className="ag-pill ag-pill--off">
+                      {fmtNum(p.avgDwellMs / 1000, 1)}s
+                    </span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
               ))}
-            </ul>
+            </div>
             <h2 className="admin-panel__title">{t('ops.bounceTop')}</h2>
-            <ul className="admin-ops__list">
+            <div className="ag-queue">
               {pageSorted.bounce.map((p) => (
-                <li key={`b-${p.pathKey}`}>
-                  <span className="admin-ops__mono">{p.pathKey}</span>
-                  <span className="admin-ops__list-meta">{fmtPct(p.bounceRate)}</span>
-                </li>
+                <article key={`b-${p.pathKey}`} className="ag-card is-warn">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title admin-ops__mono">{p.pathKey}</span>
+                      <span className="ag-card__meta">PV {p.pageViews}</span>
+                    </span>
+                    <span className="ag-pill ag-pill--warn">{fmtPct(p.bounceRate)}</span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
               ))}
-            </ul>
+            </div>
           </section>
         )}
 
         {tab === 'features' && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.topFeatures')}</h2>
-            <ul className="admin-ops__list">
+            <div className="ag-queue">
               {(featuresQ.data ?? []).slice(0, 30).map((f) => (
-                <li key={f.featureKey}>
-                  <span>{f.featureKey}</span>
-                  <span className="admin-ops__list-meta">
-                    {f.eventCount} · UV {f.uniqueUsers}
-                  </span>
-                </li>
+                <article key={f.featureKey} className="ag-card">
+                  <div className="ag-card__main" style={{ cursor: 'default' }}>
+                    <span className="ag-card__identity">
+                      <span className="ag-card__title">{f.featureKey}</span>
+                      <span className="ag-card__meta">UV {f.uniqueUsers}</span>
+                    </span>
+                    <span className="ag-pill ag-pill--off">{f.eventCount}</span>
+                    <span className="ag-card__chevron" aria-hidden />
+                  </div>
+                </article>
               ))}
-            </ul>
+            </div>
           </section>
         )}
 
@@ -808,23 +925,36 @@ export function AdminOpsPage() {
         )}
 
         {tab === 'logs' && (
-          <section className="admin-panel">
-            <div className="admin-ops__filters">
-              <select value={logKind} onChange={(e) => setLogKind(e.target.value)}>
-                <option value="">{t('ops.allKinds')}</option>
-                <option value="application">Application</option>
-                <option value="error">Error</option>
-                <option value="access">Access</option>
-                <option value="admin">Admin</option>
-                <option value="login">Login</option>
-                <option value="security">Security</option>
-              </select>
+          <section className="ag-panel">
+            <div className="ag-toolbar">
+              <div className="ag-chips" role="group" aria-label={t('ops.kind')}>
+                {[
+                  { value: '', label: t('ops.allKinds') },
+                  { value: 'application', label: 'Application' },
+                  { value: 'error', label: 'Error' },
+                  { value: 'access', label: 'Access' },
+                  { value: 'admin', label: 'Admin' },
+                  { value: 'login', label: 'Login' },
+                  { value: 'security', label: 'Security' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value || 'all'}
+                    type="button"
+                    className={`ag-chip${logKind === opt.value ? ' is-active' : ''}`}
+                    onClick={() => setLogKind(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
               <input
+                className="ag-search"
                 value={logQ}
                 onChange={(e) => setLogQ(e.target.value)}
                 placeholder={t('ops.searchPlaceholder')}
+                aria-label={t('ops.searchPlaceholder')}
               />
-              <div className="admin-ops__actions">
+              <div className="ag-card__actions">
                 <button
                   type="button"
                   className="btn btn--secondary"
@@ -849,198 +979,271 @@ export function AdminOpsPage() {
                 </button>
               </div>
             </div>
-            <div className="admin-table-wrap">
-              <table className="admin-ops__table">
-                <thead>
-                  <tr>
-                    <th>{t('ops.time')}</th>
-                    <th>{t('ops.kind')}</th>
-                    <th>{t('ops.level')}</th>
-                    <th>{t('ops.message')}</th>
-                    <th>IP</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(logsQ.data ?? []).map((row) => (
-                    <tr key={row.id}>
-                      <td>{new Date(row.loggedAt).toLocaleString()}</td>
-                      <td>{row.kind}</td>
-                      <td>{row.level}</td>
-                      <td>{row.message}</td>
-                      <td className="admin-ops__mono">{row.ipAddress}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="ag-queue">
+              {(logsQ.data ?? []).map((row) => {
+                const rowKey = String(row.id);
+                const open = expandedId === rowKey;
+                return (
+                  <article
+                    key={rowKey}
+                    className={[
+                      'ag-card',
+                      row.level === 'error' || row.kind === 'error' ? 'is-fail' : '',
+                      open ? 'is-selected' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    <button
+                      type="button"
+                      className="ag-card__main"
+                      onClick={() =>
+                        setExpandedId((prev) => (prev === rowKey ? null : rowKey))
+                      }
+                    >
+                      <span className="ag-card__identity">
+                        <span className="ag-card__title">{row.message}</span>
+                        <span className="ag-card__meta">
+                          {fmtDateTime(row.loggedAt)} · {row.kind}
+                        </span>
+                      </span>
+                      <span className={`ag-pill ${sevPill(row.level)}`}>{row.level}</span>
+                      <span className="ag-card__chevron" aria-hidden>
+                        {open ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {open ? (
+                      <div className="ag-card__detail">
+                        <p className="ag-card__excerpt admin-ops__mono">
+                          IP {row.ipAddress ?? '—'}
+                        </p>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}
 
         {tab === 'audit' && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.auditTitle')}</h2>
             <p className="admin-panel__desc">{t('ops.auditImmutable')}</p>
-            <div className="admin-table-wrap">
-              <table className="admin-ops__table">
-                <thead>
-                  <tr>
-                    <th>{t('ops.time')}</th>
-                    <th>{t('ops.actor')}</th>
-                    <th>{t('ops.action')}</th>
-                    <th>Target</th>
-                    <th>IP</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(auditsQ.data ?? []).map((a) => (
-                    <tr key={a.id}>
-                      <td>{new Date(a.createdAt).toLocaleString()}</td>
-                      <td className="admin-ops__mono">
-                        {a.actorId?.slice(0, 8)} · {a.actorRole}
-                      </td>
-                      <td>{a.action}</td>
-                      <td>
-                        {a.targetType} {a.targetId}
-                      </td>
-                      <td className="admin-ops__mono">{a.ipAddress}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="ag-queue">
+              {(auditsQ.data ?? []).map((a) => {
+                const open = expandedId === a.id;
+                return (
+                  <article
+                    key={a.id}
+                    className={`ag-card${open ? ' is-selected' : ''}`}
+                  >
+                    <button
+                      type="button"
+                      className="ag-card__main"
+                      onClick={() =>
+                        setExpandedId((prev) => (prev === a.id ? null : a.id))
+                      }
+                    >
+                      <span className="ag-card__identity">
+                        <span className="ag-card__title">
+                          {a.action} · {a.targetType}
+                        </span>
+                        <span className="ag-card__meta">{fmtDateTime(a.createdAt)}</span>
+                      </span>
+                      <span className="ag-pill ag-pill--off">{a.actorRole}</span>
+                      <span className="ag-card__chevron" aria-hidden>
+                        {open ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {open ? (
+                      <div className="ag-card__detail">
+                        <p className="ag-card__excerpt admin-ops__mono">
+                          {t('ops.actor')}: {a.actorId?.slice(0, 8)} · Target {a.targetId} ·
+                          IP {a.ipAddress ?? '—'}
+                        </p>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}
 
         {tab === 'alerts' && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.alertsTitle')}</h2>
             <p className="admin-panel__desc">{t('ops.alertsChannels')}</p>
-            <div className="admin-table-wrap">
-              <table className="admin-ops__table">
-                <thead>
-                  <tr>
-                    <th>{t('ops.time')}</th>
-                    <th>{t('ops.severity')}</th>
-                    <th>{t('ops.message')}</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
-                  {(alertsQ.data ?? d?.openAlerts ?? []).map((a) => (
-                    <tr key={a.id}>
-                      <td className="admin-ops__mono">{fmtDateTime(a.createdAt)}</td>
-                      <td>
-                        <span className={`admin-ops__sev is-${a.severity}`}>{a.severity}</span>
-                      </td>
-                      <td>
-                        <div>{a.title}</div>
-                        <div className="admin-ops__mono">{a.message}</div>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn--secondary"
-                          onClick={() => ackAlert.mutate(a.id)}
-                        >
-                          {t('ops.ack')}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="ag-queue">
+              {(alertsQ.data ?? d?.openAlerts ?? []).map((a) => {
+                const open = expandedId === a.id;
+                return (
+                  <article
+                    key={a.id}
+                    className={[
+                      'ag-card',
+                      isFailSeverity(a.severity) ? 'is-fail' : 'is-warn',
+                      open ? 'is-selected' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    <button
+                      type="button"
+                      className="ag-card__main"
+                      onClick={() =>
+                        setExpandedId((prev) => (prev === a.id ? null : a.id))
+                      }
+                    >
+                      <span className="ag-card__identity">
+                        <span className="ag-card__title">{a.title}</span>
+                        <span className="ag-card__meta">{fmtDateTime(a.createdAt)}</span>
+                      </span>
+                      <span className={`ag-pill ${sevPill(a.severity)}`}>{a.severity}</span>
+                      <span className="ag-card__chevron" aria-hidden>
+                        {open ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {open ? (
+                      <div className="ag-card__detail">
+                        <p className="ag-card__excerpt admin-ops__mono">{a.message}</p>
+                        <div className="ag-card__actions">
+                          <button
+                            type="button"
+                            className="btn btn--secondary"
+                            onClick={() => ackAlert.mutate(a.id)}
+                          >
+                            {t('ops.ack')}
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}
 
         {tab === 'reports' && (
-          <section className="admin-panel">
-            <div className="admin-ops__filters">
-              <select
-                value={reportPeriod}
-                onChange={(e) =>
-                  setReportPeriod(e.target.value as 'daily' | 'weekly' | 'monthly')
-                }
-              >
-                <option value="daily">{t('ops.reportDaily')}</option>
-                <option value="weekly">{t('ops.reportWeekly')}</option>
-                <option value="monthly">{t('ops.reportMonthly')}</option>
-              </select>
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() =>
-                  void opsApi
-                    .downloadReportCsv(reportPeriod)
-                    .catch(() => showToast(t('error'), 'error'))
-                }
-              >
-                CSV / Excel
-              </button>
-            </div>
-            {reportQ.data && (
-              <div className="admin-stats">
-                <div className="admin-stat">
-                  <div className="admin-stat__value">{reportQ.data.newMembers}</div>
-                  <div className="admin-stat__label">{t('ops.newMembers')}</div>
-                </div>
-                <div className="admin-stat">
-                  <div className="admin-stat__value">{reportQ.data.activeMembers}</div>
-                  <div className="admin-stat__label">{t('ops.activeMembers')}</div>
-                </div>
-                <div className="admin-stat">
-                  <div className="admin-stat__value">{fmtMs(reportQ.data.apiAvgMs)}</div>
-                  <div className="admin-stat__label">{t('ops.apiAvg')}</div>
-                </div>
-                <div className="admin-stat">
-                  <div className="admin-stat__value">{reportQ.data.errorCount}</div>
-                  <div className="admin-stat__label">{t('ops.errorsToday')}</div>
-                </div>
-                <div className="admin-stat">
-                  <div className="admin-stat__value">
-                    {fmtNum(reportQ.data.uptimeSec / 3600, 1)}h
-                  </div>
-                  <div className="admin-stat__label">Uptime</div>
-                </div>
-                <div className="admin-stat">
-                  <div className="admin-stat__value">
-                    {fmtPct(reportQ.data.premiumConversionRate)}
-                  </div>
-                  <div className="admin-stat__label">{t('ops.premiumRate')}</div>
-                </div>
+          <section className="ag-panel">
+            <div className="ag-toolbar">
+              <div className="ag-chips" role="group" aria-label={t('ops.tabs.reports')}>
+                {(
+                  [
+                    { value: 'daily' as const, label: t('ops.reportDaily') },
+                    { value: 'weekly' as const, label: t('ops.reportWeekly') },
+                    { value: 'monthly' as const, label: t('ops.reportMonthly') },
+                  ] as const
+                ).map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`ag-chip${reportPeriod === opt.value ? ' is-active' : ''}`}
+                    onClick={() => setReportPeriod(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
-            )}
+              <div className="ag-card__actions">
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  onClick={() =>
+                    void opsApi
+                      .downloadReportCsv(reportPeriod)
+                      .catch(() => showToast(t('error'), 'error'))
+                  }
+                >
+                  CSV / Excel
+                </button>
+              </div>
+            </div>
+            {reportQ.data ? (
+              <section className="ag-kpis" aria-label={t('ops.tabs.reports')}>
+                <div className="ag-kpi">
+                  <span className="ag-kpi__value">{reportQ.data.newMembers}</span>
+                  <span className="ag-kpi__label">{t('ops.newMembers')}</span>
+                </div>
+                <div className="ag-kpi">
+                  <span className="ag-kpi__value">{reportQ.data.activeMembers}</span>
+                  <span className="ag-kpi__label">{t('ops.activeMembers')}</span>
+                </div>
+                <div className="ag-kpi">
+                  <span className="ag-kpi__value">{fmtMs(reportQ.data.apiAvgMs)}</span>
+                  <span className="ag-kpi__label">{t('ops.apiAvg')}</span>
+                </div>
+                <div
+                  className={`ag-kpi${reportQ.data.errorCount > 0 ? ' is-danger' : ''}`}
+                >
+                  <span className="ag-kpi__value">{reportQ.data.errorCount}</span>
+                  <span className="ag-kpi__label">{t('ops.errorsToday')}</span>
+                </div>
+                <div className="ag-kpi">
+                  <span className="ag-kpi__value">
+                    {fmtNum(reportQ.data.uptimeSec / 3600, 1)}h
+                  </span>
+                  <span className="ag-kpi__label">Uptime</span>
+                </div>
+                <div className="ag-kpi">
+                  <span className="ag-kpi__value">
+                    {fmtPct(reportQ.data.premiumConversionRate)}
+                  </span>
+                  <span className="ag-kpi__label">{t('ops.premiumRate')}</span>
+                </div>
+              </section>
+            ) : null}
           </section>
         )}
 
         {tab === 'security' && (
-          <section className="admin-panel">
+          <section className="ag-panel">
             <h2 className="admin-panel__title">{t('ops.securityTitle')}</h2>
-            <div className="admin-table-wrap">
-              <table className="admin-ops__table">
-                <thead>
-                  <tr>
-                    <th>{t('ops.time')}</th>
-                    <th>{t('ops.kind')}</th>
-                    <th>{t('ops.severity')}</th>
-                    <th>{t('ops.message')}</th>
-                    <th>IP</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(securityQ.data ?? []).map((s) => (
-                    <tr key={s.id}>
-                      <td>{new Date(s.occurredAt).toLocaleString()}</td>
-                      <td>{s.eventType}</td>
-                      <td>
-                        <span className={`admin-ops__sev is-${s.severity}`}>{s.severity}</span>
-                      </td>
-                      <td>{s.message}</td>
-                      <td className="admin-ops__mono">{s.ipAddress}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="ag-queue">
+              {(securityQ.data ?? []).map((s) => {
+                const rowKey = String(s.id);
+                const open = expandedId === rowKey;
+                return (
+                  <article
+                    key={rowKey}
+                    className={[
+                      'ag-card',
+                      isFailSeverity(s.severity) ? 'is-fail' : '',
+                      open ? 'is-selected' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    <button
+                      type="button"
+                      className="ag-card__main"
+                      onClick={() =>
+                        setExpandedId((prev) => (prev === rowKey ? null : rowKey))
+                      }
+                    >
+                      <span className="ag-card__identity">
+                        <span className="ag-card__title">{s.message}</span>
+                        <span className="ag-card__meta">
+                          {fmtDateTime(s.occurredAt)} · {s.eventType}
+                        </span>
+                      </span>
+                      <span className={`ag-pill ${sevPill(s.severity)}`}>{s.severity}</span>
+                      <span className="ag-card__chevron" aria-hidden>
+                        {open ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {open ? (
+                      <div className="ag-card__detail">
+                        <p className="ag-card__excerpt admin-ops__mono">
+                          IP {s.ipAddress ?? '—'}
+                        </p>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}

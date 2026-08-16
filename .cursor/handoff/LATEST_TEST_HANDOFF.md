@@ -1,25 +1,26 @@
-ï»¿# Glanceable admin moderation + banners UX
+# Glanceable admin dashboard / ops / backup / users / subs / brands
 
 ## Summary
-Moderation and banner list/create/slots/stats redesigned with shared `ag-*` KPIs, chips, dense expandable rows, and side preview/editor panels.
+Six more admin screens use shared `ag-*` KPIs, chips, dense expandable queues, and searchable menus: dashboard, ops, backup, users, subscriptions, brands.
 
 ## Git
 - branch: `main`
-- commit: `6589bb82`
+- commit: pending
 
 ## Test focus
-1. `/admin/moderation` ? KPI tabs, pending chips, expand actions
-2. `/admin/banners` ? status KPIs, slot chips, dense rows
-3. `/admin/banners/new` and edit ? form + sticky preview side
-4. `/admin/banners/slots` ? KPIs, create side editor, activate/delete
-5. `/admin/banners/stats` ? KPIs, expandable slot/banner rows + search
+1. `/admin` ? KPI overview, attention queue, searchable menu
+2. `/admin/ops` ? chip tabs, overview KPIs, dense error/log/alert rows
+3. `/admin/backup` ? KPI strip, settings expand, history queue, restore YES flow
+4. `/admin/users` ? KPI filters, expandable role/username actions
+5. `/admin/subscriptions` ? live search, status chips, step-up + expand actions
+6. `/admin/brands` ? KPI/search chips, dense logo rows, create/edit modal
 
 ## Fast checks
 ```bash
-rg -n "admin-glance|className=\"ag\"" frontend/src/pages/admin/moderation frontend/src/pages/admin/banners
+rg -n "admin-glance|className=\"ag\"" frontend/src/pages/admin/dashboard frontend/src/pages/admin/ops frontend/src/pages/admin/backup frontend/src/pages/admin/users frontend/src/pages/admin/subscriptions frontend/src/pages/admin/brands
+node -e "JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8')); console.log('ok')"
 ```
 
-## as-is â†’ to-be
-- **as-is:** Wide tables, tab cards, tall edit form without sticky preview
-- **to-be:** ag-* KPI + chips + dense queues + side preview/editor
-
+## as-is ¡æ to-be
+- **as-is:** Tall panels, wide tabs, bulky user/sub/brand cards
+- **to-be:** Shared ag-* KPI + chips + dense queues across six screens

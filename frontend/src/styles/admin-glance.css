@@ -60,12 +60,15 @@
   font: inherit;
 }
 
-button.ag-kpi {
+button.ag-kpi,
+a.ag-kpi {
   cursor: pointer;
+  text-decoration: none;
   transition: border-color 0.12s ease, background 0.12s ease;
 }
 
-button.ag-kpi:hover {
+button.ag-kpi:hover,
+a.ag-kpi:hover {
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
 }
 
@@ -235,6 +238,7 @@ button.ag-kpi:hover {
   text-align: left;
   cursor: pointer;
   font: inherit;
+  text-decoration: none;
 }
 
 @media (min-width: 900px) {
@@ -254,6 +258,33 @@ button.ag-kpi:hover {
   display: grid;
   gap: 0.1rem;
   min-width: 0;
+}
+
+.ag-card__identity--with-thumb {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.ag-card__identity--with-thumb > span {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.ag-card__thumb {
+  width: 2.35rem;
+  height: 2.35rem;
+  object-fit: cover;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  flex: 0 0 auto;
+}
+
+.ag-card__thumb--empty {
+  display: inline-block;
 }
 
 .ag-card__title {

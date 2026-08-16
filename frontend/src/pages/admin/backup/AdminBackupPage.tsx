@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { backupApi } from '@/api/backup.api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
+import '@/styles/admin-glance.css';
 import '@/styles/admin-backup.css';
 
 function getRestoreErrorMessage(error: unknown): string | undefined {
@@ -37,11 +38,18 @@ function ProgressBar({ value }: { value: number }) {
   );
 }
 
-function statusBadgeClass(status: string): string {
+function statusPillClass(status: string): string {
   const s = status.toUpperCase();
-  if (s === 'SUCCESS' || s === 'COMPLETED' || s === 'OK') return 'admin-badge--ok';
-  if (s === 'FAILED' || s === 'ERROR') return 'admin-badge--danger';
-  return 'admin-badge--pending';
+  if (s === 'SUCCESS' || s === 'COMPLETED' || s === 'OK') return 'ag-pill--on';
+  if (s === 'FAILED' || s === 'ERROR') return 'ag-pill--danger';
+  return 'ag-pill--warn';
+}
+
+function formatBytes(n: number | null | undefined): string | null {
+  if (n == null || !Number.isFinite(n)) return null;
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 export function AdminBackupPage() {
@@ -56,6 +64,8 @@ export function AdminBackupPage() {
   const [confirmText, setConfirmText] = useState('');
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [warnOpen, setWarnOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const settingsQuery = useQuery({
     queryKey: ['admin-backup-settings'],
@@ -128,6 +138,20 @@ export function AdminBackupPage() {
   };
 
   const settings = settingsQuery.data;
+  const history = historyQuery.data ?? [];
+
+  const lastStatus = useMemo((): string => {
+    const first = history[0];
+    return first?.status ?? '—';
+  }, [history]);
+
+  const lastStatusClass = useMemo(() => {
+    if (!history[0]) return ' is-muted';
+    const s = lastStatus.toUpperCase();
+    if (s === 'SUCCESS' || s === 'COMPLETED' || s === 'OK') return '';
+    if (s === 'FAILED' || s === 'ERROR') return ' is-danger';
+    return ' is-warn';
+  }, [history, lastStatus]);
 
   return (
     <AdminPageShell
@@ -136,151 +160,210 @@ export function AdminBackupPage() {
       backTo={ROUTES.ADMIN}
       backLabel={t('backToAdmin')}
     >
-      <section className="admin-panel admin-backup__panel">
-        <div className="admin-backup__panel-head">
-          <h2 className="admin-panel__title">{t('backup.systemBackup')}</h2>
-          <p className="admin-panel__desc">{t('backup.systemBackupHelp')}</p>
-        </div>
-        <div className="admin-backup__actions">
-          <button
-            type="button"
-            className="btn btn--primary"
-            disabled={busy !== null}
-            onClick={() => void runBackup()}
-          >
-            {t('backup.runBackup')}
-          </button>
-        </div>
-        {busy === 'backup' ? <ProgressBar value={progress} /> : null}
-      </section>
-
-      <section className="admin-panel admin-backup__panel">
-        <div className="admin-backup__panel-head">
-          <h2 className="admin-panel__title">{t('backup.systemRestore')}</h2>
-          <p className="admin-panel__desc">{t('backup.systemRestoreHelp')}</p>
-        </div>
-        <div className="admin-backup__file">
-          <input
-            ref={fileRef}
-            id="admin-backup-restore-file"
-            className="admin-backup__file-input"
-            type="file"
-            accept=".zip,.json,application/zip,application/json"
-            disabled={busy !== null}
-            onChange={(e) => {
-              const file = e.target.files?.[0] ?? null;
-              setPendingFile(file);
-              setConfirmText('');
-              if (file) setWarnOpen(true);
-            }}
-          />
-          <label htmlFor="admin-backup-restore-file" className="btn btn--secondary">
-            {pendingFile ? pendingFile.name : t('backup.chooseFile')}
-          </label>
-          {pendingFile ? (
-            <span className="admin-backup__file-meta">
-              {(pendingFile.size / (1024 * 1024)).toFixed(2)} MB
-            </span>
-          ) : null}
-        </div>
-        {busy === 'restore' ? <ProgressBar value={progress} /> : null}
-      </section>
-
-      <section className="admin-panel admin-backup__panel">
-        <div className="admin-backup__panel-head">
-          <h2 className="admin-panel__title">{t('backup.autoTitle')}</h2>
-        </div>
-        {settings ? (
-          <div className="admin-backup__settings">
-            <label className="admin-backup__check">
-              <input
-                type="checkbox"
-                checked={settings.autoBackupEnabled}
-                onChange={(e) => saveSettings.mutate({ autoBackupEnabled: e.target.checked })}
-              />
-              <span>{t('backup.autoEnabled')}</span>
-            </label>
-            <div className="admin-form-grid admin-backup__settings-grid">
-              <label className="admin-form-card">
-                <span className="admin-form-card__label">{t('backup.hourUtc')}</span>
-                <input
-                  className="input"
-                  type="number"
-                  min={0}
-                  max={23}
-                  defaultValue={settings.autoBackupHourUtc}
-                  onBlur={(e) => {
-                    const hour = Number(e.target.value);
-                    if (Number.isFinite(hour) && hour !== settings.autoBackupHourUtc) {
-                      saveSettings.mutate({ autoBackupHourUtc: hour });
-                    }
-                  }}
-                />
-              </label>
-              <label className="admin-form-card">
-                <span className="admin-form-card__label">{t('backup.retention')}</span>
-                <select
-                  className="input"
-                  value={settings.retentionDays}
-                  onChange={(e) =>
-                    saveSettings.mutate({
-                      retentionDays: Number(e.target.value) as BackupRetentionDays,
-                    })
-                  }
-                >
-                  <option value={7}>7</option>
-                  <option value={30}>30</option>
-                  <option value={90}>90</option>
-                </select>
-              </label>
-            </div>
-            <p className="admin-backup__meta">
-              {t('backup.lastAuto', {
-                value: settings.lastAutoBackupAt
-                  ? new Date(settings.lastAutoBackupAt).toLocaleString()
-                  : '—',
-              })}
-            </p>
+      <div className="ag">
+        <section className="ag-kpis ag-kpis--4" aria-label={t('backup.title')}>
+          <div className={`ag-kpi${lastStatusClass}`}>
+            <span className="ag-kpi__value">{lastStatus}</span>
+            <span className="ag-kpi__label">{t('backup.kpiLastStatus')}</span>
           </div>
-        ) : (
-          <p className="admin-empty">{settingsQuery.isError ? t('backup.settingsFailed') : '…'}</p>
-        )}
-      </section>
+          <div className="ag-kpi">
+            <span className="ag-kpi__value">{settings?.retentionDays ?? '—'}</span>
+            <span className="ag-kpi__label">{t('backup.kpiRetention')}</span>
+          </div>
+          <div className="ag-kpi">
+            <span className="ag-kpi__value">{history.length}</span>
+            <span className="ag-kpi__label">{t('backup.kpiHistory')}</span>
+          </div>
+          <div className={`ag-kpi${busy ? ' is-warn' : ' is-muted'}`}>
+            <span className="ag-kpi__value">
+              {busy === 'backup'
+                ? t('backup.runBackup')
+                : busy === 'restore'
+                  ? t('backup.runRestore')
+                  : t('backup.kpiIdle')}
+            </span>
+            <span className="ag-kpi__label">{t('backup.kpiBusy')}</span>
+          </div>
+        </section>
 
-      <section className="admin-panel admin-backup__panel">
-        <div className="admin-backup__panel-head">
+        <section className="ag-panel">
+          <div className="ag-toolbar">
+            <div className="ag-card__actions">
+              <button
+                type="button"
+                className="btn btn--primary"
+                disabled={busy !== null}
+                onClick={() => void runBackup()}
+              >
+                {t('backup.runBackup')}
+              </button>
+              <input
+                ref={fileRef}
+                id="admin-backup-restore-file"
+                className="admin-backup__file-input"
+                type="file"
+                accept=".zip,.json,application/zip,application/json"
+                disabled={busy !== null}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  setPendingFile(file);
+                  setConfirmText('');
+                  if (file) setWarnOpen(true);
+                }}
+              />
+              <label htmlFor="admin-backup-restore-file" className="btn btn--secondary">
+                {pendingFile ? pendingFile.name : t('backup.chooseFile')}
+              </label>
+              {pendingFile ? (
+                <span className="ag-card__meta">
+                  {(pendingFile.size / (1024 * 1024)).toFixed(2)} MB
+                </span>
+              ) : null}
+              <button
+                type="button"
+                className="btn btn--secondary"
+                onClick={() => setSettingsOpen((v) => !v)}
+              >
+                {settingsOpen ? t('backup.hideSettings') : t('backup.showSettings')}
+              </button>
+            </div>
+          </div>
+          {busy ? <ProgressBar value={progress} /> : null}
+          <p className="ag-chart-hint">{t('backup.systemBackupHelp')}</p>
+        </section>
+
+        {settingsOpen ? (
+          <section className="ag-panel" aria-label={t('backup.autoTitle')}>
+            <h2 className="admin-panel__title">{t('backup.autoTitle')}</h2>
+            {settings ? (
+              <div className="ag-editor__form">
+                <label className="ag-check">
+                  <input
+                    type="checkbox"
+                    checked={settings.autoBackupEnabled}
+                    onChange={(e) => saveSettings.mutate({ autoBackupEnabled: e.target.checked })}
+                  />
+                  <span>{t('backup.autoEnabled')}</span>
+                </label>
+                <div className="ag-field-row">
+                  <label className="ag-field">
+                    {t('backup.hourUtc')}
+                    <input
+                      className="input"
+                      type="number"
+                      min={0}
+                      max={23}
+                      defaultValue={settings.autoBackupHourUtc}
+                      onBlur={(e) => {
+                        const hour = Number(e.target.value);
+                        if (Number.isFinite(hour) && hour !== settings.autoBackupHourUtc) {
+                          saveSettings.mutate({ autoBackupHourUtc: hour });
+                        }
+                      }}
+                    />
+                  </label>
+                  <label className="ag-field">
+                    {t('backup.retention')}
+                    <select
+                      className="input"
+                      value={settings.retentionDays}
+                      onChange={(e) =>
+                        saveSettings.mutate({
+                          retentionDays: Number(e.target.value) as BackupRetentionDays,
+                        })
+                      }
+                    >
+                      <option value={7}>7</option>
+                      <option value={30}>30</option>
+                      <option value={90}>90</option>
+                    </select>
+                  </label>
+                </div>
+                <p className="ag-chart-hint">
+                  {t('backup.lastAuto', {
+                    value: settings.lastAutoBackupAt
+                      ? new Date(settings.lastAutoBackupAt).toLocaleString()
+                      : '—',
+                  })}
+                </p>
+              </div>
+            ) : (
+              <p className="ag-empty">
+                {settingsQuery.isError ? t('backup.settingsFailed') : '…'}
+              </p>
+            )}
+          </section>
+        ) : null}
+
+        <section className="ag-panel" aria-label={t('backup.history')}>
           <h2 className="admin-panel__title">{t('backup.history')}</h2>
-        </div>
-        {!historyQuery.data?.length ? (
-          <p className="admin-empty">{t('backup.historyEmpty')}</p>
-        ) : (
-          <ul className="admin-backup__history">
-            {historyQuery.data.map((item) => (
-              <li key={item.id} className="admin-backup__history-item">
-                <div className="admin-backup__history-main">
-                  <span className="admin-backup__history-action">{item.action}</span>
-                  <span className={`admin-badge ${statusBadgeClass(item.status)}`}>
-                    {item.status}
-                  </span>
-                </div>
-                <div className="admin-backup__history-meta">
-                  <time dateTime={item.createdAt}>
-                    {new Date(item.createdAt).toLocaleString()}
-                  </time>
-                  {item.fileName ? <span className="admin-backup__history-file">{item.fileName}</span> : null}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+          {!history.length ? (
+            <p className="ag-empty">{t('backup.historyEmpty')}</p>
+          ) : (
+            <div className="ag-queue">
+              {history.map((item) => {
+                const open = expandedId === item.id;
+                const sizeLabel = formatBytes(item.fileSizeBytes);
+                const fail =
+                  String(item.status).toUpperCase() === 'FAILED' ||
+                  String(item.status).toUpperCase() === 'ERROR';
+                return (
+                  <article
+                    key={item.id}
+                    className={[
+                      'ag-card',
+                      fail ? 'is-fail' : '',
+                      open ? 'is-selected' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    <button
+                      type="button"
+                      className="ag-card__main"
+                      onClick={() =>
+                        setExpandedId((prev) => (prev === item.id ? null : item.id))
+                      }
+                    >
+                      <span className="ag-card__identity">
+                        <span className="ag-card__title">{item.action}</span>
+                        <span className="ag-card__meta">
+                          {new Date(item.createdAt).toLocaleString()}
+                          {sizeLabel ? ` · ${sizeLabel}` : ''}
+                        </span>
+                      </span>
+                      <span className={`ag-pill ${statusPillClass(item.status)}`}>
+                        {item.status}
+                      </span>
+                      <span className="ag-card__chevron" aria-hidden>
+                        {open ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {open ? (
+                      <div className="ag-card__detail">
+                        {item.fileName ? (
+                          <p className="ag-card__excerpt">{item.fileName}</p>
+                        ) : null}
+                        {item.errorMessage ? (
+                          <p className="ag-card__excerpt">{item.errorMessage}</p>
+                        ) : null}
+                        {item.completedAt ? (
+                          <p className="ag-card__excerpt">
+                            {new Date(item.completedAt).toLocaleString()}
+                          </p>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
 
       {warnOpen ? (
-        <div
-          className="dialog-overlay"
-          role="presentation"
-          onClick={closeWarn}
-        >
+        <div className="dialog-overlay" role="presentation" onClick={closeWarn}>
           <div
             className="dialog card admin-backup__dialog"
             role="dialog"

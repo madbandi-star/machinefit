@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import type { AdminBrandUpsertInput, Brand } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
-import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -18,6 +17,7 @@ import { getApiValidationFieldSummary } from '@/utils/getApiErrorMessage';
 import { useModalAccessibility } from '@/hooks/useModalAccessibility';
 import { resolveBrandMediaUrl } from '@/utils/brandMediaUrl';
 import '@/styles/admin.css';
+import '@/styles/admin-glance.css';
 
 const PAGE_SIZE = 20;
 const ACCEPT = 'image/jpeg,image/jpg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
@@ -255,11 +255,11 @@ export function AdminBrandsPage() {
   const showToast = useUIStore((s) => s.showToast);
 
   const [page, setPage] = useState(1);
-  const [draftQ, setDraftQ] = useState('');
   const [q, setQ] = useState('');
   const [sort, setSort] = useState<SortKey>('sortOrder');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [isActive, setIsActive] = useState<ActiveFilter>('all');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editor, setEditor] = useState<'create' | Brand | null>(null);
   const [form, setForm] = useState<BrandFormState>(EMPTY_FORM);
   const [pendingDelete, setPendingDelete] = useState<Brand | null>(null);
@@ -286,7 +286,7 @@ export function AdminBrandsPage() {
   }, []);
 
   const listParams = useMemo(
-    () => ({ q: q || undefined, sort, order, page, limit: PAGE_SIZE, isActive }),
+    () => ({ q: q.trim() || undefined, sort, order, page, limit: PAGE_SIZE, isActive }),
     [q, sort, order, page, isActive]
   );
 
@@ -643,6 +643,14 @@ export function AdminBrandsPage() {
   const total = listQuery.data?.meta.total ?? 0;
   const totalPages = listQuery.data?.meta.totalPages ?? 1;
   const editingBrand = editor && editor !== 'create' ? editor : null;
+  const pageActive = items.filter((b) => b.isActive).length;
+  const pageInactive = items.length - pageActive;
+
+  const setActiveFilter = (next: ActiveFilter) => {
+    setIsActive(next);
+    setPage(1);
+    setExpandedId(null);
+  };
 
   return (
     <AdminPageShell
@@ -650,149 +658,232 @@ export function AdminBrandsPage() {
       subtitle={t('brands.subtitle')}
       backTo={ROUTES.ADMIN}
       backLabel={t('backToAdmin')}
-    >
-      <form
-        className="admin-toolbar admin-catalog-toolbar"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setPage(1);
-          setQ(draftQ.trim());
-        }}
-      >
-        <input
-          className="input"
-          value={draftQ}
-          onChange={(e) => setDraftQ(e.target.value)}
-          placeholder={t('brands.searchPlaceholder')}
-        />
-        <select
-          className="input"
-          value={isActive}
-          onChange={(e) => {
-            setIsActive(e.target.value as ActiveFilter);
-            setPage(1);
-          }}
-        >
-          <option value="all">{t('brands.filterAll')}</option>
-          <option value="true">{t('active')}</option>
-          <option value="false">{t('inactive')}</option>
-        </select>
-        <select
-          className="input"
-          value={sort}
-          onChange={(e) => {
-            setSort(e.target.value as SortKey);
-            setPage(1);
-          }}
-        >
-          <option value="sortOrder">{t('brands.sortOrder')}</option>
-          <option value="name">{t('brands.sortName')}</option>
-          <option value="createdAt">{t('brands.sortCreated')}</option>
-        </select>
-        <select
-          className="input"
-          value={order}
-          onChange={(e) => {
-            setOrder(e.target.value as 'asc' | 'desc');
-            setPage(1);
-          }}
-        >
-          <option value="asc">{t('brands.orderAsc')}</option>
-          <option value="desc">{t('brands.orderDesc')}</option>
-        </select>
-        <button type="submit" className="btn btn--primary">
-          {t('brands.search')}
-        </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled={listQuery.isFetching}
-          onClick={() => void listQuery.refetch()}
-        >
-          {listQuery.isFetching ? t('processing') : t('brands.refresh')}
-        </button>
-        <button type="button" className="btn btn--secondary" onClick={openCreate}>
+      actions={
+        <button type="button" className="btn btn--primary" onClick={openCreate}>
           {t('brands.create')}
         </button>
-      </form>
+      }
+    >
+      <div className="ag">
+        <section className="ag-kpis" aria-label={t('brands.stats')}>
+          <button
+            type="button"
+            className={`ag-kpi${isActive === 'all' ? ' is-active' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            <span className="ag-kpi__value">{total}</span>
+            <span className="ag-kpi__label">{t('brands.statTotal')}</span>
+          </button>
+          <button
+            type="button"
+            className={`ag-kpi${isActive === 'true' ? ' is-active' : ''}`}
+            onClick={() => setActiveFilter('true')}
+          >
+            <span className="ag-kpi__value">{pageActive}</span>
+            <span className="ag-kpi__label">{t('brands.statActivePage')}</span>
+          </button>
+          <button
+            type="button"
+            className={`ag-kpi${isActive === 'false' ? ' is-active' : ''}${
+              pageInactive > 0 ? ' is-muted' : ''
+            }`}
+            onClick={() => setActiveFilter('false')}
+          >
+            <span className="ag-kpi__value">{pageInactive}</span>
+            <span className="ag-kpi__label">{t('brands.statInactivePage')}</span>
+          </button>
+        </section>
 
-      <AdminPanel count={total} countLabel={t('listCount', { count: total })}>
-        <div className="admin-table admin-table--dense">
+        <section className="ag-panel">
+          <div className="ag-toolbar">
+            <input
+              className="ag-search"
+              value={q}
+              onChange={(e) => {
+                setQ(e.target.value);
+                setPage(1);
+                setExpandedId(null);
+              }}
+              placeholder={t('brands.searchPlaceholder')}
+              aria-label={t('brands.searchPlaceholder')}
+            />
+            <div className="ag-chips" role="group" aria-label={t('brands.filterAll')}>
+              <button
+                type="button"
+                className={`ag-chip${isActive === 'all' ? ' is-active' : ''}`}
+                onClick={() => setActiveFilter('all')}
+              >
+                {t('brands.filterAll')}
+                <span className="ag-chip__count">{total}</span>
+              </button>
+              <button
+                type="button"
+                className={`ag-chip${isActive === 'true' ? ' is-active' : ''}`}
+                onClick={() => setActiveFilter('true')}
+              >
+                {t('active')}
+                <span className="ag-chip__count">{pageActive}</span>
+              </button>
+              <button
+                type="button"
+                className={`ag-chip${isActive === 'false' ? ' is-active' : ''}`}
+                onClick={() => setActiveFilter('false')}
+              >
+                {t('inactive')}
+                <span className="ag-chip__count">{pageInactive}</span>
+              </button>
+            </div>
+            <div className="ag-field-row">
+              <label className="ag-field">
+                <span>{t('brands.sortOrder')}</span>
+                <select
+                  className="input"
+                  value={sort}
+                  onChange={(e) => {
+                    setSort(e.target.value as SortKey);
+                    setPage(1);
+                  }}
+                >
+                  <option value="sortOrder">{t('brands.sortOrder')}</option>
+                  <option value="name">{t('brands.sortName')}</option>
+                  <option value="createdAt">{t('brands.sortCreated')}</option>
+                </select>
+              </label>
+              <label className="ag-field">
+                <span>{t('brands.orderAsc')}</span>
+                <select
+                  className="input"
+                  value={order}
+                  onChange={(e) => {
+                    setOrder(e.target.value as 'asc' | 'desc');
+                    setPage(1);
+                  }}
+                >
+                  <option value="asc">{t('brands.orderAsc')}</option>
+                  <option value="desc">{t('brands.orderDesc')}</option>
+                </select>
+              </label>
+            </div>
+            <div className="ag-card__actions">
+              <button
+                type="button"
+                className="btn btn--secondary btn--sm"
+                disabled={listQuery.isFetching}
+                onClick={() => void listQuery.refetch()}
+              >
+                {listQuery.isFetching ? t('processing') : t('brands.refresh')}
+              </button>
+            </div>
+          </div>
+
           {items.length === 0 ? (
-            <div className="admin-empty">{t('brands.empty')}</div>
+            <p className="ag-empty">{t('brands.empty')}</p>
           ) : (
-            items.map((brand) => (
-              <div key={brand.id} className="card admin-table__row">
-                <div className="admin-table__brand">
-                  {brand.logoUrl ? (
-                    <img
-                      src={resolveBrandMediaUrl(brand.logoUrl)}
-                      alt=""
-                      className="admin-table__brand-logo"
-                    />
-                  ) : null}
-                  <div className="admin-table__primary">
-                    <div className="admin-table__title-row">
-                      <strong>{getLocalizedName(brand.name, i18n.language, brand.code)}</strong>
+            <div className="ag-queue">
+              {items.map((brand) => {
+                const open = expandedId === brand.id;
+                const name = getLocalizedName(brand.name, i18n.language, brand.code);
+                const logoSrc = brand.logoUrl ? resolveBrandMediaUrl(brand.logoUrl) : null;
+                return (
+                  <article
+                    key={brand.id}
+                    className={[
+                      'ag-card',
+                      brand.isActive ? 'is-on' : 'is-off',
+                      open || editingBrand?.id === brand.id ? 'is-selected' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    <button
+                      type="button"
+                      className="ag-card__main"
+                      onClick={() =>
+                        setExpandedId((prev) => (prev === brand.id ? null : brand.id))
+                      }
+                    >
+                      <span className="ag-card__identity ag-card__identity--with-thumb">
+                        {logoSrc ? (
+                          <img src={logoSrc} alt="" className="ag-card__thumb" />
+                        ) : (
+                          <span className="ag-card__thumb ag-card__thumb--empty" aria-hidden />
+                        )}
+                        <span>
+                          <span className="ag-card__title">{name}</span>
+                          <span className="ag-card__meta">
+                            {brand.code}
+                            {brand.countryCode ? ` · ${brand.countryCode}` : ''}
+                            {` · ${t('brands.machinesCount', { count: brand.machineCount ?? 0 })}`}
+                            {` · #${brand.sortOrder ?? 0}`}
+                          </span>
+                        </span>
+                      </span>
                       <span
-                        className={`admin-status-pill${brand.isActive ? ' is-active' : ' is-inactive'}`}
+                        className={`ag-pill ${brand.isActive ? 'ag-pill--on' : 'ag-pill--off'}`}
                       >
                         {brand.isActive ? t('active') : t('inactive')}
                       </span>
-                    </div>
-                    <p className="admin-table__meta">
-                      {brand.code}
-                      {brand.countryCode ? ` · ${brand.countryCode}` : ''}
-                      {` · ${t('brands.machinesCount', { count: brand.machineCount ?? 0 })}`}
-                      {` · #${brand.sortOrder ?? 0}`}
-                    </p>
-                  </div>
-                </div>
-                <div className="admin-table__actions">
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    onClick={() => openEdit(brand)}
-                    disabled={activeMutation.isPending || deleteMutation.isPending}
-                  >
-                    {t('brands.edit')}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    disabled={
-                      (activeMutation.isPending && activeMutation.variables?.id === brand.id) ||
-                      deleteMutation.isPending
-                    }
-                    onClick={() =>
-                      activeMutation.mutate({ id: brand.id, next: !brand.isActive })
-                    }
-                  >
-                    {activeMutation.isPending && activeMutation.variables?.id === brand.id
-                      ? t('processing')
-                      : brand.isActive
-                        ? t('disable')
-                        : t('enable')}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn--secondary"
-                    disabled={activeMutation.isPending || deleteMutation.isPending}
-                    onClick={() => setPendingDelete(brand)}
-                  >
-                    {t('brands.delete')}
-                  </button>
-                </div>
-              </div>
-            ))
+                      <span className="ag-card__chevron" aria-hidden>
+                        {open ? '▾' : '▸'}
+                      </span>
+                    </button>
+                    {open ? (
+                      <div className="ag-card__detail">
+                        <div className="ag-card__actions">
+                          <button
+                            type="button"
+                            className="btn btn--secondary btn--sm"
+                            onClick={() => openEdit(brand)}
+                            disabled={activeMutation.isPending || deleteMutation.isPending}
+                          >
+                            {t('brands.edit')}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            disabled={
+                              (activeMutation.isPending &&
+                                activeMutation.variables?.id === brand.id) ||
+                              deleteMutation.isPending
+                            }
+                            onClick={() =>
+                              activeMutation.mutate({ id: brand.id, next: !brand.isActive })
+                            }
+                          >
+                            {activeMutation.isPending &&
+                            activeMutation.variables?.id === brand.id
+                              ? t('processing')
+                              : brand.isActive
+                                ? t('disable')
+                                : t('enable')}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            disabled={activeMutation.isPending || deleteMutation.isPending}
+                            onClick={() => setPendingDelete(brand)}
+                          >
+                            {t('brands.delete')}
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
           )}
-        </div>
-        <Pagination
-          page={listQuery.data?.meta.page ?? page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
-      </AdminPanel>
+
+          <Pagination
+            page={listQuery.data?.meta.page ?? page}
+            totalPages={totalPages}
+            onPageChange={(next) => {
+              setPage(next);
+              setExpandedId(null);
+            }}
+          />
+        </section>
+      </div>
 
       {editor ? (
         <div
