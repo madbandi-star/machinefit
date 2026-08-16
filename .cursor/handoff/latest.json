@@ -3,7 +3,7 @@
   "summary": "Add gap between MY_BOTTOM promo banner and ShareAppButton so they are not flush.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "70a790fb"
   },
   "changedFiles": [
     "frontend/src/styles/components.css"

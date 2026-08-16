@@ -5,7 +5,7 @@ Add vertical gap between `MY_BOTTOM` promo banner and the Share App button on My
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 70a790fb
 
 ## Test focus
 1. Marketing opt-in + live banner: banner and share button are not flush (~24?40px gap).
@@ -16,6 +16,6 @@ Add vertical gap between `MY_BOTTOM` promo banner and the Share App button on My
 rg -n "promo-banner-slot \\+ .my-page__actions" frontend/src/styles/components.css
 ```
 
-## as-is ¡æ to-be
+## as-is ï¿½ï¿½ to-be
 - **as-is:** Banner and share button sit flush.
 - **to-be:** Clear vertical separation when a banner is shown.
