@@ -3,7 +3,7 @@
   "summary": "Add modest margin below the home notice banner so it is not flush against Today’s Helchang Fortune when intermediate home cards are absent.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "65dbe7a3"
   },
   "changedFiles": [
     "frontend/src/styles/notices.css"
