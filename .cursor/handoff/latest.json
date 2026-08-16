@@ -1,31 +1,31 @@
 {
-  "title": "Glanceable admin privacy-rights queue UX",
-  "summary": "Compact dense queue rows, status via KPI only, overdue-first sort, bulk dock for multi-select, fulfill panel first in drawer.",
+  "title": "Glanceable admin Q&A management UX",
+  "summary": "Admin Q&A list redesigned for glanceability: KPI publish/review filters, category chips, expandable dense rows, and top-viewed side panel instead of a wide table.",
   "git": {
     "branch": "main",
-    "commit": "c88c1eea"
+    "commit": "935b9f8c"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx",
-    "frontend/src/styles/admin-privacy-rights.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/pages/admin/qa/AdminQaPage.tsx",
+    "frontend/src/styles/admin-qa.css",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json"
   ],
   "testFocus": [
-    "Admin /admin/privacy-rights: dense list shows type/requester/glance/status/due",
-    "KPI filters status; type chips only below search",
-    "Multi-select shows sticky bulk dock; single open uses drawer",
-    "Drawer shows fulfill panel near top"
+    "Admin /admin/qa: KPI strip filters all/published/hidden/needs-review",
+    "Category chips filter list; search still works",
+    "Dense expandable rows show publish toggle, edit, delete",
+    "Top-viewed side panel lists popular articles"
   ],
   "fastChecks": [
-    "rg -n \"apr-queue__head|requestGlance|showDock\" frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx"
+    "rg -n \"admin-qa|PublishFilter|expandedId|topViewed\" frontend/src/pages/admin/qa/AdminQaPage.tsx frontend/src/styles/admin-qa.css"
   ],
   "productionChecks": [
-    "Pages admin privacy rights glanceable queue"
+    "Pages admin Q&A glanceable list after Deploy Frontend success"
   ],
   "deploy": {
     "expected": "GitHub Pages FE success"
   },
-  "asIs": "Tall cards, duplicate status filters, bulk dock always, fulfill buried",
-  "toBe": "Dense queue, KPI status filter, action-first drawer"
+  "asIs": "Wide table hard to scan for publish state and review needs",
+  "toBe": "KPI + chips + dense expandable rows + top-viewed panel"
 }

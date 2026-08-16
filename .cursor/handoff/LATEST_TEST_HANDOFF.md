@@ -1,19 +1,26 @@
-# Glanceable admin privacy-rights queue UX
+# Glanceable admin Q&A management UX
 
 ## Summary
-Admin privacy-rights page is denser and easier to scan: compact rows, overdue-first, KPI status filters only, fulfill panel first in drawer.
+Admin Q&A list redesigned for glanceability: KPI publish/review filters, category chips, expandable dense rows, and top-viewed side panel instead of a wide table.
 
 ## Git
 - branch: `main`
-- commit: c88c1eea
+- commit: `935b9f8c`
 
 ## Test focus
-1. Queue shows type ï¿½ï¿½ requester ï¿½ï¿½ glance ï¿½ï¿½ status ï¿½ï¿½ due in one row
-2. Stats filter status; no duplicate status chip row
-3. Multi-select ï¿½ï¿½ sticky bulk dock
-4. Drawer: fulfill near top
+1. `/admin/qa` KPI strip filters all / published / hidden / needs-review
+2. Category chips + search still filter the list
+3. Dense expandable rows: publish toggle, edit, delete
+4. Top-viewed side panel shows popular articles
 
 ## Fast checks
 ```bash
-rg -n "apr-queue__head|requestGlance|showDock" frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx
+rg -n "admin-qa|PublishFilter|expandedId|topViewed" frontend/src/pages/admin/qa/AdminQaPage.tsx frontend/src/styles/admin-qa.css
 ```
+
+## Production checks
+- After Deploy Frontend success: open admin Q&A and confirm glanceable layout
+
+## as-is ¡æ to-be
+- **as-is:** Wide table hard to scan for publish state and review needs
+- **to-be:** KPI + chips + dense expandable rows + top-viewed panel
