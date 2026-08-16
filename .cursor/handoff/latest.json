@@ -3,7 +3,7 @@
   "summary": "Home page gym selector and member name now sit directly above the notice banner.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "7f734e3f"
   },
   "changedFiles": [
     "frontend/src/pages/home/HomePage.tsx"
