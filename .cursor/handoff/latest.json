@@ -1,9 +1,9 @@
-{
+﻿{
   "title": "Glanceable admin moderation + banners UX",
   "summary": "Moderation and banner list/create/slots/stats redesigned with shared ag-* KPIs, chips, dense expandable rows, and side preview/editor panels.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "6589bb82"
   },
   "changedFiles": [
     "frontend/src/pages/admin/moderation/AdminModerationPage.tsx",
@@ -34,3 +34,4 @@
   "asIs": "Wide tables, tab cards, tall edit form without sticky preview",
   "toBe": "ag-* KPI + chips + dense queues + side preview/editor"
 }
+
