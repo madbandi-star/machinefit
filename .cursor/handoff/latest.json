@@ -3,7 +3,7 @@
   "summary": "Fortune catalog admin redesigned: KPI active filters, category chips with counts, dense expandable rows with quick activate, and a side editor instead of a permanent top form.",
   "git": {
     "branch": "main",
-    "commit": "7780b82a"
+    "commit": "a0e4b89f"
   },
   "changedFiles": [
     "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",

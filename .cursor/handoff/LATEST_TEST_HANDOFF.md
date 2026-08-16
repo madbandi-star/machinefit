@@ -5,7 +5,7 @@ Fortune catalog admin redesigned: KPI active filters, category chips with counts
 
 ## Git
 - branch: `main`
-- commit: `7780b82a`
+- commit: `a0e4b89f`
 
 ## Test focus
 1. `/admin/fortune` KPI strip filters all / active / inactive
