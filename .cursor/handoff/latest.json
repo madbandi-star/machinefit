@@ -1,34 +1,32 @@
 {
-  "title": "Brand favorites page UI refresh",
-  "summary": "My Page brand favorites redesigned for scanability: summary count, logo grid for mine, searchable catalog tiles with whole-tile star toggle.",
+  "title": "Fix hidden MACHINE/WORKOUT bottom banners",
+  "summary": "Machine detail banner was under sticky RecommendCTA; moved above CTA and made mid-page muscle picker non-sticky. Records banner spacing improved.",
   "git": {
     "branch": "main",
-    "commit": "b1e13721"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
-    "frontend/src/styles/brand-favorites.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
+    "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
+    "frontend/src/styles/machines.css",
+    "frontend/src/pages/records/RecordsPage.tsx",
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "My Page → Brand favorites: summary count matches starred brands",
-    "Tap tile to add/remove; mine grid updates; search filters catalog",
-    "Empty state shows hint to pick brands below"
+    "Machine detail (logged-in, marketing opt-in): scroll — banner visible above Recommend CTA",
+    "Records/history: banner visible at bottom of page after list",
+    "Home/My page bottoms still show"
   ],
   "fastChecks": [
-    "npx tsc --noEmit -p frontend/tsconfig.json",
-    "rg -n \"brand-favorites__tile|summaryCount\" frontend/src/pages/brand-favorites frontend/src/styles/brand-favorites.css"
+    "rg -n \"MACHINE_BOTTOM|records-page__banner|recommend-cta--static\" frontend/src"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Hard refresh My Page brand favorites"
+    "Hard refresh machine detail + records"
   ],
   "deploy": {
     "expected": "Frontend Pages only"
   },
-  "asIs": "Long duplicate list rows with muted titles and brand codes were hard to scan",
-  "toBe": "Summary + mine logo grid + searchable catalog tiles; whole tile toggles favorite"
+  "asIs": "MACHINE_BOTTOM rendered under sticky RecommendCTA so it looked missing; WORKOUT_BOTTOM cramped at page end",
+  "toBe": "Banner above sticky CTA; clearer records bottom spacing"
 }

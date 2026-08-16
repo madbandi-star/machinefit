@@ -1,22 +1,22 @@
-# Test handoff — Brand favorites UI
+# Test handoff — Machine/Workout bottom banners
 
 ## Summary
-My Page brand favorites: summary count, mine logo grid, searchable catalog tiles (whole-tile ★ toggle). Shorter copy.
+Machine detail: move `MACHINE_BOTTOM` above sticky Recommend CTA (was covered). Plan muscle picker is non-sticky. Records: clearer bottom banner spacing.
 
 ## Git
 - Branch: `main`
-- Commit: b1e13721
+- Commit: pending
 
 ## Test focus
-1. Summary count matches starred brands.
-2. Tap tile add/remove; mine grid updates instantly.
-3. Search filters catalog; empty mine shows hint.
+1. Machine detail → scroll to bottom → banner above recommend button.
+2. Records → end of list → WORKOUT_BOTTOM visible.
+3. Home / My page bottoms unchanged.
 
 ## Fast checks
 ```bash
-npx tsc --noEmit -p frontend/tsconfig.json
+rg -n "MACHINE_BOTTOM|records-page__banner|recommend-cta--static" frontend/src
 ```
 
 ## as-is → to-be
-- **as-is:** Dense duplicate lists, hard to scan.
-- **to-be:** At-a-glance mine grid + add catalog.
+- **as-is:** Banner after sticky CTA → covered / hard to see.
+- **to-be:** Banner above sticky CTA; records spacing improved.

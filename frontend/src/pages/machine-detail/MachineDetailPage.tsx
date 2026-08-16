@@ -221,6 +221,7 @@ export function MachineDetailPage() {
           planDate={planDate}
           showRecommendButton={false}
           showTradeActions={false}
+          sticky={false}
         />
       ) : null}
       {canCreatePlan ? (
@@ -287,6 +288,8 @@ export function MachineDetailPage() {
           </Link>
         </div>
       ) : null}
+      {/* Banner must sit above sticky RecommendCTA or it stays covered at the bottom. */}
+      <BannerSlot slot="MACHINE_BOTTOM" className="machine-detail-page__banner" />
       {!isPlanAddMode && machineCode ? (
         <RecommendCTA
           machineCode={machineCode}
@@ -298,7 +301,6 @@ export function MachineDetailPage() {
           }
         />
       ) : null}
-      <BannerSlot slot="MACHINE_BOTTOM" />
     </div>
   );
 }

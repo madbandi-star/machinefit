@@ -15,6 +15,8 @@ import '@/styles/trade.css';
 interface RecommendCTAProps {
   machineCode: string;
   fixed?: boolean;
+  /** Sticky bottom bar (default). Set false for mid-page muscle pickers so banners stay visible. */
+  sticky?: boolean;
   initialMuscle?: TargetMuscleGroup | null;
   /** When true (FW detail), muscle chip selection syncs to `?muscle=` so the hero cover updates. */
   syncMuscleToUrl?: boolean;
@@ -29,6 +31,7 @@ interface RecommendCTAProps {
 export function RecommendCTA({
   machineCode,
   fixed = false,
+  sticky = true,
   initialMuscle = null,
   syncMuscleToUrl = false,
   planDate = null,
@@ -86,7 +89,11 @@ export function RecommendCTA({
   };
 
   return (
-    <div className={`recommend-cta${fixed ? ' recommend-cta--fixed' : ''}`}>
+    <div
+      className={`recommend-cta${fixed ? ' recommend-cta--fixed' : ''}${
+        sticky ? '' : ' recommend-cta--static'
+      }`}
+    >
       {needsMusclePicker ? (
         <div className="recommend-cta__muscle-picker" role="group" aria-label={t('targetMuscleLabel')}>
           <p className="recommend-cta__muscle-label">{t('targetMuscleLabel')}</p>

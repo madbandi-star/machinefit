@@ -1072,6 +1072,15 @@
   z-index: 10;
 }
 
+.recommend-cta--static {
+  position: static;
+  bottom: auto;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: auto;
+}
+
 .recommend-cta--fixed {
   position: fixed;
   left: 50%;
