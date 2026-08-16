@@ -483,6 +483,23 @@ a.ag-kpi:hover {
   line-height: 1.4;
 }
 
+.ag-banner--ok {
+  border-color: color-mix(in srgb, #16a34a 35%, var(--color-border));
+  background: color-mix(in srgb, #16a34a 12%, transparent);
+}
+
+.admin-banner-blockers {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--color-text-muted, #6b7280);
+}
+
+.admin-banner-blockers li + li {
+  margin-top: 0.2rem;
+}
+
 /* Chart helpers (usage timeseries) */
 .ag-chart {
   display: flex;

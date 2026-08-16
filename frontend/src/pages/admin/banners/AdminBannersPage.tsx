@@ -10,6 +10,7 @@ import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/Query
 import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
+import { getBannerPublishBlockers } from '@/utils/bannerPublish';
 import '@/styles/admin.css';
 import '@/styles/admin-glance.css';
 import '@/styles/banners.css';
@@ -218,6 +219,15 @@ export function AdminBannersPage() {
               ) : (
                 filtered.map((item) => {
                   const open = expandedId === item.id;
+                  const blockers = getBannerPublishBlockers({
+                    status: item.status,
+                    imageUrl: item.imageUrl,
+                    mobileImageUrl: item.mobileImageUrl,
+                    slots: item.slots,
+                    startAt: item.startAt,
+                    endAt: item.endAt,
+                  });
+                  const live = blockers.length === 0;
                   return (
                     <article
                       key={item.id}
@@ -237,9 +247,9 @@ export function AdminBannersPage() {
                         }
                       >
                         <span className="ag-card__identity ag-card__identity--thumb">
-                          {item.imageUrl ? (
+                          {item.imageUrl || item.mobileImageUrl ? (
                             <img
-                              src={item.imageUrl}
+                              src={item.imageUrl || item.mobileImageUrl || ''}
                               alt=""
                               className="admin-banner-thumb admin-banner-thumb--sm"
                             />
@@ -252,6 +262,10 @@ export function AdminBannersPage() {
                               {item.advertiserName || '—'}
                               {' · '}
                               {item.bannerType}
+                              {' · '}
+                              {live
+                                ? t('admin:banners.liveBadge')
+                                : t('admin:banners.notLiveBadge')}
                             </span>
                           </span>
                         </span>
@@ -287,6 +301,13 @@ export function AdminBannersPage() {
                               ? item.slots.map((s) => s.slotName).join(', ')
                               : '—'}
                           </p>
+                          {!live ? (
+                            <ul className="admin-banner-blockers">
+                              {blockers.map((code) => (
+                                <li key={code}>{t(`admin:banners.blocker.${code}`)}</li>
+                              ))}
+                            </ul>
+                          ) : null}
                           <p className="ag-card__excerpt">
                             {t('admin:banners.colImpressions')}: {item.impressionCount}
                             {' · '}

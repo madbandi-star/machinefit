@@ -339,8 +339,13 @@ export const bannerRepository = {
   ): Promise<BannerDetail | null> {
     const pool = requirePool();
     if (kind === 'mobile') {
+      // Public list requires a creatives URL; if desktop is empty, also fill image_url.
       await pool.query(
-        `UPDATE banners SET mobile_image_url = $2, mobile_image_storage_path = $3
+        `UPDATE banners SET
+           mobile_image_url = $2,
+           mobile_image_storage_path = $3,
+           image_url = COALESCE(image_url, $2),
+           image_storage_path = COALESCE(image_storage_path, $3)
          WHERE id = $1 AND deleted_at IS NULL`,
         [id, publicUrl, storagePath]
       );
@@ -459,7 +464,7 @@ export const bannerRepository = {
          AND s.status = 'active'
          AND b.deleted_at IS NULL
          AND b.status = 'active'
-         AND b.image_url IS NOT NULL
+         AND (b.image_url IS NOT NULL OR b.mobile_image_url IS NOT NULL)
          AND (b.start_at IS NULL OR b.start_at <= NOW())
          AND (b.end_at IS NULL OR b.end_at >= NOW())
        ORDER BY a.priority ASC, b.priority ASC, b.created_at DESC
@@ -472,7 +477,7 @@ export const bannerRepository = {
       name: row.name,
       advertiserName: row.advertiser_name,
       bannerType: row.banner_type as PublicBanner['bannerType'],
-      imageUrl: row.image_url!,
+      imageUrl: row.image_url || row.mobile_image_url!,
       mobileImageUrl: row.mobile_image_url,
       targetUrl: row.target_url,
       openNewWindow: row.open_new_window,

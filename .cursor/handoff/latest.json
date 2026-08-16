@@ -1,39 +1,39 @@
 {
-  "title": "Free-plan abuse prevention (server quotas)",
-  "summary": "Server-enforced free quotas on cards/templates/recommendations/uploads/workout saves; stock+daily atomic limits; auth burst/minute rate limits; abuse_events + admin abuse page; docs/abuse-prevention.md. Apply migration 138 on Postgres.",
+  "title": "Banner not showing ? public filters + admin blockers",
+  "summary": "Production /banners/public/* returned empty for all slots (not a marketing-consent-only issue). Public list now accepts mobile_image_url fallback; mobile upload fills desktop when empty; admin edit/list shows explicit publish blockers (inactive/no image/slots/schedule).",
   "git": {
     "branch": "main",
-    "commit": "0c9c665e"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/constants/free-plan-limits.ts",
-    "shared/src/constants/usage.ts",
-    "database/migrations/138_abuse_prevention_quotas.sql",
-    "backend/server/services/usage.service.ts",
-    "backend/server/middlewares/rate-limit.middleware.ts",
-    "backend/server/repositories/abuse.repository.ts",
-    "frontend/src/pages/admin/usage/AdminAbusePage.tsx",
-    "docs/abuse-prevention.md"
+    "backend/server/repositories/banner.repository.ts",
+    "database/migrations/139_banner_public_image_fallback.sql",
+    "frontend/src/utils/bannerPublish.ts",
+    "frontend/src/pages/admin/banners/AdminBannerEditPage.tsx",
+    "frontend/src/pages/admin/banners/AdminBannersPage.tsx",
+    "frontend/src/styles/admin-glance.css",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Apply migration 138",
-    "Create 31st card as FREE ? 429 STOCK_LIMIT_EXCEEDED",
-    "11th card create same day ? 429 DAILY_QUOTA_EXCEEDED",
-    "Recommend 31st ? blocked; >10/min ? RATE_LIMIT",
-    "Admin /admin/usage/abuse shows events"
+    "Admin banner list shows ??? + blocker reasons when inactive or no image",
+    "Set status=??, upload image, slots selected, empty dates ? live-ready",
+    "Logged-in user with marketing opt-in: Home/My bottom shows banner after API returns banners",
+    "GET /banners/public/MAIN_BOTTOM returns non-empty after fix + correct banner data"
   ],
   "fastChecks": [
-    "node scripts/i18n-audit.mjs",
-    "npm run build --workspace=shared",
-    "rg -n \"assertStockAllowed|recommendationRateLimit|abuse_events\" backend shared database"
+    "node -e \"JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8'))\"",
+    "rg -n \"mobile_image_url IS NOT NULL|getBannerPublishBlockers|139_banner\" backend frontend database"
   ],
   "productionChecks": [
-    "Render: run migration 138 then redeploy backend",
-    "Pages: Deploy Frontend success"
+    "curl https://machinefit.onrender.com/api/v1/banners/public/MAIN_BOTTOM ? expect banners after status+image fixed and backend redeploy",
+    "Pages Deploy Frontend success for admin blocker UI"
   ],
   "deploy": {
-    "expected": "Frontend Pages after push; backend needs migration 138 + Render redeploy"
+    "expected": "Frontend Pages after push; backend Render redeploy required for public image fallback; run migration 139 if mobile-only creatives already exist"
   },
-  "asIs": "Usage policies existed but limits_enforced=false; recommend/uploads ungated",
-  "toBe": "Abuse-critical features enforced server-side with 429 + abuse events + admin UI"
+  "asIs": "Slots+marketing set but public API empty (inactive default and/or missing desktop image)",
+  "toBe": "Clear admin blockers; public API accepts mobile fallback; mobile-only creatives can go live"
 }

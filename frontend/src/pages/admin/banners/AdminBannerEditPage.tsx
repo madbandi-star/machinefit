@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
+import { getBannerPublishBlockers } from '@/utils/bannerPublish';
 import '@/styles/admin.css';
 import '@/styles/admin-glance.css';
 import '@/styles/banners.css';
@@ -35,7 +36,7 @@ export function AdminBannerEditPage() {
   const [bannerType, setBannerType] = useState<BannerType>('image');
   const [targetUrl, setTargetUrl] = useState('');
   const [openNewWindow, setOpenNewWindow] = useState(true);
-  const [status, setStatus] = useState<BannerStatus>('inactive');
+  const [status, setStatus] = useState<BannerStatus>('active');
   const [startAt, setStartAt] = useState('');
   const [endAt, setEndAt] = useState('');
   const [priority, setPriority] = useState(100);
@@ -92,6 +93,19 @@ export function AdminBannerEditPage() {
     })),
   });
 
+  const publishBlockers = useMemo(
+    () =>
+      getBannerPublishBlockers({
+        status,
+        imageUrl: desktopPreview,
+        mobileImageUrl: mobilePreview,
+        slots: [...selectedSlots],
+        startAt: startAt || null,
+        endAt: endAt || null,
+      }),
+    [status, desktopPreview, mobilePreview, selectedSlots, startAt, endAt]
+  );
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const body = buildBody();
@@ -100,7 +114,19 @@ export function AdminBannerEditPage() {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
-      showToast(t('admin:banners.saved'), 'success');
+      const blockers = getBannerPublishBlockers({
+        status: data.status,
+        imageUrl: data.imageUrl,
+        mobileImageUrl: data.mobileImageUrl,
+        slots: data.slots,
+        startAt: data.startAt,
+        endAt: data.endAt,
+      });
+      if (blockers.length > 0) {
+        showToast(t('admin:banners.savedButNotLive'), 'info');
+      } else {
+        showToast(t('admin:banners.saved'), 'success');
+      }
       if (isNew) {
         navigate(ROUTES.ADMIN_BANNER_EDIT.replace(':bannerId', data.id), { replace: true });
       }
@@ -115,8 +141,10 @@ export function AdminBannerEditPage() {
     },
     onSuccess: async (data, vars) => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
-      if (vars.kind === 'mobile') setMobilePreview(data.mobileImageUrl ?? null);
-      else {
+      if (vars.kind === 'mobile') {
+        setMobilePreview(data.mobileImageUrl ?? null);
+        if (data.imageUrl) setDesktopPreview(data.imageUrl);
+      } else {
         setDesktopPreview(data.imageUrl ?? null);
         setBannerType(data.bannerType);
       }
@@ -340,6 +368,21 @@ export function AdminBannerEditPage() {
               </div>
 
               <h2 className="ag-editor__title">{t('admin:banners.images')}</h2>
+              {publishBlockers.length > 0 ? (
+                <div className="ag-banner" role="status">
+                  <p>{t('admin:banners.notLiveTitle')}</p>
+                  <ul className="admin-banner-blockers">
+                    {publishBlockers.map((code) => (
+                      <li key={code}>{t(`admin:banners.blocker.${code}`)}</li>
+                    ))}
+                  </ul>
+                  <p className="ag-editor__hint">{t('admin:banners.liveWhereHint')}</p>
+                </div>
+              ) : (
+                <p className="ag-banner ag-banner--ok" role="status">
+                  {t('admin:banners.liveReady')}
+                </p>
+              )}
               {isNew ? (
                 <p className="ag-banner">{t('admin:banners.saveBeforeUpload')}</p>
               ) : (
