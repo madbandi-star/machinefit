@@ -1,31 +1,26 @@
 {
-  "title": "Birth save no longer requires body-metrics consent",
-  "summary": "Saving birth date derives age server-side; that derived age was incorrectly treated as a body-metrics field touch, so PATCH /users/me demanded bodyMetricsConsent and returned CONSENT_REQUIRED. Age is excluded from body-metrics touch detection. Select-all toggle restored.",
+  "title": "Home notice–fortune spacing",
+  "summary": "Add modest margin below the home notice banner so it is not flush against Today’s Helchang Fortune when intermediate home cards are absent.",
   "git": {
     "branch": "main",
-    "commit": "63c55c45"
+    "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/services/user.service.ts",
-    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
+    "frontend/src/styles/notices.css"
   ],
   "testFocus": [
-    "Settings > birth profile: check birth consents only (no body metrics section) > Save succeeds",
-    "Select-all toggles on and off again as before",
-    "Body metrics save still requires body consent when height/weight/etc change"
+    "Home: with notice banner visible and no planned/missed banners, gap above Helchang fortune looks ~12px — not flush, not sparse"
   ],
   "fastChecks": [
-    "rg -n \"touchesBodyMetrics\" -A 8 backend/server/services/user.service.ts",
-    "rg -n \"toggleAll\" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
+    "rg -n \"home-notice-banner\" -A 12 frontend/src/styles/notices.css"
   ],
   "productionChecks": [
-    "Deploy Backend to Render success (required)",
-    "Pages deploy if FE changed",
-    "Hard refresh Settings birth section → consent → Save"
+    "Pages Deploy Frontend success",
+    "Hard refresh home"
   ],
   "deploy": {
-    "expected": "Render backend required; Pages optional for select-all revert"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Birth save failed with server consent toast after all birth checks",
-  "toBe": "Birth save succeeds with only birthProfileConsent; derived age does not demand body consent"
+  "asIs": "Notice and fortune cards flush with no gap",
+  "toBe": "About 0.75rem space under notice before next home block / fortune"
 }
