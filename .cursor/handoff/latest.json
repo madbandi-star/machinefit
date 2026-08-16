@@ -3,7 +3,7 @@
   "summary": "My Page personal settings: brand favorites renamed to My brands and placed directly under My templates.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "b031fc2f"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",

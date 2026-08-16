@@ -5,7 +5,7 @@ My Page personal settings: brand favorites renamed to **내 브랜드** / My bra
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `b031fc2f`
 
 ## Test focus
 1. My Page → 개인설정 order: 내 템플릿 → 내 브랜드 → 설정.
