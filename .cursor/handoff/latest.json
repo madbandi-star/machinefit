@@ -3,7 +3,7 @@
   "summary": "Admin glance pages densified: smaller buttons/KPIs/rows so mobile can show ~15+ list items; search added/improved on users, moderation, backup history, and retention scheduled.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "a7780ffd"
   },
   "changedFiles": [
     "frontend/src/styles/admin-glance.css",

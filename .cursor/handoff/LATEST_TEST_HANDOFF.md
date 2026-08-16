@@ -5,10 +5,10 @@ Admin glance pages densified (smaller buttons/KPIs/rows) so mobile can show ~15+
 
 ## Git
 - branch: `main`
-- commit: `PENDING` (filled after push)
+- commit: `a7780ffd`
 
 ## Test focus
-1. Admin Users on ~390px width: ¡Ã15 collapsed rows visible in the list area
+1. Admin Users on ~390px width: ??15 collapsed rows visible in the list area
 2. Search works on Users / Moderation / Backup history / Retention scheduled
 3. Q&A + Fortune queues still usable with compact action buttons
 
@@ -19,6 +19,6 @@ rg -n "usersSearchPlaceholder|moderationSearchPlaceholder|scheduledSearchPlaceho
 npm run test:smoke:changed
 ```
 
-## as-is ¡æ to-be
+## as-is ?? to-be
 - **as-is:** Large buttons, sparse rows (~3 users on mobile), missing search on several admin queues
 - **to-be:** Dense glance rows + compact `btn--sm`; search on users/moderation/backup/retention scheduled; mobile subtitle hidden to reclaim viewport
