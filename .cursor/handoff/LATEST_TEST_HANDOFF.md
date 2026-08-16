@@ -5,7 +5,7 @@ Home TODAY'S WORKOUT report now uses the same set-count filter, free-weight musc
 
 ## Git
 - Branch: `main`
-- Commit: (filled after push)
+- Commit: `fc5becee`
 
 ## Changed files
 - `shared/src/utils/effective-load.ts` (+ exported `countPerformedSets`)

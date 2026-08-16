@@ -3,7 +3,7 @@
   "summary": "Home TODAY'S WORKOUT report now uses the same set-count filter, free-weight muscle identity, and fitRating volume reps as the Records day summary so 종목/총세트/총볼륨 match.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "fc5becee"
   },
   "changedFiles": [
     "shared/src/utils/effective-load.ts",
