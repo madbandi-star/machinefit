@@ -294,7 +294,7 @@ export function AdminAdsPage() {
                         aria-hidden
                       />
                       <span className="admin-ads__row-text">
-                        <strong>{p.name}</span>
+                        <strong>{p.name}</strong>
                         <em>{placementWhere(p.placementKey)}</em>
                       </span>
                       <span className="admin-ads__row-type">{adTypeLabel(p.adType)}</span>

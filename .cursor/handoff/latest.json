@@ -1,32 +1,28 @@
 {
-  "title": "Community bottom banner on Brand favorites",
-  "summary": "Brand favorites page now shows the same COMMUNITY_BOTTOM CMS banner as free board / community lists.",
+  "title": "Fix AdminAdsPage JSX that blocked Pages deploy",
+  "summary": "Fixed mistyped </span> closing a <strong> in AdminAdsPage so frontend tsc/build and GitHub Pages deploy can succeed again. Brand favorites community banner and prior UI work already on main.",
   "git": {
     "branch": "main",
-    "commit": "01f06021"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
-    "frontend/src/components/community/CommunityBottomBanner.tsx",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "frontend/src/pages/admin/ads/AdminAdsPage.tsx"
   ],
   "testFocus": [
-    "Brand favorites page bottom shows COMMUNITY_BOTTOM when placement/policy/creative enabled",
-    "Same creative as free board bottom when configured"
+    "GitHub Actions Deploy Frontend succeeds",
+    "Admin ads page loads",
+    "Brand favorites still shows COMMUNITY_BOTTOM"
   ],
   "fastChecks": [
-    "rg -n \"CommunityBottomBanner\" frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx"
+    "npm run build --prefix frontend",
+    "rg -n \"<strong>\\{p\\.name\\}</strong>\" frontend/src/pages/admin/ads/AdminAdsPage.tsx"
   ],
   "productionChecks": [
-    "Pages Deploy Frontend success",
-    "Hard refresh Brand favorites with COMMUNITY_BOTTOM creative active"
+    "https://github.com/madbandi-star/machinefit/actions — Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages"
   },
-  "asIs": "Brand favorites had no community bottom banner",
-  "toBe": "COMMUNITY_BOTTOM slot at page bottom like free board"
+  "asIs": "Pages deploy failed on AdminAdsPage JSX parse error",
+  "toBe": "Build passes and Pages deploys"
 }

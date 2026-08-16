@@ -1,29 +1,22 @@
-# Test handoff — Community bottom banner on Brand favorites
+# Test handoff — Fix AdminAdsPage JSX that blocked Pages deploy
 
 ## Summary
-Brand favorites page now shows the same `COMMUNITY_BOTTOM` CMS banner as free board / community lists.
+Fixed mistyped `</span>` closing a `<strong>` in AdminAdsPage so frontend tsc/build and GitHub Pages deploy can succeed again.
 
 ## Git
 - Branch: `main`
-- Commit: `01f06021`
-
-## Changed files
-- `frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx`
-- `frontend/src/components/community/CommunityBottomBanner.tsx`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json` (placement label)
+- Commit: pending
 
 ## Test focus
-1. Open Brand favorites → scroll to bottom → same community CMS banner as free board (when enabled).
+1. Deploy Frontend workflow success.
+2. Admin ads page loads.
+3. Brand favorites community banner still present.
 
 ## Fast checks
 ```bash
-rg -n "CommunityBottomBanner" frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx
+rg -n "<strong>\{p\.name\}</strong>" frontend/src/pages/admin/ads/AdminAdsPage.tsx
+npm run build --prefix frontend
 ```
 
-## as-is → to-be
-| as-is | to-be |
-| --- | --- |
-| No banner on brand favorites | COMMUNITY_BOTTOM at page bottom |
-
 ## Deploy
-Frontend Pages only.
+Frontend Pages (triggered by push to main).
