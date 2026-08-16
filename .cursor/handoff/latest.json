@@ -1,7 +1,7 @@
 {
   "title": "Naver SEO: robots/sitemap/canonical brand home fixes",
   "summary": "Fixed crawl policy (Allow: /), sitemap apex URL, home canonical/OG/JSON-LD to https://machine-fit.com/, brand title/description, retained Naver/Google verification. Cloudflare must rewrite /→/machinefit/ as 200 (docs/NAVER_SEO.md).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "a83f5098" },
   "changedFiles": [
     "frontend/public/robots.txt",
     "frontend/public/sitemap.xml",

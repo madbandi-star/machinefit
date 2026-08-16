@@ -5,7 +5,7 @@ robots Allow:/, sitemap includes https://machine-fit.com/, home canonical/OG/JSO
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _a83f5098_
 
 ## Test focus
 1. npm run seo:validate in frontend
