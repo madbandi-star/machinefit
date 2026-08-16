@@ -1,28 +1,36 @@
 {
-  "title": "Fix birth profile consent save CONSENT_REQUIRED",
-  "summary": "Settings birth/body/location saves always send feature consent attestation after the checkbox gate, so Pages/Render version skew no longer rejects saves with CONSENT_REQUIRED after the user checked all items.",
+  "title": "Birth consent: select-all no longer clears + server flag restore",
+  "summary": "「필수 동의 전체 선택」이 두 번째 탭에 전부 해제되던 UX를 막고, PATCH /users/me가 raw body에서 birthProfileConsent를 다시 붙여 CONSENT_REQUIRED를 피한다.",
   "git": {
     "branch": "main",
-    "commit": "c3f837af"
+    "commit": "pending"
   },
   "changedFiles": [
+    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
     "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json",
+    "backend/server/controllers/user.controller.ts"
   ],
   "testFocus": [
-    "Settings > birth profile: check all required consents > Save succeeds",
-    "Already-agreed birth block: Save still works and re-records consent version"
+    "Settings > 생년월일·탄생시: 「필수 동의 항목 전체 선택」한 번 → 5개 모두 on → 저장 성공",
+    "전체 선택 후 같은 행을 다시 눌러도 체크가 풀리지 않음",
+    "서버 거부 시 consentBirthServerToast (클라이언트 미체크와 문구 구분)"
   ],
   "fastChecks": [
-    "rg -n \"birthProfileConsent: true|bodyMetricsConsent: true|locationGymConsent: true\" frontend/src/pages/settings/SettingsPage.tsx"
+    "rg -n \"selectAll|birthProfileConsent|consentBirthServerToast\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
+    "rg -n \"raw.birthProfileConsent\" backend/server/controllers/user.controller.ts"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Hard refresh settings birth section and save"
+    "Deploy Backend to Render success (controller change)",
+    "Hard refresh settings birth section → 전체 선택 → Save"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Checked all birth consents but save failed with personal-data consent toast",
-  "toBe": "Save sends birthProfileConsent and records successfully"
+  "asIs": "전체 선택 후에도 생년월일·탄생시 필수 동의 toast로 저장 실패",
+  "toBe": "전체 선택 유지 + birthProfileConsent 전달로 저장 성공"
 }

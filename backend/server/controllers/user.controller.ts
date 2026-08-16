@@ -15,7 +15,17 @@ export async function updateMe(req: Request, res: Response): Promise<void> {
   if (!req.user) {
     throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   }
-  const input = updateProfileSchema.parse(req.body);
+  const parsed = updateProfileSchema.parse(req.body);
+  // Re-apply feature consent flags from the raw body. If a stale shared build
+  // strips unknown keys during parse, the service would otherwise see undefined
+  // and throw CONSENT_REQUIRED even when the client attested.
+  const raw = (req.body ?? {}) as Record<string, unknown>;
+  const input = {
+    ...parsed,
+    ...(raw.bodyMetricsConsent === true ? { bodyMetricsConsent: true as const } : {}),
+    ...(raw.birthProfileConsent === true ? { birthProfileConsent: true as const } : {}),
+    ...(raw.locationGymConsent === true ? { locationGymConsent: true as const } : {}),
+  };
   const user = await userService.updateMe(req.user.userId, input);
   res.json({ success: true, data: user });
 }

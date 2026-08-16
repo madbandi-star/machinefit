@@ -504,6 +504,7 @@
     "accountDeleted": "Membership withdrawal is complete.",
     "consentRequiredToast": "Please check all required personal-data consent items.",
     "consentBirthRequiredToast": "Please check all required birth-profile consent items. (Separate from body-metrics consent.)",
+    "consentBirthServerToast": "Birth-profile consent was not accepted by the server. Select all required items again, then save.",
     "consentCheckAll": "Select all required consents",
     "consentRightsLink": "Privacy rights center",
     "consentBody": {

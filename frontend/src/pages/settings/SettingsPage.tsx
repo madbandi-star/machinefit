@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -181,6 +181,8 @@ export function SettingsPage() {
   const [birthConsentChecks, setBirthConsentChecks] = useState<ProfileConsentChecks>(() =>
     emptyProfileConsentChecks('birthProfile')
   );
+  const birthConsentChecksRef = useRef(birthConsentChecks);
+  birthConsentChecksRef.current = birthConsentChecks;
   const [locationConsentChecks, setLocationConsentChecks] = useState<ProfileConsentChecks>(() =>
     emptyProfileConsentChecks('locationGym')
   );
@@ -424,7 +426,10 @@ export function SettingsPage() {
         const code = (error.response?.data as { error?: { code?: string } } | undefined)?.error
           ?.code;
         if (code === 'CONSENT_REQUIRED') {
-          showToast(t('settings.consentBirthRequiredToast'), 'error');
+          showToast(t('settings.consentBirthServerToast'), 'error');
+          document
+            .querySelector('[data-consent-variant="birthProfile"]')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
         }
       }
@@ -569,11 +574,14 @@ export function SettingsPage() {
                 showToast(t('settings.birthTimeRequired'), 'error');
                 return;
               }
-              if (
-                !birthProfileConsentDone &&
-                !allProfileConsentsChecked('birthProfile', birthConsentChecks)
-              ) {
+              const consentsOk =
+                birthProfileConsentDone ||
+                allProfileConsentsChecked('birthProfile', birthConsentChecksRef.current);
+              if (!consentsOk) {
                 showToast(t('settings.consentBirthRequiredToast'), 'error');
+                document
+                  .querySelector('[data-consent-variant="birthProfile"]')
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
               }
               birthMutation.mutate({
