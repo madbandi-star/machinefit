@@ -1,22 +1,21 @@
-# Chevron carousel nav on horizontal scrolls
+# Move workout report email to Lab; rename LIVE menu
 
 ## Summary
-Added reusable `ScrollCarousel` chevron buttons for home recent/favorites, search muscle/brand chips, plus overflow-prone admin chip rows and a few user extras.
+Workout report email moved from My Page insights into Lab. Lab CCTV submenu (and KO page title) renamed to ¸Ó½ÅÇÍLIVE.
 
 ## Git
 - branch: `main`
-- commit: `a9a54a2a`
+- commit: pending
 
 ## Test focus
-1. Home recent/favorites ? chevrons when overflow; click scrolls
-2. Search muscle/brand chips ? same
-3. Admin ops tabs / long chip rows ? chevrons when overflow; hidden when not
+1. My Page: workout report email under Lab (not insights)
+2. Lab submenu shows ¸Ó½ÅÇÍLIVE (not CCTV)
 
 ## Fast checks
 ```bash
-rg -n "ScrollCarousel|scroll-carousel|chevronLeft" frontend/src/components frontend/src/pages/admin frontend/src/styles/scroll-carousel.css
+rg -n "WorkoutReportSection|liveDashboard" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json
 ```
 
-## as-is ï¿½ï¿½ to-be
-- **as-is:** Horizontal rows only swipe/scrollbar
-- **to-be:** Chevron prev/next when content overflows
+## as-is ¡æ to-be
+- **as-is:** Workout report under insights; Lab LIVE labeled CCTV
+- **to-be:** Workout report under Lab; LIVE labeled ¸Ó½ÅÇÍLIVE

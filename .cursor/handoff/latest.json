@@ -1,46 +1,30 @@
 {
-  "title": "Chevron carousel nav on horizontal scrolls",
-  "summary": "Added reusable ScrollCarousel chevron buttons for home recent/favorites, search muscle/brand chips, plus overflow-prone admin chip rows and a few user extras.",
+  "title": "Move workout report email to Lab; rename LIVE menu",
+  "summary": "Workout report email moved from My Page insights into Lab. Lab CCTV submenu (and KO page title) renamed to ???LIVE.",
   "git": {
     "branch": "main",
-    "commit": "a9a54a2a"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/navigation/ScrollCarousel/ScrollCarousel.tsx",
-    "frontend/src/styles/scroll-carousel.css",
-    "frontend/src/components/icons/Icon.tsx",
-    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
-    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
-    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
-    "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
-    "frontend/src/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector.tsx",
-    "frontend/src/pages/admin/ops/AdminOpsPage.tsx",
-    "frontend/src/pages/admin/qa/AdminQaPage.tsx",
-    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionScheduledPage.tsx",
-    "frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx",
-    "frontend/src/pages/admin/brands/AdminBrandsPage.tsx",
-    "frontend/src/pages/admin/banners/AdminBannersPage.tsx",
-    "frontend/src/pages/admin/usage/AdminUsagePoliciesPage.tsx",
+    "frontend/src/pages/my-page/MyPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json"
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Home recent/favorites: chevrons appear when overflow; scroll by click",
-    "Search muscle/brand chips: same chevron behavior",
-    "Admin ops tabs and long chip rows: chevrons when overflow; hide when not"
+    "My Page: workout report email no longer under insights; appears under Lab",
+    "Lab submenu label is ???LIVE (not CCTV)"
   ],
   "fastChecks": [
-    "rg -n \"ScrollCarousel|scroll-carousel|chevronLeft\" frontend/src/components frontend/src/pages/admin frontend/src/styles/scroll-carousel.css"
+    "rg -n \"WorkoutReportSection|liveDashboard\" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json"
   ],
   "productionChecks": [
-    "Pages: home + machine search + admin ops after Deploy Frontend"
+    "Pages: open My Page Lab section after Deploy Frontend"
   ],
   "deploy": {
     "expected": "GitHub Pages FE success"
   },
-  "asIs": "Horizontal rows only swipe/scrollbar, hard to nudge on desktop",
-  "toBe": "Chevron prev/next overlay buttons when content overflows"
+  "asIs": "Workout report under insights; Lab LIVE labeled CCTV",
+  "toBe": "Workout report under Lab; LIVE labeled ???LIVE"
 }

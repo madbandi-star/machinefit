@@ -202,7 +202,6 @@ export function MyPage() {
                 label={t('myPage.achievements')}
                 icon="trophy"
               />
-              <WorkoutReportSection />
             </>
           ) : null}
         </nav>
@@ -301,6 +300,7 @@ export function MyPage() {
                 label={t('myPage.liveDashboard')}
                 icon="monitor"
               />
+              <WorkoutReportSection />
               <ListNavLink
                 to={ROUTES.GROWTH_TIMELINE}
                 label={t('myPage.growthTimeline')}

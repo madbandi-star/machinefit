@@ -779,7 +779,7 @@
     "growthAnalysis": "성장 분석",
     "gymMemberManage": "헬스장·회원 관리",
     "gymMemberManageMember": "등록헬스장·회원권 관리",
-    "liveDashboard": "CCTV",
+    "liveDashboard": "머신핏LIVE",
     "achievements": "업적",
     "growthTimeline": "타임랩스",
     "lifterDna": "운동성향",
@@ -1149,7 +1149,7 @@
     "popupPrefHint": "체크하면 확인·미확인 업적 모두 접속할 때마다 팝업으로 보여요. 해제하면 팝업을 끄세요."
   },
   "liveDashboard": {
-    "title": "MachineFit LIVE",
+    "title": "머신핏LIVE",
     "subtitle": "지금 전 세계에서 일어나는 운동을 실시간으로 확인하세요.",
     "updated": "갱신 {{time}}",
     "hotCards": "실시간 하이라이트",
