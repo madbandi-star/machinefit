@@ -5,7 +5,7 @@ Moved MissedWorkoutPlansBanner from Records to Home, above Todays Fortune.
 
 ## Git
 - Branch: `main`
-- Commit: _(after push)_
+- Commit: _55c542eb_
 
 ## Test focus
 1. Home: banner above fortune when missed plans exist

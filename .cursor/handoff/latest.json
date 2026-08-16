@@ -1,7 +1,7 @@
 {
   "title": "Move missed workout plans banner to Home",
   "summary": "MissedWorkoutPlansBanner removed from Records and placed on Home directly above Todays Fortune.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "55c542eb" },
   "changedFiles": [
     "frontend/src/pages/home/HomePage.tsx",
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
