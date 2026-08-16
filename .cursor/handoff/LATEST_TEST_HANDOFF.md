@@ -1,22 +1,21 @@
-# Test handoff — My Brands order = admin display order
+# Test handoff — Search brands = admin display order
 
 ## Summary
-마이페이지 「내 브랜드」 캡션 칩을 관리자 브랜드 **표시순서(`sort_order`)** 기준으로 정렬. 공개 브랜드 목록 API도 `sortOrder` 반환 + `ORDER BY sort_order`.
+검색(및 Easy mode 피커) 브랜드 칩 정렬을 하드코딩 우선순위에서 관리자 **표시순서(`sortOrder`)** 로 변경.
 
 ## Test focus
-1. 관리자 브랜드 표시순서와 내 브랜드 칩 순서가 일치
-2. 즐겨찾기(별)는 표시만 바꾸고 순서를 앞으로 끌어올리지 않음
-3. 검색 필터 후에도 남은 항목은 sortOrder 유지
+1. 검색 페이지 브랜드 칩 순서 = 관리자 브랜드 표시순서
+2. Easy mode 머신 피커 브랜드 칩도 동일
+3. API에 없는 맨몸/프리만 fallback으로 끼워 넣음 (있으면 admin 순서 따름)
 
 ## Fast checks
 ```
-rg -n "sort_order ASC|\\(a\\.sortOrder" backend/server/repositories/machine.repository.ts frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx
+rg -n "compareBrandsByDisplayOrder|BRAND_SEARCH_ORDER" frontend/src/utils/sortBrandsForSearch.ts
 ```
 
-## Production
-- Render 백엔드 재배포 필수 (API에 sortOrder 포함)
-- Pages FE 배포
+## Note
+공개 `/brands`에 `sortOrder`가 있어야 함 (이전 BE 커밋). Render 미배포면 순서가 전부 0으로 보일 수 있음.
 
 ## As-is → To-be
-- as-is: 즐겨찾기 우선 + 가나다/알파벳
-- to-be: 관리자 표시순서
+- as-is: BODYWEIGHT → FREE_WEIGHT → Hammer… 고정
+- to-be: admin sort_order ASC

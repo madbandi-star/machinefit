@@ -1,26 +1,20 @@
 import type { Brand } from '@machinefit/shared';
 import { BRAND_CODES } from '@machinefit/shared';
 
-const BRAND_SEARCH_ORDER = [
-  BRAND_CODES.BODYWEIGHT,
-  BRAND_CODES.FREE_WEIGHT,
-  BRAND_CODES.HAMMER_STRENGTH,
-  BRAND_CODES.LIFE_FITNESS,
-  BRAND_CODES.CYBEX,
-  BRAND_CODES.TECHNOGYM,
-] as const;
-
+/** Only used when the catalog omits these search categories. */
 const FALLBACK_SEARCH_BRANDS: Brand[] = [
   {
     id: 'brand-bodyweight',
     code: BRAND_CODES.BODYWEIGHT,
     name: { ko: '맨몸', en: 'Bodyweight', ja: '自重', zh: '自重' },
+    sortOrder: 0,
     isActive: true,
   },
   {
     id: 'brand-free-weight',
     code: BRAND_CODES.FREE_WEIGHT,
     name: { ko: '프리', en: 'Free', ja: 'フリー', zh: '自由重量' },
+    sortOrder: 1,
     isActive: true,
   },
 ];
@@ -37,24 +31,18 @@ function mergeMissingBrands(brands: Brand[]): Brand[] {
   return merged;
 }
 
+/** Admin brands.displayOrder (`sortOrder`) ascending, then code. */
+export function compareBrandsByDisplayOrder(a: Brand, b: Brand): number {
+  const byOrder = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+  if (byOrder !== 0) return byOrder;
+  return a.code.localeCompare(b.code);
+}
+
 export function prepareBrandsForMachineSearch(
   brands: Brand[],
   options?: { includeFallbacks?: boolean }
 ): Brand[] {
   const merged =
     options?.includeFallbacks === false ? [...brands] : mergeMissingBrands(brands);
-  const ordered: Brand[] = [];
-
-  for (const code of BRAND_SEARCH_ORDER) {
-    const brand = merged.find((item) => item.code === code);
-    if (brand) ordered.push(brand);
-  }
-
-  for (const brand of merged) {
-    if (!BRAND_SEARCH_ORDER.includes(brand.code as (typeof BRAND_SEARCH_ORDER)[number])) {
-      ordered.push(brand);
-    }
-  }
-
-  return ordered;
+  return merged.sort(compareBrandsByDisplayOrder);
 }

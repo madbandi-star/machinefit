@@ -1,29 +1,28 @@
 {
-  "title": "My Brands chips follow admin sortOrder",
-  "summary": "Brand favorites page lists caption chips in admin brands.displayOrder (sort_order). Public brand list API now returns sortOrder and orders by sort_order ASC.",
+  "title": "Search brand chips follow admin sortOrder",
+  "summary": "Machine search BrandFilterChips now order by admin brand display order (sortOrder) instead of the hardcoded BODYWEIGHT/FREE_WEIGHT/… list.",
   "git": {
     "branch": "main",
-    "commit": "6d50e8a8"
+    "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/repositories/machine.repository.ts",
-    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx"
+    "frontend/src/utils/sortBrandsForSearch.ts"
   ],
   "testFocus": [
-    "My Page → 내 브랜드: chip order matches Admin → Brands default sortOrder (asc)",
-    "Favoriting a brand only toggles star — does not jump that chip to the top"
+    "Search page brand chip row order matches Admin → Brands sortOrder (asc)",
+    "Easy mode machine picker brand chips follow the same order"
   ],
   "fastChecks": [
-    "rg -n \"sort_order ASC|sortOrder\" backend/server/repositories/machine.repository.ts frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx"
+    "rg -n \"compareBrandsByDisplayOrder|BRAND_SEARCH_ORDER\" frontend/src/utils/sortBrandsForSearch.ts"
   ],
   "productionChecks": [
-    "Deploy Backend to Render success (required)",
     "Pages Deploy Frontend success",
-    "Hard refresh 내 브랜드"
+    "Render backend already serving sortOrder on GET /brands (from prior commit)",
+    "Hard refresh search"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages; backend already has sortOrder if prior deploy ran"
   },
-  "asIs": "My Brands chips sorted favorites-first then alphabetically",
-  "toBe": "My Brands chips ordered by admin brand display order (sort_order)"
+  "asIs": "Search brands used fixed code priority list",
+  "toBe": "Search brands ordered by admin display order"
 }
