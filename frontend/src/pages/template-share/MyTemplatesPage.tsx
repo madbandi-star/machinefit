@@ -22,6 +22,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
+import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
 import { workoutCardApi } from '@/api/workout-card.api';
 import { templateShareApi } from '@/api/template-share.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -655,6 +656,8 @@ export function MyTemplatesPage() {
           </>
         ) : null}
       </div>
+
+      <CommunityBottomBanner />
 
       <ConfirmDialog
         open={Boolean(deleteId)}
