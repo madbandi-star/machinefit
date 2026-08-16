@@ -5,7 +5,7 @@ Search brand filter chips no longer show circular OEM logos (Hammer Strength, Li
 
 ## Git
 - branch: `main`
-- commit: `PENDING`
+- commit: `91bb68e4`
 
 ## Test focus
 1. Search brand row: HS/LF/Cybex/Technogym = text only (no round image)

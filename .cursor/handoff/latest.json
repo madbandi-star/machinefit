@@ -3,7 +3,7 @@
   "summary": "Search/easy-mode brand filter chips no longer show circular OEM logos (Hammer Strength, Life Fitness, Cybex, Technogym); text-only like Atlantis. Bodyweight/free-weight glyphs kept.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "91bb68e4"
   },
   "changedFiles": [
     "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
