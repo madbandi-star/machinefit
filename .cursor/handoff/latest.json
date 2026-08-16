@@ -3,7 +3,7 @@
   "summary": "Adds placement/policy/frequency-cap engine over existing CMS banners. Inline CMS stays on; interstitial/sticky/rewarded/native/page-transition are flag-off until admin enables. Apply migration 140 + Render redeploy.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "f7bb6915"
   },
   "changedFiles": [
     "database/migrations/140_ad_placement_system.sql",

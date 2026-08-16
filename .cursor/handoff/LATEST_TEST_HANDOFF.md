@@ -5,7 +5,7 @@ Central ad policy engine + AdSlot over existing CMS banners. Interstitial/sticky
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: f7bb6915
 
 ## Test focus
 1. Free user + marketing opt-in: home/my bottom CMS still works.
