@@ -5,7 +5,7 @@ Admin banner registration/edit now shows recommended creative sizes (PC **1200¡¿
 
 ## Git
 - Branch: `main`
-- Commit: _(after commit)_
+- Commit: `9b86d302` (feature `7ecb595d`)
 
 ## Test focus
 1. `/admin/banners/new` ? size guide + inline px on upload labels.
