@@ -96,7 +96,12 @@
       "FAILED": "Failed",
       "NONE": "None",
       "expiring": "Expiring soon"
-    }
+    },
+    "stats": "Subscription stats",
+    "statTotal": "Total",
+    "statActivePage": "Active (page)",
+    "statTrialPage": "Trial (page)",
+    "statExpiredPage": "Expired (page)"
   },
   "gyms": "Gyms",
   "machines": "Machines",
@@ -264,7 +269,11 @@
     "hasMachines": "Cannot delete a brand with linked machines. Deactivate it instead.",
     "deleteTitle": "Delete this brand?",
     "deleteMessage": "Delete {{name}}. Linked machines: {{count}}.",
-    "deleteSuccess": "Brand deleted."
+    "deleteSuccess": "Brand deleted.",
+    "stats": "Brand stats",
+    "statTotal": "Total",
+    "statActivePage": "Active (page)",
+    "statInactivePage": "Inactive (page)"
   },
   "catalogMachines": {
     "title": "Machine management",
@@ -780,7 +789,12 @@
     "totalBanners": "Total banners",
     "activeBanners": "Active banners",
     "lastImpressed": "Last impression",
-    "lastClicked": "Last click"
+    "lastClicked": "Last click",
+    "kpiTotal": "Total",
+    "kpiWithBanners": "With banners",
+    "emptySlots": "No slots yet.",
+    "statsSearchPlaceholder": "Search banner name",
+    "noSlotsSelected": "Select at least one slot."
   },
   "notices": {
     "nav": "Notices",
@@ -852,7 +866,15 @@
     "settingsSaved": "Backup settings saved.",
     "settingsFailed": "Could not save settings.",
     "history": "System backup history",
-    "historyEmpty": "No history yet."
+    "historyEmpty": "No history yet.",
+    "searchPlaceholder": "Search action, status, or file",
+    "kpiLastStatus": "Last status",
+    "kpiRetention": "Retention (days)",
+    "kpiHistory": "History",
+    "kpiBusy": "State",
+    "kpiIdle": "Idle",
+    "showSettings": "Settings",
+    "hideSettings": "Hide settings"
   },
   "fortuneAdmin": {
     "nav": "Helchang Fortune",
@@ -895,7 +917,18 @@
       "style": "Style",
       "condition": "Condition",
       "body_part": "Body part"
-    }
+    },
+    "subtitle": "Scan active state and categories — then toggle or edit in place.",
+    "stats": "Overview",
+    "statTotal": "Total",
+    "statActive": "Active",
+    "statInactive": "Inactive",
+    "statCategories": "Categories",
+    "searchPlaceholder": "Search title, code, or body",
+    "noBody": "No body",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "advanced": "Advanced JSON"
   },
   "dataRetention": {
     "title": "Data retention & deletion",
@@ -1033,7 +1066,27 @@
       "soft_delete": "Soft delete",
       "archive": "Archive"
     },
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "kpiInWindow": "In window",
+    "kpiOverdue": "Overdue",
+    "kpiDueToday": "Due today",
+    "statTotal": "Total",
+    "filterFail": "Failed",
+    "logsSearch": "Search code, action, or error",
+    "auditSearch": "Search action, admin, or target",
+    "logNoError": "No error message",
+    "bucketPolicy": "Policy",
+    "bucketRecord": "Schedule",
+    "bucketConsent": "Consent",
+    "bucketOther": "Other",
+    "action": {
+      "policyCreate": "Policy created",
+      "policyUpdate": "Policy updated",
+      "consentCreate": "Consent catalog created",
+      "recordHold": "Deletion held",
+      "recordHoldRelease": "Hold released",
+      "generic": "{{action}}"
+    }
   },
   "dataRetentionNav": {},
   "username": "Username",
@@ -1070,7 +1123,24 @@
     "action": "Actioned",
     "dismiss": "Dismiss",
     "updated": "Status updated.",
-    "reportResolved": "Report resolved."
+    "reportResolved": "Report resolved.",
+    "tabPosts": "Templates",
+    "status": {
+      "published": "Published",
+      "hidden": "Hidden",
+      "removed": "Removed"
+    },
+    "reportStatus": {
+      "open": "Open",
+      "reviewed": "Reviewed",
+      "actioned": "Actioned",
+      "dismissed": "Dismissed"
+    },
+    "searchPlaceholder": "Search title or author",
+    "metrics": "Metrics",
+    "view": "View",
+    "emptyPosts": "No templates to show.",
+    "emptyReports": "No reports."
   },
   "usage": {
     "navStats": "Usage stats",
@@ -1151,7 +1221,34 @@
     "unknownAdmin": "Unknown",
     "before": "Before",
     "after": "After",
-    "diffLimits": "Free daily {{freeDaily}} / month {{freeMonthly}} · enforced {{enforced}}"
+    "diffLimits": "Free daily {{freeDaily}} / month {{freeMonthly}} · enforced {{enforced}}",
+    "statsGlanceSubtitle": "Scan KPIs and trends at a glance. Measurement only — limits are not enforced yet.",
+    "usersGlanceSubtitle": "Search members and inspect feature usage by period.",
+    "policiesGlanceSubtitle": "Scan quotas and edit in place. With enforcement OFF, nothing is blocked.",
+    "chartMaxHint": "Scale max · cards {{cards}} / active {{active}}",
+    "noUsers": "No users match.",
+    "userQuickInfo": "{{plan}} · {{days}} active days this month · ID {{id}}",
+    "viewDetail": "View detail",
+    "closeDetail": "Close",
+    "periodFilter": "Period",
+    "periodToday": "Today",
+    "period7d": "7d",
+    "periodMonth": "Month",
+    "periodLife": "Life",
+    "policySearchPlaceholder": "Feature name, code, or description",
+    "policyFilter": "Policy filter",
+    "filterAll": "All",
+    "filterEnforced": "Enforced",
+    "filterActive": "Active",
+    "kpiPolicyTotal": "Total policies",
+    "kpiPolicyEnforced": "Enforced",
+    "kpiPolicyActive": "Active",
+    "kpiUnlimitedFreeDaily": "Unlimited free daily",
+    "freeDailyShort": "Free daily {{n}}",
+    "noPolicies": "No policies match.",
+    "noDescription": "No description.",
+    "editPolicy": "Edit",
+    "inactive": "Inactive"
   },
   "points": {
     "navPolicies": "Point policies",
@@ -1185,7 +1282,25 @@
     "manualAdjust": "Admin manual adjustment",
     "recentTx": "Recent transactions",
     "startAt": "Starts at",
-    "endAt": "Ends at"
+    "endAt": "Ends at",
+    "pickPolicy": "Select a policy to edit it beside the list.",
+    "dailyLimitShort": "daily {{count}}",
+    "userLimitShort": "user {{count}}",
+    "stats": "Overview",
+    "statTotal": "Total",
+    "statEnabled": "Enabled",
+    "statDisabled": "Disabled",
+    "statAvgPoints": "Avg points",
+    "statUsersInView": "Users in view",
+    "statSumBalances": "Sum balances",
+    "highBalance": "High balance (>1000)",
+    "searchPlaceholder": "Search action name or code",
+    "emptyPolicies": "No policies match.",
+    "pickUser": "Select a member to adjust balance and review recent transactions.",
+    "lifetimeEarned": "Lifetime earned",
+    "lifetimeSpent": "Lifetime spent",
+    "emptyUsers": "No members found.",
+    "emptyTx": "No recent transactions."
   },
   "qa": {
     "nav": "Q&A",
@@ -1227,7 +1342,13 @@
     "fieldKeywords": "Keywords",
     "keywordsPlaceholder": "Comma-separated",
     "fieldOrder": "Display order",
-    "fieldSlug": "Slug (optional)"
+    "fieldSlug": "Slug (optional)",
+    "stats": "Overview",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "needsReviewShort": "Needs review",
+    "statUnpublished": "Hidden",
+    "statReview": "Needs review"
   },
   "standardMachines": {
     "nav": "Standard machines",
@@ -1309,5 +1430,21 @@
     "machinesCountLabel": "{{count}} linked",
     "backToList": "Back to list",
     "editNamed": "Edit {{name}}"
-  }
+  },
+  "menuSearch": "Search menus by name or description",
+  "menuSearchEmpty": "No menus match your search.",
+  "usersSubtitle": "Scan roles and active status — expand a row to edit.",
+  "usersStats": "User stats",
+  "usersStatTotal": "Total",
+  "usersStatActivePage": "Active (page)",
+  "usersStatInactivePage": "Inactive (page)",
+  "usersFilterLocalNote": "Active/inactive filters apply to this page only (API has no status filter).",
+  "usersSearchPlaceholder": "Search name, ID, or role",
+  "pendingShort": "Pending",
+  "filterAllShort": "All",
+  "moderationEmpty": "Nothing in this queue.",
+  "moderationSearchPlaceholder": "Search title, name, or reason",
+  "statusHidden": "Hidden",
+  "statusPinned": "Pinned",
+  "statusVisible": "Visible"
 }

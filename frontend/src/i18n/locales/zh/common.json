@@ -1807,8 +1807,17 @@
           "consent": "Consent target",
           "deletable": "Deletable",
           "retained": "Retained",
-          "note": "Note"
-        }
+          "note": "Note",
+          "categories": "Requested categories",
+          "categoriesDeleted": "Deleted categories"
+        },
+        "glanceDeletion": "{{count}} categories",
+        "fulfillTitle": "Apply to member data",
+        "fulfillHint": "Apply only the requested categories/fields. Legally retained data is never deleted here.",
+        "fulfillMarkCompleted": "Mark request completed after apply",
+        "fulfillDeleteCta": "Delete selected categories",
+        "fulfillCorrectCta": "Apply correction",
+        "fulfillSaved": "Applied the requested change."
       },
       "status": {
         "received": "Received",
@@ -1915,7 +1924,20 @@
       "eventOptInHint": "Time-limited event and campaign alerts only. Separate from general marketing.",
       "requestCancelled": "Request cancelled.",
       "cancelRequest": "Cancel request",
-      "cancelConfirm": "Cancel this privacy rights request?"
+      "cancelConfirm": "Cancel this privacy rights request?",
+      "correctionFields": {
+        "displayName": "Display name",
+        "gender": "Gender",
+        "heightCm": "Height (cm)",
+        "weightKg": "Weight (kg)",
+        "age": "Age",
+        "birthDate": "Birth date",
+        "birthTime": "Birth time",
+        "experienceLevel": "Experience level",
+        "workoutGoal": "Workout goal",
+        "homeGymName": "Home gym",
+        "other": "Other (manual)"
+      }
     },
     "report": {
       "cta": "Report",
@@ -1937,7 +1959,19 @@
       "consents": "Consent history",
       "auditLogs": "Audit logs",
       "reply": "Save reply",
-      "search": "Search"
+      "search": "Search",
+      "pendingRights": "Privacy rights",
+      "replyPlaceholder": "Write an admin reply",
+      "ticketFilter": "Ticket filter",
+      "ticketActive": "Active",
+      "ticketAll": "All",
+      "docsEmpty": "No legal documents.",
+      "docActive": "Active",
+      "consentsEmpty": "No consent records.",
+      "consentUserPlaceholder": "userId UUID (optional)",
+      "consentAgreed": "Agreed",
+      "consentRevoked": "Revoked",
+      "auditEmpty": "No audit logs."
     }
   },
   "support": {
@@ -2166,5 +2200,9 @@
       "upper_body": "今日训练完成 🔥\n{{exercises}}动作 · {{sets}}组 · {{volume}}kg\nTODAY'S POWER {{power}}",
       "default": "今日训练完成 🔥\n{{exercises}}动作 · {{sets}}组 · {{volume}}kg\nTODAY'S POWER {{power}}"
     }
+  },
+  "carousel": {
+    "prev": "Scroll previous",
+    "next": "Scroll next"
   }
 }
