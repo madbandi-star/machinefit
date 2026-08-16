@@ -3,7 +3,7 @@
   "summary": "Saving birth date derives age server-side; that derived age was incorrectly treated as a body-metrics field touch, so PATCH /users/me demanded bodyMetricsConsent and returned CONSENT_REQUIRED. Age is excluded from body-metrics touch detection. Select-all toggle restored.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "63c55c45"
   },
   "changedFiles": [
     "backend/server/services/user.service.ts",
