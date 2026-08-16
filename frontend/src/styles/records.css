@@ -16,7 +16,7 @@ body:has(.records-page--history) .layout__content {
 }
 
 .records-page__banner.promo-banner-slot {
-  margin-top: var(--space-sm, 0.75rem);
+  margin-top: var(--space-lg, 1.25rem);
   margin-bottom: var(--space-md, 1rem);
   flex-shrink: 0;
 }
