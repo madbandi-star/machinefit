@@ -3,7 +3,7 @@
   "summary": "「필수 동의 전체 선택」이 두 번째 탭에 전부 해제되던 UX를 막고, PATCH /users/me가 raw body에서 birthProfileConsent를 다시 붙여 CONSENT_REQUIRED를 피한다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a2f4dfd0"
   },
   "changedFiles": [
     "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
