@@ -3,7 +3,7 @@
   "summary": "When the search page has no favorite brands, the empty area is now a compact gold-star action row (tappable) instead of a dashed box with long copy.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "96b18e74"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
@@ -14,9 +14,9 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Logged-in user with zero brand favorites → search brand section shows compact empty row",
-    "Tap row → Brand favorites page",
-    "With favorites → chips render as before"
+    "Logged-in user with zero brand favorites ??search brand section shows compact empty row",
+    "Tap row ??Brand favorites page",
+    "With favorites ??chips render as before"
   ],
   "fastChecks": [
     "rg -n \"brand-filter-empty|filterEmptyCta\" frontend/src/pages/machine-search/MachineSearchPage.tsx frontend/src/styles/machines.css frontend/src/i18n/locales/ko/machines.json"
