@@ -1,7 +1,10 @@
 {
   "title": "Glanceable admin privacy-rights queue UX",
   "summary": "Compact dense queue rows, status via KPI only, overdue-first sort, bulk dock for multi-select, fulfill panel first in drawer.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": {
+    "branch": "main",
+    "commit": "c88c1eea"
+  },
   "changedFiles": [
     "frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx",
     "frontend/src/styles/admin-privacy-rights.css",
@@ -17,8 +20,12 @@
   "fastChecks": [
     "rg -n \"apr-queue__head|requestGlance|showDock\" frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx"
   ],
-  "productionChecks": ["Pages admin privacy rights glanceable queue"],
-  "deploy": { "expected": "GitHub Pages FE success" },
+  "productionChecks": [
+    "Pages admin privacy rights glanceable queue"
+  ],
+  "deploy": {
+    "expected": "GitHub Pages FE success"
+  },
   "asIs": "Tall cards, duplicate status filters, bulk dock always, fulfill buried",
   "toBe": "Dense queue, KPI status filter, action-first drawer"
 }

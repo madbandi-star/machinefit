@@ -5,12 +5,12 @@ Admin privacy-rights page is denser and easier to scan: compact rows, overdue-fi
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: c88c1eea
 
 ## Test focus
-1. Queue shows type ¡¤ requester ¡¤ glance ¡¤ status ¡¤ due in one row
+1. Queue shows type ï¿½ï¿½ requester ï¿½ï¿½ glance ï¿½ï¿½ status ï¿½ï¿½ due in one row
 2. Stats filter status; no duplicate status chip row
-3. Multi-select ¡æ sticky bulk dock
+3. Multi-select ï¿½ï¿½ sticky bulk dock
 4. Drawer: fulfill near top
 
 ## Fast checks
