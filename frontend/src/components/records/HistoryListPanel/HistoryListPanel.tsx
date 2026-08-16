@@ -1158,7 +1158,6 @@ export function HistoryListPanel() {
 
   return (
     <div className="records-list records-list--history history-page-premium">
-      {canUseWorkoutPlans ? <MissedWorkoutPlansBanner /> : null}
       <div className="records-list__toolbar">
         {hasAnyRecords ? (
           <HistoryLogStatusFilter value={logStatus} onChange={handleLogStatusChange} />

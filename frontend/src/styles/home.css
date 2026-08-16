@@ -1,7 +1,5 @@
-.home-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+.home-page .missed-plans-banner {
+  margin: 0;
 }
 
 .home-planned-workout {

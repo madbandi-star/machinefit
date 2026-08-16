@@ -5,7 +5,7 @@ import { AuthLandingScreen } from '@/components/auth/AuthLandingScreen/AuthLandi
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { ProfileIncompleteBanner } from '@/components/home/ProfileIncompleteBanner/ProfileIncompleteBanner';
 import { HomeNoticeBanner } from '@/components/home/HomeNoticeBanner/HomeNoticeBanner';
-import { HomePlannedWorkoutCard } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
+import { HomePlannedWorkoutCard, MissedWorkoutPlansBanner } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
 import { HomeWorkoutSessionTimer } from '@/components/home/HomeWorkoutSessionTimer/HomeWorkoutSessionTimer';
 import { WorkoutCompleteHost } from '@/components/home/WorkoutCompleteReport/WorkoutCompleteHost';
 import { HomeFortuneCard } from '@/components/home/HomeFortuneCard/HomeFortuneCard';
@@ -112,6 +112,7 @@ export function HomePage() {
 
       {showProfileBanner && <ProfileIncompleteBanner />}
       <NoticePopup />
+      <MissedWorkoutPlansBanner />
       <HomeFortuneCard />
       <HomeWorkoutSessionTimer />
       <WorkoutCompleteHost />

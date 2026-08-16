@@ -1,35 +1,21 @@
 {
-  "title": "Naver SEO: robots/sitemap/canonical brand home fixes",
-  "summary": "Fixed crawl policy (Allow: /), sitemap apex URL, home canonical/OG/JSON-LD to https://machine-fit.com/, brand title/description, retained Naver/Google verification. Cloudflare must rewrite /→/machinefit/ as 200 (docs/NAVER_SEO.md).",
-  "git": { "branch": "main", "commit": "a83f5098" },
+  "title": "Move missed workout plans banner to Home",
+  "summary": "MissedWorkoutPlansBanner removed from Records and placed on Home directly above Todays Fortune.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/public/robots.txt",
-    "frontend/public/sitemap.xml",
-    "frontend/index.html",
-    "frontend/src/seo/siteSeo.ts",
-    "frontend/src/seo/jsonLd.ts",
-    "frontend/src/seo/applyPageSeo.ts",
-    "frontend/src/seo/routeSeoPolicy.ts",
-    "frontend/src/components/auth/AuthLandingScreen/AuthLandingScreen.tsx",
-    "scripts/generate-sitemap.mjs",
-    "scripts/seo-validate.mjs",
-    "docs/NAVER_SEO.md",
-    "docs/DEPLOY.md"
+    "frontend/src/pages/home/HomePage.tsx",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/styles/home.css"
   ],
   "testFocus": [
-    "seo-validate PASS",
-    "dist contains robots/sitemap/favicon with machine-fit.com/",
-    "Cloudflare rewrite checklist in docs/NAVER_SEO.md"
+    "Home (logged in, missed plans): banner above fortune card",
+    "Records: banner no longer at top"
   ],
   "fastChecks": [
-    "cd frontend && npm run seo:validate"
+    "rg -n \"MissedWorkoutPlansBanner\" frontend/src/pages/home/HomePage.tsx frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
   ],
-  "productionChecks": [
-    "curl -sI https://machine-fit.com/ should become 200 after CF rewrite",
-    "https://machine-fit.com/robots.txt Allow: /",
-    "https://machine-fit.com/sitemap.xml includes apex /"
-  ],
+  "productionChecks": ["Pages: / home missed-plans above fortune"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "301 /→/machinefit/; restrictive robots; canonical /machinefit/",
-  "toBe": "SEO tags on apex; Allow:/; CF rewrite still required for 200 at /"
+  "asIs": "Missed plans banner on Records",
+  "toBe": "Missed plans banner on Home above fortune"
 }
