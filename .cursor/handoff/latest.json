@@ -3,7 +3,7 @@
   "summary": "Community banner was only on unused /community hub; My Page links skip the hub. Added COMMUNITY_BOTTOM to free/notices/templates/photo/requests lists. Migration 143 enables admin CMS preview.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "479bc76d"
   },
   "changedFiles": [
     "frontend/src/components/community/CommunityBottomBanner.tsx",
