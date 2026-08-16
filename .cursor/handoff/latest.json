@@ -3,7 +3,7 @@
   "summary": "Fixed mistyped </span> closing a <strong> in AdminAdsPage so frontend tsc/build and GitHub Pages deploy can succeed again. Brand favorites community banner and prior UI work already on main.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "dc49ce5f"
   },
   "changedFiles": [
     "frontend/src/pages/admin/ads/AdminAdsPage.tsx"

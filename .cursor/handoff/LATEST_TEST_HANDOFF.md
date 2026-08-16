@@ -5,7 +5,7 @@ Fixed mistyped `</span>` closing a `<strong>` in AdminAdsPage so frontend tsc/bu
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `dc49ce5f`
 
 ## Test focus
 1. Deploy Frontend workflow success.
