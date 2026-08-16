@@ -5,7 +5,7 @@ Synced missing ja/zh locale keys so frontend build (`i18n-audit`) and GitHub Pag
 
 ## Git
 - branch: `main`
-- commit: `PENDING`
+- commit: `38659b03`
 
 ## Test focus
 1. `node scripts/i18n-audit.mjs` ¡æ OK

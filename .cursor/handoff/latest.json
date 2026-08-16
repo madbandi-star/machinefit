@@ -3,7 +3,7 @@
   "summary": "Synced missing ja/zh locale keys so frontend build (i18n-audit) and GitHub Pages deploy succeed after admin densify.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "38659b03"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ja/admin.json",
