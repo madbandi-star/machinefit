@@ -5,7 +5,7 @@ Brand favorites page now shows the same `COMMUNITY_BOTTOM` CMS banner as free bo
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `01f06021`
 
 ## Changed files
 - `frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx`

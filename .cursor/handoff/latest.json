@@ -3,7 +3,7 @@
   "summary": "Brand favorites page now shows the same COMMUNITY_BOTTOM CMS banner as free board / community lists.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "01f06021"
   },
   "changedFiles": [
     "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
