@@ -3,7 +3,7 @@
   "summary": "Admin sidebar used missing admin ns key compliance.rights.admin.nav (showed raw key). Added locale strings so KO shows ???? ???? ??.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "b55d85b4"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/admin.json",
