@@ -1,26 +1,31 @@
 {
-  "title": "Member ID remaining count beside Change button",
-  "summary": "My Page member ID remaining text sits immediately to the right of the Change button instead of wrapping onto its own line.",
+  "title": "Sync self gym member name with username",
+  "summary": "Home member chip showed stale gym_members.name (머신러너3107) after username change to 사레레. Self members now follow displayName in UI, and username updates sync is_self member names in DB.",
   "git": {
     "branch": "main",
-    "commit": "637bb995"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx",
-    "frontend/src/styles/components.css"
+    "frontend/src/components/gyms/MemberSelector/MemberSelector.tsx",
+    "backend/server/repositories/gym-member.repository.ts",
+    "backend/server/services/user.service.ts",
+    "backend/server/repositories/admin.repository.ts"
   ],
   "testFocus": [
-    "My Page profile: displayName, [변경], then remaining text on same row"
+    "Home: next to default gym, self member shows account displayName",
+    "Rename username → self gym member name updates",
+    "사레레 account already backfilled in DB"
   ],
   "fastChecks": [
-    "rg -n \"member-id-remaining|changeMemberId\" frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx frontend/src/styles/components.css"
+    "rg -n \"syncSelfMemberNames|accountDisplayName\" backend/server/repositories/gym-member.repository.ts backend/server/services/user.service.ts frontend/src/components/gyms/MemberSelector/MemberSelector.tsx"
   ],
   "productionChecks": [
-    "Pages Deploy Frontend success"
+    "Pages Deploy Frontend success",
+    "Render backend redeploy (username sync)"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Remaining count on its own full-width line under Change",
-  "toBe": "Remaining count inline to the right of Change"
+  "asIs": "Self member label stayed at old username after rename",
+  "toBe": "Self member label tracks displayName; DB synced on rename"
 }

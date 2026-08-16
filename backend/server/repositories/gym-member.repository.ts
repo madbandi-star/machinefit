@@ -253,6 +253,22 @@ export const gymMemberRepository = {
     });
   },
 
+  /** Keep is_self gym member labels in sync with account username (display_name). */
+  async syncSelfMemberNames(ownerUserId: string, displayName: string): Promise<number> {
+    const pool = getPool();
+    if (!pool) return 0;
+    const name = displayName.trim();
+    if (!name) return 0;
+    const result = await pool.query(
+      `UPDATE gym_members
+       SET name = $1, updated_at = NOW()
+       WHERE owner_user_id = $2 AND is_self = TRUE
+         AND name IS DISTINCT FROM $1`,
+      [name, ownerUserId]
+    );
+    return result.rowCount ?? 0;
+  },
+
   async createProfileRequest(data: {
     memberId: string;
     gymId: string;

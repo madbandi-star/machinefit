@@ -1,19 +1,21 @@
-# Test handoff — Member ID remaining count beside Change button
+# Test handoff — Sync self gym member name with username
 
 ## Summary
-My Page member ID remaining text sits immediately to the right of the Change button instead of wrapping onto its own line.
+Home member chip showed stale `gym_members.name` after username change. Self members now follow `displayName` in the UI, and username updates sync `is_self` member names in DB. 사레레 already backfilled.
 
 ## Git
 - Branch: `main`
-- Commit: `637bb995`
+- Commit: pending
 
 ## Test focus
-1. My Page profile row: `아이디값` → `[변경]` → `아이디 변경 n/n회 남음` on one line (wraps only if screen is very narrow).
+1. Home → gym row right chip shows account username for self.
+2. Rename username → self member label updates.
+3. Non-self members still show their own names.
 
 ## Fast checks
 ```bash
-rg -n "member-id-remaining|changeMemberId" frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx frontend/src/styles/components.css
+rg -n "syncSelfMemberNames|accountDisplayName" backend/server/repositories/gym-member.repository.ts backend/server/services/user.service.ts frontend/src/components/gyms/MemberSelector/MemberSelector.tsx
 ```
 
 ## Deploy
-Frontend Pages only.
+Frontend Pages + **Render backend** (sync on rename).

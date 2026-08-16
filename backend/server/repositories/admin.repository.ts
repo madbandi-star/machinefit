@@ -147,12 +147,14 @@ export const adminRepository = {
     }
     if (input.displayName !== undefined) {
       const { applyUsernameChange } = await import('../services/user.service.js');
+      const { gymMemberRepository } = await import('./gym-member.repository.js');
       const result = await applyUsernameChange(userId, input.displayName, {
         enforceChangeLimit: false,
       });
       if (result.changed) {
         try {
           await userRepository.updateProfile(userId, { displayName: result.normalized });
+          await gymMemberRepository.syncSelfMemberNames(userId, result.normalized);
         } catch (error: unknown) {
           const code =
             error && typeof error === 'object' && 'code' in error

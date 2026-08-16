@@ -10,6 +10,7 @@ import {
 } from '@machinefit/shared';
 import { userRepository } from '../repositories/user.repository.js';
 import { userGymRepository } from '../repositories/user-gym.repository.js';
+import { gymMemberRepository } from '../repositories/gym-member.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { fortuneService } from './fortune/fortune.service.js';
 import { awardPointsSafe } from './points.service.js';
@@ -216,6 +217,9 @@ export const userService = {
       });
       if (!user) {
         throw new AppError(404, 'NOT_FOUND', 'User not found');
+      }
+      if (payload.displayName !== undefined) {
+        await gymMemberRepository.syncSelfMemberNames(userId, user.displayName);
       }
       if (touchesBirth) {
         fortuneService.invalidateUser(userId);

@@ -10,6 +10,7 @@ import './MemberSelector.css';
 export function MemberSelector() {
   const { t } = useTranslation(['gyms', 'common']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const accountDisplayName = useAuthStore((s) => s.user?.displayName?.trim() ?? '');
   const setActiveMemberId = useGymStore((s) => s.setActiveMemberId);
   const {
     members,
@@ -65,12 +66,20 @@ export function MemberSelector() {
 
   if (!isAuthenticated || !isRealGym) return null;
 
+  const memberLabel = (member: { name: string; isSelf?: boolean }) => {
+    const name =
+      member.isSelf && accountDisplayName
+        ? accountDisplayName
+        : member.name?.trim() || '';
+    return `${name}${member.isSelf ? ` (${t('gyms:members.self')})` : ''}`;
+  };
+
   const label = isLoading
     ? '…'
-    : activeMember?.name?.trim()
-      ? `${activeMember.name.trim()}${activeMember.isSelf ? ` (${t('gyms:members.self')})` : ''}`
-      : members[0]?.name?.trim()
-        ? `${members[0].name.trim()}${members[0].isSelf ? ` (${t('gyms:members.self')})` : ''}`
+    : activeMember
+      ? memberLabel(activeMember)
+      : members[0]
+        ? memberLabel(members[0])
         : t('gyms:members.selectMember');
 
   const handleSelect = (memberId: string) => {
@@ -113,7 +122,9 @@ export function MemberSelector() {
                   onClick={() => handleSelect(member.id)}
                 >
                   <span className="member-selector__option-name">
-                    {member.name}
+                    {member.isSelf && accountDisplayName
+                      ? accountDisplayName
+                      : member.name}
                     {member.isSelf ? (
                       <span className="member-selector__self-badge">
                         {' '}({t('gyms:members.self')})
