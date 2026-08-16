@@ -1,31 +1,31 @@
 {
-  "title": "Glanceable admin Q&A management UX",
-  "summary": "Admin Q&A list redesigned for glanceability: KPI publish/review filters, category chips, expandable dense rows, and top-viewed side panel instead of a wide table.",
+  "title": "Glanceable admin Helchang Fortune UX",
+  "summary": "Fortune catalog admin redesigned: KPI active filters, category chips with counts, dense expandable rows with quick activate, and a side editor instead of a permanent top form.",
   "git": {
     "branch": "main",
-    "commit": "935b9f8c"
+    "commit": "7780b82a"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/qa/AdminQaPage.tsx",
-    "frontend/src/styles/admin-qa.css",
+    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
+    "frontend/src/styles/admin-fortune.css",
     "frontend/src/i18n/locales/ko/admin.json",
     "frontend/src/i18n/locales/en/admin.json"
   ],
   "testFocus": [
-    "Admin /admin/qa: KPI strip filters all/published/hidden/needs-review",
-    "Category chips filter list; search still works",
-    "Dense expandable rows show publish toggle, edit, delete",
-    "Top-viewed side panel lists popular articles"
+    "Admin /admin/fortune: KPI filters all/active/inactive",
+    "Category chips + search filter dense list",
+    "Expand row: edit opens side panel; activate/deactivate works",
+    "Create opens side editor without burying the list"
   ],
   "fastChecks": [
-    "rg -n \"admin-qa|PublishFilter|expandedId|topViewed\" frontend/src/pages/admin/qa/AdminQaPage.tsx frontend/src/styles/admin-qa.css"
+    "rg -n \"aft-kpis|ActiveFilter|openCreate|toggleActiveMutation\" frontend/src/pages/admin/fortune/AdminFortunePage.tsx frontend/src/styles/admin-fortune.css"
   ],
   "productionChecks": [
-    "Pages admin Q&A glanceable list after Deploy Frontend success"
+    "Pages admin Helchang Fortune glanceable list after Deploy Frontend success"
   ],
   "deploy": {
     "expected": "GitHub Pages FE success"
   },
-  "asIs": "Wide table hard to scan for publish state and review needs",
-  "toBe": "KPI + chips + dense expandable rows + top-viewed panel"
+  "asIs": "Tall form always on top + bulky list cards hard to scan",
+  "toBe": "KPI + chips + dense rows + on-demand side editor"
 }

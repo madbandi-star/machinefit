@@ -1,26 +1,26 @@
-# Glanceable admin Q&A management UX
+# Glanceable admin Helchang Fortune UX
 
 ## Summary
-Admin Q&A list redesigned for glanceability: KPI publish/review filters, category chips, expandable dense rows, and top-viewed side panel instead of a wide table.
+Fortune catalog admin redesigned: KPI active filters, category chips with counts, dense expandable rows with quick activate, and a side editor instead of a permanent top form.
 
 ## Git
 - branch: `main`
-- commit: `935b9f8c`
+- commit: `7780b82a`
 
 ## Test focus
-1. `/admin/qa` KPI strip filters all / published / hidden / needs-review
-2. Category chips + search still filter the list
-3. Dense expandable rows: publish toggle, edit, delete
-4. Top-viewed side panel shows popular articles
+1. `/admin/fortune` KPI strip filters all / active / inactive
+2. Category chips + search filter the dense list
+3. Expand row ?? edit opens side panel; activate/deactivate works
+4. Create opens side editor without burying the list
 
 ## Fast checks
 ```bash
-rg -n "admin-qa|PublishFilter|expandedId|topViewed" frontend/src/pages/admin/qa/AdminQaPage.tsx frontend/src/styles/admin-qa.css
+rg -n "aft-kpis|ActiveFilter|openCreate|toggleActiveMutation" frontend/src/pages/admin/fortune/AdminFortunePage.tsx frontend/src/styles/admin-fortune.css
 ```
 
 ## Production checks
-- After Deploy Frontend success: open admin Q&A and confirm glanceable layout
+- After Deploy Frontend success: open admin Helchang Fortune and confirm glanceable layout
 
-## as-is ¡æ to-be
-- **as-is:** Wide table hard to scan for publish state and review needs
-- **to-be:** KPI + chips + dense expandable rows + top-viewed panel
+## as-is ?? to-be
+- **as-is:** Tall form always on top + bulky list cards hard to scan
+- **to-be:** KPI + chips + dense rows + on-demand side editor
