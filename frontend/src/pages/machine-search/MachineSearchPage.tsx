@@ -30,6 +30,7 @@ import {
   getTodayDateKey,
   normalizeDateKey,
 } from '@/utils/historyDate';
+import { useBrandFavorites } from '@/hooks/useBrandFavorites';
 import {
   clearRecentMachineSearches,
   getRecentMachineSearches,
@@ -38,6 +39,7 @@ import {
 } from '@/utils/recentMachineSearches';
 import { Seo } from '@/seo/Seo';
 import { breadcrumbJsonLd, brandCollectionJsonLd } from '@/seo/jsonLd';
+import '@/styles/machines.css';
 
 function resolveMuscleParam(raw: string | null): string | null {
   const trimmed = raw?.trim();
@@ -185,6 +187,28 @@ export function MachineSearchPage() {
     },
     staleTime: 10 * 60_000,
   });
+
+  const { data: favoriteBrandItems, isFetched: favoriteBrandsFetched } = useBrandFavorites();
+
+  const brandsForFilter = useMemo(() => {
+    if (!isAuthenticated) return brands;
+    if (!favoriteBrandsFetched) return [];
+    const ids = new Set((favoriteBrandItems ?? []).map((item) => item.brandId));
+    return brands.filter((brand) => ids.has(brand.id));
+  }, [brands, favoriteBrandItems, favoriteBrandsFetched, isAuthenticated]);
+
+  const favoriteBrandEmpty =
+    isAuthenticated && favoriteBrandsFetched && brandsForFilter.length === 0;
+
+  useEffect(() => {
+    if (!isAuthenticated || !favoriteBrandsFetched) return;
+    if (!brandCode) return;
+    if (brandsForFilter.some((brand) => brand.code === brandCode)) return;
+    setBrandCode(null);
+    writeSearchParams({ brand: null });
+    // writeSearchParams closes over brandCode/muscle — intentional one-shot clear
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [brandCode, brandsForFilter, favoriteBrandsFetched, isAuthenticated]);
 
   const { data: dayPlans = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
@@ -340,7 +364,23 @@ export function MachineSearchPage() {
           onClearAll={handleRecentClearAll}
         />
         <FilterChips value={muscleGroup} onChange={handleMuscleChange} />
-        <BrandFilterChips brands={brands} value={brandCode} onChange={handleBrandChange} />
+        <BrandFilterChips
+          brands={brandsForFilter}
+          value={brandCode}
+          onChange={handleBrandChange}
+          includeFallbacks={!isAuthenticated}
+          emptyState={
+            favoriteBrandEmpty ? (
+              <div className="brand-filter-empty">
+                <p className="brand-filter-empty__title">{t('brandFavorites.filterEmptyTitle')}</p>
+                <p className="brand-filter-empty__hint">{t('brandFavorites.filterEmptyHint')}</p>
+                <Link to={ROUTES.BRAND_FAVORITES} className="btn btn--secondary brand-filter-empty__cta">
+                  {t('brandFavorites.filterEmptyCta')}
+                </Link>
+              </div>
+            ) : undefined
+          }
+        />
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}
         </h2>

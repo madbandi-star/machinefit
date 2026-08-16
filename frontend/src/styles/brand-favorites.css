@@ -1,0 +1,104 @@
+.brand-favorites {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.brand-favorites__search {
+  display: block;
+}
+
+.brand-favorites__search-input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.brand-favorites__section-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 750;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.brand-favorites__empty {
+  margin: 0;
+  padding: 0.85rem 0.2rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.brand-favorites__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.brand-favorites__row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 3.4rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.55rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 80%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+}
+
+.brand-favorites__row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.brand-favorites__logo,
+.brand-favorites__logo-fallback {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 10px;
+  flex-shrink: 0;
+  object-fit: contain;
+  background: color-mix(in srgb, #1a2332 70%, transparent);
+}
+
+.brand-favorites__logo-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 750;
+  color: var(--color-primary);
+}
+
+.brand-favorites__meta {
+  min-width: 0;
+}
+
+.brand-favorites__name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-favorites__code {
+  margin: 0.1rem 0 0;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

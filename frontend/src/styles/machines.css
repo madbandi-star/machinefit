@@ -226,6 +226,49 @@
   margin-top: 0.35rem;
 }
 
+.filter-section__brand-empty {
+  margin-top: 0.25rem;
+}
+
+.brand-filter-empty {
+  padding: 0.85rem 0.75rem;
+  border-radius: 14px;
+  border: 1px dashed color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-surface) 75%, transparent);
+}
+
+.brand-filter-empty__title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 750;
+  color: var(--color-text);
+}
+
+.brand-filter-empty__hint {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.brand-filter-empty__cta {
+  display: inline-flex;
+}
+
+.brand-detail__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-detail__title-row .brand-detail__logo {
+  margin: 0;
+}
+
+.brand-detail__favorite {
+  margin-left: auto;
+}
+
 .filter-chips--brand {
   margin-top: 0;
   margin-bottom: 0.35rem;

@@ -92,6 +92,10 @@ const myTemplates = () =>
   import('@/pages/template-share/MyTemplatesPage').then((m) => ({
     default: m.MyTemplatesPage,
   }));
+const brandFavorites = () =>
+  import('@/pages/brand-favorites/BrandFavoritesPage').then((m) => ({
+    default: m.BrandFavoritesPage,
+  }));
 const adminTemplateShare = () =>
   import('@/pages/admin/template-share/AdminTemplateSharePage').then((m) => ({
     default: m.AdminTemplateSharePage,
@@ -577,6 +581,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.RECOMMEND_RESULT, element: lazyRoute(recommendResult) },
             { path: ROUTES.MY_PAGE, element: lazyRoute(myPage) },
             { path: ROUTES.MY_TEMPLATES, element: lazyRoute(myTemplates) },
+            { path: ROUTES.BRAND_FAVORITES, element: lazyRoute(brandFavorites) },
             { path: ROUTES.PAYMENT_HISTORY, element: lazyRoute(paymentHistory) },
             { path: ROUTES.MY_GYMS, element: lazyRoute(gymMemberManage) },
             { path: ROUTES.LIFTED_WEIGHT, element: lazyRoute(liftedWeight) },

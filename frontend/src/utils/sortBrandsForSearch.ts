@@ -37,8 +37,12 @@ function mergeMissingBrands(brands: Brand[]): Brand[] {
   return merged;
 }
 
-export function prepareBrandsForMachineSearch(brands: Brand[]): Brand[] {
-  const merged = mergeMissingBrands(brands);
+export function prepareBrandsForMachineSearch(
+  brands: Brand[],
+  options?: { includeFallbacks?: boolean }
+): Brand[] {
+  const merged =
+    options?.includeFallbacks === false ? [...brands] : mergeMissingBrands(brands);
   const ordered: Brand[] = [];
 
   for (const code of BRAND_SEARCH_ORDER) {

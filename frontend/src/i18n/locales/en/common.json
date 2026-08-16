@@ -61,6 +61,18 @@
   },
   "collapse": "Collapse",
   "expand": "Expand",
+  "brandFavorites": {
+    "title": "Brand favorites",
+    "subtitle": "Save brands you use often to show them in search filters.",
+    "searchLabel": "Search brands",
+    "searchPlaceholder": "Search brands...",
+    "mineTitle": "My favorite brands",
+    "allTitle": "All brands",
+    "empty": "You have not favorited any brands yet.",
+    "noSearchResults": "No matching brands.",
+    "addAria": "Add brand to favorites",
+    "removeAria": "Remove brand from favorites"
+  },
   "expandCardDetails": "Show details",
   "collapseCardDetails": "Hide details",
   "picker": {
@@ -779,6 +791,7 @@
     "adminDashboard": "Admin Dashboard",
     "adminTools": "Admin tools",
     "browseByBrand": "Browse by Brand",
+    "brandFavorites": "Brand favorites",
     "growthAnalysis": "Growth Analysis",
     "gymMemberManage": "Gyms & members",
     "gymMemberManageMember": "Registered gyms & memberships",

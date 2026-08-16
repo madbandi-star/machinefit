@@ -10,6 +10,11 @@
   "filterByBrand": "Filter by brand",
   "muscleSectionTitle": "Muscle groups",
   "brandSectionTitle": "Brands",
+  "brandFavorites": {
+    "filterEmptyTitle": "No favorite brands yet.",
+    "filterEmptyHint": "Add brands you use often in My Page > Brand favorites.",
+    "filterEmptyCta": "Brand favorites"
+  },
   "recommendedMachinesTitle": "Recommended machines",
   "recentSearches": {
     "title": "Recent searches",

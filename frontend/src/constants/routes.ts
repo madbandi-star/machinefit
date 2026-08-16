@@ -27,6 +27,7 @@ export const ROUTES = {
   TEMPLATE_SHARE: '/community/templates',
   TEMPLATE_SHARE_DETAIL: '/community/templates/:postId',
   MY_TEMPLATES: '/my-page/templates',
+  BRAND_FAVORITES: '/my-page/brand-favorites',
   POST_DETAIL: '/community/posts/:postId',
   TRADE_SELL_WRITE: '/trade/sell/write',
   TRADE_BUY_WRITE: '/trade/buy/write',

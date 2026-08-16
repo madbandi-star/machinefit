@@ -1,23 +1,30 @@
-# Test handoff — Music mini prev/next
+# Test handoff — Brand favorites
 
 ## Summary
-Compact music mini player adds icon-only previous/next track buttons (SkipBack / SkipForward) around play/pause, matching existing mini button styling.
+Brand favorites (user↔brand) with My Page manager; search brand filter chips show only favorites. Machine search results are **not** limited by favorites.
 
 ## Git
 - Branch: `main`
-- Commit: 586f1cb4
+- Commit: pending
+
+## Ops required
+1. Apply `database/migrations/141_user_favorite_brands.sql` on Supabase.
+2. Redeploy Render backend (new `/api/v1/brand-favorites`).
 
 ## Test focus
-1. Open music panel → minimize to mini PiP.
-2. Confirm prev | play/pause | next | expand | close (no visible text on new controls).
-3. Prev/next change track; disabled states match full-panel rules.
-4. Tooltip/aria present; visual icons alone read as skip previous/next.
+1. My Page → 브랜드 즐겨찾기 → ★ toggle + search.
+2. `/machines` brand chips = favorites only (logged in).
+3. 0 favorites → empty CTA; machine list still searchable.
+4. Guest keeps full brand chips.
+5. Logout clears cached favorites (QueryProvider removeQueries).
 
 ## Fast checks
 ```bash
-rg -n "playPrevTrack|SkipForward|mf-music-mini__btn:disabled" frontend/src/components/motivation/MotivationMediaControls
+rg -n "user_favorite_brands|FavoriteBrandButton|useBrandFavorites" frontend/src backend/server
+npm run build -w @machinefit/shared
+npx tsc --noEmit -p frontend/tsconfig.json
 ```
 
 ## as-is → to-be
-- **as-is:** Mini had play/pause only for transport.
-- **to-be:** Mini has icon-only prev/next beside play/pause.
+- **as-is:** Brand filter showed all brands.
+- **to-be:** Logged-in brand filter shows favorite brands only; results unrestricted.

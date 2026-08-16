@@ -21,6 +21,7 @@ function AuthScopedQueryInvalidator() {
 
   useEffect(() => {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
+    void queryClient.removeQueries({ queryKey: QUERY_KEYS.brandFavorites });
   }, [viewerId]);
 
   return null;

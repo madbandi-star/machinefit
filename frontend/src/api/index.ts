@@ -45,6 +45,7 @@ import type {
   LiveDashboardLevel,
   LiveScopeQuery,
   LiveSearchHit,
+  FavoriteBrandItem,
 } from '@machinefit/shared';
 
 export const machineApi = {
@@ -380,6 +381,15 @@ export const favoriteApi = {
       `/favorites/check/${machineCode}`,
       { params: { gymId, ...(memberId ? { memberId } : {}) } }
     ),
+};
+
+export const brandFavoriteApi = {
+  list: () => apiClient.get<ApiResponse<FavoriteBrandItem[]>>('/brand-favorites'),
+  listIds: () =>
+    apiClient.get<ApiResponse<{ brandIds: string[] }>>('/brand-favorites/ids'),
+  add: (brandId: string) =>
+    apiClient.post<ApiResponse<FavoriteBrandItem>>(`/brand-favorites/${brandId}`),
+  remove: (brandId: string) => apiClient.delete(`/brand-favorites/${brandId}`),
 };
 
 export const historyApi = {

@@ -19,6 +19,8 @@ export const QUERY_KEYS = {
   favorites: (gymId: string, memberId = '') => ['favorites', gymId, memberId] as const,
   favoriteCheck: (gymId: string, machineCode: string, memberId = '') =>
     ['favorites', gymId, memberId, 'check', machineCode] as const,
+  brandFavorites: ['brand-favorites'] as const,
+  brandFavoriteIds: ['brand-favorites', 'ids'] as const,
   history: ['history'] as const,
   historyList: (
     gymId: string,

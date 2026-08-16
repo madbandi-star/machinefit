@@ -52,6 +52,18 @@
   },
   "collapse": "收起",
   "expand": "展开",
+  "brandFavorites": {
+    "title": "品牌收藏",
+    "subtitle": "收藏常用品牌后，会显示在搜索筛选中。",
+    "searchLabel": "搜索品牌",
+    "searchPlaceholder": "搜索品牌...",
+    "mineTitle": "我收藏的品牌",
+    "allTitle": "全部品牌",
+    "empty": "还没有收藏任何品牌。",
+    "noSearchResults": "没有匹配的品牌。",
+    "addAria": "收藏品牌",
+    "removeAria": "取消品牌收藏"
+  },
   "expandCardDetails": "展开详情",
   "collapseCardDetails": "收起详情",
   "picker": {
@@ -776,6 +788,7 @@
     "adminDashboard": "Admin Dashboard",
     "adminTools": "Admin tools",
     "browseByBrand": "Browse by Brand",
+    "brandFavorites": "品牌收藏",
     "growthAnalysis": "Growth Analysis",
     "gymMemberManage": "Gyms & members",
     "gymMemberManageMember": "Registered gyms & memberships",

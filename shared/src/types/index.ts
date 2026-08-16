@@ -1,5 +1,6 @@
 export * from './api.types.js';
 export * from './machine.types.js';
+export * from './favorite-brand.types.js';
 export * from './standard-machine.types.js';
 export * from './user.types.js';
 export * from './gym.types.js';

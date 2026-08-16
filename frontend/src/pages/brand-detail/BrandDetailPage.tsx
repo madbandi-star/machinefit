@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
+import { FavoriteBrandButton } from '@/components/brands/FavoriteBrandButton/FavoriteBrandButton';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { brandApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
@@ -14,11 +15,13 @@ import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import { safeHttpUrl } from '@/utils/safeHttpUrl';
 import { Seo } from '@/seo/Seo';
 import { brandCollectionJsonLd, breadcrumbJsonLd } from '@/seo/jsonLd';
+import { useAuthStore } from '@/store/auth.store';
 import '@/styles/machines.css';
 
 export function BrandDetailPage() {
   const { brandCode } = useParams<{ brandCode: string }>();
   const { t, i18n } = useTranslation('machines');
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data: brand, isLoading: brandLoading, isError: brandError } = useQuery({
     queryKey: QUERY_KEYS.brand(brandCode!),
@@ -83,9 +86,14 @@ export function BrandDetailPage() {
       />
       <LegalDisclaimerBanner variant="trademark" compact />
       <div className="brand-detail__header">
-        {logoUrl ? (
-          <img src={logoUrl} alt={name} className="brand-detail__logo" loading="lazy" />
-        ) : null}
+        <div className="brand-detail__title-row">
+          {logoUrl ? (
+            <img src={logoUrl} alt={name} className="brand-detail__logo" loading="lazy" />
+          ) : null}
+          {isAuthenticated ? (
+            <FavoriteBrandButton brandId={brand.id} className="brand-detail__favorite" />
+          ) : null}
+        </div>
         {description ? <p className="brand-detail__desc">{description}</p> : null}
         {safeHttpUrl(brand.websiteUrl) ? (
           <a

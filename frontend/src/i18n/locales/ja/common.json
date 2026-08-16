@@ -52,6 +52,18 @@
   },
   "collapse": "閉じる",
   "expand": "開く",
+  "brandFavorites": {
+    "title": "ブランドお気に入り",
+    "subtitle": "よく使うブランドを保存すると検索フィルターに表示されます。",
+    "searchLabel": "ブランド検索",
+    "searchPlaceholder": "ブランドを検索...",
+    "mineTitle": "お気に入りブランド",
+    "allTitle": "すべてのブランド",
+    "empty": "まだお気に入りのブランドがありません。",
+    "noSearchResults": "検索結果がありません。",
+    "addAria": "ブランドをお気に入りに追加",
+    "removeAria": "ブランドのお気に入りを解除"
+  },
   "expandCardDetails": "詳細を表示",
   "collapseCardDetails": "詳細を隠す",
   "picker": {
@@ -776,6 +788,7 @@
     "adminDashboard": "Admin Dashboard",
     "adminTools": "Admin tools",
     "browseByBrand": "Browse by Brand",
+    "brandFavorites": "ブランドお気に入り",
     "growthAnalysis": "Growth Analysis",
     "gymMemberManage": "Gyms & members",
     "gymMemberManageMember": "Registered gyms & memberships",

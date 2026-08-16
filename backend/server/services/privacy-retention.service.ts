@@ -55,6 +55,7 @@ async function purgeDeactivatedUserData(userId: string): Promise<number> {
   rowsAffected += await deleteForUser('workout_cards', userId);
   rowsAffected += await deleteForUser('workout_card_templates', userId);
   rowsAffected += await deleteForUser('favorites', userId);
+  rowsAffected += await deleteForUser('user_favorite_brands', userId);
   rowsAffected += await deleteForUser('recent_history', userId);
   rowsAffected += await deleteForUser('user_machine_preferences', userId);
   rowsAffected += await deleteForUser('recommendation_feedback', userId);
