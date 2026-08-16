@@ -127,11 +127,12 @@ export const userService = {
       payload.birthTime = null;
     }
 
+    // Age is derived from birthDate and must NOT count as a body-metrics touch —
+    // otherwise birth-only saves require bodyMetricsConsent and fail with CONSENT_REQUIRED.
     const touchesBodyMetrics =
       payload.heightCm !== undefined ||
       payload.weightKg !== undefined ||
       payload.gender !== undefined ||
-      payload.age !== undefined ||
       payload.experienceLevel !== undefined ||
       payload.workoutGoal !== undefined;
     const touchesBirth =

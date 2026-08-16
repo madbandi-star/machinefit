@@ -1,27 +1,26 @@
-# Test handoff — Birth consent save (select-all + server flag)
+# Test handoff — Birth save vs body-metrics consent false positive
 
 ## Summary
-생년월일·탄생시 저장이 「필수 동의 항목을 모두 체크해 주세요」로 실패하던 문제를 재수정. 「전체 선택」이 다시 누르면 전부 해제되던 동작 제거. API는 raw body에서 `birthProfileConsent`를 재적용.
+생년월일 저장 시 서버가 `age`를 계산해 넣으면서 **신체정보 동의**까지 요구해 `CONSENT_REQUIRED`가 나던 버그 수정. 「전체 선택」토글은 원래 on/off로 복구.
+
+## Root cause
+`updateMe`가 `birthDate` → `payload.age` 도출 후 `touchesBodyMetrics`에 `age`를 포함 → `bodyMetricsConsent` 없이 거부. FE는 이를 생년월일 서버 동의 실패로 표시.
 
 ## Test focus
-1. 설정 → 생년월일·탄생시: 날짜/시간 입력 후 **필수 동의 항목 전체 선택** → 저장 성공
-2. 전체 선택 후 같은 행을 다시 눌러도 체크가 **풀리지 않음**
-3. 개별 항목(엔터테인먼트·만 14세 포함) 5개가 모두 on인지 확인
-4. (선택) 네트워크에서 PATCH `/users/me` body에 `birthProfileConsent: true` 포함
+1. 설정 → 생년월일·탄생시만: 필수 동의 체크 → 저장 **성공** (신체정보 섹션 동의 안 해도 됨)
+2. 「전체 선택」다시 누르면 해제되는 기존 토글 동작
+3. 신체정보(키/몸무게 등) 저장은 여전히 신체 동의 필요
 
 ## Fast checks
 ```
-rg -n "selectAll|consentBirthServerToast|birthConsentChecksRef" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx
-rg -n "raw.birthProfileConsent" backend/server/controllers/user.controller.ts
+rg -n "touchesBodyMetrics" -A 8 backend/server/services/user.service.ts
+rg -n "toggleAll" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx
 ```
 
 ## Production checks
-- Pages Deploy Frontend success 후 hard refresh
-- Deploy Backend to Render success (backend controller 변경)
+- **Deploy Backend to Render success 필수** (이 수정이 BE)
+- Pages는 select-all 복구 FE 포함 시
 
 ## As-is → To-be
-- as-is: 전체 선택해도 생년월일·탄생시 동의 toast로 저장 실패
-- to-be: 전체 선택 유지 + 서버 동의 플래그로 저장 성공
-
-## Deploy note
-frontend + backend → Pages + Render 둘 다 필요
+- as-is: 생년월일 동의 전부 체크해도 서버 동의 확인 실패 toast
+- to-be: 생년월일 동의만으로 저장 성공

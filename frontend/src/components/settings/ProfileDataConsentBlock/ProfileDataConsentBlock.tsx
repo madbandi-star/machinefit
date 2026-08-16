@@ -39,15 +39,12 @@ function ConsentCheckRow({
   label,
   icon,
   required = true,
-  showBadge = true,
 }: {
   checked: boolean;
   onToggle: () => void;
   label: string;
   icon: ReactNode;
   required?: boolean;
-  /** Master “select all” row hides the 필수/선택 badge. */
-  showBadge?: boolean;
 }) {
   const { t } = useTranslation();
   return (
@@ -63,15 +60,13 @@ function ConsentCheckRow({
         </span>
       </span>
       <span className="profile-consent__row-body">
-        {showBadge ? (
-          required ? (
-            <span className="profile-consent__badge">{t('auth.required')}</span>
-          ) : (
-            <span className="profile-consent__badge profile-consent__badge--optional">
-              {t('auth.optional')}
-            </span>
-          )
-        ) : null}
+        {required ? (
+          <span className="profile-consent__badge">{t('auth.required')}</span>
+        ) : (
+          <span className="profile-consent__badge profile-consent__badge--optional">
+            {t('auth.optional')}
+          </span>
+        )}
         <span className="profile-consent__row-label">{label}</span>
       </span>
       <span className="profile-consent__row-icon" aria-hidden>
@@ -156,29 +151,11 @@ export function ProfileDataConsentBlock({
   const toggle =
     (key: keyof ProfileConsentChecks) =>
     () => {
-      onChange((prev) => {
-        const base =
-          variant === 'birthProfile'
-            ? {
-                purpose: Boolean(prev.purpose),
-                retention: Boolean(prev.retention),
-                rights: Boolean(prev.rights),
-                entertainment: Boolean(prev.entertainment),
-                age14: Boolean(prev.age14),
-              }
-            : {
-                purpose: Boolean(prev.purpose),
-                retention: Boolean(prev.retention),
-                rights: Boolean(prev.rights),
-              };
-        return { ...base, [key]: !base[key as keyof typeof base] };
-      });
+      onChange((prev) => ({ ...prev, [key]: !prev[key] }));
     };
 
-  /** Select-all only — never clears. Accidental second tap used to wipe all checks. */
-  const selectAll = () => {
-    if (allOn) return;
-    onChange(fullyChecked(variant));
+  const toggleAll = () => {
+    onChange(() => (allOn ? emptyProfileConsentChecks(variant) : fullyChecked(variant)));
   };
 
   return (
@@ -186,7 +163,6 @@ export function ProfileDataConsentBlock({
       className="profile-consent"
       role="group"
       aria-label={t(`${prefix}.title`)}
-      data-consent-variant={variant}
     >
       <header className="profile-consent__header">
         <h3 className="profile-consent__title">{t(`${prefix}.title`)}</h3>
@@ -204,10 +180,10 @@ export function ProfileDataConsentBlock({
       <div className="profile-consent__checks">
         <ConsentCheckRow
           checked={allOn}
-          onToggle={selectAll}
+          onToggle={toggleAll}
           label={t('settings.consentCheckAll')}
           icon={<ShieldCheck size={20} strokeWidth={2} />}
-          showBadge={false}
+          required={false}
         />
         <ConsentCheckRow
           checked={checks.purpose}

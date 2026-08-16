@@ -1,36 +1,31 @@
 {
-  "title": "Birth consent: select-all no longer clears + server flag restore",
-  "summary": "「필수 동의 전체 선택」이 두 번째 탭에 전부 해제되던 UX를 막고, PATCH /users/me가 raw body에서 birthProfileConsent를 다시 붙여 CONSENT_REQUIRED를 피한다.",
+  "title": "Birth save no longer requires body-metrics consent",
+  "summary": "Saving birth date derives age server-side; that derived age was incorrectly treated as a body-metrics field touch, so PATCH /users/me demanded bodyMetricsConsent and returned CONSENT_REQUIRED. Age is excluded from body-metrics touch detection. Select-all toggle restored.",
   "git": {
     "branch": "main",
-    "commit": "a2f4dfd0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
-    "frontend/src/pages/settings/SettingsPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json",
-    "backend/server/controllers/user.controller.ts"
+    "backend/server/services/user.service.ts",
+    "frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
   ],
   "testFocus": [
-    "Settings > 생년월일·탄생시: 「필수 동의 항목 전체 선택」한 번 → 5개 모두 on → 저장 성공",
-    "전체 선택 후 같은 행을 다시 눌러도 체크가 풀리지 않음",
-    "서버 거부 시 consentBirthServerToast (클라이언트 미체크와 문구 구분)"
+    "Settings > birth profile: check birth consents only (no body metrics section) > Save succeeds",
+    "Select-all toggles on and off again as before",
+    "Body metrics save still requires body consent when height/weight/etc change"
   ],
   "fastChecks": [
-    "rg -n \"selectAll|birthProfileConsent|consentBirthServerToast\" frontend/src/pages/settings/SettingsPage.tsx frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx",
-    "rg -n \"raw.birthProfileConsent\" backend/server/controllers/user.controller.ts"
+    "rg -n \"touchesBodyMetrics\" -A 8 backend/server/services/user.service.ts",
+    "rg -n \"toggleAll\" frontend/src/components/settings/ProfileDataConsentBlock/ProfileDataConsentBlock.tsx"
   ],
   "productionChecks": [
-    "Pages Deploy Frontend success",
-    "Deploy Backend to Render success (controller change)",
-    "Hard refresh settings birth section → 전체 선택 → Save"
+    "Deploy Backend to Render success (required)",
+    "Pages deploy if FE changed",
+    "Hard refresh Settings birth section → consent → Save"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Render backend required; Pages optional for select-all revert"
   },
-  "asIs": "전체 선택 후에도 생년월일·탄생시 필수 동의 toast로 저장 실패",
-  "toBe": "전체 선택 유지 + birthProfileConsent 전달로 저장 성공"
+  "asIs": "Birth save failed with server consent toast after all birth checks",
+  "toBe": "Birth save succeeds with only birthProfileConsent; derived age does not demand body consent"
 }
