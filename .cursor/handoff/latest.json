@@ -3,7 +3,7 @@
   "summary": "Icon-only toggle beside plan-save marks all sets complete or undoes all completions on history/machine-card performance logs.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "e55ae1bb"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",

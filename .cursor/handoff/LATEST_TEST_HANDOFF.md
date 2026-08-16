@@ -5,7 +5,7 @@ Icon-only toggle to the right of 「계획 저장」 completes all sets or undoe
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: e55ae1bb
 
 ## Test focus
 1. Machine card / records history performance header: icon right of plan-save.
