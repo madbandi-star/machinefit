@@ -7,6 +7,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { PostCard } from '@/components/cards/PostCard/PostCard';
 import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
 import { BoardIndexSkeleton } from '@/components/community/BoardIndexSkeleton';
+import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
 import { communityApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -284,6 +285,8 @@ export function FreeBoardPage() {
         ) : (
           <p className="community-board-page__empty">{t('noPosts')}</p>
         )}
+
+        <CommunityBottomBanner />
 
         <Link to={ROUTES.MY_PAGE} className="btn btn--secondary btn--block community-board-page__back">
           ← {tCommon('nav.myPage')}

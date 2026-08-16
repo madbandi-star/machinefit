@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Icon } from '@/components/icons/Icon';
+import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
 import { templateShareApi } from '@/api/template-share.api';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
@@ -248,6 +249,7 @@ export function TemplateShareHubPage() {
             />
           </>
         ) : null}
+        <CommunityBottomBanner />
       </div>
     </PageShell>
   );

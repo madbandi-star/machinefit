@@ -1,22 +1,25 @@
-# Test handoff — Machine/Workout bottom banners
+# Test handoff — Community bottom banner on board lists
 
 ## Summary
-Machine detail: move `MACHINE_BOTTOM` above sticky Recommend CTA (was covered). Plan muscle picker is non-sticky. Records: clearer bottom banner spacing.
+`COMMUNITY_BOTTOM` was only on `/community` hub; users enter boards from My Page and never saw it. Banner now on free/notices/templates/photo/requests lists. Migration **143** enables admin CMS preview.
 
 ## Git
 - Branch: `main`
-- Commit: d002f6d5
+- Commit: pending
+
+## Ops
+- Apply `database/migrations/143_cms_banner_admin_preview.sql` on Supabase.
 
 ## Test focus
-1. Machine detail → scroll to bottom → banner above recommend button.
-2. Records → end of list → WORKOUT_BOTTOM visible.
-3. Home / My page bottoms unchanged.
+1. My Page → 자유 게시판 → scroll → banner.
+2. Other community boards same.
+3. Marketing opt-in still required for non-admin free users.
 
 ## Fast checks
 ```bash
-rg -n "MACHINE_BOTTOM|records-page__banner|recommend-cta--static" frontend/src
+rg -n "CommunityBottomBanner" frontend/src/pages
 ```
 
 ## as-is → to-be
-- **as-is:** Banner after sticky CTA → covered / hard to see.
-- **to-be:** Banner above sticky CTA; records spacing improved.
+- **as-is:** Banner only on unused hub.
+- **to-be:** Banner on board lists users actually open.

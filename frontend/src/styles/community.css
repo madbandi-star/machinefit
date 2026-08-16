@@ -11,6 +11,23 @@
   line-height: 1.4;
 }
 
+.community-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.community-hub__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.community-bottom-banner.promo-banner-slot {
+  margin-top: var(--space-lg, 1.25rem);
+  margin-bottom: var(--space-md, 1rem);
+}
+
 .community-board-page {
   display: flex;
   flex-direction: column;

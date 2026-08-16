@@ -6,6 +6,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
 import { noticeApi } from '@/api/notice.api';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/notices.css';
@@ -214,6 +215,7 @@ export function NoticesPage() {
           </div>
         ) : null}
       </div>
+      <CommunityBottomBanner />
     </PageShell>
   );
 }

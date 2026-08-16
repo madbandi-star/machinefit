@@ -1,32 +1,36 @@
 {
-  "title": "Fix hidden MACHINE/WORKOUT bottom banners",
-  "summary": "Machine detail banner was under sticky RecommendCTA; moved above CTA and made mid-page muscle picker non-sticky. Records banner spacing improved.",
+  "title": "Show COMMUNITY_BOTTOM on board lists users actually open",
+  "summary": "Community banner was only on unused /community hub; My Page links skip the hub. Added COMMUNITY_BOTTOM to free/notices/templates/photo/requests lists. Migration 143 enables admin CMS preview.",
   "git": {
     "branch": "main",
-    "commit": "d002f6d5"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
-    "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
-    "frontend/src/styles/machines.css",
-    "frontend/src/pages/records/RecordsPage.tsx",
-    "frontend/src/styles/records.css"
+    "frontend/src/components/community/CommunityBottomBanner.tsx",
+    "frontend/src/pages/community/CommunityPage.tsx",
+    "frontend/src/pages/free-board/FreeBoardPage.tsx",
+    "frontend/src/pages/notices/NoticesPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
+    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
+    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
+    "frontend/src/styles/community.css",
+    "database/migrations/143_cms_banner_admin_preview.sql"
   ],
   "testFocus": [
-    "Machine detail (logged-in, marketing opt-in): scroll — banner visible above Recommend CTA",
-    "Records/history: banner visible at bottom of page after list",
-    "Home/My page bottoms still show"
+    "My Page → Free board → scroll bottom → community banner",
+    "Same for notices / templates / photo / machine requests",
+    "Apply migration 143 if testing as admin"
   ],
   "fastChecks": [
-    "rg -n \"MACHINE_BOTTOM|records-page__banner|recommend-cta--static\" frontend/src"
+    "rg -n \"CommunityBottomBanner|COMMUNITY_BOTTOM\" frontend/src/pages"
   ],
   "productionChecks": [
-    "Pages Deploy Frontend success",
-    "Hard refresh machine detail + records"
+    "Apply Supabase migration 143",
+    "Pages Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages + apply migration 143"
   },
-  "asIs": "MACHINE_BOTTOM rendered under sticky RecommendCTA so it looked missing; WORKOUT_BOTTOM cramped at page end",
-  "toBe": "Banner above sticky CTA; clearer records bottom spacing"
+  "asIs": "Banner only on /community hub which users rarely open",
+  "toBe": "Banner on community board list bottoms users open from My Page"
 }

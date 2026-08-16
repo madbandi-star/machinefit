@@ -5,6 +5,7 @@ import type { PhotoBoardSort, PhotoPost } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
+import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
 import { photoBoardApi } from '@/api/photo-board.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -235,6 +236,8 @@ export function PhotoBoardPage() {
             />
           </>
         )}
+
+        <CommunityBottomBanner />
 
         <Link to={ROUTES.MY_PAGE} className="photo-back-link">
           ← {t('photoBackMyPage')}
