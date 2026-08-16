@@ -1360,8 +1360,7 @@ body:has(.records-page--history) .layout__content {
   padding-block: 0;
 }
 
-.records-list--history > .records-list__toolbar:first-child,
-.records-list--history > .missed-plans-banner:first-child {
+.records-list--history > .records-list__toolbar:first-child {
   margin-top: 0;
 }
 
@@ -1531,33 +1530,6 @@ body:has(.records-page--history) .layout__content {
 }
 
 
-.missed-plans-banner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid color-mix(in srgb, #f97316 35%, var(--glass-border));
-  background: color-mix(in srgb, #f97316 10%, var(--glass-bg));
-}
-
-.missed-plans-banner__title {
-  margin: 0;
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
-.missed-plans-banner__message {
-  margin: 0.2rem 0 0;
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.missed-plans-banner__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
 
 .machine-detail-plan-actions {
   display: flex;

@@ -1,16 +1,29 @@
-# Test handoff â€” Missed plans banner on Home
+# Compact missed-plans strip on Home
 
 ## Summary
-Moved MissedWorkoutPlansBanner from Records to Home, above Todays Fortune.
+È¨ ³õÄ£ ¿îµ¿ °èÈ¹À» Å« ¹è³Ê°¡ ¾Æ´Ï¶ó **¿À´ÃÀÇ ¿îµ¿ °èÈ¹**°ú °°Àº ÇÑ ÁÙ ½ºÆ®¸³À¸·Î ¾ĞÃàÇß½À´Ï´Ù. ¸Ó½Å¡¤³¯Â¥°¡ ÇÑ´«¿¡ º¸ÀÌ°í, ¾×¼ÇÀº ÂªÀº Ä¨(¿À´Ã·Î/³¯Â¥/»èÁ¦/¹«½Ã)ÀÔ´Ï´Ù.
 
 ## Git
-- Branch: `main`
-- Commit: _55c542eb_
+- branch: `main`
+- commit: (push ÈÄ °»½Å)
+
+## Changed files
+- `frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx`
+- `frontend/src/styles/home.css`
+- `frontend/src/styles/records.css`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/machines.json`
 
 ## Test focus
-1. Home: banner above fortune when missed plans exist
-2. Records: no banner
+1. ³õÄ£ °èÈ¹ÀÌ ÀÖÀ» ¶§ È¨¿¡¼­ ÇÑ ÁÙ ½ºÆ®¸³ Ç¥½Ã (¿î¼¼ À§)
+2. `¿À´Ã·Î` / `³¯Â¥` / `»èÁ¦` / `¹«½Ã` µ¿ÀÛ
+3. ¼¼·Î °ø°£ÀÌ ÀÌÀü Å« ¹è³Êº¸´Ù È®½ÇÈ÷ ÀÛÀ½
 
-## As-is â†’ To-be
-- **As-is:** Records top
-- **To-be:** Home above fortune
+## Fast checks
+```bash
+rg -n "home-missed-plans" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx frontend/src/styles/home.css
+rg -n "missed-plans-banner" frontend/src || true
+```
+
+## As-is ¡æ To-be
+- **As-is:** Å« ÁÖÈ² ¹è³Ê + Ç® »çÀÌÁî ¹öÆ° 4°³
+- **To-be:** ÄÄÆÑÆ® ÇÑ ÁÙ ½ºÆ®¸³ + ÂªÀº Ä¨ ¾×¼Ç

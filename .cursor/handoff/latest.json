@@ -1,21 +1,27 @@
 {
-  "title": "Move missed workout plans banner to Home",
-  "summary": "MissedWorkoutPlansBanner removed from Records and placed on Home directly above Todays Fortune.",
-  "git": { "branch": "main", "commit": "55c542eb" },
+  "title": "Compact missed-plans strip on Home",
+  "summary": "MissedWorkoutPlansBanner redesigned as a single-row home strip (like today’s plan): short labels, compact chips, less vertical space.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/pages/home/HomePage.tsx",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/styles/home.css"
+    "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
+    "frontend/src/styles/home.css",
+    "frontend/src/styles/records.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Home (logged in, missed plans): banner above fortune card",
-    "Records: banner no longer at top"
+    "Home with missed plans: one compact row — title · machine · MM-DD · (+more)",
+    "Actions still work: Today / Date / Delete / Skip",
+    "Height similar to “오늘의 운동 계획” strip, not a tall orange banner"
   ],
   "fastChecks": [
-    "rg -n \"MissedWorkoutPlansBanner\" frontend/src/pages/home/HomePage.tsx frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
+    "rg -n \"home-missed-plans\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx frontend/src/styles/home.css",
+    "rg -n \"missed-plans-banner\" frontend/src || true"
   ],
-  "productionChecks": ["Pages: / home missed-plans above fortune"],
+  "productionChecks": ["Pages home: compact missed-plans strip above fortune"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Missed plans banner on Records",
-  "toBe": "Missed plans banner on Home above fortune"
+  "asIs": "Tall orange banner with full-size buttons and multi-line copy",
+  "toBe": "Compact one-row strip with short labels and chip actions"
 }

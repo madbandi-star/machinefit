@@ -14,7 +14,7 @@ import { useUIStore } from '@/store/ui.store';
 import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
 import { dismissForToday, isDismissedToday } from '@/utils/dismissToday';
 import { getTodayDateKey, getTomorrowDateKey, normalizeDateKey } from '@/utils/historyDate';
-import '@/styles/records.css';
+import '@/styles/home.css';
 
 const HOME_PLANNED_DISMISS_KEY = 'home-planned-workout';
 
@@ -129,56 +129,74 @@ export function MissedWorkoutPlansBanner() {
 
   const card = visible[0] ?? datePickerCard!;
   const moreCount = Math.max(0, visible.length - 1);
+  const machineLabel = card.machineName ?? card.machineCode;
+  const dateKey = normalizeDateKey(card.scheduledDate);
+  const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(dateKey) ? dateKey.slice(5) : dateKey;
+  const busy = resolveMutation.isPending;
 
   return (
     <>
       {visible.length > 0 ? (
-        <div className="missed-plans-banner" role="status">
-          <div className="missed-plans-banner__body">
-            <p className="missed-plans-banner__title">{t('machines:history.planMissedTitle')}</p>
-            <p className="missed-plans-banner__message">
-              {t('machines:history.planMissedMessage', {
-                name: card.machineName ?? card.machineCode,
-                date: normalizeDateKey(card.scheduledDate),
-                count: moreCount,
-              })}
-            </p>
+        <section
+          className="home-missed-plans"
+          role="status"
+          aria-label={t('machines:history.planMissedTitle')}
+        >
+          <div className="home-missed-plans__main">
+            <span className="home-missed-plans__title">
+              {t('machines:history.planMissedTitle')}
+            </span>
+            <span className="home-missed-plans__sep" aria-hidden>
+              ·
+            </span>
+            <span className="home-missed-plans__detail" title={`${machineLabel} · ${dateLabel}`}>
+              {machineLabel}
+              <span className="home-missed-plans__sep" aria-hidden>
+                ·
+              </span>
+              {dateLabel}
+              {moreCount > 0 ? (
+                <span className="home-missed-plans__more">
+                  {t('machines:history.planMissedMore', { count: moreCount })}
+                </span>
+              ) : null}
+            </span>
           </div>
-          <div className="missed-plans-banner__actions">
+          <div className="home-missed-plans__actions">
             <button
               type="button"
-              className="btn btn--primary"
-              disabled={resolveMutation.isPending}
+              className="home-missed-plans__btn home-missed-plans__btn--primary"
+              disabled={busy}
               onClick={() => resolveMutation.mutate({ id: card.id, action: 'move_today' })}
             >
               {t('machines:history.planMissedMoveToday')}
             </button>
             <button
               type="button"
-              className="btn btn--secondary"
-              disabled={resolveMutation.isPending}
+              className="home-missed-plans__btn"
+              disabled={busy}
               onClick={() => setDatePickerCardId(card.id)}
             >
               {t('machines:history.planMissedChangeDate')}
             </button>
             <button
               type="button"
-              className="btn btn--secondary"
-              disabled={resolveMutation.isPending}
+              className="home-missed-plans__btn"
+              disabled={busy}
               onClick={() => resolveMutation.mutate({ id: card.id, action: 'delete' })}
             >
               {t('machines:history.planMissedDelete')}
             </button>
             <button
               type="button"
-              className="btn btn--secondary"
-              disabled={resolveMutation.isPending}
+              className="home-missed-plans__btn home-missed-plans__btn--ghost"
+              disabled={busy}
               onClick={() => resolveMutation.mutate({ id: card.id, action: 'dismiss' })}
             >
               {t('machines:history.planMissedDismiss')}
             </button>
           </div>
-        </div>
+        </section>
       ) : null}
 
       <PlanDatePickerDialog
