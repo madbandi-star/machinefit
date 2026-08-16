@@ -5,7 +5,7 @@ Brand favorites (user↔brand) with My Page manager; search brand filter chips s
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 7abd7b4f
 
 ## Ops required
 1. Apply `database/migrations/141_user_favorite_brands.sql` on Supabase.

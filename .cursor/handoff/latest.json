@@ -3,7 +3,7 @@
   "summary": "Users can favorite brands on My Page; search brand chips show only those favorites. Machine search results stay unrestricted.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "7abd7b4f"
   },
   "changedFiles": [
     "database/migrations/141_user_favorite_brands.sql",
