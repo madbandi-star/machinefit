@@ -139,6 +139,20 @@ apiClient.interceptors.response.use(
     if (!url.includes('/ops/ingest')) {
       const isTimeout = error.code === 'ECONNABORTED' || /timeout/i.test(String(error.message));
       const isNetwork = !error.response;
+      if (status === 429) {
+        const header =
+          error.response?.headers?.['retry-after'] ?? error.response?.headers?.['Retry-After'];
+        const bodyRetry = (
+          error.response?.data as { error?: { retryAfter?: number } } | undefined
+        )?.error?.retryAfter;
+        let retryAfterMs = 3_000;
+        if (typeof header === 'string' && /^\d+$/.test(header.trim())) {
+          retryAfterMs = Math.min(60_000, Math.max(1_000, Number.parseInt(header, 10) * 1000));
+        } else if (typeof bodyRetry === 'number' && Number.isFinite(bodyRetry)) {
+          retryAfterMs = Math.min(60_000, Math.max(1_000, bodyRetry * 1000));
+        }
+        (error as { retryAfterMs?: number }).retryAfterMs = retryAfterMs;
+      }
       if (isTimeout || isNetwork || (typeof status === 'number' && status >= 500)) {
         void import('@/utils/opsTelemetry').then(({ trackOpsError }) => {
           trackOpsError({
@@ -150,6 +164,9 @@ apiClient.interceptors.response.use(
               url: url.slice(0, 300),
               method: originalRequest?.method,
               status,
+              requestId:
+                originalRequest?.headers?.['X-Request-ID'] ??
+                originalRequest?.headers?.['x-request-id'],
             },
           });
         });

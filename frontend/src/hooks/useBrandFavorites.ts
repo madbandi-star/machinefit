@@ -5,6 +5,9 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { useTranslation } from 'react-i18next';
+import { resolveApiErrorMessage } from '@/utils/apiErrorCatalog';
+import { createAsyncActionGuard } from '@/utils/asyncActionGuard';
+import { useRef } from 'react';
 
 /** Shared query for the signed-in user's brand favorites (newest first). */
 export function useBrandFavorites() {
@@ -34,6 +37,7 @@ export function useBrandFavoriteToggle(brandId: string) {
   const listKey = [...QUERY_KEYS.brandFavorites, userId ?? 'guest'] as const;
   const { data: favorites = [] } = useBrandFavorites();
   const isFavorited = favorites.some((item) => item.brandId === brandId);
+  const tapGuardRef = useRef(createAsyncActionGuard({ failureCooldownMs: 3_000 }));
 
   const mutation = useMutation({
     mutationFn: async (shouldFavorite: boolean) => {
@@ -68,11 +72,11 @@ export function useBrandFavoriteToggle(brandId: string) {
       }
       return { previous };
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(listKey, context.previous);
       }
-      showToast(t('common:errors.submitFailed'), 'error');
+      showToast(resolveApiErrorMessage(err, t), 'error');
     },
     onSuccess: (item, shouldFavorite) => {
       if (shouldFavorite && item) {
@@ -98,7 +102,12 @@ export function useBrandFavoriteToggle(brandId: string) {
       showToast(t('common:nav.login'), 'info');
       return;
     }
-    mutation.mutate(!isFavorited);
+    if (mutation.isPending || tapGuardRef.current.isBlocked()) return;
+    void tapGuardRef.current
+      .run(async () => {
+        await mutation.mutateAsync(!isFavorited);
+      })
+      .catch(() => undefined);
   };
 
   return {

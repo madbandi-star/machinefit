@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { billingApi } from '@/api';
+import { useAsyncAction } from '@/hooks/useAsyncAction';
 import { usePremium } from '@/providers/PremiumProvider';
 import { useUIStore } from '@/store/ui.store';
+import { createIdempotencyKey, resolveApiErrorMessage } from '@/utils/apiErrorCatalog';
 import { ROUTES } from '@/constants/routes';
 import './SubscriptionPlanCard.css';
 
@@ -20,7 +22,7 @@ export function SubscriptionPlanCard() {
   const { t } = useTranslation();
   const showToast = useUIStore((s) => s.showToast);
   const { status, isPremium, isLoading, refresh } = usePremium();
-  const [busy, setBusy] = useState(false);
+  const { run, isBlocked, isPending, cooldownSeconds } = useAsyncAction();
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -40,52 +42,76 @@ export function SubscriptionPlanCard() {
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams, showToast, t, refresh]);
 
-  const startCheckout = async () => {
-    setBusy(true);
-    try {
-      const res = await billingApi.createCheckout({ planCode: 'PREMIUM' });
-      const url = res.data.data.checkoutUrl;
-      if (!url) {
-        showToast(t('myPage.subscription.checkoutUnavailable'), 'error');
-        return;
+  const startCheckout = () => {
+    void run(async () => {
+      try {
+        const res = await billingApi.createCheckout(
+          { planCode: 'PREMIUM' },
+          createIdempotencyKey('checkout')
+        );
+        const url = res.data.data.checkoutUrl;
+        if (!url) {
+          showToast(t('myPage.subscription.checkoutUnavailable'), 'error');
+          throw new Error('checkout_unavailable');
+        }
+        window.location.assign(url);
+      } catch (error) {
+        if ((error as Error)?.message !== 'checkout_unavailable') {
+          showToast(resolveApiErrorMessage(error, t, 'myPage.subscription.checkoutUnavailable'), 'error');
+        }
+        throw error;
       }
-      window.location.assign(url);
-    } catch {
-      showToast(t('myPage.subscription.checkoutUnavailable'), 'error');
-    } finally {
-      setBusy(false);
-    }
+    }).catch(() => undefined);
   };
 
-  const cancelSub = async () => {
+  const cancelSub = () => {
     if (!window.confirm(t('myPage.subscription.cancelConfirm'))) return;
-    setBusy(true);
-    try {
-      await billingApi.cancel();
-      showToast(t('myPage.subscription.toastCancelled'), 'success');
-      await refresh();
-    } catch {
-      showToast(t('errors.submitFailed'), 'error');
-    } finally {
-      setBusy(false);
-    }
+    void run(async () => {
+      try {
+        await billingApi.cancel();
+        showToast(t('myPage.subscription.toastCancelled'), 'success');
+        await refresh();
+      } catch (error) {
+        showToast(resolveApiErrorMessage(error, t), 'error');
+        throw error;
+      }
+    }).catch(() => undefined);
   };
 
-  const resumeSub = async () => {
-    setBusy(true);
-    try {
-      await billingApi.resume();
-      await refresh();
-      showToast(t('myPage.subscription.toastResumed'), 'success');
-    } catch {
-      showToast(t('errors.submitFailed'), 'error');
-    } finally {
-      setBusy(false);
-    }
+  const resumeSub = () => {
+    void run(async () => {
+      try {
+        await billingApi.resume();
+        await refresh();
+        showToast(t('myPage.subscription.toastResumed'), 'success');
+      } catch (error) {
+        showToast(resolveApiErrorMessage(error, t), 'error');
+        throw error;
+      }
+    }).catch(() => undefined);
+  };
+
+  const startTrial = () => {
+    void run(async () => {
+      try {
+        await billingApi.startTrial({ planCode: 'PREMIUM' }, createIdempotencyKey('trial'));
+        await refresh();
+        showToast(t('myPage.subscription.toastSuccess'), 'success');
+      } catch (error) {
+        showToast(resolveApiErrorMessage(error, t), 'error');
+        throw error;
+      }
+    }).catch(() => undefined);
   };
 
   const benefits = t('myPage.subscription.benefits', { returnObjects: true });
   const benefitList = Array.isArray(benefits) ? (benefits as string[]) : [];
+  const busyLabel =
+    isPending
+      ? t('processing')
+      : cooldownSeconds > 0
+        ? t('retryInSeconds', { seconds: cooldownSeconds })
+        : t('processing');
 
   return (
     <section className="my-page-section premium-card" aria-labelledby="subscription-plan-heading">
@@ -152,19 +178,19 @@ export function SubscriptionPlanCard() {
                 <button
                   type="button"
                   className="btn btn--primary btn--block premium-card__cta"
-                  disabled={busy}
+                  disabled={isBlocked}
                   onClick={() => void resumeSub()}
                 >
-                  {t('myPage.subscription.resume')}
+                  {isBlocked ? busyLabel : t('myPage.subscription.resume')}
                 </button>
               ) : (
                 <button
                   type="button"
                   className="btn btn--secondary btn--block"
-                  disabled={busy}
+                  disabled={isBlocked}
                   onClick={() => void cancelSub()}
                 >
-                  {t('myPage.subscription.cancel')}
+                  {isBlocked ? busyLabel : t('myPage.subscription.cancel')}
                 </button>
               )}
               <Link to={ROUTES.PAYMENT_HISTORY} className="btn btn--secondary btn--block">
@@ -191,29 +217,23 @@ export function SubscriptionPlanCard() {
               <button
                 type="button"
                 className="btn btn--primary btn--block premium-card__cta"
-                disabled={busy || status?.paymentReady === false}
+                disabled={isBlocked || status?.paymentReady === false}
                 onClick={() => void startCheckout()}
               >
                 {status?.paymentReady === false
                   ? t('myPage.subscription.payComingSoon')
-                  : t('myPage.subscription.startPremium')}
+                  : isBlocked
+                    ? busyLabel
+                    : t('myPage.subscription.startPremium')}
               </button>
               {!status?.trialConsumed ? (
                 <button
                   type="button"
                   className="btn btn--secondary btn--block"
-                  disabled={busy}
-                  onClick={() => {
-                    setBusy(true);
-                    void billingApi
-                      .startTrial({ planCode: 'PREMIUM' })
-                      .then(() => refresh())
-                      .then(() => showToast(t('myPage.subscription.toastSuccess'), 'success'))
-                      .catch(() => showToast(t('errors.submitFailed'), 'error'))
-                      .finally(() => setBusy(false));
-                  }}
+                  disabled={isBlocked}
+                  onClick={() => void startTrial()}
                 >
-                  {t('myPage.subscription.startTrial')}
+                  {isBlocked ? busyLabel : t('myPage.subscription.startTrial')}
                 </button>
               ) : null}
               <Link to={ROUTES.PAYMENT_HISTORY} className="premium-card__history-link">
@@ -226,3 +246,4 @@ export function SubscriptionPlanCard() {
     </section>
   );
 }
+

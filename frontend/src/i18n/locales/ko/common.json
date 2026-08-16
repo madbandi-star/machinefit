@@ -61,6 +61,8 @@
   },
   "collapse": "접기",
   "expand": "펼치기",
+  "processing": "처리 중...",
+  "retryInSeconds": "다시 시도 ({{seconds}})",
   "brandFavorites": {
     "title": "브랜드 즐겨찾기",
     "subtitle": "자주 쓰는 브랜드를 저장하면 검색 필터에 표시됩니다. 신규 계정은 관리자가 지정한 기본 브랜드가 자동으로 추가됩니다.",

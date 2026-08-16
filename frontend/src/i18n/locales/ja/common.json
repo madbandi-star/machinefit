@@ -52,6 +52,8 @@
   },
   "collapse": "閉じる",
   "expand": "開く",
+  "processing": "処理中...",
+  "retryInSeconds": "再試行 ({{seconds}})",
   "brandFavorites": {
     "title": "ブランドお気に入り",
     "subtitle": "よく使うブランドを保存すると検索フィルターに表示されます。新規アカウントには管理者が指定したデフォルトブランドが自動追加されます。",

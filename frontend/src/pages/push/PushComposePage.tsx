@@ -25,7 +25,9 @@ import {
 } from '@/components/location/LocationPicker';
 import { pushNotificationApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useAsyncAction } from '@/hooks/useAsyncAction';
 import { useUIStore } from '@/store/ui.store';
+import { createIdempotencyKey } from '@/utils/asyncActionGuard';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import '@/styles/push.css';
 
@@ -119,9 +121,11 @@ function PushPreview({
 }
 
 export function PushComposePage() {
-  const { t } = useTranslation('push');
+  const { t } = useTranslation(['push', 'common']);
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
+  const { run: runSend, isBlocked: sendBlocked, isPending: sendGuarding, cooldownSeconds } =
+    useAsyncAction({ failureCooldownMs: 5_000 });
 
   const [tab, setTab] = useState<Tab>('compose');
   const [kind, setKind] = useState<PushKind>('general');
@@ -208,14 +212,17 @@ export function PushComposePage() {
 
   const sendMutation = useMutation({
     mutationFn: (audience: PushAudienceInput) =>
-      pushNotificationApi.send({
-        kind,
-        title: title.trim(),
-        body: body.trim(),
-        imageUrl: imageUrl.trim() || null,
-        deepLink: deepLink.trim() || null,
-        audience,
-      }),
+      pushNotificationApi.send(
+        {
+          kind,
+          title: title.trim(),
+          body: body.trim(),
+          imageUrl: imageUrl.trim() || null,
+          deepLink: deepLink.trim() || null,
+          audience,
+        },
+        createIdempotencyKey('push-send')
+      ),
     onSuccess: (res) => {
       const data = res.data.data;
       showToast(
@@ -394,6 +401,7 @@ export function PushComposePage() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
+    if (sendBlocked || sendMutation.isPending) return;
     const audience = buildAudience();
     if (!audience) {
       showToast(t('selectAudience'), 'error');
@@ -407,7 +415,9 @@ export function PushComposePage() {
       showToast(t('marketingContentAsService'), 'error');
       return;
     }
-    sendMutation.mutate(audience);
+    void runSend(async () => {
+      await sendMutation.mutateAsync(audience);
+    }).catch(() => undefined);
   }
 
   if (capsQuery.isLoading) {
@@ -848,12 +858,18 @@ export function PushComposePage() {
                 type="submit"
                 className="push-btn push-btn-primary push-btn-block"
                 disabled={
+                  sendBlocked ||
                   sendMutation.isPending ||
+                  sendGuarding ||
                   marketingAsServiceWarning ||
                   (previewQuery.data != null && previewQuery.data.finalCount === 0)
                 }
               >
-                {sendMutation.isPending ? t('sending') : t('send')}
+                {sendMutation.isPending || sendGuarding
+                  ? t('push:sending')
+                  : cooldownSeconds > 0
+                    ? t('common:retryInSeconds', { seconds: cooldownSeconds })
+                    : t('push:send')}
               </button>
             </div>
           </form>

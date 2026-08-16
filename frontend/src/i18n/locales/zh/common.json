@@ -52,6 +52,8 @@
   },
   "collapse": "收起",
   "expand": "展开",
+  "processing": "处理中...",
+  "retryInSeconds": "重试 ({{seconds}})",
   "brandFavorites": {
     "title": "品牌收藏",
     "subtitle": "收藏常用品牌后会显示在搜索筛选中。新账号会自动加入管理员设定的默认品牌。",

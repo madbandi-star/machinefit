@@ -20,16 +20,26 @@ export const billingApi = {
   getStatus: () =>
     apiClient.get<ApiResponse<SubscriptionStatusView>>('/billing/status'),
 
-  startTrial: (body?: { planCode?: string; trialDays?: number }) =>
-    apiClient.post<ApiResponse<SubscriptionStatusView>>('/subscription/trial', body ?? {}),
+  startTrial: (
+    body?: { planCode?: string; trialDays?: number },
+    idempotencyKey?: string
+  ) =>
+    apiClient.post<ApiResponse<SubscriptionStatusView>>('/subscription/trial', body ?? {}, {
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+    }),
 
-  createCheckout: (body?: {
-    planCode?: string;
-    successUrl?: string;
-    cancelUrl?: string;
-    couponCode?: string;
-  }) =>
-    apiClient.post<ApiResponse<CheckoutSessionResult>>('/billing/create-checkout', body ?? {}),
+  createCheckout: (
+    body?: {
+      planCode?: string;
+      successUrl?: string;
+      cancelUrl?: string;
+      couponCode?: string;
+    },
+    idempotencyKey?: string
+  ) =>
+    apiClient.post<ApiResponse<CheckoutSessionResult>>('/billing/create-checkout', body ?? {}, {
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+    }),
 
   cancel: (body?: { reason?: string }) =>
     apiClient.post<ApiResponse<SubscriptionStatusView>>('/billing/cancel', body ?? {}),

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as billingController from '../controllers/billing.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { idempotencyMiddleware } from '../middlewares/idempotency.middleware.js';
 import { billingCheckoutRateLimit } from '../middlewares/rate-limit.middleware.js';
 
 export const billingRouter = Router();
@@ -17,6 +18,7 @@ billingRouter.post(
   '/subscription/trial',
   authMiddleware,
   billingCheckoutRateLimit,
+  idempotencyMiddleware(120_000),
   billingController.startTrial
 );
 billingRouter.post('/subscription/cancel', authMiddleware, billingController.cancelSubscription);
@@ -25,6 +27,7 @@ billingRouter.post(
   '/subscription/checkout',
   authMiddleware,
   billingCheckoutRateLimit,
+  idempotencyMiddleware(120_000),
   billingController.createCheckout
 );
 
@@ -40,6 +43,7 @@ billingRouter.post(
   '/billing/create-checkout',
   authMiddleware,
   billingCheckoutRateLimit,
+  idempotencyMiddleware(120_000),
   billingController.createCheckout
 );
 billingRouter.get('/billing/status', authMiddleware, billingController.getBillingStatus);

@@ -1,41 +1,44 @@
 {
-  "title": "Brand card stars + admin default favorites",
-  "summary": "Brand cards show ★; admin brands show favorite counts and can mark default favorites that seed once for new users on first favorites fetch.",
+  "title": "Global duplicate-request / double-submit guards",
+  "summary": "Added useAsyncAction + axios 429/Retry-After handling, in-memory Idempotency-Key middleware for push/checkout, and stricter push rate limit. Wired billing and push send paths.",
   "git": {
     "branch": "main",
-    "commit": "061e5d60"
+    "commit": "pending"
   },
   "changedFiles": [
-    "database/migrations/142_brand_favorite_defaults.sql",
-    "backend/server/repositories/admin-catalog.repository.ts",
-    "backend/server/repositories/brand-favorite.repository.ts",
-    "backend/server/services/brand-favorite.service.ts",
-    "backend/server/controllers/admin-catalog.controller.ts",
-    "backend/server/services/admin-catalog.service.ts",
-    "backend/server/routes/admin.routes.ts",
-    "frontend/src/components/cards/BrandCard/BrandCard.tsx",
-    "frontend/src/pages/admin/brands/AdminBrandsPage.tsx",
-    "frontend/src/api/admin.api.ts"
+    "frontend/src/hooks/useAsyncAction.ts",
+    "frontend/src/utils/asyncActionGuard.ts",
+    "frontend/src/services/http/axios-client.ts",
+    "frontend/src/utils/apiErrorCatalog.ts",
+    "frontend/src/app/providers/QueryProvider.tsx",
+    "frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx",
+    "frontend/src/components/premium/PremiumUpgradeModal/PremiumUpgradeModal.tsx",
+    "frontend/src/pages/push/PushComposePage.tsx",
+    "backend/server/middlewares/idempotency.middleware.ts",
+    "backend/server/middlewares/rate-limit.middleware.ts",
+    "backend/server/middlewares/error.middleware.ts",
+    "backend/server/routes/push-notification.routes.ts",
+    "backend/server/routes/billing.routes.ts",
+    "backend/server/app.ts"
   ],
   "testFocus": [
-    "/brands list: logged-in ★ on each card without navigating",
-    "Admin /admin/brands: favorite count in meta; toggle 기본 즐겨찾기",
-    "New user after migration 142: first search/favorites fetch gets admin defaults",
-    "Existing users not re-seeded; clearing all favorites does not re-seed"
+    "Mash checkout/trial buttons — only one request; failure cools 3s",
+    "Push send mash — Idempotency-Key + guard; no duplicate campaigns",
+    "429 shows rateLimit copy; Retry-After respected in cooldown",
+    "Brand ★ mash — single mutate; error uses catalog"
   ],
   "fastChecks": [
-    "rg -n \"is_default_favorite|brand_favorites_seeded_at|setCatalogBrandDefaultFavorite|brand-card__favorite\" frontend/src backend/server database/migrations",
-    "npm run build -w @machinefit/shared",
-    "npx tsc --noEmit -p frontend/tsconfig.json"
+    "npx vite-node frontend/src/utils/asyncActionGuard.test.ts",
+    "npx tsc --noEmit -p frontend/tsconfig.json",
+    "rg -n \"useAsyncAction|idempotencyMiddleware|Idempotency-Key|pushSendRateLimit\" frontend/src backend/server"
   ],
   "productionChecks": [
-    "Apply migrations 141+142 on Supabase",
-    "Render backend redeploy",
+    "Render backend redeploy (idempotency + Retry-After)",
     "Pages Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages; backend needs Render + migrations 141/142"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "No stars on brand cards; no admin default preset; no favorite counts",
-  "toBe": "Stars on brand cards; admin counts + default-favorite toggle; new users seeded once"
+  "asIs": "Many writes only used isPending; 429 looked like generic submitFailed; push send had no idempotency",
+  "toBe": "Shared action guard + optional Idempotency-Key on critical writes; clearer 429/network errors"
 }

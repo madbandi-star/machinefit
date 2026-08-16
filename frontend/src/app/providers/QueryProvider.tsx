@@ -12,6 +12,10 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     },
+    mutations: {
+      // Never auto-retry writes — duplicates risk DB / payment / push side effects.
+      retry: false,
+    },
   },
 });
 

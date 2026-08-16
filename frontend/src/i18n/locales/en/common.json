@@ -61,6 +61,8 @@
   },
   "collapse": "Collapse",
   "expand": "Expand",
+  "processing": "Processing...",
+  "retryInSeconds": "Retry ({{seconds}})",
   "brandFavorites": {
     "title": "Brand favorites",
     "subtitle": "Save brands you use often to show them in search filters. New accounts get admin-selected default brands automatically.",

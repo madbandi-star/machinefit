@@ -59,7 +59,16 @@ function onLimitReachedFactory(eventType: string): Options['handler'] {
       severity: eventType === 'BURST_REQUEST_DETECTED' ? 'HIGH' : 'MEDIUM',
       metadata: { method: req.method },
     });
-    res.status(options.statusCode).json(rateLimitJson);
+    const retryAfterSec = Math.max(1, Math.ceil((options.windowMs || 30_000) / 1000));
+    res.setHeader('Retry-After', String(retryAfterSec));
+    res.status(options.statusCode).json({
+      success: false,
+      error: {
+        code: 'RATE_LIMIT_EXCEEDED',
+        message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+        retryAfter: retryAfterSec,
+      },
+    });
   };
 }
 
@@ -175,6 +184,18 @@ export const searchRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: rateLimitJson,
+});
+
+/** Push campaign send — prevent double-send spam. */
+export const pushSendRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: clientKey,
+  validate: false,
+  message: rateLimitJson,
+  handler: onLimitReachedFactory('PUSH_SEND_LIMIT_EXCEEDED'),
 });
 
 /** Apply both minute + burst budgets after optional auth has attached user. */

@@ -1,29 +1,28 @@
-# Test handoff — Brand defaults + card stars
+# Test handoff — Duplicate request guards
 
 ## Summary
-Brand list cards show ★. Admin brands show favorite counts and can mark `is_default_favorite`. New users are seeded once from those defaults on first brand-favorites fetch (search uses that list).
+Global `useAsyncAction` / `asyncActionGuard` (ref lock + 3s failure cooldown), axios 429 Retry-After, optional in-memory `Idempotency-Key` on push send + checkout/trial, push send rate limit.
 
 ## Git
 - Branch: `main`
-- Commit: 061e5d60
+- Commit: pending
 
-## Ops required
-1. Apply `141_user_favorite_brands.sql` (if not yet) and `142_brand_favorite_defaults.sql`.
-2. Redeploy Render backend.
+## Ops
+- Redeploy Render backend (no new migration).
 
 ## Test focus
-1. `/brands` — ★ toggles without opening detail.
-2. Admin brands — meta shows 즐겨찾기 N명; 기본 즐겨찾기 toggle/checkbox.
-3. Brand-new account: search brand chips = admin defaults after first favorites load.
-4. Existing users: not backfilled; clearing all does not re-apply defaults.
+1. Checkout / trial / premium modal: mash → 1 call; fail → disabled ~3s with retry label.
+2. Push send: mash Enter → 1 campaign; same Idempotency-Key replays.
+3. Brand favorite ★ mash → 1 write.
+4. 429 → `errors.rateLimit` toast path via catalog.
 
 ## Fast checks
 ```bash
-rg -n "is_default_favorite|seedDefaultsIfNeeded|brand-card__favorite" frontend/src backend/server database/migrations
-npm run build -w @machinefit/shared
+npx vite-node frontend/src/utils/asyncActionGuard.test.ts
 npx tsc --noEmit -p frontend/tsconfig.json
+rg -n "useAsyncAction|idempotencyMiddleware|pushSendRateLimit" frontend/src backend/server
 ```
 
 ## as-is → to-be
-- **as-is:** No card stars / admin preset / counts.
-- **to-be:** Card ★ + admin counts + new-user default brand seed.
+- **as-is:** Soft isPending only; generic failure copy; push/checkout mash risk.
+- **to-be:** Shared guard + idempotency on critical writes; clearer rate/network errors.

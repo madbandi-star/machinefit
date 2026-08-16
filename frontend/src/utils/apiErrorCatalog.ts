@@ -31,6 +31,7 @@ const CODE_TO_KEY: Record<string, string> = {
   STOCK_LIMIT_EXCEEDED: 'errors.stockLimitExceeded',
   RATE_LIMIT: 'errors.rateLimit',
   RATE_LIMIT_EXCEEDED: 'errors.rateLimit',
+  REQUEST_IN_PROGRESS: 'errors.rateLimit',
   PLAN_LIMIT: 'errors.usageLimit',
   CSRF_REJECTED: 'errors.csrfRejected',
 };
@@ -55,6 +56,20 @@ export function resolveApiErrorMessage(
   if (!error.response) {
     return t('errors.networkError');
   }
+  const status = error.response.status;
+  if (status === 401) {
+    return t('errors.unauthorized');
+  }
+  if (status === 403) {
+    return t('errors.forbidden');
+  }
+  if (status === 429) {
+    return t('errors.rateLimit');
+  }
+  if (status >= 500) {
+    return t('errors.serverError');
+  }
+
   const code = (error.response.data as { error?: { code?: string; message?: string } } | undefined)
     ?.error?.code;
 
@@ -75,3 +90,7 @@ export function resolveApiErrorMessage(
   // Prefer FE copy; avoid showing raw KO/EN server prose when we have a generic fallback.
   return t(fallbackKey);
 }
+
+/** Prefer Retry-After header / body for cooldown UX. */
+export { getRetryAfterMs, createIdempotencyKey } from '@/utils/asyncActionGuard';
+

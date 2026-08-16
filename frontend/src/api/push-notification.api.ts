@@ -25,11 +25,12 @@ export const pushNotificationApi = {
       timeout: 60_000,
     }),
 
-  send: (input: PushSendInput) =>
+  send: (input: PushSendInput, idempotencyKey?: string) =>
     // Large audiences (all_users / role) can exceed the default 15s axios timeout
     // even after server batching — keep a generous client budget.
     apiClient.post<ApiResponse<PushSendResult>>('/push/send', input, {
       timeout: 120_000,
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
     }),
 
   listCampaigns: (params?: { all?: boolean; limit?: number; offset?: number }) =>

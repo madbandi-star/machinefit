@@ -49,7 +49,7 @@ export function errorMiddleware(
     (req as typeof req & { user?: { id?: string } }).user?.id ??
     null;
 
-  if (err instanceof AppError) {
+    if (err instanceof AppError) {
     if (err.statusCode >= 500) {
       logger.error('AppError', {
         requestId,
@@ -75,6 +75,16 @@ export function errorMiddleware(
         )
         .catch(() => undefined);
     }
+    if (err.statusCode === 429) {
+      const retryAfter =
+        typeof err.details === 'object' &&
+        err.details &&
+        'retryAfter' in (err.details as object) &&
+        typeof (err.details as { retryAfter?: unknown }).retryAfter === 'number'
+          ? Math.max(1, Math.floor((err.details as { retryAfter: number }).retryAfter))
+          : 30;
+      res.setHeader('Retry-After', String(retryAfter));
+    }
     res.status(err.statusCode).json({
       success: false,
       error: {
@@ -82,6 +92,17 @@ export function errorMiddleware(
         message: err.message,
         details: err.details,
         ...(requestId ? { requestId } : {}),
+        ...(err.statusCode === 429
+          ? {
+              retryAfter:
+                typeof err.details === 'object' &&
+                err.details &&
+                'retryAfter' in (err.details as object) &&
+                typeof (err.details as { retryAfter?: unknown }).retryAfter === 'number'
+                  ? (err.details as { retryAfter: number }).retryAfter
+                  : 30,
+            }
+          : {}),
       },
     });
     return;
