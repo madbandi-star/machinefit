@@ -3,7 +3,7 @@
   "summary": "Machine detail banner was under sticky RecommendCTA; moved above CTA and made mid-page muscle picker non-sticky. Records banner spacing improved.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "d002f6d5"
   },
   "changedFiles": [
     "frontend/src/pages/machine-detail/MachineDetailPage.tsx",

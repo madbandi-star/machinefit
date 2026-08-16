@@ -5,7 +5,7 @@ Machine detail: move `MACHINE_BOTTOM` above sticky Recommend CTA (was covered). 
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: d002f6d5
 
 ## Test focus
 1. Machine detail → scroll to bottom → banner above recommend button.
