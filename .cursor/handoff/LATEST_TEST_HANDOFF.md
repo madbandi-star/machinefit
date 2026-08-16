@@ -1,23 +1,23 @@
-# Test handoff — All-sets complete toggle
+# Test handoff — Music mini prev/next
 
 ## Summary
-Icon-only toggle to the right of 「계획 저장」 completes all sets or undoes all completions (CheckCheck ↔ ListRestart).
+Compact music mini player adds icon-only previous/next track buttons (SkipBack / SkipForward) around play/pause, matching existing mini button styling.
 
 ## Git
 - Branch: `main`
-- Commit: e55ae1bb
+- Commit: pending
 
 ## Test focus
-1. Machine card / records history performance header: icon right of plan-save.
-2. Incomplete → tap → all sets complete + silent save.
-3. All complete → red restart icon → undo all.
-4. No button text; tooltip/aria explain action.
+1. Open music panel → minimize to mini PiP.
+2. Confirm prev | play/pause | next | expand | close (no visible text on new controls).
+3. Prev/next change track; disabled states match full-panel rules.
+4. Tooltip/aria present; visual icons alone read as skip previous/next.
 
 ## Fast checks
 ```bash
-rg -n "allSetsCompleteAria|history-workout-log__all-complete|CheckCheck" frontend/src
+rg -n "playPrevTrack|SkipForward|mf-music-mini__btn:disabled" frontend/src/components/motivation/MotivationMediaControls
 ```
 
 ## as-is → to-be
-- **as-is:** Per-set complete only.
-- **to-be:** One icon toggle for all-complete / undo-all beside plan save.
+- **as-is:** Mini had play/pause only for transport.
+- **to-be:** Mini has icon-only prev/next beside play/pause.

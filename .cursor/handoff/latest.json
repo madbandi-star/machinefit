@@ -1,26 +1,22 @@
 {
-  "title": "All-sets complete toggle on history workout log",
-  "summary": "Icon-only toggle beside plan-save marks all sets complete or undoes all completions on history/machine-card performance logs.",
+  "title": "Music mini player prev/next track buttons",
+  "summary": "Compact music PiP gains icon-only SkipBack/SkipForward beside play/pause, reusing the same adjacent-track handlers as the full panel.",
   "git": {
     "branch": "main",
-    "commit": "e55ae1bb"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css"
   ],
   "testFocus": [
-    "History/machine card: plan-save right shows CheckCheck; tap completes all sets + silent save",
-    "When all complete: icon becomes ListRestart (red); tap undoes all",
-    "No visible text on the new control; aria-label/title present",
-    "Below-tip plan-save row also shows the icon button"
+    "Open motivation music mini (compact) player",
+    "Prev/next icons flank play/pause; no visible Korean/English labels",
+    "Prev disabled on first track (non-shuffle); next disabled on last when not play-all/shuffle",
+    "Tapping prev/next changes track and continues playback when already playing"
   ],
   "fastChecks": [
-    "rg -n \"allSetsCompleteAria|history-workout-log__all-complete|CheckCheck\" frontend/src"
+    "rg -n \"mf-music-mini__btn|playPrevTrack|SkipBack\" frontend/src/components/motivation/MotivationMediaControls"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success"
@@ -28,6 +24,6 @@
   "deploy": {
     "expected": "Frontend Pages after push"
   },
-  "asIs": "Only per-set complete buttons",
-  "toBe": "One icon toggle for complete-all / undo-all next to plan save"
+  "asIs": "Mini player only had play/pause, expand, close",
+  "toBe": "Mini player also has icon-only previous/next track controls"
 }

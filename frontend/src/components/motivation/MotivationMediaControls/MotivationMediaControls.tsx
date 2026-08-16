@@ -749,10 +749,30 @@ export function MotivationMediaControls({
                 <button
                   type="button"
                   className="mf-music-mini__btn"
+                  onClick={playPrevTrack}
+                  disabled={!hasPrev}
+                  aria-label={t('motivation.prev')}
+                  title={t('motivation.prev')}
+                >
+                  <SkipBack size={14} aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  className="mf-music-mini__btn"
                   onClick={togglePlayPause}
                   aria-label={musicPlaying ? t('motivation.pause') : t('motivation.play')}
                 >
                   {musicPlaying ? <Pause size={14} /> : <Play size={14} />}
+                </button>
+                <button
+                  type="button"
+                  className="mf-music-mini__btn"
+                  onClick={playNextTrack}
+                  disabled={!hasNext}
+                  aria-label={t('motivation.nextTrack')}
+                  title={t('motivation.nextTrack')}
+                >
+                  <SkipForward size={14} aria-hidden />
                 </button>
                 <button
                   type="button"
