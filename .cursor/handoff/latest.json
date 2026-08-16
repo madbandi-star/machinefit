@@ -3,7 +3,7 @@
   "summary": "RecommendCTA is no longer sticky (it covered MACHINE_BOTTOM). WORKOUT_BOTTOM moved under records toolbar so it is not buried under long history. Admins can preview CMS bottoms like free users.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "04db9134"
   },
   "changedFiles": [
     "frontend/src/styles/machines.css",

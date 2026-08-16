@@ -5,7 +5,7 @@ Sticky Recommend CTA covered machine banners — CTA is static now. Records WORK
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 04db9134
 
 ## Ops
 - Render backend redeploy (ad-policy audience).
