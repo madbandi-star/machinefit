@@ -4,11 +4,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { BannerStatus, BannerType, CreateBannerInput } from '@machinefit/shared';
 import { bannerApi } from '@/api/banner.api';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
+import '@/styles/admin-glance.css';
 import '@/styles/banners.css';
 
 function toLocalInput(iso: string | null | undefined): string {
@@ -70,9 +72,7 @@ export function AdminBannerEditPage() {
     setDesktopPreview(banner.imageUrl ?? null);
     setMobilePreview(banner.mobileImageUrl ?? null);
     setSelectedSlots(new Set(banner.slots.map((s) => s.slotKey)));
-    setSlotPriorities(
-      Object.fromEntries(banner.slots.map((s) => [s.slotKey, s.priority]))
-    );
+    setSlotPriorities(Object.fromEntries(banner.slots.map((s) => [s.slotKey, s.priority])));
   }, [bannerQuery.data]);
 
   const buildBody = (): CreateBannerInput => ({
@@ -149,278 +149,312 @@ export function AdminBannerEditPage() {
 
   if (!isNew && bannerQuery.isLoading) {
     return (
-      <div className="admin-page">
-        <Skeleton count={4} height={88} />
-      </div>
+      <AdminPageShell
+        title={t('admin:banners.edit')}
+        subtitle={t('admin:banners.editSubtitle')}
+      >
+        <Skeleton count={4} height={72} />
+      </AdminPageShell>
     );
   }
 
   if (!isNew && bannerQuery.isError) {
     return (
-      <div className="admin-page">
+      <AdminPageShell
+        title={t('admin:banners.edit')}
+        subtitle={t('admin:banners.editSubtitle')}
+      >
         <QueryErrorMessage />
-      </div>
+      </AdminPageShell>
     );
   }
 
   return (
-    <div className="admin-page">
-      <header className="admin-page__header">
-        <div className="admin-page__heading">
-          <h1 className="admin-page__title">
-            {isNew ? t('admin:banners.create') : t('admin:banners.edit')}
-          </h1>
-          <p className="admin-page__subtitle">{t('admin:banners.editSubtitle')}</p>
-        </div>
-        <div className="admin-page__actions">
-          <Link to={ROUTES.ADMIN_BANNERS} className="btn btn--secondary">
-            {t('admin:banners.backToList')}
-          </Link>
-        </div>
-      </header>
+    <AdminPageShell
+      title={isNew ? t('admin:banners.create') : t('admin:banners.edit')}
+      subtitle={t('admin:banners.editSubtitle')}
+      actions={
+        <Link to={ROUTES.ADMIN_BANNERS} className="btn btn--secondary">
+          {t('admin:banners.backToList')}
+        </Link>
+      }
+    >
+      <div className="ag">
+        <div className="ag-layout is-editing">
+          <section className="ag-panel ag-main">
+            <form className="ag-editor__form" onSubmit={onSubmit}>
+              <h2 className="ag-editor__title">{t('admin:banners.basicInfo')}</h2>
 
-      <div className="admin-page__body">
-        <form className="admin-panel" onSubmit={onSubmit}>
-          <h2 className="admin-panel__title">{t('admin:banners.basicInfo')}</h2>
-          <div className="form-field">
-            <label htmlFor="banner-name">{t('admin:banners.fieldName')}</label>
-            <input
-              id="banner-name"
-              className="input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-advertiser">{t('admin:banners.fieldAdvertiser')}</label>
-            <input
-              id="banner-advertiser"
-              className="input"
-              value={advertiserName}
-              onChange={(e) => setAdvertiserName(e.target.value)}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-desc">{t('admin:banners.fieldDescription')}</label>
-            <textarea
-              id="banner-desc"
-              className="input"
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-type">{t('admin:banners.fieldType')}</label>
-            <select
-              id="banner-type"
-              className="input"
-              value={bannerType}
-              onChange={(e) => setBannerType(e.target.value as BannerType)}
-            >
-              <option value="image">{t('admin:banners.typeImage')}</option>
-              <option value="gif">{t('admin:banners.typeGif')}</option>
-            </select>
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-url">{t('admin:banners.fieldTargetUrl')}</label>
-            <input
-              id="banner-url"
-              className="input"
-              value={targetUrl}
-              onChange={(e) => setTargetUrl(e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-          <div className="form-field">
-            <label>
-              <input
-                type="checkbox"
-                checked={openNewWindow}
-                onChange={(e) => setOpenNewWindow(e.target.checked)}
-              />{' '}
-              {t('admin:banners.fieldOpenNewWindow')}
-            </label>
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-status">{t('admin:banners.fieldStatus')}</label>
-            <select
-              id="banner-status"
-              className="input"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as BannerStatus)}
-            >
-              <option value="active">{t('admin:banners.statusActive')}</option>
-              <option value="inactive">{t('admin:banners.statusInactive')}</option>
-            </select>
-          </div>
-
-          <h2 className="admin-panel__title">{t('admin:banners.exposure')}</h2>
-          <div className="form-field">
-            <span>{t('admin:banners.fieldSlots')}</span>
-            <div className="admin-banner-form__slots">
-              {slots.map((slot) => {
-                const checked = selectedSlots.has(slot.slotKey);
-                return (
-                  <div key={slot.id} className="admin-banner-form__slot-row">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={(e) => {
-                          setSelectedSlots((prev) => {
-                            const next = new Set(prev);
-                            if (e.target.checked) next.add(slot.slotKey);
-                            else next.delete(slot.slotKey);
-                            return next;
-                          });
-                        }}
-                      />
-                      {slot.slotName}
-                      <code style={{ marginLeft: 4, fontSize: '0.75rem' }}>{slot.slotKey}</code>
-                    </label>
-                    {checked ? (
-                      <input
-                        type="number"
-                        className="input"
-                        style={{ width: 96 }}
-                        min={0}
-                        max={10000}
-                        value={slotPriorities[slot.slotKey] ?? priority}
-                        onChange={(e) =>
-                          setSlotPriorities((prev) => ({
-                            ...prev,
-                            [slot.slotKey]: Number(e.target.value) || 0,
-                          }))
-                        }
-                        aria-label={t('admin:banners.fieldPriority')}
-                      />
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-start">{t('admin:banners.fieldStartAt')}</label>
-            <input
-              id="banner-start"
-              type="datetime-local"
-              className="input"
-              value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-end">{t('admin:banners.fieldEndAt')}</label>
-            <input
-              id="banner-end"
-              type="datetime-local"
-              className="input"
-              value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="banner-priority">{t('admin:banners.fieldPriority')}</label>
-            <input
-              id="banner-priority"
-              type="number"
-              className="input"
-              min={0}
-              max={10000}
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value) || 0)}
-            />
-          </div>
-
-          <h2 className="admin-panel__title">{t('admin:banners.images')}</h2>
-          {isNew ? (
-            <p className="admin-page__subtitle">{t('admin:banners.saveBeforeUpload')}</p>
-          ) : (
-            <>
-              <div className="form-field">
-                <label htmlFor="banner-desktop">{t('admin:banners.fieldDesktopImage')}</label>
+              <label className="ag-field ag-field--full">
+                <span>{t('admin:banners.fieldName')}</span>
                 <input
-                  id="banner-desktop"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) uploadMutation.mutate({ file, kind: 'desktop' });
-                  }}
+                  className="input"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
                 />
-              </div>
-              <div className="form-field">
-                <label htmlFor="banner-mobile">{t('admin:banners.fieldMobileImage')}</label>
-                <input
-                  id="banner-mobile"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) uploadMutation.mutate({ file, kind: 'mobile' });
-                  }}
-                />
-              </div>
-            </>
-          )}
+              </label>
 
-          <h2 className="admin-panel__title">{t('admin:banners.preview')}</h2>
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-            <button
-              type="button"
-              className={`btn btn--sm ${previewMode === 'pc' ? 'btn--primary' : 'btn--secondary'}`}
-              onClick={() => setPreviewMode('pc')}
-            >
-              {t('admin:banners.previewPc')}
-            </button>
-            <button
-              type="button"
-              className={`btn btn--sm ${previewMode === 'mobile' ? 'btn--primary' : 'btn--secondary'}`}
-              onClick={() => setPreviewMode('mobile')}
-            >
-              {t('admin:banners.previewMobile')}
-            </button>
-          </div>
-          <div className="admin-banner-preview">
-            <div
-              className={[
-                'admin-banner-preview__frame',
-                previewMode === 'mobile' && 'admin-banner-preview__frame--mobile',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              <p className="admin-banner-preview__label">
-                {previewMode === 'pc'
-                  ? t('admin:banners.previewPc')
-                  : t('admin:banners.previewMobile')}
-                {selectedSlotNames ? ` · ${selectedSlotNames}` : ''}
-              </p>
-              {previewSrc ? (
-                <img src={previewSrc} alt="" className="admin-banner-preview__img" />
+              <div className="ag-field-row">
+                <label className="ag-field">
+                  <span>{t('admin:banners.fieldAdvertiser')}</span>
+                  <input
+                    className="input"
+                    value={advertiserName}
+                    onChange={(e) => setAdvertiserName(e.target.value)}
+                  />
+                </label>
+                <label className="ag-field">
+                  <span>{t('admin:banners.fieldType')}</span>
+                  <select
+                    className="input"
+                    value={bannerType}
+                    onChange={(e) => setBannerType(e.target.value as BannerType)}
+                  >
+                    <option value="image">{t('admin:banners.typeImage')}</option>
+                    <option value="gif">{t('admin:banners.typeGif')}</option>
+                  </select>
+                </label>
+              </div>
+
+              <label className="ag-field ag-field--full">
+                <span>{t('admin:banners.fieldDescription')}</span>
+                <textarea
+                  className="input"
+                  rows={2}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </label>
+
+              <label className="ag-field ag-field--full">
+                <span>{t('admin:banners.fieldTargetUrl')}</span>
+                <input
+                  className="input"
+                  value={targetUrl}
+                  onChange={(e) => setTargetUrl(e.target.value)}
+                  placeholder="https://..."
+                />
+              </label>
+
+              <div className="ag-field-row">
+                <label className="ag-field">
+                  <span>{t('admin:banners.fieldStatus')}</span>
+                  <select
+                    className="input"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as BannerStatus)}
+                  >
+                    <option value="active">{t('admin:banners.statusActive')}</option>
+                    <option value="inactive">{t('admin:banners.statusInactive')}</option>
+                  </select>
+                </label>
+                <label className="ag-field">
+                  <span>{t('admin:banners.fieldPriority')}</span>
+                  <input
+                    className="input"
+                    type="number"
+                    min={0}
+                    max={10000}
+                    value={priority}
+                    onChange={(e) => setPriority(Number(e.target.value) || 0)}
+                  />
+                </label>
+              </div>
+
+              <label className="ag-check">
+                <input
+                  type="checkbox"
+                  checked={openNewWindow}
+                  onChange={(e) => setOpenNewWindow(e.target.checked)}
+                />
+                <span>{t('admin:banners.fieldOpenNewWindow')}</span>
+              </label>
+
+              <h2 className="ag-editor__title">{t('admin:banners.exposure')}</h2>
+              <div className="ag-field ag-field--full">
+                <span>{t('admin:banners.fieldSlots')}</span>
+                <div className="admin-banner-form__slots">
+                  {slots.map((slot) => {
+                    const checked = selectedSlots.has(slot.slotKey);
+                    return (
+                      <div key={slot.id} className="admin-banner-form__slot-row">
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(e) => {
+                              setSelectedSlots((prev) => {
+                                const next = new Set(prev);
+                                if (e.target.checked) next.add(slot.slotKey);
+                                else next.delete(slot.slotKey);
+                                return next;
+                              });
+                            }}
+                          />
+                          {slot.slotName}
+                          <code className="admin-banner-form__slot-key">{slot.slotKey}</code>
+                        </label>
+                        {checked ? (
+                          <input
+                            type="number"
+                            className="input"
+                            style={{ width: 96 }}
+                            min={0}
+                            max={10000}
+                            value={slotPriorities[slot.slotKey] ?? priority}
+                            onChange={(e) =>
+                              setSlotPriorities((prev) => ({
+                                ...prev,
+                                [slot.slotKey]: Number(e.target.value) || 0,
+                              }))
+                            }
+                            aria-label={t('admin:banners.fieldPriority')}
+                          />
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="ag-field-row">
+                <label className="ag-field">
+                  <span>{t('admin:banners.fieldStartAt')}</span>
+                  <input
+                    className="input"
+                    type="datetime-local"
+                    value={startAt}
+                    onChange={(e) => setStartAt(e.target.value)}
+                  />
+                </label>
+                <label className="ag-field">
+                  <span>{t('admin:banners.fieldEndAt')}</span>
+                  <input
+                    className="input"
+                    type="datetime-local"
+                    value={endAt}
+                    onChange={(e) => setEndAt(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <h2 className="ag-editor__title">{t('admin:banners.images')}</h2>
+              {isNew ? (
+                <p className="ag-banner">{t('admin:banners.saveBeforeUpload')}</p>
               ) : (
-                <p className="admin-page__subtitle">{t('admin:banners.noPreview')}</p>
+                <div className="ag-field-row">
+                  <label className="ag-field">
+                    <span>{t('admin:banners.fieldDesktopImage')}</span>
+                    <input
+                      className="input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) uploadMutation.mutate({ file, kind: 'desktop' });
+                      }}
+                    />
+                  </label>
+                  <label className="ag-field">
+                    <span>{t('admin:banners.fieldMobileImage')}</span>
+                    <input
+                      className="input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) uploadMutation.mutate({ file, kind: 'mobile' });
+                      }}
+                    />
+                  </label>
+                </div>
               )}
-            </div>
-          </div>
 
-          <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.5rem' }}>
-            <button
-              type="submit"
-              className="btn btn--primary"
-              disabled={saveMutation.isPending}
-            >
-              {saveMutation.isPending ? t('admin:processing') : t('common:actions.save')}
-            </button>
-            <Link to={ROUTES.ADMIN_BANNERS} className="btn btn--secondary">
-              {t('common:actions.cancel')}
-            </Link>
-          </div>
-        </form>
+              <div className="ag-editor__actions">
+                <button
+                  type="submit"
+                  className="btn btn--primary"
+                  disabled={saveMutation.isPending}
+                >
+                  {saveMutation.isPending ? t('admin:processing') : t('common:actions.save')}
+                </button>
+                <Link to={ROUTES.ADMIN_BANNERS} className="btn btn--secondary">
+                  {t('common:actions.cancel')}
+                </Link>
+              </div>
+            </form>
+          </section>
+
+          <aside className="ag-editor" aria-label={t('admin:banners.preview')}>
+            <div className="ag-editor__head">
+              <div>
+                <h2 className="ag-editor__title">{t('admin:banners.preview')}</h2>
+                <p className="ag-editor__hint">
+                  {selectedSlotNames || t('admin:banners.noSlotsSelected')}
+                </p>
+              </div>
+              <span
+                className={`ag-pill ${status === 'active' ? 'ag-pill--on' : 'ag-pill--off'}`}
+              >
+                {status === 'active'
+                  ? t('admin:banners.statusActive')
+                  : t('admin:banners.statusInactive')}
+              </span>
+            </div>
+
+            <div className="ag-chips" role="group" aria-label={t('admin:banners.preview')}>
+              <button
+                type="button"
+                className={`ag-chip${previewMode === 'pc' ? ' is-active' : ''}`}
+                onClick={() => setPreviewMode('pc')}
+              >
+                {t('admin:banners.previewPc')}
+              </button>
+              <button
+                type="button"
+                className={`ag-chip${previewMode === 'mobile' ? ' is-active' : ''}`}
+                onClick={() => setPreviewMode('mobile')}
+              >
+                {t('admin:banners.previewMobile')}
+              </button>
+            </div>
+
+            <div className="admin-banner-preview">
+              <div
+                className={[
+                  'admin-banner-preview__frame',
+                  previewMode === 'mobile' && 'admin-banner-preview__frame--mobile',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <p className="admin-banner-preview__label">
+                  {previewMode === 'pc'
+                    ? t('admin:banners.previewPc')
+                    : t('admin:banners.previewMobile')}
+                </p>
+                {previewSrc ? (
+                  <img src={previewSrc} alt="" className="admin-banner-preview__img" />
+                ) : (
+                  <p className="ag-empty">{t('admin:banners.noPreview')}</p>
+                )}
+              </div>
+            </div>
+
+            <dl className="ag-metric-grid">
+              <div className="ag-metric">
+                <span className="ag-metric__value">{priority}</span>
+                <span className="ag-metric__label">{t('admin:banners.fieldPriority')}</span>
+              </div>
+              <div className="ag-metric">
+                <span className="ag-metric__value">{selectedSlots.size}</span>
+                <span className="ag-metric__label">{t('admin:banners.assignedCount')}</span>
+              </div>
+            </dl>
+          </aside>
+        </div>
       </div>
-    </div>
+    </AdminPageShell>
   );
 }

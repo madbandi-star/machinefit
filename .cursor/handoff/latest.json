@@ -1,46 +1,36 @@
 {
-  "title": "Glanceable admin usage / points / retention UX",
-  "summary": "Nine admin screens redesigned with shared ag-* glance pattern: KPI filters, chips, dense expandable rows, and side editors for usage stats/users/policies, points policies/users, and data retention suite.",
+  "title": "Glanceable admin moderation + banners UX",
+  "summary": "Moderation and banner list/create/slots/stats redesigned with shared ag-* KPIs, chips, dense expandable rows, and side preview/editor panels.",
   "git": {
     "branch": "main",
-    "commit": "8dfe317a"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/styles/admin-glance.css",
-    "frontend/src/styles/admin-data-retention.css",
-    "frontend/src/pages/admin/usage/AdminUsageStatsPage.tsx",
-    "frontend/src/pages/admin/usage/AdminUsageUsersPage.tsx",
-    "frontend/src/pages/admin/usage/AdminUsagePoliciesPage.tsx",
-    "frontend/src/pages/admin/points/AdminPointsPoliciesPage.tsx",
-    "frontend/src/pages/admin/points/AdminPointsUsersPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionScheduledPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionLogsPage.tsx",
-    "frontend/src/pages/admin/data-retention/AdminDataRetentionAuditPage.tsx",
+    "frontend/src/pages/admin/moderation/AdminModerationPage.tsx",
+    "frontend/src/pages/admin/banners/AdminBannersPage.tsx",
+    "frontend/src/pages/admin/banners/AdminBannerEditPage.tsx",
+    "frontend/src/pages/admin/banners/AdminBannerSlotsPage.tsx",
+    "frontend/src/pages/admin/banners/AdminBannerStatsPage.tsx",
+    "frontend/src/styles/banners.css",
     "frontend/src/i18n/locales/ko/admin.json",
     "frontend/src/i18n/locales/en/admin.json"
   ],
   "testFocus": [
-    "/admin/usage ? KPI + range chips + chart",
-    "/admin/usage/users ? live search, dense rows, period side panel",
-    "/admin/usage/policies ? KPI filters, side editor save",
-    "/admin/points/policies ? enabled KPIs, side editor save",
-    "/admin/points/users ? balance list, adjust + tx side panel",
-    "/admin/data-retention ? KPI jump + dense policies + period edit impact confirm",
-    "/admin/data-retention/scheduled ? overdue/hold KPIs, in-row hold",
-    "/admin/data-retention/logs ? fail-first KPI filter",
-    "/admin/data-retention/audit ? action chips + dense log rows"
+    "/admin/moderation ? KPI tabs, pending chips, expand actions",
+    "/admin/banners ? status KPIs, slot chips, dense rows",
+    "/admin/banners/new and edit ? form + sticky preview side",
+    "/admin/banners/slots ? KPIs, create side editor, activate/delete",
+    "/admin/banners/stats ? KPIs, expandable slot/banner rows + search"
   ],
   "fastChecks": [
-    "rg -n \"className=\\\"ag\\\"|admin-glance\" frontend/src/pages/admin/usage frontend/src/pages/admin/points frontend/src/pages/admin/data-retention",
-    "node -e \"JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8')); console.log('ok')\""
+    "rg -n \"admin-glance|className=\\\"ag\\\"\" frontend/src/pages/admin/moderation frontend/src/pages/admin/banners"
   ],
   "productionChecks": [
-    "Pages: open each listed admin route after Deploy Frontend success"
+    "Pages: open moderation + banner admin routes after Deploy Frontend success"
   ],
   "deploy": {
     "expected": "GitHub Pages FE success"
   },
-  "asIs": "AdminPanel splits, tall forms, bulky fact cards, weak filters",
-  "toBe": "Shared ag-* KPI + chips + dense queue + side editor across nine screens"
+  "asIs": "Wide tables, tab cards, tall edit form without sticky preview",
+  "toBe": "ag-* KPI + chips + dense queues + side preview/editor"
 }

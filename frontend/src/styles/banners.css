@@ -106,6 +106,31 @@
   background: var(--color-surface-muted, #f3f4f6);
 }
 
+.admin-banner-thumb--sm {
+  width: 48px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.admin-banner-thumb--empty {
+  display: inline-block;
+  border: 1px dashed var(--color-border, #d1d5db);
+}
+
+.ag-card__identity--thumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ag-card__identity-text {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
 .admin-banner-form__slots {
   display: flex;
   flex-direction: column;
@@ -124,6 +149,12 @@
   align-items: center;
   gap: 0.35rem;
   min-width: 12rem;
+}
+
+.admin-banner-form__slot-key {
+  margin-left: 0.25rem;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
 }
 
 .admin-banners-table {
