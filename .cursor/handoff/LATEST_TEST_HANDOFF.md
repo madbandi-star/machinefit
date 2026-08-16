@@ -5,7 +5,7 @@ My Page member ID remaining text sits immediately to the right of the Change but
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `637bb995`
 
 ## Test focus
 1. My Page profile row: `아이디값` → `[변경]` → `아이디 변경 n/n회 남음` on one line (wraps only if screen is very narrow).

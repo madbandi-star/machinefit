@@ -3,7 +3,7 @@
   "summary": "My Page member ID remaining text sits immediately to the right of the Change button instead of wrapping onto its own line.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "637bb995"
   },
   "changedFiles": [
     "frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx",
