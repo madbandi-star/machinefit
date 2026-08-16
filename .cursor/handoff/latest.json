@@ -1,7 +1,10 @@
 {
   "title": "Workout plan reminder copy update",
   "summary": "Changed Korean/English workout plan reminder body to fire-emoji framing without plan count.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": {
+    "branch": "main",
+    "commit": "47d53dfe"
+  },
   "changedFiles": [
     "backend/server/services/workout-card.service.ts"
   ],
@@ -12,8 +15,12 @@
   "fastChecks": [
     "rg -n \"?? ??? ??? ????\" backend/server/services/workout-card.service.ts"
   ],
-  "productionChecks": ["After Render redeploy: next reminder uses new copy"],
-  "deploy": { "expected": "FE Pages no-op; Render backend needed" },
+  "productionChecks": [
+    "After Render redeploy: next reminder uses new copy"
+  ],
+  "deploy": {
+    "expected": "FE Pages no-op; Render backend needed"
+  },
   "asIs": "?? ??? ??? N? ????.",
   "toBe": "???????? ??? ??? ????.??????"
 }

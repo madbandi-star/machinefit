@@ -1,11 +1,11 @@
 # Workout plan reminder copy update
 
 ## Summary
-Workout plan reminder body changed to `???¿À´Ã ¿¹Á¤µÈ ¿îµ¿ÀÌ ÀÖ½À´Ï´Ù.???` (no count).
+Workout plan reminder body changed to `???ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.???` (no count).
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: 47d53dfe
 
 ## Changed files
 - `backend/server/services/workout-card.service.ts`
@@ -16,12 +16,12 @@ Workout plan reminder body changed to `???¿À´Ã ¿¹Á¤µÈ ¿îµ¿ÀÌ ÀÖ½À´Ï´Ù.???` (no c
 
 ## Fast checks
 ```bash
-rg -n "¿À´Ã ¿¹Á¤µÈ ¿îµ¿ÀÌ ÀÖ½À´Ï´Ù" backend/server/services/workout-card.service.ts
+rg -n "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½" backend/server/services/workout-card.service.ts
 ```
 
-## As-is ¡æ To-be
-- **As-is:** `¿À´Ã ¿¹Á¤µÈ ¿îµ¿ÀÌ N°³ ÀÖ½À´Ï´Ù.`
-- **To-be:** `???¿À´Ã ¿¹Á¤µÈ ¿îµ¿ÀÌ ÀÖ½À´Ï´Ù.???`
+## As-is ï¿½ï¿½ To-be
+- **As-is:** `ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ Nï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.`
+- **To-be:** `???ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½îµ¿ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.???`
 
 ## Note
 Backend change ? Render redeploy required for production.
