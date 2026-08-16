@@ -1,32 +1,29 @@
-# Test handoff — Unify brand favorites into dense chip picker
+# Test handoff — Community bottom banner on Brand favorites
 
 ## Summary
-Brand favorites page is one searchable chip grid (no logos, no separate mine/add sections). Favorites sort to the top; mobile shows 3–4 brands per row.
+Brand favorites page now shows the same `COMMUNITY_BOTTOM` CMS banner as free board / community lists.
 
 ## Git
 - Branch: `main`
-- Commit: `f54caff8`
+- Commit: pending
 
 ## Changed files
 - `frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx`
-- `frontend/src/styles/brand-favorites.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json`
+- `frontend/src/components/community/CommunityBottomBanner.tsx`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json` (placement label)
 
 ## Test focus
-1. Single list; starred favorites first.
-2. No logos/images.
-3. Mobile: 3–4 chips per row.
-4. Toggle updates count; search filter on machine search still uses favorites.
+1. Open Brand favorites → scroll to bottom → same community CMS banner as free board (when enabled).
 
 ## Fast checks
 ```bash
-rg -n "brand-favorites__chip|listLabel|resolveBrandLogoUrl" frontend/src/pages/brand-favorites frontend/src/styles/brand-favorites.css frontend/src/i18n/locales/ko/common.json
+rg -n "CommunityBottomBanner" frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 | --- | --- |
-| Mine + Add sections with logo tiles | One dense chip grid, text + star only |
+| No banner on brand favorites | COMMUNITY_BOTTOM at page bottom |
 
 ## Deploy
 Frontend Pages only.

@@ -1,34 +1,32 @@
 {
-  "title": "Unify brand favorites into dense chip picker",
-  "summary": "Brand favorites page is one searchable chip grid (no logos, no separate mine/add sections). Favorites sort to the top; mobile shows 3–4 brands per row.",
+  "title": "Community bottom banner on Brand favorites",
+  "summary": "Brand favorites page now shows the same COMMUNITY_BOTTOM CMS banner as free board / community lists.",
   "git": {
     "branch": "main",
-    "commit": "f54caff8"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
-    "frontend/src/styles/brand-favorites.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/components/community/CommunityBottomBanner.tsx",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Brand favorites: single list, favorites starred and sorted first",
-    "No brand logos/images in tiles",
-    "Mobile width: at least 3 chips per row",
-    "Toggle star updates count and search filter still works"
+    "Brand favorites page bottom shows COMMUNITY_BOTTOM when placement/policy/creative enabled",
+    "Same creative as free board bottom when configured"
   ],
   "fastChecks": [
-    "rg -n \"brand-favorites__chip|listLabel|resolveBrandLogoUrl\" frontend/src/pages/brand-favorites frontend/src/styles/brand-favorites.css frontend/src/i18n/locales/ko/common.json"
+    "rg -n \"CommunityBottomBanner\" frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Hard refresh Brand favorites page"
+    "Hard refresh Brand favorites with COMMUNITY_BOTTOM creative active"
   ],
   "deploy": {
     "expected": "Frontend Pages only"
   },
-  "asIs": "Two stacked sections with logo tiles, few brands visible",
-  "toBe": "One dense text chip grid, favorites on top, no images"
+  "asIs": "Brand favorites had no community bottom banner",
+  "toBe": "COMMUNITY_BOTTOM slot at page bottom like free board"
 }

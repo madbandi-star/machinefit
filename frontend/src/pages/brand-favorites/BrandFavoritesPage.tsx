@@ -5,6 +5,7 @@ import { Search, Star } from 'lucide-react';
 import type { Brand } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
 import { brandApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useBrandFavorites, useBrandFavoriteToggle } from '@/hooks/useBrandFavorites';
@@ -102,6 +103,7 @@ export function BrandFavoritesPage() {
           )}
         </section>
       </div>
+      <CommunityBottomBanner />
     </PageShell>
   );
 }
