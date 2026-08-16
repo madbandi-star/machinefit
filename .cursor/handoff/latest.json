@@ -3,7 +3,7 @@
   "summary": "Added reusable ScrollCarousel chevron buttons for home recent/favorites, search muscle/brand chips, plus overflow-prone admin chip rows and a few user extras.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a9a54a2a"
   },
   "changedFiles": [
     "frontend/src/components/navigation/ScrollCarousel/ScrollCarousel.tsx",

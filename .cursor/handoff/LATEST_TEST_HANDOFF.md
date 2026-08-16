@@ -5,7 +5,7 @@ Added reusable `ScrollCarousel` chevron buttons for home recent/favorites, searc
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `a9a54a2a`
 
 ## Test focus
 1. Home recent/favorites ? chevrons when overflow; click scrolls
@@ -17,6 +17,6 @@ Added reusable `ScrollCarousel` chevron buttons for home recent/favorites, searc
 rg -n "ScrollCarousel|scroll-carousel|chevronLeft" frontend/src/components frontend/src/pages/admin frontend/src/styles/scroll-carousel.css
 ```
 
-## as-is ¡æ to-be
+## as-is ï¿½ï¿½ to-be
 - **as-is:** Horizontal rows only swipe/scrollbar
 - **to-be:** Chevron prev/next when content overflows
