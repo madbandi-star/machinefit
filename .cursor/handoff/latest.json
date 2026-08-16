@@ -3,7 +3,7 @@
   "summary": "Server-enforced free quotas on cards/templates/recommendations/uploads/workout saves; stock+daily atomic limits; auth burst/minute rate limits; abuse_events + admin abuse page; docs/abuse-prevention.md. Apply migration 138 on Postgres.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "0c9c665e"
   },
   "changedFiles": [
     "shared/src/constants/free-plan-limits.ts",

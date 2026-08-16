@@ -5,7 +5,7 @@ Server-enforced free quotas (cards/templates/recommend/uploads/workout saves), s
 
 ## Git
 - branch: `main`
-- commit: `PENDING`
+- commit: `0c9c665e`
 
 ## Test focus
 1. Migration 138 applied
