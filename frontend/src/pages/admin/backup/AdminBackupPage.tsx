@@ -65,6 +65,7 @@ export function AdminBackupPage() {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [warnOpen, setWarnOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [historySearch, setHistorySearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const settingsQuery = useQuery({
@@ -139,6 +140,24 @@ export function AdminBackupPage() {
 
   const settings = settingsQuery.data;
   const history = historyQuery.data ?? [];
+
+  const filteredHistory = useMemo(() => {
+    const q = historySearch.trim().toLowerCase();
+    if (!q) return history;
+    return history.filter((item) => {
+      const hay = [
+        item.action,
+        item.status,
+        item.fileName,
+        item.errorMessage,
+        item.createdAt ? new Date(item.createdAt).toLocaleString() : '',
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }, [history, historySearch]);
 
   const lastStatus = useMemo((): string => {
     const first = history[0];
@@ -297,11 +316,25 @@ export function AdminBackupPage() {
 
         <section className="ag-panel" aria-label={t('backup.history')}>
           <h2 className="admin-panel__title">{t('backup.history')}</h2>
+          {history.length ? (
+            <div className="ag-toolbar">
+              <input
+                type="search"
+                className="ag-search"
+                value={historySearch}
+                onChange={(e) => setHistorySearch(e.target.value)}
+                placeholder={t('backup.searchPlaceholder')}
+                aria-label={t('backup.searchPlaceholder')}
+              />
+            </div>
+          ) : null}
           {!history.length ? (
+            <p className="ag-empty">{t('backup.historyEmpty')}</p>
+          ) : filteredHistory.length === 0 ? (
             <p className="ag-empty">{t('backup.historyEmpty')}</p>
           ) : (
             <div className="ag-queue">
-              {history.map((item) => {
+              {filteredHistory.map((item) => {
                 const open = expandedId === item.id;
                 const sizeLabel = formatBytes(item.fileSizeBytes);
                 const fail =

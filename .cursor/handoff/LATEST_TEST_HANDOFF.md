@@ -1,20 +1,24 @@
-# Move home gym+member selector above notices
+# Admin dense lists + search
 
 ## Summary
-Home page gym selector and member name now sit directly above the notice banner.
+Admin glance pages densified (smaller buttons/KPIs/rows) so mobile can show ~15+ list items. Search added/improved on users, moderation, backup history, and retention scheduled.
 
 ## Git
 - branch: `main`
-- commit: `7f734e3f`
+- commit: `PENDING` (filled after push)
 
 ## Test focus
-1. Home (premium+): gym+member row appears above `HomeNoticeBanner`
+1. Admin Users on ~390px width: ¡Ã15 collapsed rows visible in the list area
+2. Search works on Users / Moderation / Backup history / Retention scheduled
+3. Q&A + Fortune queues still usable with compact action buttons
 
 ## Fast checks
 ```bash
-rg -n "home-gym-selector|HomeNoticeBanner" frontend/src/pages/home/HomePage.tsx
+rg -n "ag-queue|min-height: 1\.85rem|gap: 0\.15rem" frontend/src/styles/admin-glance.css
+rg -n "usersSearchPlaceholder|moderationSearchPlaceholder|scheduledSearchPlaceholder" frontend/src/pages/admin frontend/src/i18n/locales/ko/admin.json
+npm run test:smoke:changed
 ```
 
-## as-is ï¿½ï¿½ to-be
-- **as-is:** Gym+member below notice and planned workout
-- **to-be:** Gym+member immediately above notice banner
+## as-is ¡æ to-be
+- **as-is:** Large buttons, sparse rows (~3 users on mobile), missing search on several admin queues
+- **to-be:** Dense glance rows + compact `btn--sm`; search on users/moderation/backup/retention scheduled; mobile subtitle hidden to reclaim viewport

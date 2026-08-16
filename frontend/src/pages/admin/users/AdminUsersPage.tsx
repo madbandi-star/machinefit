@@ -26,6 +26,7 @@ export function AdminUsersPage() {
   const showToast = useUIStore((s) => s.showToast);
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftUsername, setDraftUsername] = useState('');
@@ -70,10 +71,16 @@ export function AdminUsersPage() {
   }, [items]);
 
   const visible = useMemo(() => {
-    if (statusFilter === 'active') return items.filter((u) => u.isActive);
-    if (statusFilter === 'inactive') return items.filter((u) => !u.isActive);
-    return items;
-  }, [items, statusFilter]);
+    let list = items;
+    if (statusFilter === 'active') list = list.filter((u) => u.isActive);
+    else if (statusFilter === 'inactive') list = list.filter((u) => !u.isActive);
+    const q = search.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((u) => {
+      const hay = `${u.displayName ?? ''} ${u.id ?? ''} ${u.roleCode ?? ''}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [items, statusFilter, search]);
 
   if (isLoading && !data) {
     return (
@@ -129,6 +136,16 @@ export function AdminUsersPage() {
         <p className="ag-chart-hint">{t('usersFilterLocalNote')}</p>
 
         <section className="ag-panel">
+          <div className="ag-toolbar">
+            <input
+              type="search"
+              className="ag-search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('usersSearchPlaceholder')}
+              aria-label={t('usersSearchPlaceholder')}
+            />
+          </div>
           {visible.length === 0 ? (
             <p className="ag-empty">{t('noUsers')}</p>
           ) : (

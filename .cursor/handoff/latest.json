@@ -1,25 +1,43 @@
 {
-  "title": "Move home gym+member selector above notices",
-  "summary": "Home page gym selector and member name now sit directly above the notice banner.",
+  "title": "Admin dense lists + search",
+  "summary": "Admin glance pages densified: smaller buttons/KPIs/rows so mobile can show ~15+ list items; search added/improved on users, moderation, backup history, and retention scheduled.",
   "git": {
     "branch": "main",
-    "commit": "7f734e3f"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/home/HomePage.tsx"
+    "frontend/src/styles/admin-glance.css",
+    "frontend/src/styles/admin.css",
+    "frontend/src/styles/admin-qa.css",
+    "frontend/src/styles/admin-fortune.css",
+    "frontend/src/styles/admin-data-retention.css",
+    "frontend/src/styles/banners.css",
+    "frontend/src/pages/admin/users/AdminUsersPage.tsx",
+    "frontend/src/pages/admin/moderation/AdminModerationPage.tsx",
+    "frontend/src/pages/admin/backup/AdminBackupPage.tsx",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionScheduledPage.tsx",
+    "frontend/src/pages/admin/ops/AdminOpsPage.tsx",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Home (premium+): gym+member row appears above HomeNoticeBanner"
+    "Admin Users on mobile viewport: ?15 collapsed rows visible without scrolling past list chrome",
+    "Search filters users / moderation / backup history / retention scheduled",
+    "Q&A and Fortune queues remain readable with compact rows and small action buttons"
   ],
   "fastChecks": [
-    "rg -n \"home-gym-selector|HomeNoticeBanner\" frontend/src/pages/home/HomePage.tsx"
+    "rg -n \"ag-queue|min-height: 1\\.85rem|gap: 0\\.15rem\" frontend/src/styles/admin-glance.css",
+    "rg -n \"usersSearchPlaceholder|moderationSearchPlaceholder|scheduledSearchPlaceholder\" frontend/src/pages/admin frontend/src/i18n/locales/ko/admin.json",
+    "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "Pages home: confirm order gym/member ? notice"
+    "Open /admin/users on phone width after Pages deploy ? count visible user rows"
   ],
   "deploy": {
-    "expected": "GitHub Pages FE success"
+    "expected": "GitHub Pages frontend deploy after push to main"
   },
-  "asIs": "Gym+member below notice and planned workout",
-  "toBe": "Gym+member immediately above notice banner"
+  "asIs": "Admin lists used large buttons and sparse rows (~3 users visible on mobile); several queues lacked search.",
+  "toBe": "Compact glance rows/chips/buttons; search on users, moderation, backup history, retention scheduled; mobile header subtitle hidden to free list space."
 }

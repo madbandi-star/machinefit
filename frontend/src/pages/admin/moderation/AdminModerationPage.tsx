@@ -26,6 +26,7 @@ export function AdminModerationPage() {
   const showToast = useUIStore((s) => s.showToast);
   const [tab, setTab] = useState<Tab>('requests');
   const [requestFilter, setRequestFilter] = useState<RequestFilter>('pending');
+  const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const { data: posts, isLoading: postsLoading } = useQuery({
@@ -94,11 +95,35 @@ export function AdminModerationPage() {
     };
   }, [posts, requests, reports]);
 
+  const searchQ = search.trim().toLowerCase();
+
+  const filteredPosts = useMemo(() => {
+    const list = posts ?? [];
+    if (!searchQ) return list;
+    return list.filter((p) => {
+      const hay = `${p.title ?? ''} ${p.authorName ?? ''}`.toLowerCase();
+      return hay.includes(searchQ);
+    });
+  }, [posts, searchQ]);
+
   const filteredRequests = useMemo(() => {
-    const list = requests ?? [];
-    if (requestFilter === 'pending') return list.filter((r) => r.status === 'pending');
-    return list;
-  }, [requests, requestFilter]);
+    let list = requests ?? [];
+    if (requestFilter === 'pending') list = list.filter((r) => r.status === 'pending');
+    if (!searchQ) return list;
+    return list.filter((r) => {
+      const hay = `${r.machineName ?? ''} ${r.brandName ?? ''} ${r.authorName ?? ''} ${r.description ?? ''}`.toLowerCase();
+      return hay.includes(searchQ);
+    });
+  }, [requests, requestFilter, searchQ]);
+
+  const filteredReports = useMemo(() => {
+    const list = reports ?? [];
+    if (!searchQ) return list;
+    return list.filter((r) => {
+      const hay = `${r.reason ?? ''} ${r.description ?? ''} ${r.status ?? ''}`.toLowerCase();
+      return hay.includes(searchQ);
+    });
+  }, [reports, searchQ]);
 
   const isLoading =
     (tab === 'posts' && postsLoading) ||
@@ -162,8 +187,16 @@ export function AdminModerationPage() {
         </section>
 
         <section className="ag-panel">
-          {tab === 'requests' ? (
-            <div className="ag-toolbar">
+          <div className="ag-toolbar">
+            <input
+              type="search"
+              className="ag-search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('moderationSearchPlaceholder')}
+              aria-label={t('moderationSearchPlaceholder')}
+            />
+            {tab === 'requests' ? (
               <div className="ag-chips" role="group" aria-label={t('status')}>
                 <button
                   type="button"
@@ -182,17 +215,17 @@ export function AdminModerationPage() {
                   <span className="ag-chip__count">{counts.requests}</span>
                 </button>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
 
           {isLoading ? <Skeleton count={4} height={52} /> : null}
 
           {!isLoading && tab === 'posts' ? (
             <div className="ag-queue">
-              {(posts ?? []).length === 0 ? (
+              {filteredPosts.length === 0 ? (
                 <p className="ag-empty">{t('moderationEmpty')}</p>
               ) : (
-                (posts ?? []).map((post) => {
+                filteredPosts.map((post) => {
                   const open = expandedId === post.id;
                   return (
                     <article
@@ -322,10 +355,10 @@ export function AdminModerationPage() {
 
           {!isLoading && tab === 'reports' ? (
             <div className="ag-queue">
-              {(reports ?? []).length === 0 ? (
+              {filteredReports.length === 0 ? (
                 <p className="ag-empty">{t('moderationEmpty')}</p>
               ) : (
-                (reports ?? []).map((report) => {
+                filteredReports.map((report) => {
                   const open = expandedId === report.id;
                   return (
                     <article

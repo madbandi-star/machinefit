@@ -748,6 +748,41 @@ table.admin-table .admin-status-pill {
   margin-top: 0;
 }
 
+/* Dense glance admin lists: reclaim vertical space for more rows */
+.admin-page:has(.ag),
+.admin-page:has(.aqa),
+.admin-page:has(.aft) {
+  gap: 0.45rem;
+}
+
+.admin-page:has(.ag) .admin-page__body,
+.admin-page:has(.aqa) .admin-page__body,
+.admin-page:has(.aft) .admin-page__body {
+  gap: 0.45rem;
+}
+
+.admin-page:has(.ag) .admin-page__actions .btn,
+.admin-page:has(.aqa) .admin-page__actions .btn,
+.admin-page:has(.aft) .admin-page__actions .btn {
+  min-height: 1.7rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 719px) {
+  .admin-page:has(.ag) .admin-page__subtitle,
+  .admin-page:has(.aqa) .admin-page__subtitle,
+  .admin-page:has(.aft) .admin-page__subtitle {
+    display: none;
+  }
+
+  .admin-page:has(.ag) .admin-page__title,
+  .admin-page:has(.aqa) .admin-page__title,
+  .admin-page:has(.aft) .admin-page__title {
+    font-size: 1.05rem;
+  }
+}
+
 /* ── Tabs ── */
 
 .admin-tabs {

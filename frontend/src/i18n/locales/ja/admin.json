@@ -932,6 +932,7 @@
     "periodUnit": "Unit",
     "emptyPolicies": "No matching retention policies.",
     "emptyScheduled": "No scheduled deletions.",
+    "scheduledSearchPlaceholder": "Search policy, subject, or ID",
     "detailEmptyTitle": "Policy detail",
     "detailEmpty": "Select a policy from the list.",
     "scheduledList": "Scheduled list",

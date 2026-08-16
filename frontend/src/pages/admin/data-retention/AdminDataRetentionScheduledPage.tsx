@@ -40,6 +40,7 @@ export function AdminDataRetentionScheduledPage() {
   const queryClient = useQueryClient();
   const [window, setWindow] = useState<WindowKey>('30d');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('inWindow');
+  const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [holdId, setHoldId] = useState<string | null>(null);
   const [holdReason, setHoldReason] = useState('');
@@ -90,13 +91,18 @@ export function AdminDataRetentionScheduledPage() {
   }, [items]);
 
   const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
     return items.filter((r) => {
-      if (statusFilter === 'overdue') return r.daysRemaining < 0;
-      if (statusFilter === 'dueToday') return r.daysRemaining === 0;
-      if (statusFilter === 'onHold') return r.hold;
-      return true;
+      if (statusFilter === 'overdue' && !(r.daysRemaining < 0)) return false;
+      if (statusFilter === 'dueToday' && !(r.daysRemaining === 0)) return false;
+      if (statusFilter === 'onHold' && !r.hold) return false;
+      if (!q) return true;
+      const hay = `${r.id ?? ''} ${r.policyCode ?? ''} ${r.policyName ?? ''} ${
+        r.userDisplayName ?? ''
+      } ${r.subjectId ?? ''} ${r.status ?? ''} ${r.holdReason ?? ''}`.toLowerCase();
+      return hay.includes(q);
     });
-  }, [items, statusFilter]);
+  }, [items, statusFilter, search]);
 
   const openHold = (id: string) => {
     setExpandedId(id);
@@ -163,6 +169,14 @@ export function AdminDataRetentionScheduledPage() {
 
         <section className="ag-panel">
           <div className="ag-toolbar">
+            <input
+              type="search"
+              className="ag-search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('dataRetention.scheduledSearchPlaceholder')}
+              aria-label={t('dataRetention.scheduledSearchPlaceholder')}
+            />
             <ScrollCarousel
               className="chip-carousel"
               scrollerClassName="ag-chips"

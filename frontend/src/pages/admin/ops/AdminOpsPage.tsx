@@ -590,7 +590,7 @@ export function AdminOpsPage() {
                           <div className="ag-card__actions">
                             <button
                               type="button"
-                              className="btn btn--secondary"
+                              className="btn btn--secondary btn--sm"
                               onClick={() => resolveErr.mutate(e.id)}
                             >
                               {t('ops.resolve')}
@@ -970,7 +970,7 @@ export function AdminOpsPage() {
               <div className="ag-card__actions">
                 <button
                   type="button"
-                  className="btn btn--secondary"
+                  className="btn btn--secondary btn--sm"
                   onClick={() =>
                     void opsApi
                       .downloadLogsCsv({ kind: logKind || undefined, q: logQ || undefined })
@@ -981,7 +981,7 @@ export function AdminOpsPage() {
                 </button>
                 <button
                   type="button"
-                  className="btn btn--secondary"
+                  className="btn btn--secondary btn--sm"
                   onClick={() =>
                     void opsApi
                       .downloadLogsCsv({ kind: logKind || undefined, q: logQ || undefined })
@@ -1124,7 +1124,7 @@ export function AdminOpsPage() {
                         <div className="ag-card__actions">
                           <button
                             type="button"
-                            className="btn btn--secondary"
+                            className="btn btn--secondary btn--sm"
                             onClick={() => ackAlert.mutate(a.id)}
                           >
                             {t('ops.ack')}
@@ -1163,7 +1163,7 @@ export function AdminOpsPage() {
               <div className="ag-card__actions">
                 <button
                   type="button"
-                  className="btn btn--secondary"
+                  className="btn btn--secondary btn--sm"
                   onClick={() =>
                     void opsApi
                       .downloadReportCsv(reportPeriod)

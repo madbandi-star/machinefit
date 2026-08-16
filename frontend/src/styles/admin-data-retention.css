@@ -3,40 +3,41 @@
 .adr-quick {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.3rem;
   align-items: center;
 }
 
 .adr-quick .btn {
-  min-height: 2.1rem;
-  font-size: 0.78rem;
+  min-height: 1.6rem;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.7rem;
 }
 
 .adr-dl {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.28rem;
   margin: 0;
 }
 
 .adr-dl > div {
   display: grid;
-  gap: 0.12rem;
-  padding: 0.45rem 0.55rem;
-  border-radius: 8px;
+  gap: 0.08rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
   border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
   background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
 }
 
 .adr-dl dt {
   margin: 0;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 650;
   color: var(--color-text-muted);
 }
 
 .adr-dl dd {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 650;
   color: var(--color-text);
   overflow-wrap: anywhere;
@@ -47,28 +48,28 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 0.3rem;
+  gap: 0.15rem;
 }
 
 .adr-versions li {
-  padding: 0.4rem 0.5rem;
+  padding: 0.28rem 0.4rem;
   border-radius: 6px;
   border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
   background: color-mix(in srgb, var(--color-bg) 45%, var(--color-surface));
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   color: var(--color-text-muted);
   overflow-wrap: anywhere;
 }
 
 .adr-hold-form {
   display: grid;
-  gap: 0.45rem;
-  padding-top: 0.15rem;
+  gap: 0.35rem;
+  padding-top: 0.1rem;
 }
 
 .adr-section-title {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
