@@ -66,6 +66,10 @@ export const adminBrandUpsertSchema = z.object({
   isDefaultFavorite: z.boolean().optional().default(false),
 });
 
+export const adminBrandSortMoveSchema = z.object({
+  direction: z.enum(['up', 'down', 'top', 'bottom']),
+});
+
 export const adminMachineListQuerySchema = z.object({
   q: z.string().max(100).optional(),
   brandId: z.string().uuid().optional(),
@@ -135,6 +139,7 @@ export const adminMachineTipsUpdateSchema = z.object({
 
 export type AdminBrandListQuery = z.infer<typeof adminBrandListQuerySchema>;
 export type AdminBrandUpsertInput = z.infer<typeof adminBrandUpsertSchema>;
+export type AdminBrandSortMoveInput = z.infer<typeof adminBrandSortMoveSchema>;
 export type AdminMachineListQuery = z.infer<typeof adminMachineListQuerySchema>;
 export type AdminMachineUpsertInput = z.infer<typeof adminMachineUpsertSchema>;
 export type AdminMachineTipsUpdateInput = z.infer<typeof adminMachineTipsUpdateSchema>;

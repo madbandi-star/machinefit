@@ -41,6 +41,7 @@ adminRouter.patch(
   '/catalog/brands/:id/default-favorite',
   adminCatalogController.setBrandDefaultFavorite
 );
+adminRouter.patch('/catalog/brands/:id/sort-move', adminCatalogController.moveBrandSort);
 adminRouter.delete('/catalog/brands/:id', adminCatalogController.deleteBrand);
 adminRouter.post(
   '/catalog/brands/:id/logo',

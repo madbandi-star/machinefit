@@ -1,35 +1,40 @@
 {
-  "title": "Home empty recent/favorites UI polish",
-  "summary": "Restyle home Recent Records and Favorites empty prompts to match the green accent card mock (section bar, circular icons, badge pill, chevron chip, dot grid). No query/route/logic changes.",
+  "title": "Admin brand display-order arrows",
+  "summary": "Admin brands list shows sortOrder on each row and supports top/up/down/bottom reorder via PATCH /admin/catalog/brands/:id/sort-move (renumbers global sort_order).",
   "git": {
     "branch": "main",
-    "commit": "a2c428a0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/home/HomeSectionEmptyPrompt/HomeSectionEmptyPrompt.tsx",
-    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
-    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
-    "frontend/src/styles/home.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "shared/src/validators/admin-catalog.schema.ts",
+    "backend/server/repositories/admin-catalog.repository.ts",
+    "backend/server/services/admin-catalog.service.ts",
+    "backend/server/controllers/admin-catalog.controller.ts",
+    "backend/server/routes/admin.routes.ts",
+    "frontend/src/api/admin.api.ts",
+    "frontend/src/pages/admin/brands/AdminBrandsPage.tsx",
+    "frontend/src/styles/admin-glance.css",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Home with empty recent + empty favorites: cards match mock layout",
-    "Tapping cards still navigates to machines / favorites-empty (unchanged routes)",
-    "When data exists, carousel still works (only empty UI changed)"
+    "Admin → Brands: each row shows numeric display order",
+    "Arrow buttons: top / up / down / bottom change order and refresh list",
+    "Search/My Brands / Machine search chips follow new order after Render + Pages"
   ],
   "fastChecks": [
-    "rg -n \"home-section-empty__badge|recentEmptyBadge\" frontend/src/components/home frontend/src/styles/home.css"
+    "rg -n \"sort-move|moveBrandSort|ag-brand-order\" backend/server frontend/src"
   ],
   "productionChecks": [
+    "Deploy Backend to Render success (required)",
     "Pages Deploy Frontend success",
-    "Hard refresh home empty states"
+    "Hard refresh admin brands"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Plain empty prompt rows",
-  "toBe": "Mock-matched empty cards with bar title, badge, dots"
+  "asIs": "sortOrder only in meta text / edit form",
+  "toBe": "Visible order badge + one-click reorder arrows"
 }

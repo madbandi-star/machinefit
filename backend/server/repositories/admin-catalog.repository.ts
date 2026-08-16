@@ -308,6 +308,61 @@ export const adminCatalogRepository = {
     return updated;
   },
 
+  /**
+   * Reorder brands by moving one row in the global sort_order sequence, then
+   * renumber 0..n-1 so display order stays dense and stable.
+   */
+  async moveBrandSort(
+    id: string,
+    direction: 'up' | 'down' | 'top' | 'bottom'
+  ): Promise<Brand> {
+    const pool = getPool();
+    if (!pool) throw new AppError(503, 'DB_UNAVAILABLE', 'Database not configured');
+    const existing = await this.getBrand(id);
+    if (!existing) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+
+    const { rows } = await pool.query<{ id: string }>(
+      `SELECT id FROM brands ORDER BY sort_order ASC, code ASC`
+    );
+    const ids = rows.map((r) => r.id);
+    const from = ids.indexOf(existing.id);
+    if (from < 0) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+
+    let to = from;
+    if (direction === 'up') to = Math.max(0, from - 1);
+    else if (direction === 'down') to = Math.min(ids.length - 1, from + 1);
+    else if (direction === 'top') to = 0;
+    else to = ids.length - 1;
+
+    if (to === from) {
+      return existing;
+    }
+
+    const [moved] = ids.splice(from, 1);
+    ids.splice(to, 0, moved);
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      for (let i = 0; i < ids.length; i++) {
+        await client.query(
+          `UPDATE brands SET sort_order = $2, updated_at = NOW() WHERE id = $1`,
+          [ids[i], i]
+        );
+      }
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+
+    const updated = await this.getBrand(existing.id);
+    if (!updated) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+    return updated;
+  },
+
   async deleteBrand(id: string): Promise<{ deleted: true }> {
     const pool = getPool();
     if (!pool) throw new AppError(503, 'DB_UNAVAILABLE', 'Database not configured');

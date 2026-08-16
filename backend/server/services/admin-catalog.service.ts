@@ -72,6 +72,15 @@ export const adminCatalogService = {
     return adminCatalogRepository.setBrandDefaultFavorite(id, isDefaultFavorite);
   },
 
+  async moveBrandSort(
+    id: string,
+    direction: 'up' | 'down' | 'top' | 'bottom'
+  ): Promise<Brand> {
+    const updated = await adminCatalogRepository.moveBrandSort(id, direction);
+    brandService.invalidateListCache();
+    return updated;
+  },
+
   deleteBrand(id: string): Promise<{ deleted: true }> {
     return adminCatalogRepository.deleteBrand(id);
   },

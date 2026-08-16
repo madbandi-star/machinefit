@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import {
   adminBrandListQuerySchema,
+  adminBrandSortMoveSchema,
   adminBrandUpsertSchema,
   adminMachineListQuerySchema,
   adminMachineTipsUpdateSchema,
@@ -65,6 +66,19 @@ export async function setBrandDefaultFavorite(req: Request, res: Response, next:
     const data = await adminCatalogService.setBrandDefaultFavorite(
       getParam(req.params.id),
       input.isDefaultFavorite
+    );
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function moveBrandSort(req: Request, res: Response, next: NextFunction) {
+  try {
+    const input = adminBrandSortMoveSchema.parse(req.body);
+    const data = await adminCatalogService.moveBrandSort(
+      getParam(req.params.id),
+      input.direction
     );
     res.json({ success: true, data });
   } catch (error) {

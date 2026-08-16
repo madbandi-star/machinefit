@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState, type DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { ChevronDown, ChevronUp, ChevronsDown, ChevronsUp } from 'lucide-react';
 import type { AdminBrandUpsertInput, Brand } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
@@ -519,6 +520,33 @@ export function AdminBrandsPage() {
     },
   });
 
+  const moveSortMutation = useMutation({
+    mutationFn: ({
+      id,
+      direction,
+    }: {
+      id: string;
+      direction: 'up' | 'down' | 'top' | 'bottom';
+    }) => adminApi.moveCatalogBrandSort(id, direction),
+    onMutate: () => {
+      if (sort !== 'sortOrder' || order !== 'asc') {
+        setSort('sortOrder');
+        setOrder('asc');
+      }
+    },
+    onSuccess: async () => {
+      await invalidate();
+      showToast(t('brands.orderMoved'), 'success');
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error) && !error.response) {
+        showToast(t('brands.networkError'), 'error');
+      } else {
+        showToast(t('error'), 'error');
+      }
+    },
+  });
+
   const uploadLogoMutation = useMutation({
     mutationFn: async ({ id, file }: { id: string; file: File }) => {
       setUploadProgress((p) => ({ ...p, logo: 0 }));
@@ -826,10 +854,20 @@ export function AdminBrandsPage() {
             <p className="ag-empty">{t('brands.empty')}</p>
           ) : (
             <div className="ag-queue">
-              {items.map((brand) => {
+              {items.map((brand, index) => {
                 const open = expandedId === brand.id;
                 const name = getLocalizedName(brand.name, i18n.language, brand.code);
                 const logoSrc = brand.logoUrl ? resolveBrandMediaUrl(brand.logoUrl) : null;
+                const movingThis =
+                  moveSortMutation.isPending && moveSortMutation.variables?.id === brand.id;
+                const orderBusy = moveSortMutation.isPending;
+                const isFirstVisible =
+                  sort === 'sortOrder' && order === 'asc' && page === 1 && index === 0;
+                const isLastVisible =
+                  sort === 'sortOrder' &&
+                  order === 'asc' &&
+                  page >= totalPages &&
+                  index === items.length - 1;
                 return (
                   <article
                     key={brand.id}
@@ -837,44 +875,105 @@ export function AdminBrandsPage() {
                       'ag-card',
                       brand.isActive ? 'is-on' : 'is-off',
                       open || editingBrand?.id === brand.id ? 'is-selected' : '',
+                      movingThis ? 'is-moving' : '',
                     ]
                       .filter(Boolean)
                       .join(' ')}
                   >
-                    <button
-                      type="button"
-                      className="ag-card__main"
-                      onClick={() =>
-                        setExpandedId((prev) => (prev === brand.id ? null : brand.id))
-                      }
-                    >
-                      <span className="ag-card__identity ag-card__identity--with-thumb">
-                        {logoSrc ? (
-                          <img src={logoSrc} alt="" className="ag-card__thumb" />
-                        ) : (
-                          <span className="ag-card__thumb ag-card__thumb--empty" aria-hidden />
-                        )}
-                        <span>
-                          <span className="ag-card__title">{name}</span>
-                          <span className="ag-card__meta">
-                            {brand.code}
-                            {brand.countryCode ? ` · ${brand.countryCode}` : ''}
-                            {` · ${t('brands.machinesCount', { count: brand.machineCount ?? 0 })}`}
-                            {` · ${t('brands.favoritesCount', { count: brand.favoriteCount ?? 0 })}`}
-                            {brand.isDefaultFavorite ? ` · ${t('brands.defaultFavoriteBadge')}` : ''}
-                            {` · #${brand.sortOrder ?? 0}`}
+                    <div className="ag-card__top">
+                      <button
+                        type="button"
+                        className="ag-card__main"
+                        onClick={() =>
+                          setExpandedId((prev) => (prev === brand.id ? null : brand.id))
+                        }
+                      >
+                        <span className="ag-card__identity ag-card__identity--with-thumb">
+                          {logoSrc ? (
+                            <img src={logoSrc} alt="" className="ag-card__thumb" />
+                          ) : (
+                            <span className="ag-card__thumb ag-card__thumb--empty" aria-hidden />
+                          )}
+                          <span>
+                            <span className="ag-card__title">{name}</span>
+                            <span className="ag-card__meta">
+                              {brand.code}
+                              {brand.countryCode ? ` · ${brand.countryCode}` : ''}
+                              {` · ${t('brands.machinesCount', { count: brand.machineCount ?? 0 })}`}
+                              {` · ${t('brands.favoritesCount', { count: brand.favoriteCount ?? 0 })}`}
+                              {brand.isDefaultFavorite
+                                ? ` · ${t('brands.defaultFavoriteBadge')}`
+                                : ''}
+                            </span>
                           </span>
                         </span>
-                      </span>
-                      <span
-                        className={`ag-pill ${brand.isActive ? 'ag-pill--on' : 'ag-pill--off'}`}
+                        <span
+                          className={`ag-pill ${brand.isActive ? 'ag-pill--on' : 'ag-pill--off'}`}
+                        >
+                          {brand.isActive ? t('active') : t('inactive')}
+                        </span>
+                        <span className="ag-card__chevron" aria-hidden>
+                          {open ? '▾' : '▸'}
+                        </span>
+                      </button>
+                      <div
+                        className="ag-brand-order"
+                        role="group"
+                        aria-label={t('brands.displayOrder')}
                       >
-                        {brand.isActive ? t('active') : t('inactive')}
-                      </span>
-                      <span className="ag-card__chevron" aria-hidden>
-                        {open ? '▾' : '▸'}
-                      </span>
-                    </button>
+                        <span className="ag-brand-order__value" title={t('brands.displayOrder')}>
+                          {brand.sortOrder ?? 0}
+                        </span>
+                        <button
+                          type="button"
+                          className="ag-brand-order__btn"
+                          aria-label={t('brands.moveTop')}
+                          title={t('brands.moveTop')}
+                          disabled={orderBusy || isFirstVisible}
+                          onClick={() =>
+                            moveSortMutation.mutate({ id: brand.id, direction: 'top' })
+                          }
+                        >
+                          <ChevronsUp size={14} strokeWidth={2.4} aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          className="ag-brand-order__btn"
+                          aria-label={t('brands.moveUp')}
+                          title={t('brands.moveUp')}
+                          disabled={orderBusy || isFirstVisible}
+                          onClick={() =>
+                            moveSortMutation.mutate({ id: brand.id, direction: 'up' })
+                          }
+                        >
+                          <ChevronUp size={14} strokeWidth={2.4} aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          className="ag-brand-order__btn"
+                          aria-label={t('brands.moveDown')}
+                          title={t('brands.moveDown')}
+                          disabled={orderBusy || isLastVisible}
+                          onClick={() =>
+                            moveSortMutation.mutate({ id: brand.id, direction: 'down' })
+                          }
+                        >
+                          <ChevronDown size={14} strokeWidth={2.4} aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          className="ag-brand-order__btn"
+                          aria-label={t('brands.moveBottom')}
+                          title={t('brands.moveBottom')}
+                          disabled={orderBusy || isLastVisible}
+                          onClick={() =>
+                            moveSortMutation.mutate({ id: brand.id, direction: 'bottom' })
+                          }
+                        >
+                          <ChevronsDown size={14} strokeWidth={2.4} aria-hidden />
+                        </button>
+                      </div>
+                    </div>
                     {open ? (
                       <div className="ag-card__detail">
                         <div className="ag-card__actions">
@@ -882,7 +981,11 @@ export function AdminBrandsPage() {
                             type="button"
                             className="btn btn--secondary btn--sm"
                             onClick={() => openEdit(brand)}
-                            disabled={activeMutation.isPending || deleteMutation.isPending}
+                            disabled={
+                              activeMutation.isPending ||
+                              deleteMutation.isPending ||
+                              orderBusy
+                            }
                           >
                             {t('brands.edit')}
                           </button>
@@ -892,7 +995,8 @@ export function AdminBrandsPage() {
                             disabled={
                               defaultFavoriteMutation.isPending ||
                               activeMutation.isPending ||
-                              deleteMutation.isPending
+                              deleteMutation.isPending ||
+                              orderBusy
                             }
                             onClick={() =>
                               defaultFavoriteMutation.mutate({
@@ -911,7 +1015,8 @@ export function AdminBrandsPage() {
                             disabled={
                               (activeMutation.isPending &&
                                 activeMutation.variables?.id === brand.id) ||
-                              deleteMutation.isPending
+                              deleteMutation.isPending ||
+                              orderBusy
                             }
                             onClick={() =>
                               activeMutation.mutate({ id: brand.id, next: !brand.isActive })
@@ -927,7 +1032,9 @@ export function AdminBrandsPage() {
                           <button
                             type="button"
                             className="btn btn--ghost btn--sm"
-                            disabled={activeMutation.isPending || deleteMutation.isPending}
+                            disabled={
+                              activeMutation.isPending || deleteMutation.isPending || orderBusy
+                            }
                             onClick={() => setPendingDelete(brand)}
                           >
                             {t('brands.delete')}

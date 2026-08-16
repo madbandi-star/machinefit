@@ -134,6 +134,12 @@ export const adminApi = {
       isDefaultFavorite,
     }),
 
+  moveCatalogBrandSort: (
+    id: string,
+    direction: 'up' | 'down' | 'top' | 'bottom'
+  ) =>
+    apiClient.patch<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/sort-move`, { direction }),
+
   deleteCatalogBrand: (id: string) =>
     apiClient.delete<ApiResponse<{ deleted: true }>>(`/admin/catalog/brands/${id}`),
 
