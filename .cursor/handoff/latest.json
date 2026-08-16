@@ -3,7 +3,7 @@
   "summary": "Workout report email moved from My Page insights into Lab. Lab CCTV submenu (and KO page title) renamed to ???LIVE.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "442a34a4"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",
