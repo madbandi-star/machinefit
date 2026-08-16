@@ -1,30 +1,25 @@
 {
-  "title": "Move workout report email to Lab; rename LIVE menu",
-  "summary": "Workout report email moved from My Page insights into Lab. Lab CCTV submenu (and KO page title) renamed to ???LIVE.",
+  "title": "Move home gym+member selector above notices",
+  "summary": "Home page gym selector and member name now sit directly above the notice banner.",
   "git": {
     "branch": "main",
-    "commit": "442a34a4"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/pages/home/HomePage.tsx"
   ],
   "testFocus": [
-    "My Page: workout report email no longer under insights; appears under Lab",
-    "Lab submenu label is ???LIVE (not CCTV)"
+    "Home (premium+): gym+member row appears above HomeNoticeBanner"
   ],
   "fastChecks": [
-    "rg -n \"WorkoutReportSection|liveDashboard\" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json"
+    "rg -n \"home-gym-selector|HomeNoticeBanner\" frontend/src/pages/home/HomePage.tsx"
   ],
   "productionChecks": [
-    "Pages: open My Page Lab section after Deploy Frontend"
+    "Pages home: confirm order gym/member ? notice"
   ],
   "deploy": {
     "expected": "GitHub Pages FE success"
   },
-  "asIs": "Workout report under insights; Lab LIVE labeled CCTV",
-  "toBe": "Workout report under Lab; LIVE labeled ???LIVE"
+  "asIs": "Gym+member below notice and planned workout",
+  "toBe": "Gym+member immediately above notice banner"
 }

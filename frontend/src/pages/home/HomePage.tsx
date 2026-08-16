@@ -98,15 +98,15 @@ export function HomePage() {
         titleAbsolute
         jsonLd={homeBrandJsonLd()}
       />
-      <HomeNoticeBanner />
-      <HomePlannedWorkoutCard />
-
       {showGymMemberSelectors && (
         <div className="home-gym-selector">
           <GymSelector />
           <MemberSelector />
         </div>
       )}
+
+      <HomeNoticeBanner />
+      <HomePlannedWorkoutCard />
 
       <InstallPromptBanner />
 
