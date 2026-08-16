@@ -14,9 +14,9 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Logged-in user with zero brand favorites ??search brand section shows compact empty row",
-    "Tap row ??Brand favorites page",
-    "With favorites ??chips render as before"
+    "Logged-in user with zero brand favorites: search brand section shows compact empty row",
+    "Tap row opens Brand favorites page",
+    "With favorites, chips render as before"
   ],
   "fastChecks": [
     "rg -n \"brand-filter-empty|filterEmptyCta\" frontend/src/pages/machine-search/MachineSearchPage.tsx frontend/src/styles/machines.css frontend/src/i18n/locales/ko/machines.json"
@@ -28,6 +28,6 @@
   "deploy": {
     "expected": "Frontend Pages only"
   },
-  "asIs": "Dashed dashed box + long path hint + secondary button",
+  "asIs": "Dashed box + long path hint + secondary button",
   "toBe": "Horizontal star nudge link with short copy and Add chip"
 }
