@@ -1,9 +1,9 @@
 {
   "title": "Banner size guide + schedule UX",
-  "summary": "Admin banner edit shows recommended PC 1200×160 / mobile 750×120 sizes; replaced datetime-local with date+time cards, always-on toggle, and quick presets (now / 7d / 30d).",
+  "summary": "Admin banner edit shows recommended PC 1200?60 / mobile 750?20 sizes; replaced datetime-local with date+time cards, always-on toggle, and quick presets (now / 7d / 30d).",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "7ecb595d"
   },
   "changedFiles": [
     "shared/src/constants/banner.ts",
@@ -16,7 +16,7 @@
     "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Admin banner create/edit: size guide shows 1200×160 and 750×120",
+    "Admin banner create/edit: size guide shows 1200?60 and 750?20",
     "Schedule: Always on clears dates; Limited splits date/time; presets work",
     "Save still sends startAt/endAt as before"
   ],
