@@ -3,7 +3,7 @@
   "summary": "Machine search entry defaults to muscle=전체 and brand=맨몸 (BODYWEIGHT). Explicit brand=all keeps brand chip on 전체 without snapping back to bodyweight.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "222e6870"
   },
   "changedFiles": [
     "frontend/src/constants/machine-search-defaults.ts",
