@@ -60,6 +60,20 @@ export function formatHistoryDateHeader(dateKey: string, locale: string): string
   return `${datePart}(${weekday})`;
 }
 
+/** Compact label like `08-15(토)` for glanceable home/list rows. */
+export function formatShortDateWithWeekday(dateKey: string, locale: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return dateKey;
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const date = new Date(y, (m ?? 1) - 1, d ?? 1);
+  if (Number.isNaN(date.getTime())) return dateKey.slice(5);
+  const weekday = date
+    .toLocaleDateString(locale || 'ko', { weekday: 'short' })
+    .replace(/[().]/g, '')
+    .trim();
+  const mmDd = dateKey.slice(5);
+  return weekday ? `${mmDd}(${weekday})` : mmDd;
+}
+
 export function collectMuscleGroupsInOrder<
   T extends { muscleGroup?: string; machineCode?: string; targetMuscleGroup?: string },
 >(items: T[]): string[] {

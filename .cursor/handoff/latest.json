@@ -1,22 +1,20 @@
 {
-  "title": "Home missed-plans: dismiss only",
-  "summary": "Removed Today/Date/Delete actions from the home missed-plans strip; only dismiss remains.",
-  "git": { "branch": "main", "commit": "74dd6d0b" },
+  "title": "Missed plans date shows weekday",
+  "summary": "Home missed-plans date now shows compact MM-DD(weekday), e.g. 08-15(?).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
-    "frontend/src/styles/home.css"
+    "frontend/src/utils/historyDate.ts"
   ],
   "testFocus": [
-    "Home missed strip shows info + dismiss only",
-    "Today/Date/Delete buttons absent",
-    "Dismiss still hides the current missed plan"
+    "Home missed strip date like 08-15(?) for ko locale",
+    "Dismiss still works"
   ],
   "fastChecks": [
-    "rg -n \"move_today|planMissedMoveToday|PlanDatePickerDialog\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx || true",
-    "rg -n \"planMissedDismiss\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
+    "rg -n \"formatShortDateWithWeekday\" frontend/src/utils/historyDate.ts frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
   ],
-  "productionChecks": ["Pages home: missed strip has only dismiss"],
+  "productionChecks": ["Pages home: missed date includes weekday"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Missed strip had Today/Date/Delete/Skip",
-  "toBe": "Missed strip shows info + Skip only"
+  "asIs": "Missed strip showed MM-DD only",
+  "toBe": "Missed strip shows MM-DD(weekday)"
 }

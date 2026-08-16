@@ -12,7 +12,7 @@ import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { dismissForToday, isDismissedToday } from '@/utils/dismissToday';
-import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
+import { getTodayDateKey, normalizeDateKey, formatShortDateWithWeekday } from '@/utils/historyDate';
 import '@/styles/home.css';
 
 const HOME_PLANNED_DISMISS_KEY = 'home-planned-workout';
@@ -58,7 +58,7 @@ export function HomePlannedWorkoutCard() {
 }
 
 export function MissedWorkoutPlansBanner() {
-  const { t } = useTranslation(['machines', 'common']);
+  const { t, i18n } = useTranslation(['machines', 'common']);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
   const { activeMemberId, memberScopeReady } = useActiveMember();
@@ -114,8 +114,7 @@ export function MissedWorkoutPlansBanner() {
   const card = visible[0];
   const moreCount = Math.max(0, visible.length - 1);
   const machineLabel = card.machineName ?? card.machineCode;
-  const dateKey = normalizeDateKey(card.scheduledDate);
-  const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(dateKey) ? dateKey.slice(5) : dateKey;
+  const dateLabel = formatShortDateWithWeekday(normalizeDateKey(card.scheduledDate), i18n.language);
 
   return (
     <section
