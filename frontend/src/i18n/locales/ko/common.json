@@ -63,7 +63,7 @@
   "expand": "펼치기",
   "brandFavorites": {
     "title": "브랜드 즐겨찾기",
-    "subtitle": "자주 쓰는 브랜드를 저장하면 검색 필터에 표시됩니다.",
+    "subtitle": "자주 쓰는 브랜드를 저장하면 검색 필터에 표시됩니다. 신규 계정은 관리자가 지정한 기본 브랜드가 자동으로 추가됩니다.",
     "searchLabel": "브랜드 검색",
     "searchPlaceholder": "브랜드 검색...",
     "mineTitle": "내가 즐겨찾기한 브랜드",

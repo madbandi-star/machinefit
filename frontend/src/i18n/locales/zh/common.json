@@ -54,7 +54,7 @@
   "expand": "展开",
   "brandFavorites": {
     "title": "品牌收藏",
-    "subtitle": "收藏常用品牌后，会显示在搜索筛选中。",
+    "subtitle": "收藏常用品牌后会显示在搜索筛选中。新账号会自动加入管理员设定的默认品牌。",
     "searchLabel": "搜索品牌",
     "searchPlaceholder": "搜索品牌...",
     "mineTitle": "我收藏的品牌",

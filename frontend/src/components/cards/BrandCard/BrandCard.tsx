@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
+import { FavoriteBrandButton } from '@/components/brands/FavoriteBrandButton/FavoriteBrandButton';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/store/auth.store';
 import { getLocalizedName } from '@/utils/localizedName';
 import { useState } from 'react';
 import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
@@ -14,6 +16,7 @@ interface BrandCardProps {
 
 export function BrandCard({ brand }: BrandCardProps) {
   const { i18n } = useTranslation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [logoFailed, setLogoFailed] = useState(false);
   const name = getLocalizedName(brand.name, i18n.language, brand.code);
   const description = brand.description
@@ -21,11 +24,8 @@ export function BrandCard({ brand }: BrandCardProps) {
     : '';
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
 
-  return (
-    <Link
-      to={ROUTES.BRAND_DETAIL.replace(':brandCode', brand.code)}
-      className="card card--interactive brand-card"
-    >
+  const main = (
+    <>
       <div className="brand-card__media">
         {logoUrl && !logoFailed ? (
           <img
@@ -46,6 +46,20 @@ export function BrandCard({ brand }: BrandCardProps) {
         {description ? <p className="brand-card__desc">{description}</p> : null}
         <p className="brand-card__code">{brand.code}</p>
       </div>
-    </Link>
+    </>
+  );
+
+  return (
+    <div className="card card--interactive brand-card-wrap">
+      <Link
+        to={ROUTES.BRAND_DETAIL.replace(':brandCode', brand.code)}
+        className="brand-card"
+      >
+        {main}
+      </Link>
+      {isAuthenticated ? (
+        <FavoriteBrandButton brandId={brand.id} className="brand-card__favorite" />
+      ) : null}
+    </div>
   );
 }

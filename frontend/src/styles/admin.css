@@ -2268,6 +2268,15 @@ table.admin-table .admin-status-pill {
   min-height: 2.4rem;
 }
 
+.admin-catalog-hint {
+  grid-column: 1 / -1;
+  margin: -0.15rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
 .admin-catalog-images {
   display: grid;
   grid-template-columns: 1fr 1fr;

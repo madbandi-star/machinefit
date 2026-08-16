@@ -28,9 +28,11 @@ interface BrandAdminRow {
   country_code: string | null;
   sort_order: number;
   is_active: boolean;
+  is_default_favorite?: boolean;
   created_at: string;
   updated_at: string;
   machine_count: string | number;
+  favorite_count?: string | number;
 }
 
 interface MachineAdminRow {
@@ -75,9 +77,11 @@ function mapBrand(row: BrandAdminRow): Brand {
     countryCode: row.country_code ?? undefined,
     sortOrder: row.sort_order ?? 0,
     isActive: row.is_active,
+    isDefaultFavorite: Boolean(row.is_default_favorite),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     machineCount: Number(row.machine_count ?? 0),
+    favoriteCount: Number(row.favorite_count ?? 0),
   };
 }
 
@@ -170,7 +174,8 @@ export const adminCatalogRepository = {
 
     const result = await pool.query<BrandAdminRow>(
       `SELECT b.*, c.code AS country_code,
-              (SELECT COUNT(*) FROM machines m WHERE m.brand_id = b.id) AS machine_count
+              (SELECT COUNT(*) FROM machines m WHERE m.brand_id = b.id) AS machine_count,
+              (SELECT COUNT(*) FROM user_favorite_brands f WHERE f.brand_id = b.id) AS favorite_count
        FROM brands b
        LEFT JOIN countries c ON c.id = b.country_id
        ${where}
@@ -190,7 +195,8 @@ export const adminCatalogRepository = {
     if (!pool) return null;
     const result = await pool.query<BrandAdminRow>(
       `SELECT b.*, c.code AS country_code,
-              (SELECT COUNT(*) FROM machines m WHERE m.brand_id = b.id) AS machine_count
+              (SELECT COUNT(*) FROM machines m WHERE m.brand_id = b.id) AS machine_count,
+              (SELECT COUNT(*) FROM user_favorite_brands f WHERE f.brand_id = b.id) AS favorite_count
        FROM brands b
        LEFT JOIN countries c ON c.id = b.country_id
        WHERE b.id::text = $1 OR b.code = $1`,
@@ -208,8 +214,8 @@ export const adminCatalogRepository = {
       const result = await pool.query<{ id: string }>(
         `INSERT INTO brands (
            code, name, description, website_url,
-           country_id, sort_order, is_active
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7)
+           country_id, sort_order, is_active, is_default_favorite
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
          RETURNING id`,
         [
           input.code.trim().toUpperCase(),
@@ -219,6 +225,7 @@ export const adminCatalogRepository = {
           countryId,
           input.sortOrder ?? 0,
           input.isActive ?? true,
+          input.isDefaultFavorite ?? false,
         ]
       );
       const created = await this.getBrand(result.rows[0].id);
@@ -248,6 +255,7 @@ export const adminCatalogRepository = {
            country_id = $6,
            sort_order = $7,
            is_active = $8,
+           is_default_favorite = $9,
            updated_at = NOW()
          WHERE id = $1`,
         [
@@ -259,6 +267,7 @@ export const adminCatalogRepository = {
           countryId,
           input.sortOrder ?? 0,
           input.isActive ?? true,
+          input.isDefaultFavorite ?? false,
         ]
       );
     } catch (err: unknown) {
@@ -280,6 +289,20 @@ export const adminCatalogRepository = {
       existing.id,
       isActive,
     ]);
+    const updated = await this.getBrand(existing.id);
+    if (!updated) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+    return updated;
+  },
+
+  async setBrandDefaultFavorite(id: string, isDefaultFavorite: boolean): Promise<Brand> {
+    const pool = getPool();
+    if (!pool) throw new AppError(503, 'DB_UNAVAILABLE', 'Database not configured');
+    const existing = await this.getBrand(id);
+    if (!existing) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
+    await pool.query(
+      'UPDATE brands SET is_default_favorite = $2, updated_at = NOW() WHERE id = $1',
+      [existing.id, isDefaultFavorite]
+    );
     const updated = await this.getBrand(existing.id);
     if (!updated) throw new AppError(404, 'NOT_FOUND', 'Brand not found');
     return updated;

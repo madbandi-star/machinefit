@@ -1,30 +1,29 @@
-# Test handoff — Brand favorites
+# Test handoff — Brand defaults + card stars
 
 ## Summary
-Brand favorites (user↔brand) with My Page manager; search brand filter chips show only favorites. Machine search results are **not** limited by favorites.
+Brand list cards show ★. Admin brands show favorite counts and can mark `is_default_favorite`. New users are seeded once from those defaults on first brand-favorites fetch (search uses that list).
 
 ## Git
 - Branch: `main`
-- Commit: 7abd7b4f
+- Commit: pending
 
 ## Ops required
-1. Apply `database/migrations/141_user_favorite_brands.sql` on Supabase.
-2. Redeploy Render backend (new `/api/v1/brand-favorites`).
+1. Apply `141_user_favorite_brands.sql` (if not yet) and `142_brand_favorite_defaults.sql`.
+2. Redeploy Render backend.
 
 ## Test focus
-1. My Page → 브랜드 즐겨찾기 → ★ toggle + search.
-2. `/machines` brand chips = favorites only (logged in).
-3. 0 favorites → empty CTA; machine list still searchable.
-4. Guest keeps full brand chips.
-5. Logout clears cached favorites (QueryProvider removeQueries).
+1. `/brands` — ★ toggles without opening detail.
+2. Admin brands — meta shows 즐겨찾기 N명; 기본 즐겨찾기 toggle/checkbox.
+3. Brand-new account: search brand chips = admin defaults after first favorites load.
+4. Existing users: not backfilled; clearing all does not re-apply defaults.
 
 ## Fast checks
 ```bash
-rg -n "user_favorite_brands|FavoriteBrandButton|useBrandFavorites" frontend/src backend/server
+rg -n "is_default_favorite|seedDefaultsIfNeeded|brand-card__favorite" frontend/src backend/server database/migrations
 npm run build -w @machinefit/shared
 npx tsc --noEmit -p frontend/tsconfig.json
 ```
 
 ## as-is → to-be
-- **as-is:** Brand filter showed all brands.
-- **to-be:** Logged-in brand filter shows favorite brands only; results unrestricted.
+- **as-is:** No card stars / admin preset / counts.
+- **to-be:** Card ★ + admin counts + new-user default brand seed.

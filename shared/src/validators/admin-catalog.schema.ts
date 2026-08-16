@@ -63,6 +63,7 @@ export const adminBrandUpsertSchema = z.object({
   ),
   sortOrder: z.number().int().min(0).max(999999).optional().default(0),
   isActive: z.boolean().optional().default(true),
+  isDefaultFavorite: z.boolean().optional().default(false),
 });
 
 export const adminMachineListQuerySchema = z.object({

@@ -68,6 +68,10 @@ export const adminCatalogService = {
     return adminCatalogRepository.setBrandActive(id, isActive);
   },
 
+  setBrandDefaultFavorite(id: string, isDefaultFavorite: boolean): Promise<Brand> {
+    return adminCatalogRepository.setBrandDefaultFavorite(id, isDefaultFavorite);
+  },
+
   deleteBrand(id: string): Promise<{ deleted: true }> {
     return adminCatalogRepository.deleteBrand(id);
   },

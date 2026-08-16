@@ -129,6 +129,11 @@ export const adminApi = {
   setCatalogBrandActive: (id: string, isActive: boolean) =>
     apiClient.patch<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/active`, { isActive }),
 
+  setCatalogBrandDefaultFavorite: (id: string, isDefaultFavorite: boolean) =>
+    apiClient.patch<ApiResponse<Brand>>(`/admin/catalog/brands/${id}/default-favorite`, {
+      isDefaultFavorite,
+    }),
+
   deleteCatalogBrand: (id: string) =>
     apiClient.delete<ApiResponse<{ deleted: true }>>(`/admin/catalog/brands/${id}`),
 

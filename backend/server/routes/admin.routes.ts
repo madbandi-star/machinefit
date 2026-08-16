@@ -37,6 +37,10 @@ adminRouter.get('/catalog/brands', adminCatalogController.listBrands);
 adminRouter.post('/catalog/brands', adminCatalogController.createBrand);
 adminRouter.patch('/catalog/brands/:id', adminCatalogController.updateBrand);
 adminRouter.patch('/catalog/brands/:id/active', adminCatalogController.setBrandActive);
+adminRouter.patch(
+  '/catalog/brands/:id/default-favorite',
+  adminCatalogController.setBrandDefaultFavorite
+);
 adminRouter.delete('/catalog/brands/:id', adminCatalogController.deleteBrand);
 adminRouter.post(
   '/catalog/brands/:id/logo',

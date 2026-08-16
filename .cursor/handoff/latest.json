@@ -1,49 +1,41 @@
 {
-  "title": "Brand favorites for search brand filter",
-  "summary": "Users can favorite brands on My Page; search brand chips show only those favorites. Machine search results stay unrestricted.",
+  "title": "Brand card stars + admin default favorites",
+  "summary": "Brand cards show ★; admin brands show favorite counts and can mark default favorites that seed once for new users on first favorites fetch.",
   "git": {
     "branch": "main",
-    "commit": "7abd7b4f"
+    "commit": "pending"
   },
   "changedFiles": [
-    "database/migrations/141_user_favorite_brands.sql",
+    "database/migrations/142_brand_favorite_defaults.sql",
+    "backend/server/repositories/admin-catalog.repository.ts",
     "backend/server/repositories/brand-favorite.repository.ts",
     "backend/server/services/brand-favorite.service.ts",
-    "backend/server/controllers/brand-favorite.controller.ts",
-    "backend/server/routes/brand-favorite.routes.ts",
-    "backend/server/routes/index.ts",
-    "backend/server/services/privacy-retention.service.ts",
-    "shared/src/types/favorite-brand.types.ts",
-    "shared/src/types/index.ts",
-    "frontend/src/api/index.ts",
-    "frontend/src/hooks/useBrandFavorites.ts",
-    "frontend/src/components/brands/FavoriteBrandButton/FavoriteBrandButton.tsx",
-    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/pages/brand-detail/BrandDetailPage.tsx"
+    "backend/server/controllers/admin-catalog.controller.ts",
+    "backend/server/services/admin-catalog.service.ts",
+    "backend/server/routes/admin.routes.ts",
+    "frontend/src/components/cards/BrandCard/BrandCard.tsx",
+    "frontend/src/pages/admin/brands/AdminBrandsPage.tsx",
+    "frontend/src/api/admin.api.ts"
   ],
   "testFocus": [
-    "My Page > 브랜드 즐겨찾기: list all brands, search, star toggle optimistic",
-    "Search /machines: logged-in user sees only favorite brand chips; machine list unchanged",
-    "Zero favorites: empty CTA to brand favorites; search still works",
-    "Guest: full brand chips (previous behavior)",
-    "Logout/login switch clears previous user's favorites from UI"
+    "/brands list: logged-in ★ on each card without navigating",
+    "Admin /admin/brands: favorite count in meta; toggle 기본 즐겨찾기",
+    "New user after migration 142: first search/favorites fetch gets admin defaults",
+    "Existing users not re-seeded; clearing all favorites does not re-seed"
   ],
   "fastChecks": [
-    "rg -n \"user_favorite_brands|brand-favorites|FavoriteBrandButton|useBrandFavorites\" frontend/src backend/server database/migrations",
+    "rg -n \"is_default_favorite|brand_favorites_seeded_at|setCatalogBrandDefaultFavorite|brand-card__favorite\" frontend/src backend/server database/migrations",
     "npm run build -w @machinefit/shared",
     "npx tsc --noEmit -p frontend/tsconfig.json"
   ],
   "productionChecks": [
-    "Apply migration 141 on Supabase",
+    "Apply migrations 141+142 on Supabase",
     "Render backend redeploy",
     "Pages Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages after push; backend needs Render + migration 141"
+    "expected": "Frontend Pages; backend needs Render + migrations 141/142"
   },
-  "asIs": "Search brand chips listed all brands",
-  "toBe": "Logged-in users see only favorited brands in the brand chip filter"
+  "asIs": "No stars on brand cards; no admin default preset; no favorite counts",
+  "toBe": "Stars on brand cards; admin counts + default-favorite toggle; new users seeded once"
 }

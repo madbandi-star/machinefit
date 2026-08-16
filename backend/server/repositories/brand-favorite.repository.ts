@@ -135,4 +135,37 @@ export const brandFavoriteRepository = {
       count: Number(r.cnt) || 0,
     }));
   },
+
+  /** Returns true if this user still needs the admin default-favorite seed. */
+  async needsDefaultSeed(userId: string): Promise<boolean> {
+    const pool = getPool();
+    if (!pool) return false;
+    const result = await pool.query<{ brand_favorites_seeded_at: string | null }>(
+      `SELECT brand_favorites_seeded_at FROM users WHERE id = $1`,
+      [userId]
+    );
+    return result.rows[0] != null && result.rows[0].brand_favorites_seeded_at == null;
+  },
+
+  /** Copy admin default brands into the user once; mark seeded even if none configured. */
+  async seedDefaultsIfNeeded(userId: string): Promise<void> {
+    const pool = getPool();
+    if (!pool) return;
+    if (!(await this.needsDefaultSeed(userId))) return;
+
+    await pool.query(
+      `INSERT INTO user_favorite_brands (user_id, brand_id)
+       SELECT $1, b.id
+       FROM brands b
+       WHERE b.is_default_favorite = TRUE
+         AND b.is_active = TRUE
+       ON CONFLICT (user_id, brand_id) DO NOTHING`,
+      [userId]
+    );
+
+    await pool.query(
+      `UPDATE users SET brand_favorites_seeded_at = NOW(), updated_at = NOW() WHERE id = $1`,
+      [userId]
+    );
+  },
 };

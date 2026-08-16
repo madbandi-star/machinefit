@@ -50,6 +50,7 @@ type BrandFormState = {
   countryCode: string;
   sortOrder: string;
   isActive: boolean;
+  isDefaultFavorite: boolean;
 };
 
 const EMPTY_FORM: BrandFormState = {
@@ -66,6 +67,7 @@ const EMPTY_FORM: BrandFormState = {
   countryCode: '',
   sortOrder: '0',
   isActive: true,
+  isDefaultFavorite: false,
 };
 
 function isAllowedImage(file: File): boolean {
@@ -111,6 +113,7 @@ function toUpsertInput(form: BrandFormState): AdminBrandUpsertInput {
     countryCode: form.countryCode.trim().toUpperCase(),
     sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
     isActive: form.isActive,
+    isDefaultFavorite: form.isDefaultFavorite,
   };
 }
 
@@ -129,6 +132,7 @@ function fromBrand(brand: Brand): BrandFormState {
     countryCode: brand.countryCode ?? '',
     sortOrder: String(brand.sortOrder ?? 0),
     isActive: brand.isActive,
+    isDefaultFavorite: Boolean(brand.isDefaultFavorite),
   };
 }
 
@@ -439,6 +443,43 @@ export function AdminBrandsPage() {
       await invalidate();
       showToast(
         variables.next ? t('brands.enabledSuccess') : t('brands.disabledSuccess'),
+        'success'
+      );
+    },
+    onError: (_error, _vars, context) => {
+      if (context?.previous) {
+        for (const [queryKey, data] of context.previous) {
+          queryClient.setQueryData(queryKey, data);
+        }
+      }
+      showToast(t('error'), 'error');
+    },
+  });
+
+  const defaultFavoriteMutation = useMutation({
+    mutationFn: ({ id, next }: { id: string; next: boolean }) =>
+      adminApi.setCatalogBrandDefaultFavorite(id, next),
+    onMutate: async ({ id, next }) => {
+      const previous = queryClient.getQueriesData({ queryKey: QUERY_KEYS.adminBrands });
+      for (const [queryKey, cached] of previous) {
+        if (!cached || typeof cached !== 'object' || !('items' in cached)) continue;
+        const data = cached as { items: Brand[]; meta: unknown };
+        queryClient.setQueryData(queryKey, {
+          ...data,
+          items: data.items.map((item) =>
+            item.id === id ? { ...item, isDefaultFavorite: next } : item
+          ),
+        });
+      }
+      return { previous };
+    },
+    onSuccess: async (response, variables) => {
+      syncBrandCaches(response.data.data, 'upsert');
+      await invalidate();
+      showToast(
+        variables.next
+          ? t('brands.defaultFavoriteOnSuccess')
+          : t('brands.defaultFavoriteOffSuccess'),
         'success'
       );
     },
@@ -819,6 +860,8 @@ export function AdminBrandsPage() {
                             {brand.code}
                             {brand.countryCode ? ` · ${brand.countryCode}` : ''}
                             {` · ${t('brands.machinesCount', { count: brand.machineCount ?? 0 })}`}
+                            {` · ${t('brands.favoritesCount', { count: brand.favoriteCount ?? 0 })}`}
+                            {brand.isDefaultFavorite ? ` · ${t('brands.defaultFavoriteBadge')}` : ''}
                             {` · #${brand.sortOrder ?? 0}`}
                           </span>
                         </span>
@@ -842,6 +885,25 @@ export function AdminBrandsPage() {
                             disabled={activeMutation.isPending || deleteMutation.isPending}
                           >
                             {t('brands.edit')}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn--ghost btn--sm"
+                            disabled={
+                              defaultFavoriteMutation.isPending ||
+                              activeMutation.isPending ||
+                              deleteMutation.isPending
+                            }
+                            onClick={() =>
+                              defaultFavoriteMutation.mutate({
+                                id: brand.id,
+                                next: !brand.isDefaultFavorite,
+                              })
+                            }
+                          >
+                            {brand.isDefaultFavorite
+                              ? t('brands.defaultFavoriteOff')
+                              : t('brands.defaultFavoriteOn')}
                           </button>
                           <button
                             type="button"
@@ -1040,6 +1102,17 @@ export function AdminBrandsPage() {
                     />
                     <span>{t('active')}</span>
                   </label>
+                  <label className="admin-catalog-check">
+                    <input
+                      type="checkbox"
+                      checked={form.isDefaultFavorite}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, isDefaultFavorite: e.target.checked }))
+                      }
+                    />
+                    <span>{t('brands.defaultFavorite')}</span>
+                  </label>
+                  <p className="admin-catalog-hint">{t('brands.defaultFavoriteHint')}</p>
                 </div>
               </section>
 

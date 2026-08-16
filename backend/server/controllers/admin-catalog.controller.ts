@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
 import {
   adminBrandListQuerySchema,
   adminBrandUpsertSchema,
@@ -52,6 +53,19 @@ export async function setBrandActive(req: Request, res: Response, next: NextFunc
   try {
     const input = adminToggleActiveBodySchema.parse(req.body);
     const data = await adminCatalogService.setBrandActive(getParam(req.params.id), input.isActive);
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function setBrandDefaultFavorite(req: Request, res: Response, next: NextFunction) {
+  try {
+    const input = z.object({ isDefaultFavorite: z.boolean() }).parse(req.body);
+    const data = await adminCatalogService.setBrandDefaultFavorite(
+      getParam(req.params.id),
+      input.isDefaultFavorite
+    );
     res.json({ success: true, data });
   } catch (error) {
     next(error);

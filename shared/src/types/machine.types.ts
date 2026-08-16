@@ -19,6 +19,10 @@ export interface Brand {
   updatedAt?: string;
   /** Admin: linked machine count. */
   machineCount?: number;
+  /** Admin: how many users favorited this brand. */
+  favoriteCount?: number;
+  /** Admin: included in new-user default favorites preset. */
+  isDefaultFavorite?: boolean;
 }
 
 export interface Machine {
