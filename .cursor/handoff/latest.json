@@ -7,9 +7,9 @@
     "frontend/src/styles/home.css"
   ],
   "testFocus": [
-    "Home missed strip shows info + ë¬´ì‹œ only",
-    "?¤ëŠ˜ë¡?? ì§œ/?? œ buttons absent",
-    "ë¬´ì‹œ still dismisses the current missed plan"
+    "Home missed strip shows info + dismiss only",
+    "Today/Date/Delete buttons absent",
+    "Dismiss still hides the current missed plan"
   ],
   "fastChecks": [
     "rg -n \"move_today|planMissedMoveToday|PlanDatePickerDialog\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx || true",
