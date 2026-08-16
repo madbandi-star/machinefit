@@ -1,40 +1,29 @@
 {
-  "title": "Admin brand display-order arrows",
-  "summary": "Admin brands list shows sortOrder on each row and supports top/up/down/bottom reorder via PATCH /admin/catalog/brands/:id/sort-move (renumbers global sort_order).",
+  "title": "Search defaults: all muscles + bodyweight brand",
+  "summary": "Machine search entry defaults to muscle=전체 and brand=맨몸 (BODYWEIGHT). Explicit brand=all keeps brand chip on 전체 without snapping back to bodyweight.",
   "git": {
     "branch": "main",
-    "commit": "c7b087bd"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/validators/admin-catalog.schema.ts",
-    "backend/server/repositories/admin-catalog.repository.ts",
-    "backend/server/services/admin-catalog.service.ts",
-    "backend/server/controllers/admin-catalog.controller.ts",
-    "backend/server/routes/admin.routes.ts",
-    "frontend/src/api/admin.api.ts",
-    "frontend/src/pages/admin/brands/AdminBrandsPage.tsx",
-    "frontend/src/styles/admin-glance.css",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "frontend/src/constants/machine-search-defaults.ts",
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx"
   ],
   "testFocus": [
-    "Admin → Brands: each row shows numeric display order",
-    "Arrow buttons: top / up / down / bottom change order and refresh list",
-    "Search/My Brands / Machine search chips follow new order after Render + Pages"
+    "Open /machines with no query: muscle 전체 + brand 맨몸 selected",
+    "Select brand 전체 stays on 전체 (URL brand=all)",
+    "Deep link ?brand=CYBEX still opens Cybex"
   ],
   "fastChecks": [
-    "rg -n \"sort-move|moveBrandSort|ag-brand-order\" backend/server frontend/src"
+    "rg -n \"DEFAULT_SEARCH_BRAND_CODE|brand === 'all'|BODYWEIGHT\" frontend/src/constants/machine-search-defaults.ts frontend/src/pages/machine-search/MachineSearchPage.tsx"
   ],
   "productionChecks": [
-    "Deploy Backend to Render success (required)",
     "Pages Deploy Frontend success",
-    "Hard refresh admin brands"
+    "Hard refresh search entry"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "sortOrder only in meta text / edit form",
-  "toBe": "Visible order badge + one-click reorder arrows"
+  "asIs": "Search opened with all muscles and all brands",
+  "toBe": "Search opens with all muscles and bodyweight brand"
 }

@@ -7,10 +7,10 @@ import { BRAND_CODES } from '@machinefit/shared';
 export const DEFAULT_SEARCH_MUSCLE_GROUP: string | null = null;
 
 /**
- * Default brand filter on machine search: all brands.
- * `null` means no brandCode query param (전체).
+ * Default brand filter when entering machine search with no `brand` param.
+ * Users can still pick “전체” (`brand=all` → null).
  */
-export const DEFAULT_SEARCH_BRAND_CODE: string | null = null;
+export const DEFAULT_SEARCH_BRAND_CODE: string | null = BRAND_CODES.BODYWEIGHT;
 
 /** Brand code used for the short “맨몸” chip label. */
 export const SEARCH_BODYWEIGHT_BRAND_CODE = BRAND_CODES.BODYWEIGHT;

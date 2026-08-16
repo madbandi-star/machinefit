@@ -50,7 +50,9 @@ function resolveMuscleParam(raw: string | null): string | null {
 
 function resolveBrandParam(raw: string | null): string | null {
   const trimmed = raw?.trim();
-  if (!trimmed || trimmed === 'all') return DEFAULT_SEARCH_BRAND_CODE;
+  // Explicit “전체” — do not fall back to the entry default.
+  if (trimmed === 'all') return null;
+  if (!trimmed) return DEFAULT_SEARCH_BRAND_CODE;
   return trimmed;
 }
 
@@ -94,7 +96,7 @@ export function MachineSearchPage() {
     setBrandCode(resolveBrandParam(searchParams.get('brand')));
   }, [searchParams]);
 
-  // Drop legacy forced muscle=back so “전체” is the default. Preserve planDate.
+  // Default entry: muscle=전체 (omit), brand=맨몸. Keep brand=all as explicit “전체”.
   useEffect(() => {
     setSearchParams(
       (prev) => {
@@ -104,9 +106,11 @@ export function MachineSearchPage() {
           next.delete('muscle');
           changed = true;
         }
-        if (next.get('brand') === 'all') {
-          next.delete('brand');
-          changed = true;
+        if (!next.has('brand')) {
+          if (DEFAULT_SEARCH_BRAND_CODE) {
+            next.set('brand', DEFAULT_SEARCH_BRAND_CODE);
+            changed = true;
+          }
         }
         next.delete('scope');
         return changed ? next : prev;
@@ -145,7 +149,9 @@ export function MachineSearchPage() {
         const brand = patch.brand !== undefined ? patch.brand : brandCode;
         if (muscle) next.set('muscle', muscle);
         else next.delete('muscle');
-        if (brand) next.set('brand', brand);
+        // null = 전체 → keep brand=all so entry default (맨몸) is not re-applied.
+        if (brand === null) next.set('brand', 'all');
+        else if (brand) next.set('brand', brand);
         else next.delete('brand');
         next.delete('scope');
         return next;
