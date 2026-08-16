@@ -3,7 +3,7 @@
   "summary": "Machine search BrandFilterChips now order by admin brand display order (sortOrder) instead of the hardcoded BODYWEIGHT/FREE_WEIGHT/… list.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a4a9a78f"
   },
   "changedFiles": [
     "frontend/src/utils/sortBrandsForSearch.ts"
