@@ -1,44 +1,34 @@
 {
-  "title": "Global duplicate-request / double-submit guards",
-  "summary": "Added useAsyncAction + axios 429/Retry-After handling, in-memory Idempotency-Key middleware for push/checkout, and stricter push rate limit. Wired billing and push send paths.",
+  "title": "Brand favorites page UI refresh",
+  "summary": "My Page brand favorites redesigned for scanability: summary count, logo grid for mine, searchable catalog tiles with whole-tile star toggle.",
   "git": {
     "branch": "main",
-    "commit": "a6613294"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/hooks/useAsyncAction.ts",
-    "frontend/src/utils/asyncActionGuard.ts",
-    "frontend/src/services/http/axios-client.ts",
-    "frontend/src/utils/apiErrorCatalog.ts",
-    "frontend/src/app/providers/QueryProvider.tsx",
-    "frontend/src/components/my-page/SubscriptionPlanCard/SubscriptionPlanCard.tsx",
-    "frontend/src/components/premium/PremiumUpgradeModal/PremiumUpgradeModal.tsx",
-    "frontend/src/pages/push/PushComposePage.tsx",
-    "backend/server/middlewares/idempotency.middleware.ts",
-    "backend/server/middlewares/rate-limit.middleware.ts",
-    "backend/server/middlewares/error.middleware.ts",
-    "backend/server/routes/push-notification.routes.ts",
-    "backend/server/routes/billing.routes.ts",
-    "backend/server/app.ts"
+    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
+    "frontend/src/styles/brand-favorites.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Mash checkout/trial buttons — only one request; failure cools 3s",
-    "Push send mash — Idempotency-Key + guard; no duplicate campaigns",
-    "429 shows rateLimit copy; Retry-After respected in cooldown",
-    "Brand ★ mash — single mutate; error uses catalog"
+    "My Page → Brand favorites: summary count matches starred brands",
+    "Tap tile to add/remove; mine grid updates; search filters catalog",
+    "Empty state shows hint to pick brands below"
   ],
   "fastChecks": [
-    "npx vite-node frontend/src/utils/asyncActionGuard.test.ts",
     "npx tsc --noEmit -p frontend/tsconfig.json",
-    "rg -n \"useAsyncAction|idempotencyMiddleware|Idempotency-Key|pushSendRateLimit\" frontend/src backend/server"
+    "rg -n \"brand-favorites__tile|summaryCount\" frontend/src/pages/brand-favorites frontend/src/styles/brand-favorites.css"
   ],
   "productionChecks": [
-    "Render backend redeploy (idempotency + Retry-After)",
-    "Pages Deploy Frontend success"
+    "Pages Deploy Frontend success",
+    "Hard refresh My Page brand favorites"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Many writes only used isPending; 429 looked like generic submitFailed; push send had no idempotency",
-  "toBe": "Shared action guard + optional Idempotency-Key on critical writes; clearer 429/network errors"
+  "asIs": "Long duplicate list rows with muted titles and brand codes were hard to scan",
+  "toBe": "Summary + mine logo grid + searchable catalog tiles; whole tile toggles favorite"
 }

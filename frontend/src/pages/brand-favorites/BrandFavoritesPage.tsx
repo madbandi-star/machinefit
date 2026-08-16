@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Search, Star } from 'lucide-react';
 import type { Brand } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
-import { FavoriteBrandButton } from '@/components/brands/FavoriteBrandButton/FavoriteBrandButton';
 import { brandApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { useBrandFavorites } from '@/hooks/useBrandFavorites';
+import { useBrandFavorites, useBrandFavoriteToggle } from '@/hooks/useBrandFavorites';
 import { getLocalizedName } from '@/utils/localizedName';
 import { resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/brand-favorites.css';
@@ -17,7 +17,7 @@ function brandMatchesQuery(brand: Brand, q: string, language: string): boolean {
   const name = getLocalizedName(brand.name, language, brand.code).toLowerCase();
   const en = brand.name?.en?.toLowerCase() ?? '';
   const code = brand.code.toLowerCase();
-  return name.includes(q) || en.includes(q) || code.toLowerCase().includes(q);
+  return name.includes(q) || en.includes(q) || code.includes(q);
 }
 
 export function BrandFavoritesPage() {
@@ -41,11 +41,10 @@ export function BrandFavoritesPage() {
     const byId = new Map(brands.map((b) => [b.id, b]));
     return favorites
       .map((f) => byId.get(f.brandId))
-      .filter((b): b is Brand => Boolean(b))
-      .filter((b) => brandMatchesQuery(b, normalizedQuery, i18n.language));
-  }, [brands, favorites, normalizedQuery, i18n.language]);
+      .filter((b): b is Brand => Boolean(b));
+  }, [brands, favorites]);
 
-  const allBrandsFiltered = useMemo(() => {
+  const catalogBrands = useMemo(() => {
     return [...brands]
       .filter((b) => brandMatchesQuery(b, normalizedQuery, i18n.language))
       .sort((a, b) => {
@@ -59,51 +58,83 @@ export function BrandFavoritesPage() {
   }, [brands, favoriteIds, normalizedQuery, i18n.language]);
 
   const loading = brandsLoading || favoritesLoading;
+  const favoriteCount = favoriteBrands.length;
 
   return (
     <PageShell title={t('brandFavorites.title')} subtitle={t('brandFavorites.subtitle')}>
       <div className="brand-favorites">
-        <label className="brand-favorites__search">
-          <span className="visually-hidden">{t('brandFavorites.searchLabel')}</span>
-          <input
-            type="search"
-            className="brand-favorites__search-input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('brandFavorites.searchPlaceholder')}
-            autoComplete="off"
-          />
-        </label>
+        <div className="brand-favorites__summary" aria-live="polite">
+          <span className="brand-favorites__summary-star" aria-hidden>
+            <Star size={16} strokeWidth={2.25} fill="currentColor" />
+          </span>
+          <p className="brand-favorites__summary-text">
+            {t('brandFavorites.summaryCount', { count: favoriteCount })}
+          </p>
+        </div>
 
         <section className="brand-favorites__section" aria-labelledby="brand-fav-mine-title">
-          <h2 id="brand-fav-mine-title" className="brand-favorites__section-title">
-            {t('brandFavorites.mineTitle')}
-          </h2>
+          <div className="brand-favorites__section-head">
+            <h2 id="brand-fav-mine-title" className="brand-favorites__section-title">
+              {t('brandFavorites.mineTitle')}
+            </h2>
+            {!loading && favoriteCount > 0 ? (
+              <span className="brand-favorites__badge">{favoriteCount}</span>
+            ) : null}
+          </div>
+
           {loading ? (
-            <Skeleton count={2} height={56} />
+            <div className="brand-favorites__mine-grid" aria-hidden>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} height={92} />
+              ))}
+            </div>
           ) : favoriteBrands.length === 0 ? (
-            <p className="brand-favorites__empty">{t('brandFavorites.empty')}</p>
+            <div className="brand-favorites__empty-panel">
+              <p className="brand-favorites__empty-title">{t('brandFavorites.empty')}</p>
+              <p className="brand-favorites__empty-hint">{t('brandFavorites.emptyHint')}</p>
+            </div>
           ) : (
-            <ul className="brand-favorites__list">
+            <ul className="brand-favorites__mine-grid">
               {favoriteBrands.map((brand) => (
-                <BrandFavoriteRow key={brand.id} brand={brand} />
+                <BrandFavoriteTile key={brand.id} brand={brand} variant="mine" />
               ))}
             </ul>
           )}
         </section>
 
         <section className="brand-favorites__section" aria-labelledby="brand-fav-all-title">
-          <h2 id="brand-fav-all-title" className="brand-favorites__section-title">
-            {t('brandFavorites.allTitle')}
-          </h2>
+          <div className="brand-favorites__section-head">
+            <h2 id="brand-fav-all-title" className="brand-favorites__section-title">
+              {t('brandFavorites.allTitle')}
+            </h2>
+          </div>
+
+          <label className="brand-favorites__search">
+            <Search className="brand-favorites__search-icon" size={18} aria-hidden />
+            <span className="visually-hidden">{t('brandFavorites.searchLabel')}</span>
+            <input
+              type="search"
+              className="brand-favorites__search-input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('brandFavorites.searchPlaceholder')}
+              autoComplete="off"
+              enterKeyHint="search"
+            />
+          </label>
+
           {loading ? (
-            <Skeleton count={6} height={56} />
-          ) : allBrandsFiltered.length === 0 ? (
+            <div className="brand-favorites__catalog-grid" aria-hidden>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} height={76} />
+              ))}
+            </div>
+          ) : catalogBrands.length === 0 ? (
             <p className="brand-favorites__empty">{t('brandFavorites.noSearchResults')}</p>
           ) : (
-            <ul className="brand-favorites__list">
-              {allBrandsFiltered.map((brand) => (
-                <BrandFavoriteRow key={brand.id} brand={brand} />
+            <ul className="brand-favorites__catalog-grid">
+              {catalogBrands.map((brand) => (
+                <BrandFavoriteTile key={brand.id} brand={brand} variant="catalog" />
               ))}
             </ul>
           )}
@@ -113,27 +144,50 @@ export function BrandFavoritesPage() {
   );
 }
 
-function BrandFavoriteRow({ brand }: { brand: Brand }) {
-  const { i18n } = useTranslation();
+function BrandFavoriteTile({
+  brand,
+  variant,
+}: {
+  brand: Brand;
+  variant: 'mine' | 'catalog';
+}) {
+  const { i18n, t } = useTranslation('common');
   const name = getLocalizedName(brand.name, i18n.language, brand.code);
   const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
+  const { isFavorited, toggle, isPending, canToggle } = useBrandFavoriteToggle(brand.id);
 
   return (
-    <li className="brand-favorites__row">
-      <div className="brand-favorites__row-main">
+    <li>
+      <button
+        type="button"
+        className={`brand-favorites__tile brand-favorites__tile--${variant}${
+          isFavorited ? ' brand-favorites__tile--on' : ''
+        }`}
+        onClick={toggle}
+        disabled={!canToggle || isPending}
+        aria-pressed={isFavorited}
+        aria-label={
+          isFavorited
+            ? t('brandFavorites.removeNamed', { name })
+            : t('brandFavorites.addNamed', { name })
+        }
+      >
+        <span className="brand-favorites__tile-star" aria-hidden>
+          <Star
+            size={variant === 'mine' ? 14 : 15}
+            strokeWidth={2.25}
+            fill={isFavorited ? 'currentColor' : 'none'}
+          />
+        </span>
         {logoUrl ? (
-          <img src={logoUrl} alt="" className="brand-favorites__logo" loading="lazy" />
+          <img src={logoUrl} alt="" className="brand-favorites__tile-logo" loading="lazy" />
         ) : (
-          <span className="brand-favorites__logo-fallback" aria-hidden>
+          <span className="brand-favorites__tile-fallback" aria-hidden>
             {name.slice(0, 1)}
           </span>
         )}
-        <div className="brand-favorites__meta">
-          <p className="brand-favorites__name">{name}</p>
-          <p className="brand-favorites__code">{brand.code}</p>
-        </div>
-      </div>
-      <FavoriteBrandButton brandId={brand.id} />
+        <span className="brand-favorites__tile-name">{name}</span>
+      </button>
     </li>
   );
 }
