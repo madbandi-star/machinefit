@@ -25,6 +25,7 @@ import { EasyWizardShell } from '@/components/easy-mode/EasyWizardShell';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
@@ -885,7 +886,11 @@ export function EasyWizardPage() {
                 {recentMachines.length > 0 ? (
                   <div className="easy-list">
                     <p className="easy-list__label">{t('easyMode.recent')}</p>
-                    <div className="easy-thumb-row">
+                    <ScrollCarousel
+                      className="easy-thumb-row-scroller"
+                      scrollerClassName="easy-thumb-row"
+                      scrollerProps={{ 'aria-label': t('easyMode.recent') }}
+                    >
                       {recentMachines.map((m) => (
                         <button
                           key={m.code}
@@ -904,14 +909,18 @@ export function EasyWizardPage() {
                           <span>{m.name}</span>
                         </button>
                       ))}
-                    </div>
+                    </ScrollCarousel>
                   </div>
                 ) : null}
 
                 {(favoritesQuery.data?.length ?? 0) > 0 ? (
                   <div className="easy-list">
                     <p className="easy-list__label">{t('easyMode.favorites')}</p>
-                    <div className="easy-thumb-row">
+                    <ScrollCarousel
+                      className="easy-thumb-row-scroller"
+                      scrollerClassName="easy-thumb-row"
+                      scrollerProps={{ 'aria-label': t('easyMode.favorites') }}
+                    >
                       {(favoritesQuery.data ?? []).slice(0, 6).map((m) => (
                         <button
                           key={m.id}
@@ -932,7 +941,7 @@ export function EasyWizardPage() {
                           <span>{m.machineName}</span>
                         </button>
                       ))}
-                    </div>
+                    </ScrollCarousel>
                   </div>
                 ) : null}
               </>

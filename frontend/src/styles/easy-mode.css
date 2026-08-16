@@ -2387,6 +2387,11 @@
   text-align: center;
 }
 
+.easy-thumb-row-scroller {
+  position: relative;
+  min-width: 0;
+}
+
 .easy-thumb-row {
   display: flex;
   align-items: stretch;
