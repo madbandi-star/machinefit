@@ -1,7 +1,12 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { PrivacyRightsRequest } from '@machinefit/shared';
+import {
+  PRIVACY_CORRECTION_FIELD_KEYS,
+  PRIVACY_DELETION_CATEGORIES,
+  type PrivacyDeletionCategory,
+  type PrivacyRightsRequest,
+} from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -37,6 +42,18 @@ const TYPE_OPTIONS: Array<Exclude<TypeFilter, ''>> = [
   'consent_withdraw',
 ];
 
+function requestedCategories(r: PrivacyRightsRequest): PrivacyDeletionCategory[] {
+  const raw = r.payload?.categories;
+  if (Array.isArray(raw) && raw.length > 0) {
+    return raw
+      .map(String)
+      .filter((c): c is PrivacyDeletionCategory =>
+        (PRIVACY_DELETION_CATEGORIES as readonly string[]).includes(c)
+      );
+  }
+  return [...PRIVACY_DELETION_CATEGORIES];
+}
+
 function payloadLines(r: PrivacyRightsRequest): Array<{ label: string; value: string }> {
   const p = r.payload ?? {};
   const lines: Array<{ label: string; value: string }> = [];
@@ -51,6 +68,15 @@ function payloadLines(r: PrivacyRightsRequest): Array<{ label: string; value: st
   }
   if (p.consentTarget != null && String(p.consentTarget)) {
     lines.push({ label: 'consent', value: String(p.consentTarget) });
+  }
+  if (Array.isArray(p.categories) && p.categories.length) {
+    lines.push({ label: 'categories', value: p.categories.map(String).join(', ') });
+  }
+  if (Array.isArray(p.categoriesDeleted) && p.categoriesDeleted.length) {
+    lines.push({
+      label: 'categoriesDeleted',
+      value: p.categoriesDeleted.map(String).join(', '),
+    });
   }
   if (Array.isArray(p.deletable) && p.deletable.length) {
     lines.push({ label: 'deletable', value: p.deletable.map(String).join(', ') });
@@ -90,6 +116,10 @@ export function AdminPrivacyRightsPage() {
   const [applyCorrection, setApplyCorrection] = useState(true);
   const [applyProcessingStop, setApplyProcessingStop] = useState(true);
   const [pendingDeleteIds, setPendingDeleteIds] = useState<string[] | null>(null);
+  const [fulfillCategories, setFulfillCategories] = useState<PrivacyDeletionCategory[]>([]);
+  const [fulfillFieldKey, setFulfillFieldKey] = useState<string>('displayName');
+  const [fulfillCorrectionValue, setFulfillCorrectionValue] = useState('');
+  const [fulfillMarkCompleted, setFulfillMarkCompleted] = useState(true);
 
   const listQuery = useQuery({
     queryKey: ['admin-privacy-rights'],
@@ -154,6 +184,18 @@ export function AdminPrivacyRightsPage() {
     () => allRows.find((r) => r.id === detailId) ?? null,
     [allRows, detailId]
   );
+
+  useEffect(() => {
+    if (!detail) return;
+    if (detail.requestType === 'deletion') {
+      setFulfillCategories(requestedCategories(detail));
+    }
+    if (detail.requestType === 'correction') {
+      setFulfillFieldKey(String(detail.payload?.fieldKey ?? 'displayName'));
+      setFulfillCorrectionValue(String(detail.payload?.requestedValue ?? ''));
+    }
+  }, [detail]);
+
   const allSelected = rows.length > 0 && rows.every((r) => selectedIds.includes(r.id));
   const selectedRows = useMemo(
     () => allRows.filter((r) => selectedIds.includes(r.id)),
@@ -229,10 +271,38 @@ export function AdminPrivacyRightsPage() {
     onError: () => showToast(t('errors.submitFailed'), 'error'),
   });
 
+  const fulfillMutation = useMutation({
+    mutationFn: () => {
+      if (!detail) throw new Error('No detail');
+      if (detail.requestType === 'deletion') {
+        return complianceApi.adminFulfillRightsRequest(detail.id, {
+          mode: 'delete_categories',
+          categories: fulfillCategories,
+          markCompleted: fulfillMarkCompleted,
+          resultMessage: resultMessage || undefined,
+        });
+      }
+      return complianceApi.adminFulfillRightsRequest(detail.id, {
+        mode: 'apply_correction',
+        fieldKey: fulfillFieldKey as (typeof PRIVACY_CORRECTION_FIELD_KEYS)[number],
+        correctionValue: fulfillCorrectionValue,
+        markCompleted: fulfillMarkCompleted,
+        resultMessage: resultMessage || undefined,
+      });
+    },
+    onSuccess: () => {
+      invalidate();
+      showToast(t('compliance.rights.admin.fulfillSaved'), 'success');
+      if (fulfillMarkCompleted) clearSelection();
+    },
+    onError: () => showToast(t('errors.submitFailed'), 'error'),
+  });
+
   const busy =
     updateMutation.isPending ||
     bulkUpdateMutation.isPending ||
-    deleteMutation.isPending;
+    deleteMutation.isPending ||
+    fulfillMutation.isPending;
 
   const closeDetail = useCallback(() => {
     if (busy) return;
@@ -737,6 +807,98 @@ export function AdminPrivacyRightsPage() {
                       {detail.rejectionReason}
                     </p>
                   ) : null}
+                </div>
+              ) : null}
+
+              {(detail.requestType === 'deletion' ||
+                detail.requestType === 'correction') &&
+              detail.status !== 'cancelled' &&
+              detail.status !== 'rejected' ? (
+                <div className="apr-fulfill">
+                  <h4>{t('compliance.rights.admin.fulfillTitle')}</h4>
+                  <p className="apr-fulfill__hint">
+                    {t('compliance.rights.admin.fulfillHint')}
+                  </p>
+
+                  {detail.requestType === 'deletion' ? (
+                    <div className="apr-fulfill__cats">
+                      {requestedCategories(detail).map((key) => {
+                        const checked = fulfillCategories.includes(key);
+                        return (
+                          <label key={key} className="apr-fulfill__check">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              disabled={busy}
+                              onChange={() => {
+                                setFulfillCategories((prev) =>
+                                  checked
+                                    ? prev.filter((c) => c !== key)
+                                    : [...prev, key]
+                                );
+                              }}
+                            />
+                            <span>{t(`compliance.rights.inventory.${key}`)}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="apr-fulfill__correction">
+                      <label className="apr-field">
+                        <span>{t('compliance.rights.correctionField')}</span>
+                        <select
+                          value={fulfillFieldKey}
+                          disabled={busy}
+                          onChange={(e) => setFulfillFieldKey(e.target.value)}
+                        >
+                          {PRIVACY_CORRECTION_FIELD_KEYS.map((key) => (
+                            <option key={key} value={key}>
+                              {t(`compliance.rights.correctionFields.${key}`, {
+                                defaultValue: key,
+                              })}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="apr-field">
+                        <span>{t('compliance.rights.correctionRequested')}</span>
+                        <input
+                          value={fulfillCorrectionValue}
+                          disabled={busy}
+                          onChange={(e) => setFulfillCorrectionValue(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                  )}
+
+                  <label className="apr-fulfill__check">
+                    <input
+                      type="checkbox"
+                      checked={fulfillMarkCompleted}
+                      disabled={busy}
+                      onChange={(e) => setFulfillMarkCompleted(e.target.checked)}
+                    />
+                    <span>{t('compliance.rights.admin.fulfillMarkCompleted')}</span>
+                  </label>
+
+                  <button
+                    type="button"
+                    className="btn btn--primary"
+                    disabled={
+                      busy ||
+                      (detail.requestType === 'deletion' &&
+                        fulfillCategories.length === 0) ||
+                      (detail.requestType === 'correction' &&
+                        fulfillFieldKey !== 'other' &&
+                        !fulfillCorrectionValue.trim())
+                    }
+                    onClick={() => fulfillMutation.mutate()}
+                  >
+                    {detail.requestType === 'deletion'
+                      ? t('compliance.rights.admin.fulfillDeleteCta')
+                      : t('compliance.rights.admin.fulfillCorrectCta')}
+                  </button>
                 </div>
               ) : null}
 

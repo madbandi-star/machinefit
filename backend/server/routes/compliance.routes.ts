@@ -124,3 +124,9 @@ complianceRouter.patch(
   requireMinRole(Role.ADMIN),
   complianceController.adminUpdatePrivacyRightsRequest
 );
+complianceRouter.post(
+  '/admin/privacy-rights/requests/:requestId/fulfill',
+  authMiddleware,
+  requireMinRole(Role.ADMIN),
+  complianceController.adminFulfillPrivacyRightsRequest
+);

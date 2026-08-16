@@ -226,6 +226,7 @@ export const privacyRightsRepository = {
       consentTarget: input.consentTarget,
       acknowledgedInventory: input.acknowledgedInventory,
       confirmed: input.confirmed,
+      categories: input.categories,
       ...(extras?.payload ?? {}),
     };
     const subject =
@@ -289,6 +290,22 @@ export const privacyRightsRepository = {
     );
     const row = rows[0];
     if (!row) return null;
+    return this.getById(requestId);
+  },
+
+  async mergePayload(
+    requestId: string,
+    payload: Record<string, unknown>
+  ): Promise<PrivacyRightsRequest | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    await pool.query(
+      `UPDATE privacy_rights_requests
+       SET payload = $2::jsonb,
+           updated_at = NOW()
+       WHERE id = $1`,
+      [requestId, JSON.stringify(payload)]
+    );
     return this.getById(requestId);
   },
 

@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
+  PRIVACY_CORRECTION_FIELD_KEYS,
+  PRIVACY_DELETION_CATEGORIES,
   PRIVACY_RIGHTS_USER_CANCELLABLE_TYPES,
+  type PrivacyDeletionCategory,
   type PrivacyRightsRequest,
 } from '@machinefit/shared';
 import { GuideProse } from '@/components/content/GuideProse/GuideProse';
@@ -78,6 +81,9 @@ export function PrivacyRightsPage() {
   const [correctionReason, setCorrectionReason] = useState('');
   const [deletionAck, setDeletionAck] = useState(false);
   const [deletionConfirm, setDeletionConfirm] = useState(false);
+  const [deletionCategories, setDeletionCategories] = useState<PrivacyDeletionCategory[]>(
+    () => [...PRIVACY_DELETION_CATEGORIES]
+  );
   const [stopConfirm, setStopConfirm] = useState(false);
   const [openExercise, setOpenExercise] = useState<
     'correction' | 'deletion' | 'stop' | null
@@ -392,10 +398,13 @@ export function PrivacyRightsPage() {
                         value={correctionField}
                         onChange={(e) => setCorrectionField(e.target.value)}
                       >
-                        <option value="displayName">
-                          {t('auth.displayNamePlaceholder')}
-                        </option>
-                        <option value="other">{t('compliance.rights.correctionOther')}</option>
+                        {PRIVACY_CORRECTION_FIELD_KEYS.map((key) => (
+                          <option key={key} value={key}>
+                            {t(`compliance.rights.correctionFields.${key}`, {
+                              defaultValue: key,
+                            })}
+                          </option>
+                        ))}
                       </select>
                     </label>
                     <label className="pr-field">
@@ -483,10 +492,29 @@ export function PrivacyRightsPage() {
                   <div className="pr-inventory">
                     <div className="pr-inventory__col">
                       <h4>{t('compliance.rights.deletionDeletableTitle')}</h4>
-                      <ul>
-                        {(purposes?.deletionInventory.deletable ?? []).map((key) => (
-                          <li key={key}>{t(`compliance.rights.inventory.${key}`)}</li>
-                        ))}
+                      <ul className="pr-inventory__checks">
+                        {(purposes?.deletionInventory.deletable ?? []).map((key) => {
+                          const cat = key as PrivacyDeletionCategory;
+                          const checked = deletionCategories.includes(cat);
+                          return (
+                            <li key={key}>
+                              <label className="pr-check pr-check--inline">
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() => {
+                                    setDeletionCategories((prev) =>
+                                      checked
+                                        ? prev.filter((c) => c !== cat)
+                                        : [...prev, cat]
+                                    );
+                                  }}
+                                />
+                                <span>{t(`compliance.rights.inventory.${key}`)}</span>
+                              </label>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                     <div className="pr-inventory__col pr-inventory__col--retain">
@@ -521,13 +549,17 @@ export function PrivacyRightsPage() {
                       type="button"
                       className="btn btn--primary"
                       disabled={
-                        rightsMutation.isPending || !deletionAck || !deletionConfirm
+                        rightsMutation.isPending ||
+                        !deletionAck ||
+                        !deletionConfirm ||
+                        deletionCategories.length === 0
                       }
                       onClick={() =>
                         rightsMutation.mutate({
                           requestType: 'deletion',
                           acknowledgedInventory: true,
                           confirmed: true,
+                          categories: deletionCategories,
                         })
                       }
                     >

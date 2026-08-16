@@ -1,26 +1,38 @@
 {
-  "title": "Workout plan reminder copy update",
-  "summary": "Changed Korean/English workout plan reminder body to fire-emoji framing without plan count.",
-  "git": {
-    "branch": "main",
-    "commit": "47d53dfe"
-  },
+  "title": "Admin category correct/delete for privacy rights",
+  "summary": "Admins can apply member-requested correction fields and deletion categories from /admin/privacy-rights. Members can select deletion categories when filing.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "backend/server/services/workout-card.service.ts"
+    "shared/src/constants/privacy-rights.ts",
+    "shared/src/validators/compliance.schema.ts",
+    "backend/server/services/privacy-rights-fulfillment.service.ts",
+    "backend/server/services/compliance.service.ts",
+    "backend/server/controllers/compliance.controller.ts",
+    "backend/server/routes/compliance.routes.ts",
+    "backend/server/repositories/privacy-rights.repository.ts",
+    "frontend/src/api/compliance.api.ts",
+    "frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx",
+    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
+    "frontend/src/styles/admin-privacy-rights.css",
+    "frontend/src/styles/privacy-rights.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Reminder body is ???????? ??? ??? ????.??????",
-    "Still one reminder per user per day when eligible plans exist"
+    "Member deletion request: select categories, submit",
+    "Admin /admin/privacy-rights: open deletion ? check categories ? Apply delete",
+    "Admin correction: apply field value ? mark completed",
+    "Retained categories never deleted"
   ],
   "fastChecks": [
-    "rg -n \"?? ??? ??? ????\" backend/server/services/workout-card.service.ts"
+    "rg -n \"adminFulfillPrivacyRightsRequest|delete_categories|apply_correction\" backend/server frontend/src",
+    "rg -n \"fulfillTitle|fulfillDeleteCta\" frontend/src/i18n/locales/ko/common.json"
   ],
   "productionChecks": [
-    "After Render redeploy: next reminder uses new copy"
+    "Render backend redeploy required",
+    "Pages FE: admin privacy rights fulfill panel"
   ],
-  "deploy": {
-    "expected": "FE Pages no-op; Render backend needed"
-  },
-  "asIs": "?? ??? ??? N? ????.",
-  "toBe": "???????? ??? ??? ????.??????"
+  "deploy": { "expected": "GitHub Pages FE + Render backend" },
+  "asIs": "Admin could only mark tickets; no category delete/correct apply",
+  "toBe": "Admin applies requested categories/fields via fulfill API+UI"
 }

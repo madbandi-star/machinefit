@@ -9,6 +9,8 @@ import {
   SUPPORT_TICKET_STATUSES,
 } from '../constants/legal.js';
 import {
+  PRIVACY_CORRECTION_FIELD_KEYS,
+  PRIVACY_DELETION_CATEGORIES,
   PRIVACY_RIGHTS_REQUEST_TYPES,
 } from '../constants/privacy-rights.js';
 
@@ -36,6 +38,8 @@ export const createPrivacyRightsRequestSchema = z.object({
   /** deletion / processing_stop confirmation */
   acknowledgedInventory: z.boolean().optional(),
   confirmed: z.boolean().optional(),
+  /** deletion: which deletable categories the member wants removed */
+  categories: z.array(z.enum(PRIVACY_DELETION_CATEGORIES)).max(20).optional(),
 });
 
 export const adminPrivacyRightsUpdateSchema = z.object({
@@ -62,6 +66,16 @@ export const adminPrivacyRightsBulkUpdateSchema = z.object({
 
 export const adminPrivacyRightsBulkDeleteSchema = z.object({
   ids: z.array(z.string().uuid()).min(1).max(100),
+});
+
+/** Admin applies category deletion or field correction against a rights request. */
+export const adminPrivacyRightsFulfillSchema = z.object({
+  mode: z.enum(['delete_categories', 'apply_correction']),
+  categories: z.array(z.enum(PRIVACY_DELETION_CATEGORIES)).min(1).max(20).optional(),
+  fieldKey: z.enum(PRIVACY_CORRECTION_FIELD_KEYS).optional(),
+  correctionValue: z.string().max(2000).optional(),
+  markCompleted: z.boolean().optional().default(false),
+  resultMessage: z.string().max(5000).optional(),
 });
 
 /** Record feature-scoped profile data processing consent (body / birth / location-gym). */
@@ -126,5 +140,8 @@ export type AdminPrivacyRightsBulkUpdateInput = z.infer<
 >;
 export type AdminPrivacyRightsBulkDeleteInput = z.infer<
   typeof adminPrivacyRightsBulkDeleteSchema
+>;
+export type AdminPrivacyRightsFulfillInput = z.infer<
+  typeof adminPrivacyRightsFulfillSchema
 >;
 export type CreateSupportTicketInput = z.infer<typeof createSupportTicketSchema>;

@@ -1,6 +1,7 @@
 import type {
   ApiResponse,
   AdminAuditLog,
+  AdminPrivacyRightsFulfillInput,
   AdminPrivacyRightsUpdateInput,
   ComplianceOverview,
   ConsentUpdateInput,
@@ -96,6 +97,17 @@ export const complianceApi = {
       '/admin/privacy-rights/requests',
       { data: { ids } }
     ),
+
+  adminFulfillRightsRequest: (
+    requestId: string,
+    body: AdminPrivacyRightsFulfillInput
+  ) =>
+    apiClient.post<
+      ApiResponse<{
+        request: PrivacyRightsRequest;
+        results: Array<Record<string, unknown>>;
+      }>
+    >(`/admin/privacy-rights/requests/${requestId}/fulfill`, body),
 
   createTicket: (input: CreateSupportTicketInput) =>
     apiClient.post<ApiResponse<SupportTicketDetail>>('/support/tickets', input),

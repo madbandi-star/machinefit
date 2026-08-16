@@ -1,27 +1,28 @@
-# Workout plan reminder copy update
+# Admin category correct/delete for privacy rights
 
 ## Summary
-Workout plan reminder body changed to `???О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫Н╣©О©╫О©╫ О©╫ж╫О©╫О©╫о╢О©╫.???` (no count).
+Admins can apply member-requested **correction** and **deletion categories** from `/admin/privacy-rights` (Actual apply panel). Members select deletion categories when filing.
 
 ## Git
 - branch: `main`
-- commit: 47d53dfe
+- commit: pending
 
-## Changed files
-- `backend/server/services/workout-card.service.ts`
-
-## Test focus
-1. New Korean copy (and EN equivalent)
-2. Reminder still once/day when eligible
+## How to use (admin)
+1. Open `/admin/privacy-rights`
+2. Open a `deletion` or `correction` request
+3. Use **╫га╕ ╧щ©╣** panel:
+   - Deletion: check categories ║Ф Delete selected
+   - Correction: field + value ║Ф Apply correction
+4. Optionally mark completed
 
 ## Fast checks
 ```bash
-rg -n "О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫Н╣©О©╫О©╫ О©╫ж╫О©╫О©╫о╢О©╫" backend/server/services/workout-card.service.ts
+rg -n "adminFulfillPrivacyRightsRequest|delete_categories" backend/server frontend/src
 ```
 
-## As-is О©╫О©╫ To-be
-- **As-is:** `О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫Н╣©О©╫О©╫ NО©╫О©╫ О©╫ж╫О©╫О©╫о╢О©╫.`
-- **To-be:** `???О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫Н╣©О©╫О©╫ О©╫ж╫О©╫О©╫о╢О©╫.???`
+## As-is ║Ф To-be
+- **As-is:** Status-only ticket handling
+- **To-be:** Category/field apply against live user data + audit log
 
 ## Note
-Backend change ? Render redeploy required for production.
+Backend change ? **Render redeploy** required.

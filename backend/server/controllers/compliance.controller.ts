@@ -4,6 +4,7 @@ import {
   adminLegalDocumentSchema,
   adminPrivacyRightsBulkDeleteSchema,
   adminPrivacyRightsBulkUpdateSchema,
+  adminPrivacyRightsFulfillSchema,
   adminPrivacyRightsUpdateSchema,
   adminSanctionSchema,
   adminSupportTicketUpdateSchema,
@@ -159,6 +160,20 @@ export async function adminDeletePrivacyRightsRequests(
   const user = requireUser(req);
   const input = adminPrivacyRightsBulkDeleteSchema.parse(req.body);
   const data = await complianceService.adminDeletePrivacyRightsRequests(
+    user.userId,
+    input
+  );
+  res.json({ success: true, data });
+}
+
+export async function adminFulfillPrivacyRightsRequest(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const user = requireUser(req);
+  const input = adminPrivacyRightsFulfillSchema.parse(req.body);
+  const data = await complianceService.adminFulfillPrivacyRightsRequest(
+    String(req.params.requestId),
     user.userId,
     input
   );

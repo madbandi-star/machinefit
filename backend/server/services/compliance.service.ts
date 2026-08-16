@@ -202,9 +202,14 @@ export const complianceService = {
           'Deletion requires inventory acknowledgement and confirmation'
         );
       }
+      const categories =
+        input.categories && input.categories.length > 0
+          ? input.categories
+          : [...PRIVACY_DELETION_INVENTORY.deletable];
       const created = await privacyRightsRepository.create(userId, input, {
         status: 'received',
         payload: {
+          categories,
           deletable: PRIVACY_DELETION_INVENTORY.deletable,
           retained: PRIVACY_DELETION_INVENTORY.retained,
           note: '법정 보존 데이터는 즉시 삭제되지 않습니다. 계정 전체 종료는 회원탈퇴를 이용하세요.',
@@ -215,7 +220,7 @@ export const complianceService = {
         action: 'privacy.rights.deletion.requested',
         targetType: 'privacy_rights_request',
         targetId: created.id,
-        meta: { ip: meta?.ipAddress },
+        meta: { ip: meta?.ipAddress, categories },
       });
       return created;
     }
@@ -435,6 +440,17 @@ export const complianceService = {
       meta: { ids: input.ids, deleted },
     });
     return { deleted };
+  },
+
+  async adminFulfillPrivacyRightsRequest(
+    requestId: string,
+    adminId: string,
+    input: import('@machinefit/shared').AdminPrivacyRightsFulfillInput
+  ) {
+    const { privacyRightsFulfillmentService } = await import(
+      './privacy-rights-fulfillment.service.js'
+    );
+    return privacyRightsFulfillmentService.fulfill(requestId, adminId, input);
   },
 
   createTicket(userId: string, input: CreateSupportTicketInput) {
