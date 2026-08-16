@@ -5,14 +5,14 @@ Admins can apply member-requested **correction** and **deletion categories** fro
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: 7529a1db
 
 ## How to use (admin)
 1. Open `/admin/privacy-rights`
 2. Open a `deletion` or `correction` request
-3. Use **╫га╕ ╧щ©╣** panel:
-   - Deletion: check categories ║Ф Delete selected
-   - Correction: field + value ║Ф Apply correction
+3. Use **О©╫О©╫О©╫О©╫ О©╫щ©О©╫** panel:
+   - Deletion: check categories О©╫О©╫ Delete selected
+   - Correction: field + value О©╫О©╫ Apply correction
 4. Optionally mark completed
 
 ## Fast checks
@@ -20,7 +20,7 @@ Admins can apply member-requested **correction** and **deletion categories** fro
 rg -n "adminFulfillPrivacyRightsRequest|delete_categories" backend/server frontend/src
 ```
 
-## As-is ║Ф To-be
+## As-is О©╫О©╫ To-be
 - **As-is:** Status-only ticket handling
 - **To-be:** Category/field apply against live user data + audit log
 

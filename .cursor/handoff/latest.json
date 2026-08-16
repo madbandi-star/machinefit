@@ -1,7 +1,10 @@
 {
   "title": "Admin category correct/delete for privacy rights",
   "summary": "Admins can apply member-requested correction fields and deletion categories from /admin/privacy-rights. Members can select deletion categories when filing.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": {
+    "branch": "main",
+    "commit": "7529a1db"
+  },
   "changedFiles": [
     "shared/src/constants/privacy-rights.ts",
     "shared/src/validators/compliance.schema.ts",
@@ -32,7 +35,9 @@
     "Render backend redeploy required",
     "Pages FE: admin privacy rights fulfill panel"
   ],
-  "deploy": { "expected": "GitHub Pages FE + Render backend" },
+  "deploy": {
+    "expected": "GitHub Pages FE + Render backend"
+  },
   "asIs": "Admin could only mark tickets; no category delete/correct apply",
   "toBe": "Admin applies requested categories/fields via fulfill API+UI"
 }
