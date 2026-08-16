@@ -3,7 +3,7 @@
   "summary": "Admin brands list shows sortOrder on each row and supports top/up/down/bottom reorder via PATCH /admin/catalog/brands/:id/sort-move (renumbers global sort_order).",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "c7b087bd"
   },
   "changedFiles": [
     "shared/src/validators/admin-catalog.schema.ts",
