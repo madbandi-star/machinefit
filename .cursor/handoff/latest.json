@@ -1,7 +1,7 @@
 {
   "title": "Compact missed-plans strip on Home",
   "summary": "MissedWorkoutPlansBanner redesigned as a single-row home strip (like today’s plan): short labels, compact chips, less vertical space.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "d821a988" },
   "changedFiles": [
     "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
     "frontend/src/styles/home.css",

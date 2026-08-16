@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: (push ÈÄ °»½Å)
+- commit: `d821a988`
 
 ## Changed files
 - `frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx`
