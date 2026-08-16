@@ -607,7 +607,12 @@
     "nav": "Friends"
   },
   "compliance": {
-    "nav": "Compliance"
+    "nav": "Compliance",
+    "rights": {
+      "admin": {
+        "nav": "个人信息权利请求管理"
+      }
+    }
   },
   "ops": {
     "nav": "Ops Monitoring",

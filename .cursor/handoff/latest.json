@@ -1,31 +1,29 @@
 {
-  "title": "Fix i18n audit blocking Pages deploy",
-  "summary": "Synced missing ja/zh locale keys so frontend build (i18n-audit) and GitHub Pages deploy succeed after admin densify.",
+  "title": "Admin privacy-rights nav Korean label",
+  "summary": "Admin sidebar used missing admin ns key compliance.rights.admin.nav (showed raw key). Added locale strings so KO shows ???? ???? ??.",
   "git": {
     "branch": "main",
-    "commit": "38659b03"
+    "commit": "PENDING"
   },
   "changedFiles": [
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
     "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/admin.json",
-    "frontend/src/i18n/locales/zh/common.json",
-    "docs/I18N_AUDIT_REPORT.json"
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Deploy Frontend workflow succeeds on main",
-    "npm run build in frontend passes i18n-audit"
+    "Admin sidebar Community group: privacy rights item shows ???? ???? ?? (KO)"
   ],
   "fastChecks": [
-    "node scripts/i18n-audit.mjs",
-    "npm run test:smoke:changed"
+    "rg -n \"???? ???? ??\" frontend/src/i18n/locales/ko/admin.json",
+    "rg -n \"compliance.rights.admin.nav\" frontend/src/layouts/AdminLayout.tsx"
   ],
   "productionChecks": [
-    "GitHub Actions: Deploy Frontend to GitHub Pages = success"
+    "After Pages deploy, open /admin and confirm Korean nav label"
   ],
   "deploy": {
-    "expected": "Pages deploy after push"
+    "expected": "GitHub Pages after push to main"
   },
-  "asIs": "Pages deploy failed on i18n missing keys (ja/zh).",
-  "toBe": "i18n audit clean; frontend build and Pages deploy succeed."
+  "asIs": "Menu showed compliance.rights.admin.nav (missing admin ns key)",
+  "toBe": "KO label: ???? ???? ??"
 }

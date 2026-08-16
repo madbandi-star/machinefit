@@ -814,7 +814,12 @@
     "nav": "Friends"
   },
   "compliance": {
-    "nav": "Compliance"
+    "nav": "Compliance",
+    "rights": {
+      "admin": {
+        "nav": "Privacy rights management"
+      }
+    }
   },
   "ops": {
     "nav": "Ops Monitoring",

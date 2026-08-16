@@ -1,21 +1,20 @@
-# Fix i18n audit blocking Pages deploy
+# Admin privacy-rights nav Korean label
 
 ## Summary
-Synced missing ja/zh locale keys so frontend build (`i18n-audit`) and GitHub Pages deploy succeed after admin densify.
+Admin sidebar used missing `admin` ns key `compliance.rights.admin.nav` (raw key). Added locale strings so KO shows **개인정보 권리행사 관리**.
 
 ## Git
 - branch: `main`
-- commit: `38659b03`
+- commit: `PENDING`
 
 ## Test focus
-1. `node scripts/i18n-audit.mjs` → OK
-2. Deploy Frontend workflow on `main` → success
+1. Admin → 커뮤니티·서비스: menu label is `개인정보 권리행사 관리`
 
 ## Fast checks
 ```bash
-node scripts/i18n-audit.mjs
+rg -n "개인정보 권리행사 관리" frontend/src/i18n/locales/ko/admin.json
 ```
 
 ## as-is → to-be
-- **as-is:** Pages deploy failed (missing ja/zh i18n keys)
-- **to-be:** Audit clean; Pages deploy succeeds
+- **as-is:** `compliance.rights.admin.nav` raw key
+- **to-be:** `개인정보 권리행사 관리`
