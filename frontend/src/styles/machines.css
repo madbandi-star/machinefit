@@ -1063,13 +1063,11 @@
 }
 
 .recommend-cta {
-  position: sticky;
-  bottom: calc(var(--bottom-nav-height) + var(--space-sm));
+  /* Static: sticky bottom bar covered MACHINE_BOTTOM CMS banners. */
+  position: relative;
   padding: var(--space-sm) 0 var(--space-xs);
-  background: var(--sticky-bar-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 10;
+  background: transparent;
+  z-index: 1;
 }
 
 .recommend-cta--static {

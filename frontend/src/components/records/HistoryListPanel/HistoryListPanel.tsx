@@ -11,6 +11,7 @@ import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/Query
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
 import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
 import { HistoryDayActionsSheet } from '@/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet';
+import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import { favoriteApi, historyApi, workoutCardApi, workoutLogApi } from '@/api';
 import { fetchWorkoutLogs } from '@/api/workout-log';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -77,6 +78,7 @@ import { resolveVoicePrefsForTemplate } from '@/utils/workoutCardVoicePrefs';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 import '@/styles/records.css';
+import '@/styles/banners.css';
 
 const HISTORY_LIST_LIMIT = 100;
 const HISTORY_WORKOUT_LOG_LIMIT = 200;
@@ -1236,6 +1238,8 @@ export function HistoryListPanel() {
           ) : null}
         </div>
       </div>
+
+      <BannerSlot slot="WORKOUT_BOTTOM" className="records-page__banner" />
 
       {isEmptyList ? (
         <EmptyState

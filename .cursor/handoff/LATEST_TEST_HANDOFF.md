@@ -1,25 +1,22 @@
-# Test handoff — Community bottom banner on board lists
+# Test handoff — MACHINE/WORKOUT banner visibility
 
 ## Summary
-`COMMUNITY_BOTTOM` was only on `/community` hub; users enter boards from My Page and never saw it. Banner now on free/notices/templates/photo/requests lists. Migration **143** enables admin CMS preview.
+Sticky Recommend CTA covered machine banners — CTA is static now. Records WORKOUT_BOTTOM sits under the toolbar (not under a long history list). Admins preview CMS like free users.
 
 ## Git
 - Branch: `main`
-- Commit: 479bc76d
+- Commit: pending
 
 ## Ops
-- Apply `database/migrations/143_cms_banner_admin_preview.sql` on Supabase.
+- Render backend redeploy (ad-policy audience).
+- Optional: still apply migration `143` if not yet.
 
 ## Test focus
-1. My Page → 자유 게시판 → scroll → banner.
-2. Other community boards same.
-3. Marketing opt-in still required for non-admin free users.
+1. Machine detail → scroll to recommend → banner above button.
+2. Records → banner under toolbar.
+3. Home / My unchanged.
 
 ## Fast checks
 ```bash
-rg -n "CommunityBottomBanner" frontend/src/pages
+rg -n "WORKOUT_BOTTOM|MACHINE_BOTTOM|recommend-cta" frontend/src/pages/machine-detail frontend/src/components/records/HistoryListPanel frontend/src/styles/machines.css
 ```
-
-## as-is → to-be
-- **as-is:** Banner only on unused hub.
-- **to-be:** Banner on board lists users actually open.

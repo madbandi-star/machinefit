@@ -1,5 +1,4 @@
 import { HistoryListPanel } from '@/components/records/HistoryListPanel/HistoryListPanel';
-import { BannerSlot } from '@/components/banners/BannerSlot/BannerSlot';
 import '@/styles/records.css';
 import '@/styles/banners.css';
 
@@ -10,7 +9,6 @@ export function RecordsPage() {
       <div className="records-page__panel">
         <HistoryListPanel />
       </div>
-      <BannerSlot slot="WORKOUT_BOTTOM" className="records-page__banner" />
     </div>
   );
 }

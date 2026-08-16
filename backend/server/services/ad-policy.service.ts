@@ -58,7 +58,8 @@ function audienceAllows(
   }
 ): boolean {
   if (status === 'ANONYMOUS') return policy.anonymousEnabled;
-  if (status === 'ADMIN') return policy.adminEnabled;
+  // Admins preview the same CMS bottoms free members see (QA / creative check).
+  if (status === 'ADMIN') return policy.adminEnabled || policy.freeUserEnabled;
   if (status === 'PAID_USER') return policy.paidUserEnabled;
   return policy.freeUserEnabled;
 }

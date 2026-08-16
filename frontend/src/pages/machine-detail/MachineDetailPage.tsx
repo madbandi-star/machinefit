@@ -288,8 +288,10 @@ export function MachineDetailPage() {
           </Link>
         </div>
       ) : null}
-      {/* Banner must sit above sticky RecommendCTA or it stays covered at the bottom. */}
-      <BannerSlot slot="MACHINE_BOTTOM" className="machine-detail-page__banner" />
+      {/* After hero content so it is not buried under sticky UI; above Recommend CTA. */}
+      {!isPlanAddMode ? (
+        <BannerSlot slot="MACHINE_BOTTOM" className="machine-detail-page__banner" />
+      ) : null}
       {!isPlanAddMode && machineCode ? (
         <RecommendCTA
           machineCode={machineCode}

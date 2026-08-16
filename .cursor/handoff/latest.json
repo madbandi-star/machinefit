@@ -1,36 +1,33 @@
 {
-  "title": "Show COMMUNITY_BOTTOM on board lists users actually open",
-  "summary": "Community banner was only on unused /community hub; My Page links skip the hub. Added COMMUNITY_BOTTOM to free/notices/templates/photo/requests lists. Migration 143 enables admin CMS preview.",
+  "title": "Make MACHINE/WORKOUT banners actually visible",
+  "summary": "RecommendCTA is no longer sticky (it covered MACHINE_BOTTOM). WORKOUT_BOTTOM moved under records toolbar so it is not buried under long history. Admins can preview CMS bottoms like free users.",
   "git": {
     "branch": "main",
-    "commit": "479bc76d"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/community/CommunityBottomBanner.tsx",
-    "frontend/src/pages/community/CommunityPage.tsx",
-    "frontend/src/pages/free-board/FreeBoardPage.tsx",
-    "frontend/src/pages/notices/NoticesPage.tsx",
-    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
-    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
-    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
-    "frontend/src/styles/community.css",
-    "database/migrations/143_cms_banner_admin_preview.sql"
+    "frontend/src/styles/machines.css",
+    "frontend/src/styles/records.css",
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
+    "frontend/src/pages/records/RecordsPage.tsx",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "backend/server/services/ad-policy.service.ts"
   ],
   "testFocus": [
-    "My Page → Free board → scroll bottom → community banner",
-    "Same for notices / templates / photo / machine requests",
-    "Apply migration 143 if testing as admin"
+    "Machine detail: scroll to recommend button — CMS banner directly above it",
+    "Records: banner under calendar/toolbar before history list",
+    "Home/My bottoms unchanged"
   ],
   "fastChecks": [
-    "rg -n \"CommunityBottomBanner|COMMUNITY_BOTTOM\" frontend/src/pages"
+    "rg -n \"position: relative|WORKOUT_BOTTOM|MACHINE_BOTTOM|adminEnabled \\|\\| policy.freeUserEnabled\" frontend/src/styles/machines.css frontend/src/components/records/HistoryListPanel frontend/src/pages/machine-detail backend/server/services/ad-policy.service.ts"
   ],
   "productionChecks": [
-    "Apply Supabase migration 143",
-    "Pages Deploy Frontend success"
+    "Pages Deploy Frontend success",
+    "Render backend redeploy (admin CMS audience)"
   ],
   "deploy": {
-    "expected": "Frontend Pages + apply migration 143"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Banner only on /community hub which users rarely open",
-  "toBe": "Banner on community board list bottoms users open from My Page"
+  "asIs": "Sticky Recommend CTA covered machine banner; records banner after endless history list",
+  "toBe": "Static CTA + banner above it; records banner under toolbar"
 }
