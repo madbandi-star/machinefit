@@ -55,7 +55,7 @@
   "processing": "処理中...",
   "retryInSeconds": "再試行 ({{seconds}})",
   "brandFavorites": {
-    "title": "ブランドお気に入り",
+    "title": "マイブランド",
     "subtitle": "★をタップすると検索フィルターに反映。お気に入りは上に集まります。",
     "summaryCount": "お気に入り {{count}}",
     "searchLabel": "ブランド検索",
@@ -795,7 +795,7 @@
     "adminDashboard": "Admin Dashboard",
     "adminTools": "Admin tools",
     "browseByBrand": "Browse by Brand",
-    "brandFavorites": "ブランドお気に入り",
+    "brandFavorites": "マイブランド",
     "growthAnalysis": "Growth Analysis",
     "gymMemberManage": "Gyms & members",
     "gymMemberManageMember": "Registered gyms & memberships",

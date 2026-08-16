@@ -1,28 +1,30 @@
 {
-  "title": "Fix AdminAdsPage JSX that blocked Pages deploy",
-  "summary": "Fixed mistyped </span> closing a <strong> in AdminAdsPage so frontend tsc/build and GitHub Pages deploy can succeed again. Brand favorites community banner and prior UI work already on main.",
+  "title": "Rename and reorder My brands on My Page",
+  "summary": "My Page personal settings: brand favorites renamed to My brands and placed directly under My templates.",
   "git": {
     "branch": "main",
-    "commit": "dc49ce5f"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/ads/AdminAdsPage.tsx"
+    "frontend/src/pages/my-page/MyPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "GitHub Actions Deploy Frontend succeeds",
-    "Admin ads page loads",
-    "Brand favorites still shows COMMUNITY_BOTTOM"
+    "My Page personal settings: My templates then My brands then Settings",
+    "Brand favorites page title shows My brands"
   ],
   "fastChecks": [
-    "npm run build --prefix frontend",
-    "rg -n \"<strong>\\{p\\.name\\}</strong>\" frontend/src/pages/admin/ads/AdminAdsPage.tsx"
+    "rg -n \"MY_TEMPLATES|BRAND_FAVORITES|내 브랜드|My brands\" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json"
   ],
   "productionChecks": [
-    "https://github.com/madbandi-star/machinefit/actions — Deploy Frontend success"
+    "Pages Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Pages deploy failed on AdminAdsPage JSX parse error",
-  "toBe": "Build passes and Pages deploys"
+  "asIs": "Brand favorites after Settings",
+  "toBe": "My brands under My templates"
 }

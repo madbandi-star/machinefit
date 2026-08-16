@@ -240,12 +240,12 @@ export function MyPage() {
             label={tc('templateShare.myTemplates')}
             icon="history"
           />
-          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           <ListNavLink
             to={ROUTES.BRAND_FAVORITES}
             label={t('myPage.brandFavorites')}
             icon="bookmark"
           />
+          <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showAboveMember ? (
             <ListNavLink
               to={ROUTES.MY_GYMS}

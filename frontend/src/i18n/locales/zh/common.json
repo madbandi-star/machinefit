@@ -55,7 +55,7 @@
   "processing": "处理中...",
   "retryInSeconds": "重试 ({{seconds}})",
   "brandFavorites": {
-    "title": "品牌收藏",
+    "title": "我的品牌",
     "subtitle": "点按 ★ 即可用于搜索筛选。收藏会排在前面。",
     "summaryCount": "收藏 {{count}}",
     "searchLabel": "搜索品牌",
@@ -795,7 +795,7 @@
     "adminDashboard": "Admin Dashboard",
     "adminTools": "Admin tools",
     "browseByBrand": "Browse by Brand",
-    "brandFavorites": "品牌收藏",
+    "brandFavorites": "我的品牌",
     "growthAnalysis": "Growth Analysis",
     "gymMemberManage": "Gyms & members",
     "gymMemberManageMember": "Registered gyms & memberships",

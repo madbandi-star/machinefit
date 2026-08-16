@@ -64,7 +64,7 @@
   "processing": "처리 중...",
   "retryInSeconds": "다시 시도 ({{seconds}})",
   "brandFavorites": {
-    "title": "브랜드 즐겨찾기",
+    "title": "내 브랜드",
     "subtitle": "★ 누르면 검색 필터에 바로 반영됩니다. 즐겨찾기가 위로 모여 보여요.",
     "summaryCount": "즐겨찾기 {{count}}",
     "searchLabel": "브랜드 검색",
@@ -798,7 +798,7 @@
     "adminDashboard": "관리자 대시보드",
     "adminTools": "관리자 도구",
     "browseByBrand": "브랜드별 조회",
-    "brandFavorites": "브랜드 즐겨찾기",
+    "brandFavorites": "내 브랜드",
     "growthAnalysis": "성장 분석",
     "gymMemberManage": "헬스장·회원 관리",
     "gymMemberManageMember": "등록헬스장·회원권 관리",

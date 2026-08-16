@@ -1,22 +1,20 @@
-# Test handoff — Fix AdminAdsPage JSX that blocked Pages deploy
+# Test handoff — Rename and reorder My brands on My Page
 
 ## Summary
-Fixed mistyped `</span>` closing a `<strong>` in AdminAdsPage so frontend tsc/build and GitHub Pages deploy can succeed again.
+My Page personal settings: brand favorites renamed to **내 브랜드** / My brands and placed directly under My templates.
 
 ## Git
 - Branch: `main`
-- Commit: `dc49ce5f`
+- Commit: pending
 
 ## Test focus
-1. Deploy Frontend workflow success.
-2. Admin ads page loads.
-3. Brand favorites community banner still present.
+1. My Page → 개인설정 order: 내 템플릿 → 내 브랜드 → 설정.
+2. Page title on brand favorites route is 내 브랜드.
 
 ## Fast checks
 ```bash
-rg -n "<strong>\{p\.name\}</strong>" frontend/src/pages/admin/ads/AdminAdsPage.tsx
-npm run build --prefix frontend
+rg -n "MY_TEMPLATES|BRAND_FAVORITES|내 브랜드|My brands" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json
 ```
 
 ## Deploy
-Frontend Pages (triggered by push to main).
+Frontend Pages only.

@@ -64,7 +64,7 @@
   "processing": "Processing...",
   "retryInSeconds": "Retry ({{seconds}})",
   "brandFavorites": {
-    "title": "Brand favorites",
+    "title": "My brands",
     "subtitle": "Tap ★ to use a brand in search. Favorites stay at the top.",
     "summaryCount": "{{count}} favorites",
     "searchLabel": "Search brands",
@@ -798,7 +798,7 @@
     "adminDashboard": "Admin Dashboard",
     "adminTools": "Admin tools",
     "browseByBrand": "Browse by Brand",
-    "brandFavorites": "Brand favorites",
+    "brandFavorites": "My brands",
     "growthAnalysis": "Growth Analysis",
     "gymMemberManage": "Gyms & members",
     "gymMemberManageMember": "Registered gyms & memberships",
