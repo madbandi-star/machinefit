@@ -1,33 +1,34 @@
 {
-  "title": "Make MACHINE/WORKOUT banners actually visible",
-  "summary": "RecommendCTA is no longer sticky (it covered MACHINE_BOTTOM). WORKOUT_BOTTOM moved under records toolbar so it is not buried under long history. Admins can preview CMS bottoms like free users.",
+  "title": "Admin ads UI glanceable redesign",
+  "summary": "Ad placements & policy admin page is denser: status pills, primary power toggles, scrollable placement list + side policy panel. Long guide collapsed behind details.",
   "git": {
     "branch": "main",
-    "commit": "04db9134"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/styles/machines.css",
-    "frontend/src/styles/records.css",
-    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
-    "frontend/src/pages/records/RecordsPage.tsx",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "backend/server/services/ad-policy.service.ts"
+    "frontend/src/pages/admin/ads/AdminAdsPage.tsx",
+    "frontend/src/styles/admin-ads.css",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Machine detail: scroll to recommend button — CMS banner directly above it",
-    "Records: banner under calendar/toolbar before history list",
-    "Home/My bottoms unchanged"
+    "Admin → Ad policy: status pills reflect ADS_ENABLED / INLINE_CMS",
+    "Select CMS placement row → audience chips + interval on right (desktop) / below (mobile)",
+    "Toggle placement on/off without leaving selection",
+    "More switches expands secondary flags"
   ],
   "fastChecks": [
-    "rg -n \"position: relative|WORKOUT_BOTTOM|MACHINE_BOTTOM|adminEnabled \\|\\| policy.freeUserEnabled\" frontend/src/styles/machines.css frontend/src/components/records/HistoryListPanel frontend/src/pages/machine-detail backend/server/services/ad-policy.service.ts"
+    "rg -n \"admin-ads__split|admin-ads__status-pill|flagsTitleShort\" frontend/src/pages/admin/ads frontend/src/styles/admin-ads.css frontend/src/i18n/locales/ko/admin.json"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Render backend redeploy (admin CMS audience)"
+    "Hard refresh admin ads page"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Sticky Recommend CTA covered machine banner; records banner after endless history list",
-  "toBe": "Static CTA + banner above it; records banner under toolbar"
+  "asIs": "Long stacked guide cards and verbose flag/placement cards hard to scan",
+  "toBe": "One status strip + power toggles + placement list with inline policy editor"
 }
