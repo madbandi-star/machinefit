@@ -46,7 +46,6 @@ import { mergeWorkoutPlanCards } from '@/utils/workoutPlanCards';
 import { HistoryDateCalendarDialog } from '@/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog';
 import { HistorySummaryStats } from '@/components/records/HistorySummaryStats/HistorySummaryStats';
 import { HistoryRecordCard } from '@/components/records/HistoryRecordCard/HistoryRecordCard';
-import { MissedWorkoutPlansBanner } from '@/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard';
 import { isDismissedToday } from '@/utils/dismissToday';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
@@ -1003,7 +1002,7 @@ export function HistoryListPanel() {
         await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards });
         return res.data.data.id;
       } catch (error) {
-        // Card may already exist (race / prior sync) — resolve by listing that date.
+        // Card may already exist (race / prior sync) ??resolve by listing that date.
         const listed = await workoutCardApi.list({
           gymId: activeGymId,
           memberId: activeMemberId,
@@ -1065,7 +1064,7 @@ export function HistoryListPanel() {
     }
   };
 
-  // Must stay above early returns — Rules of Hooks (loading → loaded used to add this memo).
+  // Must stay above early returns ??Rules of Hooks (loading ??loaded used to add this memo).
   const hasCardsOnTargetDate = useMemo(
     () => allRecordCards.some((card) => card.logDate === targetDeleteDate),
     [allRecordCards, targetDeleteDate]
@@ -1081,7 +1080,7 @@ export function HistoryListPanel() {
   }, [targetDeleteDate, workoutCards, workoutLogs]);
 
   const todayDateKey = getTodayDateKey();
-  /** Plan-for-date CTA only when calendar date ≠ today (today uses normal machine browse). */
+  /** Plan-for-date CTA only when calendar date ??today (today uses normal machine browse). */
   const showPlanAddForDate =
     Boolean(selectedDate) && normalizeDateKey(selectedDate) !== todayDateKey;
   const planAddUrl = `${ROUTES.MACHINES}?planDate=${encodeURIComponent(targetDeleteDate)}`;
@@ -1256,7 +1255,7 @@ export function HistoryListPanel() {
             const showDayAddExercise =
               isAuthenticated &&
               (isTodayGroup || (isFutureGroup && canUseWorkoutPlans));
-            // Include planDate for today too so search shows 「추가됨」 on already-added machines.
+            // Include planDate for today too so search shows ?�추가?��?on already-added machines.
             const dayAddExerciseUrl =
               isTodayGroup || isFutureGroup
                 ? `${ROUTES.MACHINES}?planDate=${encodeURIComponent(groupDateKey)}`
