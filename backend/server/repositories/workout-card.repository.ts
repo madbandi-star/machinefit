@@ -1076,6 +1076,31 @@ export const workoutCardRepository = {
     return result.rows.map((r) => r.user_id);
   },
 
+  async countOwnedCards(userId: string): Promise<number> {
+    const pool = getPool();
+    if (!pool) return 0;
+    const result = await pool.query<{ count: string }>(
+      `SELECT COUNT(*)::text AS count
+       FROM workout_cards
+       WHERE user_id = $1
+         AND status IN ('PLANNED', 'COMPLETED', 'IN_PROGRESS')`,
+      [userId]
+    );
+    return parseInt(result.rows[0]?.count ?? '0', 10) || 0;
+  },
+
+  async countOwnedTemplates(userId: string): Promise<number> {
+    const pool = getPool();
+    if (!pool) return 0;
+    const result = await pool.query<{ count: string }>(
+      `SELECT COUNT(*)::text AS count
+       FROM workout_card_templates
+       WHERE user_id = $1`,
+      [userId]
+    );
+    return parseInt(result.rows[0]?.count ?? '0', 10) || 0;
+  },
+
   async countPlannedForUserOnDate(userId: string, scheduledDate: string): Promise<number> {
     const pool = getPool();
     if (!pool) return 0;

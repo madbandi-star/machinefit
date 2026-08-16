@@ -16,9 +16,11 @@ export const usagePolicyUpdateSchema = z.object({
   freeAllowed: z.boolean().optional(),
   freeDailyLimit: z.number().int().min(0).nullable().optional(),
   freeMonthlyLimit: z.number().int().min(0).nullable().optional(),
+  freeStockLimit: z.number().int().min(0).nullable().optional(),
   premiumAllowed: z.boolean().optional(),
   premiumDailyLimit: z.number().int().min(0).nullable().optional(),
   premiumMonthlyLimit: z.number().int().min(0).nullable().optional(),
+  premiumStockLimit: z.number().int().min(0).nullable().optional(),
   limitsEnforced: z.boolean().optional(),
   isActive: z.boolean().optional(),
 });

@@ -48,4 +48,15 @@ export const adminUsageApi = {
     apiClient.get<
       ApiResponse<{ total: number; items: UsagePolicyHistoryItem[] } | PaginatedResponse<UsagePolicyHistoryItem>>
     >('/admin/usage/policies/history', { params }),
+
+  listAbuseEvents: (params?: {
+    from?: string;
+    to?: string;
+    eventType?: string;
+    page?: number;
+    limit?: number;
+  }) =>
+    apiClient.get<
+      ApiResponse<{ total: number; items: import('@machinefit/shared').AbuseEvent[] }>
+    >('/admin/usage/abuse-events', { params }),
 };

@@ -184,7 +184,10 @@
     "tokenExpired": "セッションの有効期限が切れました。再度ログインしてください。",
     "ageRestricted": "満14歳未満は登録できません。",
     "usageLimit": "利用上限に達しました。しばらくしてから再試行するか、プランを確認してください。",
-    "csrfRejected": "リクエスト元が許可されていないため処理できません。"
+    "csrfRejected": "リクエスト元が許可されていないため処理できません。",
+    "dailyQuotaExceeded": "You've used today's free quota. Please try again tomorrow.",
+    "stockLimitExceeded": "You've reached the free plan maximum. Remove an item before adding more.",
+    "rateLimit": "Too many requests. Please wait a moment and try again."
   },
   "auth": {
     "welcomeBack": "Welcome back — good to see you!",

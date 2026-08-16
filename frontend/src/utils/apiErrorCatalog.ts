@@ -26,6 +26,11 @@ const CODE_TO_KEY: Record<string, string> = {
   AGE_RESTRICTED: 'errors.ageRestricted',
   CONSENT_REQUIRED: 'settings.consentRequiredToast',
   USAGE_LIMIT: 'errors.usageLimit',
+  DAILY_QUOTA_EXCEEDED: 'errors.dailyQuotaExceeded',
+  MONTHLY_QUOTA_EXCEEDED: 'errors.dailyQuotaExceeded',
+  STOCK_LIMIT_EXCEEDED: 'errors.stockLimitExceeded',
+  RATE_LIMIT: 'errors.rateLimit',
+  RATE_LIMIT_EXCEEDED: 'errors.rateLimit',
   PLAN_LIMIT: 'errors.usageLimit',
   CSRF_REJECTED: 'errors.csrfRejected',
 };

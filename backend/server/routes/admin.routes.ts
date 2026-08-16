@@ -282,6 +282,7 @@ adminRouter.get('/usage/users/:userId', usageController.getUser);
 adminRouter.get('/usage/policies', usageController.listPolicies);
 adminRouter.get('/usage/policies/history', usageController.listHistory);
 adminRouter.put('/usage/policies/:policyId', usageController.updatePolicy);
+adminRouter.get('/usage/abuse-events', usageController.listAbuseEvents);
 
 /** Points ledger + policies */
 adminRouter.get('/points/policies', pointsController.adminListPolicies);

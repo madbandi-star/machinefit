@@ -24,6 +24,8 @@ export const USAGE_FEATURE_CODES = [
   'lab_live_dashboard',
   'lab_open',
   'lab_share',
+  'recommendation',
+  'image_upload',
 ] as const;
 
 export type UsageFeatureCode = (typeof USAGE_FEATURE_CODES)[number];
@@ -51,6 +53,7 @@ export const USAGE_COLUMN_BY_FEATURE: Partial<Record<UsageFeatureCode, string>> 
   voice_count: 'voice_count_count',
   voice_count_complete: 'voice_count_complete_count',
   login: 'login_count',
+  // recommendation + image_upload live in extras JSONB
 };
 
 export type UsagePlanTier = 'FREE' | 'PREMIUM' | 'ADMIN';
@@ -61,4 +64,14 @@ export type UsageLimitReason =
   | 'PLAN_NOT_ALLOWED'
   | 'DAILY_LIMIT_EXCEEDED'
   | 'MONTHLY_LIMIT_EXCEEDED'
+  | 'STOCK_LIMIT_EXCEEDED'
   | 'LIMITS_NOT_ENFORCED';
+
+/** Features where free-tier abuse prevention is expected on by default (migration 138). */
+export const ABUSE_CRITICAL_FEATURE_CODES = [
+  'exercise_card_create',
+  'exercise_record_save',
+  'template_create',
+  'recommendation',
+  'image_upload',
+] as const;

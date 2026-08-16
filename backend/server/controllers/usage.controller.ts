@@ -10,6 +10,7 @@ import {
 import { AppError } from '../middlewares/error.middleware.js';
 import { usageAdminService } from '../services/usage-admin.service.js';
 import { usageService } from '../services/usage.service.js';
+import { abuseRepository } from '../repositories/abuse.repository.js';
 
 export async function trackEvents(
   req: Request,
@@ -154,6 +155,27 @@ export async function listHistory(
       throw new AppError(400, 'VALIDATION_ERROR', parsed.error.message);
     }
     const data = await usageAdminService.listHistory(parsed.data);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function listAbuseEvents(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 30));
+    const data = await abuseRepository.list({
+      from: typeof req.query.from === 'string' ? req.query.from : undefined,
+      to: typeof req.query.to === 'string' ? req.query.to : undefined,
+      eventType: typeof req.query.eventType === 'string' ? req.query.eventType : undefined,
+      page,
+      limit,
+    });
     res.json({ success: true, data });
   } catch (err) {
     next(err);

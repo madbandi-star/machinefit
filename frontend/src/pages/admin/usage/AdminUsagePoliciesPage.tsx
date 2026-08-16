@@ -92,9 +92,11 @@ export function AdminUsagePoliciesPage() {
       freeAllowed: selected.freeAllowed,
       freeDailyLimit: selected.freeDailyLimit,
       freeMonthlyLimit: selected.freeMonthlyLimit,
+      freeStockLimit: selected.freeStockLimit,
       premiumAllowed: selected.premiumAllowed,
       premiumDailyLimit: selected.premiumDailyLimit,
       premiumMonthlyLimit: selected.premiumMonthlyLimit,
+      premiumStockLimit: selected.premiumStockLimit,
       limitsEnforced: selected.limitsEnforced,
       isActive: selected.isActive,
     });
@@ -371,6 +373,18 @@ export function AdminUsagePoliciesPage() {
                       label={t('usage.freeMonthly')}
                       value={draft.freeMonthlyLimit ?? null}
                       onChange={(v) => setDraft({ ...draft, freeMonthlyLimit: v })}
+                    />
+                  </div>
+                  <div className="ag-field-row">
+                    <LimitInput
+                      label={t('usage.freeStock')}
+                      value={draft.freeStockLimit ?? null}
+                      onChange={(v) => setDraft({ ...draft, freeStockLimit: v })}
+                    />
+                    <LimitInput
+                      label={t('usage.premiumStock')}
+                      value={draft.premiumStockLimit ?? null}
+                      onChange={(v) => setDraft({ ...draft, premiumStockLimit: v })}
                     />
                   </div>
                   <div className="ag-field-row">

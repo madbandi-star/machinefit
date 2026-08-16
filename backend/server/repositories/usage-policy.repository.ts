@@ -10,9 +10,11 @@ type PolicyRow = {
   free_allowed: boolean;
   free_daily_limit: number | null;
   free_monthly_limit: number | null;
+  free_stock_limit: number | null;
   premium_allowed: boolean;
   premium_daily_limit: number | null;
   premium_monthly_limit: number | null;
+  premium_stock_limit: number | null;
   limits_enforced: boolean;
   is_active: boolean;
   updated_by: string | null;
@@ -36,9 +38,11 @@ export function mapPolicy(row: PolicyRow): UsagePolicy {
     freeAllowed: row.free_allowed,
     freeDailyLimit: row.free_daily_limit,
     freeMonthlyLimit: row.free_monthly_limit,
+    freeStockLimit: row.free_stock_limit ?? null,
     premiumAllowed: row.premium_allowed,
     premiumDailyLimit: row.premium_daily_limit,
     premiumMonthlyLimit: row.premium_monthly_limit,
+    premiumStockLimit: row.premium_stock_limit ?? null,
     limitsEnforced: row.limits_enforced,
     isActive: row.is_active,
     updatedBy: row.updated_by,
@@ -87,11 +91,13 @@ export const usagePolicyRepository = {
     if (input.freeAllowed !== undefined) push('free_allowed', input.freeAllowed);
     if (input.freeDailyLimit !== undefined) push('free_daily_limit', input.freeDailyLimit);
     if (input.freeMonthlyLimit !== undefined) push('free_monthly_limit', input.freeMonthlyLimit);
+    if (input.freeStockLimit !== undefined) push('free_stock_limit', input.freeStockLimit);
     if (input.premiumAllowed !== undefined) push('premium_allowed', input.premiumAllowed);
     if (input.premiumDailyLimit !== undefined) push('premium_daily_limit', input.premiumDailyLimit);
     if (input.premiumMonthlyLimit !== undefined) {
       push('premium_monthly_limit', input.premiumMonthlyLimit);
     }
+    if (input.premiumStockLimit !== undefined) push('premium_stock_limit', input.premiumStockLimit);
     if (input.limitsEnforced !== undefined) push('limits_enforced', input.limitsEnforced);
     if (input.isActive !== undefined) push('is_active', input.isActive);
 

@@ -28,7 +28,7 @@ import { workoutLogRepository } from '../repositories/workout-log.repository.js'
 import { historyRepository } from '../repositories/history.repository.js';
 import { workoutRecordOrderRepository } from '../repositories/workout-record-order.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
-import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
+import { assertStockAllowed, assertUsageAllowed, trackUsageSafe } from './usage.service.js';
 import { awardPointsSafe } from './points.service.js';
 import { gymScopeService } from './gym-scope.service.js';
 import { liftedVolumeService } from './lifted-volume.service.js';
@@ -184,6 +184,7 @@ export const workoutCardService = {
       input.gymId,
       input.memberId
     );
+    await assertStockAllowed(userId, 'exercise_card_create');
     await assertUsageAllowed(userId, 'exercise_card_create');
     const { machineId, targetMuscleKey } = await resolveMachineAndMuscle(
       input.machineCode,
@@ -926,6 +927,7 @@ export const workoutCardService = {
     }
 
     assertSafeUgc(input.name, ...items.map((item) => item.diary));
+    await assertStockAllowed(userId, 'template_create');
     await assertUsageAllowed(userId, 'template_create');
     await assertUsageAllowed(userId, 'template_save');
 

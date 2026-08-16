@@ -1253,7 +1253,20 @@
     "noPolicies": "No policies match.",
     "noDescription": "No description.",
     "editPolicy": "Edit",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "navAbuse": "Abuse events",
+    "abuseTitle": "Abuse / limit events",
+    "abuseSubtitle": "Review quota and rate-limit events by period.",
+    "abuseSearch": "Search user, endpoint, or type",
+    "abuseRange": "Range",
+    "abuseToday": "Today",
+    "abuse7d": "7 days",
+    "abuse30d": "30 days",
+    "abuseType": "Event type",
+    "abuseAllTypes": "All",
+    "abuseEmpty": "No events.",
+    "freeStock": "Free stock cap",
+    "premiumStock": "Premium stock cap"
   },
   "points": {
     "navPolicies": "Point policies",

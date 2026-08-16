@@ -472,6 +472,10 @@ const adminUsagePolicyHistoryPage = () =>
   import('@/pages/admin/usage/AdminUsagePolicyHistoryPage').then((m) => ({
     default: m.AdminUsagePolicyHistoryPage,
   }));
+const adminAbusePage = () =>
+  import('@/pages/admin/usage/AdminAbusePage').then((m) => ({
+    default: m.AdminAbusePage,
+  }));
 const adminPointsPoliciesPage = () =>
   import('@/pages/admin/points/AdminPointsPoliciesPage').then((m) => ({
     default: m.AdminPointsPoliciesPage,
@@ -775,6 +779,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
           path: ROUTES.ADMIN_USAGE_POLICY_HISTORY,
           element: lazyRoute(adminUsagePolicyHistoryPage),
         },
+        { path: ROUTES.ADMIN_USAGE_ABUSE, element: lazyRoute(adminAbusePage) },
         {
           path: ROUTES.ADMIN_POINTS_POLICIES,
           element: lazyRoute(adminPointsPoliciesPage),

@@ -14,6 +14,7 @@ import { isAllowedPhotoBoardImage, photoBoardImageLimits } from '../config/photo
 import { AppError } from '../middlewares/error.middleware.js';
 import { photoBoardRepository } from '../repositories/photo-board.repository.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
+import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
 import { notificationService } from './notification.service.js';
 
 async function processPhoto(buffer: Buffer) {
@@ -80,6 +81,7 @@ export const photoBoardService = {
     files: Express.Multer.File[]
   ) {
     assertSafeUgc(input.title, input.content, ...(input.tags ?? []));
+    await assertUsageAllowed(userId, 'image_upload');
     const limits = photoBoardImageLimits();
     if (!files.length) throw new AppError(400, 'IMAGES_REQUIRED', 'At least one image is required');
     if (files.length > limits.maxCount) {
@@ -97,7 +99,9 @@ export const photoBoardService = {
       processed.push(await processPhoto(file.buffer));
     }
 
-    return photoBoardRepository.createPost(userId, input, processed);
+    const post = await photoBoardRepository.createPost(userId, input, processed);
+    trackUsageSafe(userId, 'image_upload');
+    return post;
   },
 
   updatePost(postId: string, userId: string, role: RoleCode, input: UpdatePhotoPostInput) {

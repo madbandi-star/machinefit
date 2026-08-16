@@ -174,6 +174,7 @@ export const ROUTES = {
   ADMIN_USAGE_USERS: '/admin/usage/users',
   ADMIN_USAGE_POLICIES: '/admin/usage/policies',
   ADMIN_USAGE_POLICY_HISTORY: '/admin/usage/policies/history',
+  ADMIN_USAGE_ABUSE: '/admin/usage/abuse',
   ADMIN_POINTS_POLICIES: '/admin/points/policies',
   ADMIN_POINTS_USERS: '/admin/points/users',
   ADMIN_OPS: '/admin/ops',

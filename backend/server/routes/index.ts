@@ -42,11 +42,15 @@ import { usageRouter } from './usage.routes.js';
 import { pointsRouter } from './points.routes.js';
 import { qaRouter } from './qa.routes.js';
 import * as webhookController from '../controllers/webhook.controller.js';
-import { webhookRateLimit } from '../middlewares/rate-limit.middleware.js';
+import { webhookRateLimit, apiBurstRateLimit, apiUserMinuteRateLimit } from '../middlewares/rate-limit.middleware.js';
+import { optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
 
 export const apiRouter = Router();
 
 apiRouter.use(healthRouter);
+/** Attach user when JWT present so identity rate limits can key by userId. */
+apiRouter.use(optionalAuthMiddleware);
+apiRouter.use(apiBurstRateLimit, apiUserMinuteRateLimit);
 apiRouter.use('/ops', opsRouter);
 apiRouter.use(complianceRouter);
 apiRouter.use(billingRouter);

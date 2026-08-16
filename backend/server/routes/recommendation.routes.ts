@@ -3,6 +3,7 @@ import * as recommendationController from '../controllers/recommendation.control
 import * as feedbackController from '../controllers/feedback.controller.js';
 import { optionalAuthMiddleware, authMiddleware } from '../middlewares/auth.middleware.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
+import { recommendationRateLimit } from '../middlewares/rate-limit.middleware.js';
 import { recommendationSchema } from '@machinefit/shared';
 
 export const recommendationRouter = Router();
@@ -10,6 +11,7 @@ export const recommendationRouter = Router();
 recommendationRouter.post(
   '/',
   optionalAuthMiddleware,
+  recommendationRateLimit,
   validateBody(recommendationSchema),
   recommendationController.createRecommendation
 );

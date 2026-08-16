@@ -9,9 +9,12 @@ export interface UsagePolicy {
   freeAllowed: boolean;
   freeDailyLimit: number | null;
   freeMonthlyLimit: number | null;
+  /** Concurrent ownership cap (e.g. max cards). Null = unlimited. */
+  freeStockLimit: number | null;
   premiumAllowed: boolean;
   premiumDailyLimit: number | null;
   premiumMonthlyLimit: number | null;
+  premiumStockLimit: number | null;
   limitsEnforced: boolean;
   isActive: boolean;
   updatedBy: string | null;

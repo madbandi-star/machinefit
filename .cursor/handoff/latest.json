@@ -1,27 +1,39 @@
 {
-  "title": "Search brand chips text-only",
-  "summary": "Search/easy-mode brand filter chips no longer show circular OEM logos (Hammer Strength, Life Fitness, Cybex, Technogym); text-only like Atlantis. Bodyweight/free-weight glyphs kept.",
+  "title": "Free-plan abuse prevention (server quotas)",
+  "summary": "Server-enforced free quotas on cards/templates/recommendations/uploads/workout saves; stock+daily atomic limits; auth burst/minute rate limits; abuse_events + admin abuse page; docs/abuse-prevention.md. Apply migration 138 on Postgres.",
   "git": {
     "branch": "main",
-    "commit": "91bb68e4"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
+    "shared/src/constants/free-plan-limits.ts",
+    "shared/src/constants/usage.ts",
+    "database/migrations/138_abuse_prevention_quotas.sql",
+    "backend/server/services/usage.service.ts",
+    "backend/server/middlewares/rate-limit.middleware.ts",
+    "backend/server/repositories/abuse.repository.ts",
+    "frontend/src/pages/admin/usage/AdminAbusePage.tsx",
+    "docs/abuse-prevention.md"
   ],
   "testFocus": [
-    "Machine search brand row: HS/LF/Cybex/Technogym chips are text-only (no circular image)",
-    "Atlantis still text-only; bodyweight/free-weight still show glyph"
+    "Apply migration 138",
+    "Create 31st card as FREE ? 429 STOCK_LIMIT_EXCEEDED",
+    "11th card create same day ? 429 DAILY_QUOTA_EXCEEDED",
+    "Recommend 31st ? blocked; >10/min ? RATE_LIMIT",
+    "Admin /admin/usage/abuse shows events"
   ],
   "fastChecks": [
-    "rg -n \"resolveBrandLogoUrl|filter-chip__brand-logo\" frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
-    "npm run test:smoke:changed"
+    "node scripts/i18n-audit.mjs",
+    "npm run build --workspace=shared",
+    "rg -n \"assertStockAllowed|recommendationRateLimit|abuse_events\" backend shared database"
   ],
   "productionChecks": [
-    "After Pages deploy, open search and confirm OEM brand chips have no round logos"
+    "Render: run migration 138 then redeploy backend",
+    "Pages: Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "GitHub Pages after push to main"
+    "expected": "Frontend Pages after push; backend needs migration 138 + Render redeploy"
   },
-  "asIs": "OEM brands showed circular logo marks on search chips",
-  "toBe": "OEM brand chips are text-only (Atlantis style)"
+  "asIs": "Usage policies existed but limits_enforced=false; recommend/uploads ungated",
+  "toBe": "Abuse-critical features enforced server-side with 429 + abuse events + admin UI"
 }

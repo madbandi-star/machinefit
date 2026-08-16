@@ -193,6 +193,9 @@
     "tokenExpired": "Your session expired. Please sign in again.",
     "ageRestricted": "You must be 14 or older to create an account.",
     "usageLimit": "You've reached a usage limit. Try again later or check your plan.",
+    "dailyQuotaExceeded": "You've used today's free quota. Please try again tomorrow.",
+    "stockLimitExceeded": "You've reached the free plan maximum. Remove an item before adding more.",
+    "rateLimit": "Too many requests. Please wait a moment and try again.",
     "csrfRejected": "This request was blocked because its origin is not allowed."
   },
   "auth": {

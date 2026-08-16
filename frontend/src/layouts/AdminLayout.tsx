@@ -99,6 +99,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         labelKey: 'usage.navHistory',
         icon: 'history',
       },
+      { to: ROUTES.ADMIN_USAGE_ABUSE, labelKey: 'usage.navAbuse', icon: 'shield' },
       { to: ROUTES.ADMIN_POINTS_POLICIES, labelKey: 'points.navPolicies', icon: 'trendingUp' },
       { to: ROUTES.ADMIN_POINTS_USERS, labelKey: 'points.navUsers', icon: 'users' },
     ],

@@ -4,6 +4,7 @@ import { recommendationService } from '../services/recommendation.service.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { gymMemberRepository } from '../repositories/gym-member.repository.js';
 import { gymScopeService } from '../services/gym-scope.service.js';
+import { assertUsageAllowed, trackUsageSafe } from '../services/usage.service.js';
 import { getParam } from '../utils/params.util.js';
 import { resolveRequestLocale } from '../utils/locale.util.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -19,6 +20,7 @@ export async function createRecommendation(
 
   if (req.user?.userId) {
     const userId = req.user.userId;
+    await assertUsageAllowed(userId, 'recommendation');
 
     if (input.gymId && input.memberId) {
       await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
@@ -74,6 +76,9 @@ export async function createRecommendation(
   }
 
   const result = await recommendationService.generate(input, req.user?.userId, locale);
+  if (req.user?.userId) {
+    trackUsageSafe(req.user.userId, 'recommendation');
+  }
   res.status(201).json({ success: true, data: result });
 }
 

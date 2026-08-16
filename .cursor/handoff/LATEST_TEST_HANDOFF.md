@@ -1,21 +1,25 @@
-# Search brand chips text-only
+# Free-plan abuse prevention (server quotas)
 
 ## Summary
-Search brand filter chips no longer show circular OEM logos (Hammer Strength, Life Fitness, Cybex, Technogym). Text-only like Atlantis. Bodyweight/free-weight glyphs kept.
+Server-enforced free quotas (cards/templates/recommend/uploads/workout saves), stock+daily atomic limits, auth burst/minute rate limits, `abuse_events` + admin Abuse page. See `docs/abuse-prevention.md`. **Apply migration 138** on Postgres/Render.
 
 ## Git
 - branch: `main`
-- commit: `91bb68e4`
+- commit: `PENDING`
 
 ## Test focus
-1. Search brand row: HS/LF/Cybex/Technogym = text only (no round image)
-2. Atlantis unchanged; 맨몸/프리 still have glyph
+1. Migration 138 applied
+2. FREE: 31st owned card → stock 429; 11th create same day → daily 429
+3. Recommend over daily/minute → 429
+4. Admin → 남용·제한 이벤트 lists events
 
 ## Fast checks
 ```bash
-rg -n "resolveBrandLogoUrl|filter-chip__brand-logo" frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx
+node scripts/i18n-audit.mjs
+npm run build --workspace=shared
+rg -n "assertStockAllowed|recommendationRateLimit|abuse_events" backend shared database
 ```
 
 ## as-is → to-be
-- **as-is:** Circular brand logos on OEM chips
-- **to-be:** Text-only OEM chips (Atlantis style)
+- **as-is:** Policies tracked but not enforced; recommend/uploads open
+- **to-be:** Server 429 enforcement + abuse monitoring
