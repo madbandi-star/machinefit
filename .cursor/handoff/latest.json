@@ -3,7 +3,7 @@
   "summary": "Six more admin screens use shared ag-* KPIs, chips, dense expandable queues, and searchable menus: dashboard, ops, backup, users, subscriptions, brands.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "2de23002"
   },
   "changedFiles": [
     "frontend/src/pages/admin/dashboard/AdminDashboardPage.tsx",

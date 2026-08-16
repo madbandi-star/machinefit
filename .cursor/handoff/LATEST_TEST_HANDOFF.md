@@ -5,7 +5,7 @@ Six more admin screens use shared `ag-*` KPIs, chips, dense expandable queues, a
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `2de23002`
 
 ## Test focus
 1. `/admin` ? KPI overview, attention queue, searchable menu
@@ -21,6 +21,6 @@ rg -n "admin-glance|className=\"ag\"" frontend/src/pages/admin/dashboard fronten
 node -e "JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8')); console.log('ok')"
 ```
 
-## as-is ¡æ to-be
+## as-is ï¿½ï¿½ to-be
 - **as-is:** Tall panels, wide tabs, bulky user/sub/brand cards
 - **to-be:** Shared ag-* KPI + chips + dense queues across six screens
