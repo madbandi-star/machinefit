@@ -3,7 +3,7 @@
   "summary": "Brand cards show ★; admin brands show favorite counts and can mark default favorites that seed once for new users on first favorites fetch.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "061e5d60"
   },
   "changedFiles": [
     "database/migrations/142_brand_favorite_defaults.sql",

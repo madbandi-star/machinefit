@@ -5,7 +5,7 @@ Brand list cards show ★. Admin brands show favorite counts and can mark `is_de
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 061e5d60
 
 ## Ops required
 1. Apply `141_user_favorite_brands.sql` (if not yet) and `142_brand_favorite_defaults.sql`.
