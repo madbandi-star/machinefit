@@ -3,7 +3,7 @@
   "summary": "Home member chip showed stale gym_members.name (머신러너3107) after username change to 사레레. Self members now follow displayName in UI, and username updates sync is_self member names in DB.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "bca537b0"
   },
   "changedFiles": [
     "frontend/src/components/gyms/MemberSelector/MemberSelector.tsx",

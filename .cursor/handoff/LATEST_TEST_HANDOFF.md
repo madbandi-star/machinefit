@@ -5,7 +5,7 @@ Home member chip showed stale `gym_members.name` after username change. Self mem
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `bca537b0`
 
 ## Test focus
 1. Home → gym row right chip shows account username for self.
