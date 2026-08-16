@@ -3,7 +3,7 @@
   "summary": "My Page brand favorites redesigned for scanability: summary count, logo grid for mine, searchable catalog tiles with whole-tile star toggle.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "b1e13721"
   },
   "changedFiles": [
     "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
