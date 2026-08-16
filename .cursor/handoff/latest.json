@@ -1,23 +1,19 @@
 {
-  "title": "Rename and reorder My brands on My Page",
-  "summary": "My Page personal settings: brand favorites renamed to My brands and placed directly under My templates.",
+  "title": "Member ID remaining count beside Change button",
+  "summary": "My Page member ID remaining text sits immediately to the right of the Change button instead of wrapping onto its own line.",
   "git": {
     "branch": "main",
-    "commit": "b031fc2f"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx",
+    "frontend/src/styles/components.css"
   ],
   "testFocus": [
-    "My Page personal settings: My templates then My brands then Settings",
-    "Brand favorites page title shows My brands"
+    "My Page profile: displayName, [변경], then remaining text on same row"
   ],
   "fastChecks": [
-    "rg -n \"MY_TEMPLATES|BRAND_FAVORITES|내 브랜드|My brands\" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json"
+    "rg -n \"member-id-remaining|changeMemberId\" frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx frontend/src/styles/components.css"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success"
@@ -25,6 +21,6 @@
   "deploy": {
     "expected": "Frontend Pages only"
   },
-  "asIs": "Brand favorites after Settings",
-  "toBe": "My brands under My templates"
+  "asIs": "Remaining count on its own full-width line under Change",
+  "toBe": "Remaining count inline to the right of Change"
 }

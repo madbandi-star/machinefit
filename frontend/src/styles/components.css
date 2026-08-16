@@ -1191,17 +1191,27 @@
   line-height: 1.35;
 }
 
-.profile-card__member-id-remaining,
+.profile-card__member-id-remaining {
+  flex: 0 1 auto;
+  margin: 0;
+  font-size: var(--font-size-caption, 0.75rem);
+  color: var(--color-text-muted, #6b7280);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
 .profile-card__member-id-limit {
-  flex: 1 1 100%;
+  flex: 1 1 auto;
   margin: 0;
   font-size: var(--font-size-caption, 0.75rem);
   color: var(--color-text-muted, #6b7280);
   line-height: 1.35;
+  font-weight: 650;
 }
 
-.profile-card__member-id-limit {
-  font-weight: 650;
+.profile-card__member-id--editing .profile-card__member-id-remaining {
+  flex: 1 1 100%;
+  white-space: normal;
 }
 
 .my-page .page-shell__header--no-subtitle {

@@ -1,19 +1,18 @@
-# Test handoff — Rename and reorder My brands on My Page
+# Test handoff — Member ID remaining count beside Change button
 
 ## Summary
-My Page personal settings: brand favorites renamed to **내 브랜드** / My brands and placed directly under My templates.
+My Page member ID remaining text sits immediately to the right of the Change button instead of wrapping onto its own line.
 
 ## Git
 - Branch: `main`
-- Commit: `b031fc2f`
+- Commit: pending
 
 ## Test focus
-1. My Page → 개인설정 order: 내 템플릿 → 내 브랜드 → 설정.
-2. Page title on brand favorites route is 내 브랜드.
+1. My Page profile row: `아이디값` → `[변경]` → `아이디 변경 n/n회 남음` on one line (wraps only if screen is very narrow).
 
 ## Fast checks
 ```bash
-rg -n "MY_TEMPLATES|BRAND_FAVORITES|내 브랜드|My brands" frontend/src/pages/my-page/MyPage.tsx frontend/src/i18n/locales/ko/common.json
+rg -n "member-id-remaining|changeMemberId" frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx frontend/src/styles/components.css
 ```
 
 ## Deploy
