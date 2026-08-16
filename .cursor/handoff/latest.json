@@ -1,34 +1,35 @@
 {
-  "title": "Admin ads UI glanceable redesign",
-  "summary": "Ad placements & policy admin page is denser: status pills, primary power toggles, scrollable placement list + side policy panel. Long guide collapsed behind details.",
+  "title": "Align home workout report with Records totals",
+  "summary": "Home TODAY'S WORKOUT report now uses the same set-count filter, free-weight muscle identity, and fitRating volume reps as the Records day summary so 종목/총세트/총볼륨 match.",
   "git": {
     "branch": "main",
-    "commit": "04e930e9"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/ads/AdminAdsPage.tsx",
-    "frontend/src/styles/admin-ads.css",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "shared/src/utils/effective-load.ts",
+    "shared/src/utils/workout-complete-report.ts",
+    "shared/src/utils/effective-load.test.ts",
+    "shared/src/utils/workout-complete-report.test.ts",
+    "frontend/src/utils/historySummaryStats.ts",
+    "frontend/src/services/workoutCompleteReport.service.ts"
   ],
   "testFocus": [
-    "Admin → Ad policy: status pills reflect ADS_ENABLED / INLINE_CMS",
-    "Select CMS placement row → audience chips + interval on right (desktop) / below (mobile)",
-    "Toggle placement on/off without leaving selection",
-    "More switches expands secondary flags"
+    "End session → home report 종목/총세트/총볼륨",
+    "Records ?date=today summary 총세트/총볼륨 for same logs",
+    "Partial setCompleted: both sides count completed only when any true",
+    "FW_DUMBBELL chest+back same day → 2 exercises on report"
   ],
   "fastChecks": [
-    "rg -n \"admin-ads__split|admin-ads__status-pill|flagsTitleShort\" frontend/src/pages/admin/ads frontend/src/styles/admin-ads.css frontend/src/i18n/locales/ko/admin.json"
+    "node --import tsx --test shared/src/utils/effective-load.test.ts shared/src/utils/workout-complete-report.test.ts",
+    "rg -n \"countPerformedSets|fitRating|exerciseAggregateKey|buildLogVolumeContexts\" shared/src/utils/effective-load.ts shared/src/utils/workout-complete-report.ts frontend/src/utils/historySummaryStats.ts frontend/src/services/workoutCompleteReport.service.ts"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Hard refresh admin ads page"
+    "Hard refresh: end workout vs Records date filter for today"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages only (shared bundled into FE)"
   },
-  "asIs": "Long stacked guide cards and verbose flag/placement cards hard to scan",
-  "toBe": "One status strip + power toggles + placement list with inline policy editor"
+  "asIs": "Home counted sets/exercises/volume with different rules than Records",
+  "toBe": "Shared countPerformedSets + fitRating contexts + FW muscle keys on both sides"
 }

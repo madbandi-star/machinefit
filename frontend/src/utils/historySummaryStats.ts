@@ -1,6 +1,7 @@
 import type { RecommendationSettings, WorkoutLog } from '@machinefit/shared';
 import {
   computePerformedTotalWeightKg,
+  countPerformedSets,
   getEffectiveWeight,
   resolveSessionAverageWeightKg,
 } from '@machinefit/shared';
@@ -59,6 +60,7 @@ function resolveRecommendedReps(settings?: Partial<RecommendationSettings> | nul
  *   reps follow the same fit rule as 조정중량 seeding:
  *   - 추천값 잘맞음 / 미선택 → 추천횟수
  *   - 셋팅값 조정 필요 → 조정횟수(있으면) else 추천횟수
+ * - 총 세트: same completed-filter rule as volume / home workout report
  */
 export function computeHistorySummaryStats(
   cards: HistoryRecordCard[],
@@ -92,7 +94,7 @@ export function computeHistorySummaryStats(
       machineCode: card.machineCode,
     };
 
-    totalSets += log.setCount;
+    totalSets += countPerformedSets(load);
     totalWeightKg += resolveSessionAverageWeightKg(load);
     totalVolumeKg += computePerformedTotalWeightKg(load);
   }

@@ -3,7 +3,12 @@ import {
   type WorkoutCompleteReport,
   type WorkoutLog,
 } from '@machinefit/shared';
-import { historyApi, machinePreferenceApi, workoutLogApi } from '@/api';
+import {
+  historyApi,
+  machinePreferenceApi,
+  recommendationFeedbackApi,
+  workoutLogApi,
+} from '@/api';
 import { pointsApi } from '@/api/points.api';
 import { shiftDateKey } from '@/utils/historyDate';
 import type { PosterRepsContext } from '@/utils/workoutPosterExerciseDetails';
@@ -42,6 +47,103 @@ export type WorkoutCompleteFetchResult = {
   repsByMachine?: Record<string, PosterRepsContext | undefined>;
 };
 
+type LogVolumeContext = {
+  adjustedWeight?: number | null;
+  recommendedWeight?: number | null;
+  adjustedReps?: number | null;
+  recommendedReps?: number | null;
+  fitRating?: 'good' | 'bad' | null;
+};
+
+/**
+ * Build per-log volume contexts matching Records / backend workout-load:
+ * prefs + recommendation snapshot + fitRating when recommendationId exists.
+ */
+async function buildLogVolumeContexts(input: {
+  logs: WorkoutLog[];
+  gymId: string;
+  memberId?: string | null;
+  preferenceScope?: { gymId: string; memberId: string };
+  from: string;
+  to: string;
+}): Promise<Record<string, LogVolumeContext | undefined> | undefined> {
+  const { logs, gymId, memberId, preferenceScope, from, to } = input;
+  if (logs.length === 0) return undefined;
+
+  const machineCodes = [...new Set(logs.map((l) => l.machineCode))];
+  const recommendationIds = [
+    ...new Set(
+      logs.map((l) => l.recommendationId).filter((id): id is string => Boolean(id))
+    ),
+  ];
+
+  try {
+    const [prefs, historyRes, feedback] = await Promise.all([
+      preferenceScope && machineCodes.length > 0
+        ? machinePreferenceApi.getBatch(machineCodes, preferenceScope)
+        : Promise.resolve(null),
+      historyApi
+        .list(gymId, {
+          from,
+          to,
+          limit: 100,
+          memberId: memberId ?? undefined,
+        })
+        .catch(() => null),
+      recommendationIds.length > 0
+        ? recommendationFeedbackApi.getBatch(recommendationIds).catch(() =>
+            Object.fromEntries(recommendationIds.map((id) => [id, null]))
+          )
+        : Promise.resolve({} as Record<string, 'good' | 'bad' | null>),
+    ]);
+
+    const historyItems = historyRes?.data.data ?? [];
+    const historyByRecommendation = new Map(
+      historyItems
+        .filter((h) => h.recommendationId)
+        .map((h) => [h.recommendationId!, h] as const)
+    );
+    const historyByMachine = new Map(
+      historyItems.map((h) => [h.machineCode, h] as const)
+    );
+
+    const contexts: Record<string, LogVolumeContext | undefined> = {};
+    for (const log of logs) {
+      const adjusted = prefs?.[log.machineCode]?.customSettings;
+      const history =
+        (log.recommendationId
+          ? historyByRecommendation.get(log.recommendationId)
+          : undefined) ?? historyByMachine.get(log.machineCode);
+      const fitRating =
+        log.recommendationId != null
+          ? ((feedback as Record<string, 'good' | 'bad' | null>)[log.recommendationId] ??
+            null)
+          : undefined;
+
+      contexts[log.id] = {
+        adjustedWeight: adjusted?.recommendedWeightKg,
+        recommendedWeight: history?.settings.recommendedWeightKg,
+        adjustedReps: resolveReps(
+          adjusted?.recommendedRepsMin,
+          adjusted?.recommendedRepsMax
+        ),
+        recommendedReps: resolveReps(
+          history?.settings.recommendedRepsMin,
+          history?.settings.recommendedRepsMax
+        ),
+        ...(fitRating !== undefined ? { fitRating } : {}),
+      };
+      // Machine fallback for callers that still key by code (poster enrichment).
+      if (!contexts[log.machineCode]) {
+        contexts[log.machineCode] = contexts[log.id];
+      }
+    }
+    return contexts;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function fetchWorkoutCompleteReport(input: {
   gymId: string;
   memberId?: string | null;
@@ -75,58 +177,14 @@ export async function fetchWorkoutCompleteReport(input: {
     (log) => (log.logDate?.slice(0, 10) ?? '') !== dateKey
   );
 
-  const machineCodes = [
-    ...new Set([...todayLogs, ...priorLogs].map((l) => l.machineCode)),
-  ];
-
-  let contexts:
-    | Record<
-        string,
-        {
-          adjustedWeight?: number | null;
-          recommendedWeight?: number | null;
-          adjustedReps?: number | null;
-          recommendedReps?: number | null;
-        }
-      >
-    | undefined;
-
-  if (preferenceScope && machineCodes.length > 0) {
-    try {
-      const prefs = await machinePreferenceApi.getBatch(machineCodes, preferenceScope);
-      const historyRes = await historyApi
-        .list(gymId, {
-          from: fromPrior,
-          to: dateKey,
-          limit: 100,
-          memberId: memberId ?? undefined,
-        })
-        .catch(() => null);
-      const historyByMachine = new Map(
-        (historyRes?.data.data ?? []).map((h) => [h.machineCode, h] as const)
-      );
-
-      contexts = {};
-      for (const code of machineCodes) {
-        const adjusted = prefs?.[code]?.customSettings;
-        const history = historyByMachine.get(code);
-        contexts[code] = {
-          adjustedWeight: adjusted?.recommendedWeightKg,
-          recommendedWeight: history?.settings.recommendedWeightKg,
-          adjustedReps: resolveReps(
-            adjusted?.recommendedRepsMin,
-            adjusted?.recommendedRepsMax
-          ),
-          recommendedReps: resolveReps(
-            history?.settings.recommendedRepsMin,
-            history?.settings.recommendedRepsMax
-          ),
-        };
-      }
-    } catch {
-      contexts = undefined;
-    }
-  }
+  const contexts = await buildLogVolumeContexts({
+    logs: [...todayLogs, ...priorLogs],
+    gymId,
+    memberId,
+    preferenceScope,
+    from: fromPrior,
+    to: dateKey,
+  });
 
   const seoulDay = seoulDateKey();
   const ledgerItems = ledgerRes?.data.data.items ?? [];
@@ -154,13 +212,18 @@ export async function fetchWorkoutCompleteReport(input: {
 
   const repsByMachine: Record<string, PosterRepsContext | undefined> | undefined = contexts
     ? Object.fromEntries(
-        Object.entries(contexts).map(([code, ctx]) => [
-          code,
-          {
-            adjustedReps: ctx.adjustedReps,
-            recommendedReps: ctx.recommendedReps,
-          },
-        ])
+        todayLogs.map((log) => {
+          const ctx = contexts[log.id] ?? contexts[log.machineCode];
+          return [
+            log.machineCode,
+            ctx
+              ? {
+                  adjustedReps: ctx.adjustedReps,
+                  recommendedReps: ctx.recommendedReps,
+                }
+              : undefined,
+          ];
+        })
       )
     : undefined;
 

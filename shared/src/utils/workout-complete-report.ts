@@ -1,4 +1,5 @@
-import { computePerformedTotalWeightKg } from './effective-load.js';
+import { computePerformedTotalWeightKg, countPerformedSets } from './effective-load.js';
+import { normalizeWorkoutLogTargetMuscle } from './free-weight.js';
 import { formatVolumeKg } from './lifted-volume.js';
 import type { WorkoutLog } from '../types/workout.types.js';
 import type {
@@ -38,14 +39,22 @@ export interface LogVolumeContext {
   recommendedWeight?: number | null;
   adjustedReps?: number | null;
   recommendedReps?: number | null;
+  /** Same fit gate as Records / history 총볼륨 (good|null → 추천횟수, bad → 조정횟수). */
+  fitRating?: 'good' | 'bad' | null;
 }
 
-function countPerformedSets(log: WorkoutLog): number {
-  if (Array.isArray(log.setCompleted) && log.setCompleted.length > 0) {
-    return log.setCompleted.filter(Boolean).length;
-  }
-  if (log.setCount > 0) return log.setCount;
-  return Array.isArray(log.setWeightsKg) ? log.setWeightsKg.length : 0;
+/** Prefer per-log context (`log.id`); fall back to machineCode for older callers. */
+export function resolveLogVolumeContext(
+  log: WorkoutLog,
+  contexts?: Record<string, LogVolumeContext | undefined>
+): LogVolumeContext | undefined {
+  if (!contexts) return undefined;
+  return contexts[log.id] ?? contexts[log.machineCode];
+}
+
+function exerciseAggregateKey(log: WorkoutLog): string {
+  const muscle = normalizeWorkoutLogTargetMuscle(log.machineCode, log.targetMuscleGroup);
+  return `${log.machineCode}::${muscle}`;
 }
 
 export function volumeKgForLog(log: WorkoutLog, ctx?: LogVolumeContext): number {
@@ -57,7 +66,16 @@ export function volumeKgForLog(log: WorkoutLog, ctx?: LogVolumeContext): number 
     recommendedWeight: ctx?.recommendedWeight,
     adjustedReps: ctx?.adjustedReps,
     recommendedReps: ctx?.recommendedReps,
+    ...(ctx?.fitRating !== undefined ? { fitRating: ctx.fitRating } : {}),
     machineCode: log.machineCode,
+  });
+}
+
+export function setsForLog(log: WorkoutLog): number {
+  return countPerformedSets({
+    sets: log.setCount,
+    setWeightsKg: log.setWeightsKg,
+    setCompleted: log.setCompleted,
   });
 }
 
@@ -65,12 +83,13 @@ export function buildExerciseMetrics(
   logs: WorkoutLog[],
   contexts?: Record<string, LogVolumeContext | undefined>
 ): WorkoutDayExerciseMetric[] {
-  const byCode = new Map<string, WorkoutDayExerciseMetric>();
+  const byKey = new Map<string, WorkoutDayExerciseMetric>();
 
   for (const log of logs) {
-    const volumeKg = volumeKgForLog(log, contexts?.[log.machineCode]);
-    const setCount = countPerformedSets(log);
-    const existing = byCode.get(log.machineCode);
+    const volumeKg = volumeKgForLog(log, resolveLogVolumeContext(log, contexts));
+    const setCount = setsForLog(log);
+    const key = exerciseAggregateKey(log);
+    const existing = byKey.get(key);
     const name = log.machineName?.trim() || log.machineCode;
     if (existing) {
       existing.setCount += setCount;
@@ -79,7 +98,7 @@ export function buildExerciseMetrics(
         existing.targetMuscleGroup = log.targetMuscleGroup;
       }
     } else {
-      byCode.set(log.machineCode, {
+      byKey.set(key, {
         machineCode: log.machineCode,
         machineName: name,
         setCount,
@@ -89,7 +108,7 @@ export function buildExerciseMetrics(
     }
   }
 
-  return [...byCode.values()].sort((a, b) => b.volumeKg - a.volumeKg);
+  return [...byKey.values()].sort((a, b) => b.volumeKg - a.volumeKg);
 }
 
 export function buildDaySummaryMetrics(input: {
@@ -252,15 +271,17 @@ export function aggregatePriorVolumes(
   for (const log of logs) {
     const day = log.logDate?.slice(0, 10);
     if (!day || day === todayKey) continue;
-    const vol = volumeKgForLog(log, contexts?.[log.machineCode]);
+    const vol = volumeKgForLog(log, resolveLogVolumeContext(log, contexts));
     dayTotalsMap.set(day, (dayTotalsMap.get(day) ?? 0) + vol);
-    const mk = `${day}::${log.machineCode}`;
+    const mk = `${day}::${exerciseAggregateKey(log)}`;
     dayMachineMap.set(mk, (dayMachineMap.get(mk) ?? 0) + vol);
   }
 
   const bestByMachine: Record<string, number> = {};
   for (const [key, vol] of dayMachineMap) {
-    const code = key.split('::')[1];
+    // key = `${day}::${machineCode}::${muscle}`
+    const parts = key.split('::');
+    const code = parts[1];
     if (!code) continue;
     bestByMachine[code] = Math.max(bestByMachine[code] ?? 0, vol);
   }

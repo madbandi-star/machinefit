@@ -1,35 +1,37 @@
-# Test handoff — Admin ads UI glanceable redesign
+# Test handoff — Align home workout report with Records totals
 
 ## Summary
-Ad placements & policy admin page is denser: status pills, primary power toggles, scrollable placement list + side policy panel. Long guide collapsed behind `<details>`.
+Home TODAY'S WORKOUT report now uses the same set-count filter, free-weight muscle identity, and fitRating volume reps as the Records day summary so 종목/총세트/총볼륨 match.
 
 ## Git
 - Branch: `main`
-- Commit: `04e930e9`
+- Commit: (filled after push)
 
 ## Changed files
-- `frontend/src/pages/admin/ads/AdminAdsPage.tsx`
-- `frontend/src/styles/admin-ads.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/admin.json`
+- `shared/src/utils/effective-load.ts` (+ exported `countPerformedSets`)
+- `shared/src/utils/workout-complete-report.ts`
+- `frontend/src/utils/historySummaryStats.ts`
+- `frontend/src/services/workoutCompleteReport.service.ts`
+- tests under `shared/src/utils/*.test.ts`
 
 ## Test focus
-1. Admin → Ad policy: status pills reflect ADS_ENABLED / INLINE_CMS and CMS slot count.
-2. Click a placement row → policy audience chips + interval edit for that placement.
-3. Row on/off switch works without losing selection.
-4. “More switches” shows secondary flags.
+1. End session → home report exercises / sets / volume.
+2. Open Records with `?date=today` — summary sets & volume match the report for the same logs.
+3. Logs with some incomplete sets: both count only completed when any `setCompleted` is true.
+4. Same-day FW dumbbell chest + back → report exercise count 2.
 
-## Fast checks (no Pages wait)
+## Fast checks
 ```bash
-rg -n "admin-ads__split|admin-ads__status-pill|flagsTitleShort" frontend/src/pages/admin/ads frontend/src/styles/admin-ads.css frontend/src/i18n/locales/ko/admin.json
+node --import tsx --test shared/src/utils/effective-load.test.ts shared/src/utils/workout-complete-report.test.ts
+rg -n "countPerformedSets|fitRating|exerciseAggregateKey|buildLogVolumeContexts" shared/src/utils/effective-load.ts shared/src/utils/workout-complete-report.ts frontend/src/utils/historySummaryStats.ts frontend/src/services/workoutCompleteReport.service.ts
 ```
-
-## Production checks
-- Deploy Frontend (Pages) success → hard refresh admin ads page.
 
 ## as-is → to-be
 | as-is | to-be |
 | --- | --- |
-| Long stacked guide + verbose cards | Status strip + compact toggles + list/policy split |
+| Home sets from any completed flags; Records always `setCount` | Shared `countPerformedSets` (volume filter) |
+| Home volume ignored fitRating | Home loads feedback like Records |
+| Home FW merged by machine only | Split by target muscle like Records cards |
 
 ## Deploy
-Frontend Pages only (no backend / migration).
+Frontend Pages only (shared is bundled into the frontend build).

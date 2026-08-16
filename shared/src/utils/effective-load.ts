@@ -143,6 +143,15 @@ function resolveSetCount(input: EffectiveLoadInput): number {
 }
 
 /**
+ * Performed set count — same rule as volume (`computePerformedTotalWeightKg`):
+ * when any set is marked completed and lengths match weights → count completed only;
+ * otherwise `sets` / `setCount`, else positive weight slots.
+ */
+export function countPerformedSets(input: EffectiveLoadInput): number {
+  return resolveSetCount(input);
+}
+
+/**
  * Session / log **volume** (총 볼륨) from stepper weights:
  * Σ(setWeight_i × effectiveReps), or effectiveWeight × reps × sets when no steppers yet.
  * Dumbbell (`FW_DUMBBELL`): set weights are per-hand → volume × 2 (both hands).

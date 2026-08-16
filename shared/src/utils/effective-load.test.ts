@@ -7,6 +7,7 @@ import { describe, it } from 'node:test';
 import {
   computePerformedTotalWeightKg,
   computeTotalWeightKg,
+  countPerformedSets,
   getEffectiveReps,
   getEffectiveWeight,
   resolveSessionAverageWeightKg,
@@ -249,6 +250,30 @@ describe('resolveSessionWorkingWeightKg from steppers', () => {
         setWeightsKg: [30, 40, 35],
       }),
       40
+    );
+  });
+});
+
+describe('countPerformedSets', () => {
+  it('counts completed sets when any completed flag is true', () => {
+    assert.equal(
+      countPerformedSets({
+        sets: 4,
+        setWeightsKg: [40, 40, 40, 40],
+        setCompleted: [true, true, false, false],
+      }),
+      2
+    );
+  });
+
+  it('falls back to setCount when no completed flags are true', () => {
+    assert.equal(
+      countPerformedSets({
+        sets: 4,
+        setWeightsKg: [40, 40, 40, 40],
+        setCompleted: [false, false, false, false],
+      }),
+      4
     );
   });
 });
