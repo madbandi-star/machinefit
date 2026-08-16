@@ -1,14 +1,14 @@
 {
   "title": "Home missed-plans: dismiss only",
   "summary": "Removed Today/Date/Delete actions from the home missed-plans strip; only dismiss remains.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "74dd6d0b" },
   "changedFiles": [
     "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
     "frontend/src/styles/home.css"
   ],
   "testFocus": [
     "Home missed strip shows info + 무시 only",
-    "오늘로/날짜/삭제 buttons absent",
+    "?�늘�??�짜/??�� buttons absent",
     "무시 still dismisses the current missed plan"
   ],
   "fastChecks": [
