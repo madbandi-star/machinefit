@@ -1,15 +1,16 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { RetentionPolicy, RetentionPolicyUpdateInput } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
-import { AdminPanel } from '@/components/admin/AdminPanel/AdminPanel';
+import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { dataRetentionApi } from '@/api/data-retention.api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
+import '@/styles/admin-glance.css';
 import '@/styles/admin-data-retention.css';
 
 const CATEGORIES = [
@@ -22,6 +23,8 @@ const CATEGORIES = [
   'auth',
   'other',
 ] as const;
+
+type KpiFilter = 'all' | 'active' | 'due7' | 'failed' | 'hold' | 'scheduled';
 
 function formatPeriod(p: RetentionPolicy, t: (k: string) => string) {
   const unit =
@@ -40,18 +43,19 @@ function ddayLabel(days: number, t: (k: string, o?: Record<string, unknown>) => 
 }
 
 function ddayPillClass(days: number): string {
-  if (days < 0) return 'admin-status-pill is-danger';
-  if (days <= 7) return 'admin-status-pill is-pending';
-  return 'admin-status-pill is-active';
+  if (days < 0) return 'ag-pill ag-pill--danger';
+  if (days <= 7) return 'ag-pill ag-pill--warn';
+  return 'ag-pill ag-pill--on';
 }
 
 export function AdminDataRetentionPage() {
   const { t } = useTranslation('admin');
+  const navigate = useNavigate();
   const showToast = useUIStore((s) => s.showToast);
   const queryClient = useQueryClient();
-  const [q, setQ] = useState('');
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [kpiFilter, setKpiFilter] = useState<KpiFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editPeriod, setEditPeriod] = useState<{
     value: number;
@@ -121,203 +125,250 @@ export function AdminDataRetentionPage() {
   });
 
   const selected = detailQuery.data?.policy;
-  const kpi = useMemo(() => summaryQuery.data, [summaryQuery.data]);
+  const kpi = summaryQuery.data;
   const policies = policiesQuery.data?.items ?? [];
+
+  const categoryCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of policies) {
+      map.set(p.dataCategory, (map.get(p.dataCategory) ?? 0) + 1);
+    }
+    return map;
+  }, [policies]);
+
+  const filtered = useMemo(() => {
+    return policies.filter((p) => {
+      if (kpiFilter === 'active' && !p.isActive) return false;
+      if (kpiFilter === 'due7' && p.sampleDaysRemaining > 7) return false;
+      return true;
+    });
+  }, [policies, kpiFilter]);
 
   const selectPolicy = (p: RetentionPolicy) => {
     setSelectedId(p.id);
     setEditPeriod({ value: p.periodValue, unit: p.periodUnit });
     setImpactPreview(null);
+    setChangeReason('');
   };
 
-  if (summaryQuery.isLoading || policiesQuery.isLoading) {
-    return (
-      <AdminPageShell title={t('dataRetention.title')} subtitle={t('dataRetention.subtitle')}>
-        <Skeleton count={5} />
-      </AdminPageShell>
-    );
-  }
+  const closeEditor = () => {
+    setSelectedId(null);
+    setImpactPreview(null);
+    setChangeReason('');
+  };
+
+  const onKpiClick = (next: KpiFilter) => {
+    if (next === 'failed') {
+      navigate(ROUTES.ADMIN_DATA_RETENTION_LOGS);
+      return;
+    }
+    if (next === 'hold' || next === 'scheduled') {
+      navigate(ROUTES.ADMIN_DATA_RETENTION_SCHEDULED);
+      return;
+    }
+    setKpiFilter(next);
+  };
+
+  const loading = summaryQuery.isLoading || policiesQuery.isLoading;
 
   return (
-    <AdminPageShell title={t('dataRetention.title')} subtitle={t('dataRetention.subtitle')}>
-      <div className="admin-retention">
-        <AdminPanel title={t('dataRetention.overview')}>
-          <div className="admin-stats admin-retention__stats">
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.policyTotal ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiTotal')}</div>
-            </div>
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.policyActive ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiActive')}</div>
-            </div>
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.scheduledTotal ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiScheduled')}</div>
-            </div>
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.dueIn7Days ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiDue7')}</div>
-            </div>
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.deleteFailed ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiFailed')}</div>
-            </div>
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.onHold ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiHold')}</div>
-            </div>
-            <div className="admin-stat">
-              <div className="admin-stat__value">{kpi?.anonymized ?? 0}</div>
-              <div className="admin-stat__label">{t('dataRetention.kpiAnonymized')}</div>
-            </div>
-          </div>
-          <div className="admin-retention__quick">
-            <Link className="btn btn--secondary" to={ROUTES.ADMIN_DATA_RETENTION_SCHEDULED}>
-              {t('dataRetention.navScheduled')}
-            </Link>
-            <Link className="btn btn--secondary" to={ROUTES.ADMIN_DATA_RETENTION_LOGS}>
-              {t('dataRetention.navLogs')}
-            </Link>
-            <Link className="btn btn--secondary" to={ROUTES.ADMIN_DATA_RETENTION_AUDIT}>
-              {t('dataRetention.navAudit')}
-            </Link>
+    <AdminPageShell
+      title={t('dataRetention.title')}
+      subtitle={t('dataRetention.subtitle')}
+      actions={
+        <div className="adr-quick">
+          <Link className="btn btn--secondary btn--sm" to={ROUTES.ADMIN_DATA_RETENTION_SCHEDULED}>
+            {t('dataRetention.navScheduled')}
+          </Link>
+          <Link className="btn btn--secondary btn--sm" to={ROUTES.ADMIN_DATA_RETENTION_LOGS}>
+            {t('dataRetention.navLogs')}
+          </Link>
+          <Link className="btn btn--secondary btn--sm" to={ROUTES.ADMIN_DATA_RETENTION_AUDIT}>
+            {t('dataRetention.navAudit')}
+          </Link>
+          <button
+            type="button"
+            className="btn btn--primary btn--sm"
+            disabled={syncMutation.isPending}
+            onClick={() => syncMutation.mutate()}
+          >
+            {t('dataRetention.syncWithdrawn')}
+          </button>
+        </div>
+      }
+    >
+      <div className="ag">
+        {loading ? <Skeleton count={1} height={72} /> : null}
+        {!loading && kpi ? (
+          <section className="ag-kpis" aria-label={t('dataRetention.overview')}>
             <button
               type="button"
-              className="btn btn--primary"
-              disabled={syncMutation.isPending}
-              onClick={() => syncMutation.mutate()}
+              className={`ag-kpi${kpiFilter === 'all' ? ' is-active' : ''}`}
+              onClick={() => onKpiClick('all')}
             >
-              {t('dataRetention.syncWithdrawn')}
+              <span className="ag-kpi__value">{kpi.policyTotal}</span>
+              <span className="ag-kpi__label">{t('dataRetention.kpiTotal')}</span>
             </button>
-          </div>
-        </AdminPanel>
-
-        <div className="admin-retention__layout">
-          <AdminPanel
-            title={t('dataRetention.policies')}
-            count={policies.length}
-            countLabel={t('listCount', { count: policies.length })}
-          >
-            <div className="admin-toolbar admin-retention__toolbar">
-              <input
-                className="input"
-                type="search"
-                value={q}
-                placeholder={t('dataRetention.search')}
-                aria-label={t('dataRetention.search')}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') setSearch(q.trim());
-                }}
-              />
-              <button
-                type="button"
-                className="btn btn--secondary"
-                onClick={() => setSearch(q.trim())}
-              >
-                {t('dataRetention.searchAction')}
-              </button>
-            </div>
-
-            <div
-              className="admin-retention__chips"
-              role="group"
-              aria-label={t('dataRetention.colCategory')}
+            <button
+              type="button"
+              className={`ag-kpi${kpiFilter === 'active' ? ' is-active' : ''}`}
+              onClick={() => onKpiClick('active')}
             >
+              <span className="ag-kpi__value">{kpi.policyActive}</span>
+              <span className="ag-kpi__label">{t('dataRetention.kpiActive')}</span>
+            </button>
+            <button
+              type="button"
+              className={`ag-kpi${kpiFilter === 'due7' ? ' is-active' : ''}${
+                kpi.dueIn7Days > 0 ? ' is-warn' : ''
+              }`}
+              onClick={() => onKpiClick('due7')}
+            >
+              <span className="ag-kpi__value">{kpi.dueIn7Days}</span>
+              <span className="ag-kpi__label">{t('dataRetention.kpiDue7')}</span>
+            </button>
+            <button
+              type="button"
+              className={`ag-kpi${kpi.deleteFailed > 0 ? ' is-danger' : ''}`}
+              onClick={() => onKpiClick('failed')}
+            >
+              <span className="ag-kpi__value">{kpi.deleteFailed}</span>
+              <span className="ag-kpi__label">{t('dataRetention.kpiFailed')}</span>
+            </button>
+            <button
+              type="button"
+              className={`ag-kpi${kpi.onHold > 0 ? ' is-warn' : ''}`}
+              onClick={() => onKpiClick('hold')}
+            >
+              <span className="ag-kpi__value">{kpi.onHold}</span>
+              <span className="ag-kpi__label">{t('dataRetention.kpiHold')}</span>
+            </button>
+            <button type="button" className="ag-kpi" onClick={() => onKpiClick('scheduled')}>
+              <span className="ag-kpi__value">{kpi.scheduledTotal}</span>
+              <span className="ag-kpi__label">{t('dataRetention.kpiScheduled')}</span>
+            </button>
+          </section>
+        ) : null}
+
+        <section className="ag-panel">
+          <div className="ag-toolbar">
+            <input
+              className="ag-search"
+              type="search"
+              value={search}
+              placeholder={t('dataRetention.search')}
+              aria-label={t('dataRetention.search')}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="ag-chips" role="group" aria-label={t('dataRetention.colCategory')}>
               <button
                 type="button"
-                className={`admin-retention__chip${category === '' ? ' admin-retention__chip--active' : ''}`}
-                aria-pressed={category === ''}
+                className={`ag-chip${category === '' ? ' is-active' : ''}`}
                 onClick={() => setCategory('')}
               >
                 {t('dataRetention.allCategories')}
+                <span className="ag-chip__count">{policies.length}</span>
               </button>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  className={`admin-retention__chip${category === c ? ' admin-retention__chip--active' : ''}`}
-                  aria-pressed={category === c}
-                  onClick={() => setCategory(c)}
-                >
-                  {t(`dataRetention.category.${c}`)}
-                </button>
-              ))}
-            </div>
-
-            {policies.length === 0 ? (
-              <div className="admin-empty">{t('dataRetention.emptyPolicies')}</div>
-            ) : (
-              <div className="admin-retention__list">
-                <div className="admin-retention__head" aria-hidden>
-                  <span>{t('dataRetention.colName')}</span>
-                  <span>{t('dataRetention.colMeta')}</span>
-                  <span>{t('dataRetention.colStatus')}</span>
-                </div>
-                {policies.map((p) => (
+              {CATEGORIES.map((c) => {
+                const count = categoryCounts.get(c) ?? 0;
+                return (
                   <button
-                    key={p.id}
+                    key={c}
                     type="button"
-                    className={`admin-retention__row${selectedId === p.id ? ' is-selected' : ''}`}
-                    onClick={() => selectPolicy(p)}
+                    className={`ag-chip${category === c ? ' is-active' : ''}`}
+                    onClick={() => setCategory(c)}
                   >
-                    <div className="admin-retention__main">
-                      <div className="admin-retention__title-row">
-                        <h3 className="admin-retention__name">{p.name}</h3>
-                        <span
-                          className={`admin-status-pill${p.isActive ? ' is-active' : ' is-inactive'}`}
+                    {t(`dataRetention.category.${c}`)}
+                    {count > 0 ? <span className="ag-chip__count">{count}</span> : null}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className={`ag-layout${selectedId ? ' is-editing' : ''}`}>
+            <div className="ag-main">
+              {policiesQuery.isError ? (
+                <QueryErrorMessage onRetry={() => void policiesQuery.refetch()} />
+              ) : null}
+              {loading ? <Skeleton count={5} height={52} /> : null}
+              {!loading && !policiesQuery.isError && filtered.length === 0 ? (
+                <p className="ag-empty">{t('dataRetention.emptyPolicies')}</p>
+              ) : null}
+              {!loading && filtered.length > 0 ? (
+                <div className="ag-queue">
+                  {filtered.map((p) => {
+                    const open = selectedId === p.id;
+                    return (
+                      <article
+                        key={p.id}
+                        className={[
+                          'ag-card',
+                          p.isActive ? 'is-on' : 'is-off',
+                          open ? 'is-selected' : '',
+                          p.sampleDaysRemaining <= 7 ? 'is-warn' : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        <button
+                          type="button"
+                          className="ag-card__main"
+                          onClick={() => (open ? closeEditor() : selectPolicy(p))}
                         >
-                          {p.isActive
-                            ? t('dataRetention.colActive')
-                            : t('dataRetention.inactive')}
-                        </span>
-                      </div>
-                      <p className="admin-retention__code">{p.code}</p>
-                    </div>
-                    <dl className="admin-retention__facts">
-                      <div className="admin-retention__fact">
-                        <dt>{t('dataRetention.colCategory')}</dt>
-                        <dd>{t(`dataRetention.category.${p.dataCategory}`)}</dd>
-                      </div>
-                      <div className="admin-retention__fact">
-                        <dt>{t('dataRetention.colPeriod')}</dt>
-                        <dd>{formatPeriod(p, t)}</dd>
-                      </div>
-                      <div className="admin-retention__fact">
-                        <dt>{t('dataRetention.colSampleDday')}</dt>
-                        <dd>
+                          <span className="ag-card__identity">
+                            <span className="ag-card__title">{p.name}</span>
+                            <span className="ag-card__meta">
+                              {t(`dataRetention.category.${p.dataCategory}`)}
+                              {' · '}
+                              {formatPeriod(p, t)}
+                              {' · '}
+                              {ddayLabel(p.sampleDaysRemaining, t)}
+                              {' · '}
+                              {p.autoDelete
+                                ? t('dataRetention.autoOn')
+                                : t('dataRetention.autoOff')}
+                              {' · '}v{p.currentVersion}
+                            </span>
+                          </span>
+                          <span
+                            className={`ag-pill ${p.isActive ? 'ag-pill--on' : 'ag-pill--off'}`}
+                          >
+                            {p.isActive
+                              ? t('dataRetention.colActive')
+                              : t('dataRetention.inactive')}
+                          </span>
                           <span className={ddayPillClass(p.sampleDaysRemaining)}>
                             {ddayLabel(p.sampleDaysRemaining, t)}
                           </span>
-                        </dd>
-                      </div>
-                      <div className="admin-retention__fact">
-                        <dt>{t('dataRetention.colAuto')}</dt>
-                        <dd>
-                          {p.autoDelete
-                            ? t('dataRetention.autoOn')
-                            : t('dataRetention.autoOff')}
-                        </dd>
-                      </div>
-                    </dl>
-                    <div className="admin-retention__actions">
-                      <span className="admin-status-pill is-verified">v{p.currentVersion}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </AdminPanel>
+                          <span className="ag-card__chevron" aria-hidden>
+                            {open ? '▾' : '▸'}
+                          </span>
+                        </button>
+                      </article>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
 
-          {selected ? (
-            <AdminPanel
-              className="admin-retention__detail-sticky"
-              title={selected.name}
-              desc={selected.description || t('dataRetention.noDesc')}
-            >
-              <div className="admin-retention__detail">
-                <dl className="admin-retention__dl">
+            {selected ? (
+              <aside className="ag-editor" aria-label={selected.name}>
+                <div className="ag-editor__head">
+                  <div>
+                    <h2 className="ag-editor__title">{selected.name}</h2>
+                    <p className="ag-editor__hint">
+                      {selected.description || t('dataRetention.noDesc')}
+                    </p>
+                  </div>
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={closeEditor}>
+                    {t('dataRetention.cancel')}
+                  </button>
+                </div>
+
+                {detailQuery.isLoading ? <Skeleton count={3} height={40} /> : null}
+
+                <dl className="adr-dl">
                   <div>
                     <dt>{t('dataRetention.colCategory')}</dt>
                     <dd>{t(`dataRetention.category.${selected.dataCategory}`)}</dd>
@@ -363,14 +414,12 @@ export function AdminDataRetentionPage() {
                   </div>
                 </dl>
 
-                <div className="admin-retention__edit">
-                  <h3 className="admin-retention__edit-title">{t('dataRetention.editPeriod')}</h3>
-                  <p className="admin-retention__detail-desc">{t('dataRetention.editPeriodHint')}</p>
-                  <div className="admin-form-grid">
-                    <label className="admin-form-card">
-                      <span className="admin-form-card__label">
-                        {t('dataRetention.colPeriod')}
-                      </span>
+                <div className="ag-editor__form">
+                  <h3 className="adr-section-title">{t('dataRetention.editPeriod')}</h3>
+                  <p className="ag-editor__hint">{t('dataRetention.editPeriodHint')}</p>
+                  <div className="ag-field-row">
+                    <label className="ag-field">
+                      <span>{t('dataRetention.colPeriod')}</span>
                       <input
                         className="input"
                         type="number"
@@ -384,12 +433,10 @@ export function AdminDataRetentionPage() {
                         }
                       />
                     </label>
-                    <label className="admin-form-card">
-                      <span className="admin-form-card__label">
-                        {t('dataRetention.periodUnit')}
-                      </span>
+                    <label className="ag-field">
+                      <span>{t('dataRetention.periodUnit')}</span>
                       <select
-                        className="admin-select"
+                        className="input"
                         value={editPeriod.unit}
                         onChange={(e) =>
                           setEditPeriod((prev) => ({
@@ -403,22 +450,20 @@ export function AdminDataRetentionPage() {
                         <option value="year">{t('dataRetention.unitYear')}</option>
                       </select>
                     </label>
-                    <label className="admin-form-card admin-form-card--full">
-                      <span className="admin-form-card__label">
-                        {t('dataRetention.changeReason')}
-                      </span>
-                      <input
-                        className="input"
-                        type="text"
-                        value={changeReason}
-                        onChange={(e) => setChangeReason(e.target.value)}
-                        placeholder={t('dataRetention.changeReason')}
-                      />
-                    </label>
                   </div>
+                  <label className="ag-field ag-field--full">
+                    <span>{t('dataRetention.changeReason')}</span>
+                    <input
+                      className="input"
+                      type="text"
+                      value={changeReason}
+                      onChange={(e) => setChangeReason(e.target.value)}
+                      placeholder={t('dataRetention.changeReason')}
+                    />
+                  </label>
 
                   {impactPreview ? (
-                    <p className="admin-retention__impact">
+                    <p className="ag-banner">
                       {t('dataRetention.impactPreview', {
                         affected: impactPreview.affectedRecords,
                         changed: impactPreview.scheduleChanged,
@@ -426,7 +471,7 @@ export function AdminDataRetentionPage() {
                     </p>
                   ) : null}
 
-                  <div className="admin-retention__actions">
+                  <div className="ag-editor__actions">
                     <button
                       type="button"
                       className="btn btn--secondary btn--sm"
@@ -490,8 +535,8 @@ export function AdminDataRetentionPage() {
 
                 {(detailQuery.data?.versions.length ?? 0) > 0 ? (
                   <div>
-                    <h3 className="admin-retention__edit-title">{t('dataRetention.versions')}</h3>
-                    <ul className="admin-retention__versions">
+                    <h3 className="adr-section-title">{t('dataRetention.versions')}</h3>
+                    <ul className="adr-versions">
                       {detailQuery.data!.versions.map((v) => (
                         <li key={v.id}>
                           v{v.version} · {v.changeReason || '—'} ·{' '}
@@ -501,14 +546,10 @@ export function AdminDataRetentionPage() {
                     </ul>
                   </div>
                 ) : null}
-              </div>
-            </AdminPanel>
-          ) : (
-            <AdminPanel title={t('dataRetention.detailEmptyTitle')}>
-              <div className="admin-empty">{t('dataRetention.detailEmpty')}</div>
-            </AdminPanel>
-          )}
-        </div>
+              </aside>
+            ) : null}
+          </div>
+        </section>
       </div>
     </AdminPageShell>
   );
