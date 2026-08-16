@@ -1,20 +1,21 @@
-# Admin privacy-rights nav Korean label
+# Search brand chips text-only
 
 ## Summary
-Admin sidebar used missing `admin` ns key `compliance.rights.admin.nav` (raw key). Added locale strings so KO shows **개인정보 권리행사 관리**.
+Search brand filter chips no longer show circular OEM logos (Hammer Strength, Life Fitness, Cybex, Technogym). Text-only like Atlantis. Bodyweight/free-weight glyphs kept.
 
 ## Git
 - branch: `main`
-- commit: `b55d85b4`
+- commit: `PENDING`
 
 ## Test focus
-1. Admin → 커뮤니티·서비스: menu label is `개인정보 권리행사 관리`
+1. Search brand row: HS/LF/Cybex/Technogym = text only (no round image)
+2. Atlantis unchanged; 맨몸/프리 still have glyph
 
 ## Fast checks
 ```bash
-rg -n "개인정보 권리행사 관리" frontend/src/i18n/locales/ko/admin.json
+rg -n "resolveBrandLogoUrl|filter-chip__brand-logo" frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx
 ```
 
 ## as-is → to-be
-- **as-is:** `compliance.rights.admin.nav` raw key
-- **to-be:** `개인정보 권리행사 관리`
+- **as-is:** Circular brand logos on OEM chips
+- **to-be:** Text-only OEM chips (Atlantis style)

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
 import { BRAND_CODES } from '@machinefit/shared';
@@ -6,7 +5,6 @@ import { Icon, type IconName } from '@/components/icons/Icon';
 import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { getLocalizedName } from '@/utils/localizedName';
 import { prepareBrandsForMachineSearch } from '@/utils/sortBrandsForSearch';
-import { brandUsesWordmarkChip, resolveBrandLogoUrl } from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
 function nonMachineBrandGlyph(code: string): IconName | null {
@@ -59,43 +57,15 @@ function BrandLogoChip({
   active: boolean;
   onSelect: () => void;
 }) {
-  const [logoFailed, setLogoFailed] = useState(false);
-  const logoUrl = resolveBrandLogoUrl(brand.code, brand.logoUrl);
-  const showLogo = Boolean(logoUrl) && !logoFailed;
-  const wordmark = showLogo && brandUsesWordmarkChip(brand.code);
+  // OEM brands (HS/LF/Cybex/Technogym, Atlantis, …): text-only chips — no circular logo marks.
   const glyph = nonMachineBrandGlyph(brand.code);
   const displayName = brandChipDisplayName(brand, label);
   const nameLines = brandChipNameLines(displayName);
 
-  if (wordmark) {
-    return (
-      <button
-        type="button"
-        className={`filter-chip filter-chip--brand filter-chip--brand-wordmark${
-          active ? ' filter-chip--active' : ''
-        }`}
-        onClick={onSelect}
-        aria-pressed={active}
-        aria-label={label}
-        data-brand-code={brand.code}
-      >
-        <img
-          key={`${brand.code}:${logoUrl}`}
-          src={logoUrl}
-          alt=""
-          className="filter-chip__brand-wordmark"
-          loading="lazy"
-          decoding="async"
-          onError={() => setLogoFailed(true)}
-        />
-      </button>
-    );
-  }
-
   return (
     <button
       type="button"
-      className={`filter-chip filter-chip--brand${showLogo ? ' filter-chip--brand-has-logo' : ''}${
+      className={`filter-chip filter-chip--brand${
         glyph ? ' filter-chip--brand-has-glyph' : ''
       }${nameLines.length > 1 ? ' filter-chip--brand-multiline' : ''}${
         active ? ' filter-chip--active' : ''
@@ -108,18 +78,6 @@ function BrandLogoChip({
       {glyph ? (
         <span className="filter-chip__brand-glyph" aria-hidden>
           <Icon name={glyph} size={15} strokeWidth={1.9} />
-        </span>
-      ) : showLogo ? (
-        <span className="filter-chip__brand-logo-wrap" aria-hidden>
-          <img
-            key={`${brand.code}:${logoUrl}`}
-            src={logoUrl}
-            alt=""
-            className="filter-chip__brand-logo"
-            loading="lazy"
-            decoding="async"
-            onError={() => setLogoFailed(true)}
-          />
         </span>
       ) : null}
       <span className={`filter-chip__label${nameLines.length > 1 ? ' filter-chip__label--stacked' : ''}`}>

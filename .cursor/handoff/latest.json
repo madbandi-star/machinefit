@@ -1,29 +1,27 @@
 {
-  "title": "Admin privacy-rights nav Korean label",
-  "summary": "Admin sidebar used missing admin ns key compliance.rights.admin.nav (showed raw key). Added locale strings so KO shows ???? ???? ??.",
+  "title": "Search brand chips text-only",
+  "summary": "Search/easy-mode brand filter chips no longer show circular OEM logos (Hammer Strength, Life Fitness, Cybex, Technogym); text-only like Atlantis. Bodyweight/free-weight glyphs kept.",
   "git": {
     "branch": "main",
-    "commit": "b55d85b4"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
   ],
   "testFocus": [
-    "Admin sidebar Community group: privacy rights item shows ???? ???? ?? (KO)"
+    "Machine search brand row: HS/LF/Cybex/Technogym chips are text-only (no circular image)",
+    "Atlantis still text-only; bodyweight/free-weight still show glyph"
   ],
   "fastChecks": [
-    "rg -n \"???? ???? ??\" frontend/src/i18n/locales/ko/admin.json",
-    "rg -n \"compliance.rights.admin.nav\" frontend/src/layouts/AdminLayout.tsx"
+    "rg -n \"resolveBrandLogoUrl|filter-chip__brand-logo\" frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
+    "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Pages deploy, open /admin and confirm Korean nav label"
+    "After Pages deploy, open search and confirm OEM brand chips have no round logos"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "Menu showed compliance.rights.admin.nav (missing admin ns key)",
-  "toBe": "KO label: ???? ???? ??"
+  "asIs": "OEM brands showed circular logo marks on search chips",
+  "toBe": "OEM brand chips are text-only (Atlantis style)"
 }
