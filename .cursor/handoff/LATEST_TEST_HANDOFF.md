@@ -5,7 +5,7 @@ Compact music mini player adds icon-only previous/next track buttons (SkipBack /
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: 586f1cb4
 
 ## Test focus
 1. Open music panel → minimize to mini PiP.

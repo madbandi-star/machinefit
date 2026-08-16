@@ -3,7 +3,7 @@
   "summary": "Compact music PiP gains icon-only SkipBack/SkipForward beside play/pause, reusing the same adjacent-track handlers as the full panel.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "586f1cb4"
   },
   "changedFiles": [
     "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
