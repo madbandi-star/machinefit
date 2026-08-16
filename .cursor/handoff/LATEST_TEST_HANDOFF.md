@@ -1,27 +1,22 @@
-# Test handoff ? Banner not showing
+# Test handoff ? Banner size guide + schedule UX
 
 ## Summary
-Production `GET /banners/public/*` returned `banners: []` for all 5 slots. Marketing consent alone cannot show creatives if the server filters them out. Fix: public list accepts desktop **or** mobile image; mobile upload also fills desktop when empty; admin UI lists explicit blockers (inactive / no image / no slots / schedule).
+Admin banner registration/edit now shows recommended creative sizes (PC **1200×160**, mobile **750×120**) and replaces `datetime-local` with date+time cards, always-on toggle, and presets.
 
 ## Git
 - Branch: `main`
-- Commit: `612f43b2`
+- Commit: _(after commit)_
 
 ## Test focus
-1. Admin ?? ??? ???: banners show **?????** with reasons when inactive or no image.
-2. Edit banner: Status **???**, upload image, slots checked, leave start/end empty ?? **???? ????**.
-3. App user with marketing opt-in: scroll to bottom of Home / My ? banner appears.
-4. After backend redeploy (+ migration 139 if needed): `GET .../banners/public/MAIN_BOTTOM` non-empty.
+1. `/admin/banners/new` ? size guide + inline px on upload labels.
+2. Schedule ? **제한 없음** clears; **기간 설정** shows date/time cards; presets (지금 / 7일 / 30일).
+3. Save still persists `startAt`/`endAt` correctly.
 
 ## Fast checks
 ```bash
-rg -n "mobile_image_url IS NOT NULL|getBannerPublishBlockers|139_banner" backend frontend database
+rg -n "BANNER_RECOMMENDED_SIZES|BannerScheduleFields|admin-banner-schedule" shared frontend
 ```
 
-## Production
-- Render: redeploy backend; optionally run `139_banner_public_image_fallback.sql` for existing mobile-only rows.
-- Confirm public API then returns banners when admin status=active + image present.
-
-## as-is ?? to-be
-- **as-is:** Slots + marketing set; app shows nothing; public API empty.
-- **to-be:** Admin shows why not live; public API returns creatives when active+image; users with marketing consent see page-bottom banners.
+## as-is → to-be
+- **as-is:** No size guidance; awkward datetime-local.
+- **to-be:** Clear recommended sizes + clearer schedule UX.

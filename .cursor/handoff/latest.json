@@ -1,39 +1,36 @@
 {
-  "title": "Banner not showing ? public filters + admin blockers",
-  "summary": "Production /banners/public/* returned empty for all slots (not a marketing-consent-only issue). Public list now accepts mobile_image_url fallback; mobile upload fills desktop when empty; admin edit/list shows explicit publish blockers (inactive/no image/slots/schedule).",
+  "title": "Banner size guide + schedule UX",
+  "summary": "Admin banner edit shows recommended PC 1200×160 / mobile 750×120 sizes; replaced datetime-local with date+time cards, always-on toggle, and quick presets (now / 7d / 30d).",
   "git": {
     "branch": "main",
-    "commit": "612f43b2"
+    "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/repositories/banner.repository.ts",
-    "database/migrations/139_banner_public_image_fallback.sql",
-    "frontend/src/utils/bannerPublish.ts",
+    "shared/src/constants/banner.ts",
     "frontend/src/pages/admin/banners/AdminBannerEditPage.tsx",
-    "frontend/src/pages/admin/banners/AdminBannersPage.tsx",
-    "frontend/src/styles/admin-glance.css",
+    "frontend/src/pages/admin/banners/BannerScheduleFields.tsx",
+    "frontend/src/styles/banners.css",
     "frontend/src/i18n/locales/ko/admin.json",
     "frontend/src/i18n/locales/en/admin.json",
     "frontend/src/i18n/locales/ja/admin.json",
     "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Admin banner list shows ??? + blocker reasons when inactive or no image",
-    "Set status=??, upload image, slots selected, empty dates ? live-ready",
-    "Logged-in user with marketing opt-in: Home/My bottom shows banner after API returns banners",
-    "GET /banners/public/MAIN_BOTTOM returns non-empty after fix + correct banner data"
+    "Admin banner create/edit: size guide shows 1200×160 and 750×120",
+    "Schedule: Always on clears dates; Limited splits date/time; presets work",
+    "Save still sends startAt/endAt as before"
   ],
   "fastChecks": [
-    "node -e \"JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8'))\"",
-    "rg -n \"mobile_image_url IS NOT NULL|getBannerPublishBlockers|139_banner\" backend frontend database"
+    "rg -n \"BANNER_RECOMMENDED_SIZES|BannerScheduleFields|admin-banner-schedule\" shared frontend",
+    "node -e \"JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8'))\""
   ],
   "productionChecks": [
-    "curl https://machinefit.onrender.com/api/v1/banners/public/MAIN_BOTTOM ? expect banners after status+image fixed and backend redeploy",
-    "Pages Deploy Frontend success for admin blocker UI"
+    "Pages Deploy Frontend success",
+    "Open /admin/banners/new and verify size guide + schedule UI"
   ],
   "deploy": {
-    "expected": "Frontend Pages after push; backend Render redeploy required for public image fallback; run migration 139 if mobile-only creatives already exist"
+    "expected": "Frontend Pages after push; shared rebuild in CI"
   },
-  "asIs": "Slots+marketing set but public API empty (inactive default and/or missing desktop image)",
-  "toBe": "Clear admin blockers; public API accepts mobile fallback; mobile-only creatives can go live"
+  "asIs": "No size guidance; raw datetime-local for schedule",
+  "toBe": "Clear recommended sizes + usable date/time schedule controls"
 }

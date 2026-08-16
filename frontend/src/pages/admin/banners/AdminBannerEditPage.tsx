@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { BannerStatus, BannerType, CreateBannerInput } from '@machinefit/shared';
+import { BANNER_MAX_IMAGE_BYTES, BANNER_RECOMMENDED_SIZES } from '@machinefit/shared';
 import { bannerApi } from '@/api/banner.api';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
@@ -10,6 +11,7 @@ import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/Query
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import { getBannerPublishBlockers } from '@/utils/bannerPublish';
+import { BannerScheduleFields } from './BannerScheduleFields';
 import '@/styles/admin.css';
 import '@/styles/admin-glance.css';
 import '@/styles/banners.css';
@@ -346,28 +348,69 @@ export function AdminBannerEditPage() {
                 </div>
               </div>
 
-              <div className="ag-field-row">
-                <label className="ag-field">
-                  <span>{t('admin:banners.fieldStartAt')}</span>
-                  <input
-                    className="input"
-                    type="datetime-local"
-                    value={startAt}
-                    onChange={(e) => setStartAt(e.target.value)}
-                  />
-                </label>
-                <label className="ag-field">
-                  <span>{t('admin:banners.fieldEndAt')}</span>
-                  <input
-                    className="input"
-                    type="datetime-local"
-                    value={endAt}
-                    onChange={(e) => setEndAt(e.target.value)}
-                  />
-                </label>
-              </div>
+              <BannerScheduleFields
+                startAt={startAt}
+                endAt={endAt}
+                onStartAtChange={setStartAt}
+                onEndAtChange={setEndAt}
+              />
 
               <h2 className="ag-editor__title">{t('admin:banners.images')}</h2>
+              <div className="admin-banner-size-guide" role="note">
+                <p className="admin-banner-size-guide__title">
+                  {t('admin:banners.sizeGuideTitle')}
+                </p>
+                <p className="ag-editor__hint">{t('admin:banners.sizeGuideDesc')}</p>
+                <ul className="admin-banner-size-guide__list">
+                  <li>
+                    <span className="admin-banner-size-guide__label">
+                      {t('admin:banners.previewPc')}
+                    </span>
+                    <strong>
+                      {BANNER_RECOMMENDED_SIZES.desktop.width}×
+                      {BANNER_RECOMMENDED_SIZES.desktop.height}px
+                    </strong>
+                    <span className="admin-banner-size-guide__ratio">
+                      {t('admin:banners.sizeRatio', {
+                        ratio: (
+                          BANNER_RECOMMENDED_SIZES.desktop.width /
+                          BANNER_RECOMMENDED_SIZES.desktop.height
+                        ).toFixed(1),
+                      })}
+                    </span>
+                    <span
+                      className="admin-banner-size-guide__bar admin-banner-size-guide__bar--pc"
+                      aria-hidden
+                    />
+                  </li>
+                  <li>
+                    <span className="admin-banner-size-guide__label">
+                      {t('admin:banners.previewMobile')}
+                    </span>
+                    <strong>
+                      {BANNER_RECOMMENDED_SIZES.mobile.width}×
+                      {BANNER_RECOMMENDED_SIZES.mobile.height}px
+                    </strong>
+                    <span className="admin-banner-size-guide__ratio">
+                      {t('admin:banners.sizeRatio', {
+                        ratio: (
+                          BANNER_RECOMMENDED_SIZES.mobile.width /
+                          BANNER_RECOMMENDED_SIZES.mobile.height
+                        ).toFixed(1),
+                      })}
+                    </span>
+                    <span
+                      className="admin-banner-size-guide__bar admin-banner-size-guide__bar--mobile"
+                      aria-hidden
+                    />
+                  </li>
+                </ul>
+                <p className="ag-editor__hint">
+                  {t('admin:banners.sizeGuideFormats', {
+                    mb: Math.round(BANNER_MAX_IMAGE_BYTES / (1024 * 1024)),
+                  })}
+                </p>
+              </div>
               {publishBlockers.length > 0 ? (
                 <div className="ag-banner" role="status">
                   <p>{t('admin:banners.notLiveTitle')}</p>
@@ -388,7 +431,13 @@ export function AdminBannerEditPage() {
               ) : (
                 <div className="ag-field-row">
                   <label className="ag-field">
-                    <span>{t('admin:banners.fieldDesktopImage')}</span>
+                    <span>
+                      {t('admin:banners.fieldDesktopImage')}
+                      <span className="admin-banner-size-inline">
+                        {BANNER_RECOMMENDED_SIZES.desktop.width}×
+                        {BANNER_RECOMMENDED_SIZES.desktop.height}
+                      </span>
+                    </span>
                     <input
                       className="input"
                       type="file"
@@ -400,7 +449,13 @@ export function AdminBannerEditPage() {
                     />
                   </label>
                   <label className="ag-field">
-                    <span>{t('admin:banners.fieldMobileImage')}</span>
+                    <span>
+                      {t('admin:banners.fieldMobileImage')}
+                      <span className="admin-banner-size-inline">
+                        {BANNER_RECOMMENDED_SIZES.mobile.width}×
+                        {BANNER_RECOMMENDED_SIZES.mobile.height}
+                      </span>
+                    </span>
                     <input
                       className="input"
                       type="file"

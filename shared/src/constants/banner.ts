@@ -35,3 +35,12 @@ export type BannerImageKind = 'desktop' | 'mobile';
 
 /** Max banners returned for a public slot (UX: avoid stacking too many ads). */
 export const BANNER_PUBLIC_SLOT_LIMIT = 3;
+
+/**
+ * Recommended creative pixel sizes for page-bottom slots.
+ * Display uses full content width with object-fit:cover at ~160px (PC) / 120px (mobile).
+ */
+export const BANNER_RECOMMENDED_SIZES = {
+  desktop: { width: 1200, height: 160 },
+  mobile: { width: 750, height: 120 },
+} as const;
