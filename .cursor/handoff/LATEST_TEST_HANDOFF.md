@@ -5,7 +5,7 @@ Brand favorites page is one searchable chip grid (no logos, no separate mine/add
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `f54caff8`
 
 ## Changed files
 - `frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx`

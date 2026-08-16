@@ -3,7 +3,7 @@
   "summary": "Brand favorites page is one searchable chip grid (no logos, no separate mine/add sections). Favorites sort to the top; mobile shows 3–4 brands per row.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "f54caff8"
   },
   "changedFiles": [
     "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
