@@ -1,0 +1,113 @@
+/* Unified ad placements — fail-soft, mobile-first */
+
+.ad-slot {
+  margin: var(--space-md, 1rem) 0 0;
+}
+
+.ad-slot--mock {
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  border: 1px dashed var(--color-border, #d1d5db);
+  background: color-mix(in srgb, var(--color-surface-muted, #f3f4f6) 80%, transparent);
+}
+
+.ad-slot__badge {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font-size: 0.7rem;
+}
+
+.ad-slot__title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.ad-slot__body {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #6b7280);
+}
+
+.ad-sticky {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  pointer-events: none;
+}
+
+.ad-sticky__inner {
+  pointer-events: auto;
+  margin: 0 auto;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.ad-sticky__title {
+  margin: 0;
+  flex: 1;
+  font-size: 0.82rem;
+}
+
+.ad-sticky__close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text-muted, #6b7280);
+}
+
+.ad-interstitial {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.ad-interstitial__card {
+  width: min(420px, 100%);
+  padding: 1.25rem 1.1rem;
+  border-radius: 12px;
+  background: var(--color-surface, #fff);
+  display: grid;
+  gap: 0.55rem;
+}
+
+.ad-interstitial__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-text-muted, #6b7280);
+}
+
+.ad-interstitial__title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.ad-interstitial__body {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #6b7280);
+  line-height: 1.45;
+}
+
+.ad-interstitial__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}

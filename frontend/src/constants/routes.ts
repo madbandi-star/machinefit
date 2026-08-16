@@ -132,6 +132,7 @@ export const ROUTES = {
   ADMIN_BANNER_EDIT: '/admin/banners/:bannerId',
   ADMIN_BANNER_SLOTS: '/admin/banners/slots',
   ADMIN_BANNER_STATS: '/admin/banners/stats',
+  ADMIN_ADS: '/admin/ads',
   ADMIN_TRADES: '/admin/trades',
   ADMIN_MOTIVATION: '/admin/motivation',
   ADMIN_MUSCLE_IMAGES: '/admin/muscle-group-images',

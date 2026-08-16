@@ -54,6 +54,7 @@
     "fortuneDesc": "Manage Helchang Fortune phrases, keywords, and strategies.",
     "dataRetentionDesc": "Manage retention and deletion policies.",
     "bannersDesc": "Register promo banners and control placements.",
+    "adsDesc": "Manage ad placements, frequency caps, feature flags, and stats.",
     "bannerSlotsDesc": "Manage where banners can appear.",
     "bannerStatsDesc": "View impressions, clicks, and CTR.",
     "templateShareDesc": "Moderate shared templates, reports, and stats."
@@ -668,6 +669,34 @@
     "blockUserId": "User ID",
     "blockReason": "Block reason",
     "block": "Block"
+  },
+  "ads": {
+    "nav": "Ad policy",
+    "title": "Ad placements / policy",
+    "subtitle": "Feature flags, placements, frequency caps, and stats. Register CMS creatives under Banners.",
+    "flagsTitle": "Feature Flags",
+    "placementsTitle": "Placements",
+    "policiesTitle": "Frequency / Audience",
+    "statsTitle": "Stats",
+    "impressions": "Impressions",
+    "clicks": "Clicks",
+    "interstitials": "Interstitials",
+    "rewards": "Rewards",
+    "byPlacement": "By placement",
+    "noStats": "No impressions yet.",
+    "saved": "Saved.",
+    "on": "ON",
+    "off": "OFF",
+    "enable": "Enable",
+    "disable": "Disable",
+    "defaultPolicy": "Default policy",
+    "minInterval": "Min interval (sec)",
+    "range": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "7d": "7 days",
+      "30d": "30 days"
+    }
   },
   "banners": {
     "nav": "Ads / Banners",

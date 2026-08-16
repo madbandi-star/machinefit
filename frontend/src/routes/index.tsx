@@ -362,6 +362,10 @@ const adminBannerStatsPage = () =>
   import('@/pages/admin/banners/AdminBannerStatsPage').then((m) => ({
     default: m.AdminBannerStatsPage,
   }));
+const adminAdsPage = () =>
+  import('@/pages/admin/ads/AdminAdsPage').then((m) => ({
+    default: m.AdminAdsPage,
+  }));
 const adminMotivation = () =>
   import('@/pages/admin/motivation/AdminMotivationPage').then((m) => ({
     default: m.AdminMotivationPage,
@@ -752,6 +756,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_BANNER_SLOTS, element: lazyRoute(adminBannerSlotsPage) },
         { path: ROUTES.ADMIN_BANNER_STATS, element: lazyRoute(adminBannerStatsPage) },
         { path: ROUTES.ADMIN_BANNER_EDIT, element: lazyRoute(adminBannerEditPage) },
+        { path: ROUTES.ADMIN_ADS, element: lazyRoute(adminAdsPage) },
         { path: ROUTES.ADMIN_FORTUNE, element: lazyRoute(adminFortunePage) },
         { path: ROUTES.ADMIN_TRADES, element: lazyRoute(adminTrades) },
         { path: ROUTES.ADMIN_ONLINE_PT, element: lazyRoute(adminOnlinePt) },

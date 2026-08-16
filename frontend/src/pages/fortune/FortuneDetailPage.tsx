@@ -5,6 +5,7 @@ import { isAllGymsId } from '@machinefit/shared';
 import { userApi } from '@/api';
 import { fortuneApi } from '@/api/fortune.api';
 import { FortuneDashboard } from '@/components/fortune/FortuneDashboard';
+import { AdSlot } from '@/ads/AdSlot';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -109,6 +110,7 @@ export function FortuneDetailPage() {
         birthTime={me?.birthTime}
         birthTimeUnknown={me?.birthTimeUnknown}
       />
+      <AdSlot placement="FORTUNE_BOTTOM" event="FORTUNE_VIEW" />
     </PageShell>
   );
 }

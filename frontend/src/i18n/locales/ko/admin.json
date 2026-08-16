@@ -47,6 +47,7 @@
     "subscriptionsDesc": "멤버십·체험 기간을 관리합니다.",
     "noticesDesc": "공지사항을 작성·게시합니다.",
     "bannersDesc": "프로모션·제휴 배너를 등록하고 노출 위치를 관리합니다.",
+    "adsDesc": "광고 Placement·Frequency Cap·Feature Flag·통계를 관리합니다.",
     "bannerSlotsDesc": "배너가 표시될 슬롯(위치)을 관리합니다.",
     "bannerStatsDesc": "배너 노출·클릭·CTR 통계를 확인합니다.",
     "photoBoardDesc": "사진게시판 신고·차단을 관리합니다.",
@@ -774,6 +775,34 @@
     "blockUserId": "사용자 ID",
     "blockReason": "차단 사유",
     "block": "차단"
+  },
+  "ads": {
+    "nav": "광고 정책",
+    "title": "광고 Placement / 정책",
+    "subtitle": "Feature Flag·Placement·Frequency Cap·통계를 한곳에서 관리합니다. CMS 배너 이미지는 배너 메뉴에서 등록하세요.",
+    "flagsTitle": "Feature Flags",
+    "placementsTitle": "Placements",
+    "policiesTitle": "Frequency / Audience",
+    "statsTitle": "통계",
+    "impressions": "노출",
+    "clicks": "클릭",
+    "interstitials": "전면",
+    "rewards": "리워드 완료",
+    "byPlacement": "Placement별",
+    "noStats": "아직 집계된 노출이 없습니다.",
+    "saved": "저장했습니다.",
+    "on": "ON",
+    "off": "OFF",
+    "enable": "활성화",
+    "disable": "비활성화",
+    "defaultPolicy": "기본 정책",
+    "minInterval": "최소 간격(초)",
+    "range": {
+      "today": "오늘",
+      "yesterday": "어제",
+      "7d": "7일",
+      "30d": "30일"
+    }
   },
   "banners": {
     "nav": "광고/배너 관리",

@@ -57,6 +57,18 @@ export function resolveApiErrorMessage(
   }
   const code = (error.response.data as { error?: { code?: string; message?: string } } | undefined)
     ?.error?.code;
+
+  if (
+    code === 'DAILY_QUOTA_EXCEEDED' ||
+    code === 'MONTHLY_QUOTA_EXCEEDED' ||
+    code === 'STOCK_LIMIT_EXCEEDED' ||
+    code === 'USAGE_LIMIT'
+  ) {
+    void import('@/ads/adEventBus').then(({ adEventBus }) => {
+      adEventBus.emit({ placement: 'LIMIT_REACHED', event: 'FREE_LIMIT_REACHED' });
+    });
+  }
+
   const byCode = translateApiErrorCode(code, t);
   if (byCode) return byCode;
 

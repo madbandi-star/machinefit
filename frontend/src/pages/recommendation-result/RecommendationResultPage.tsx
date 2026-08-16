@@ -17,6 +17,7 @@ import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/F
 import { ActiveSettingsSourceBanner } from '@/components/recommendation/ActiveSettingsSourceBanner/ActiveSettingsSourceBanner';
 import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { MachineCardDisclaimerNotices } from '@/components/compliance/MachineCardDisclaimerNotices';
+import { AdSlot } from '@/ads/AdSlot';
 import { recommendationApi, workoutCardApi } from '@/api';
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -575,6 +576,7 @@ export function RecommendationResultPage() {
           )}
         </article>
         <MachineCardDisclaimerNotices />
+        <AdSlot placement="RECOMMENDATION_BOTTOM" event="RECOMMENDATION_RESULT" />
       </div>
     </div>
   );

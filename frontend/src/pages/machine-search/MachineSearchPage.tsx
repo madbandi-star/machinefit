@@ -11,6 +11,7 @@ import { BrandFilterChips } from '@/components/machines/BrandFilterChips/BrandFi
 import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
 import { RecentMachineSearches } from '@/components/machines/RecentMachineSearches/RecentMachineSearches';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
+import { AdSlot } from '@/ads/AdSlot';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
   DEFAULT_SEARCH_BRAND_CODE,
@@ -351,7 +352,7 @@ export function MachineSearchPage() {
           <div
             className={`machine-list machine-list--recommend${isFetching ? ' machine-list--fetching' : ''}`}
           >
-            {data.map((machine) => {
+            {data.map((machine, index) => {
               const alreadyPlanned = plannedKeys.has(
                 planMachineKey(
                   machine.code,
@@ -359,16 +360,20 @@ export function MachineSearchPage() {
                 )
               );
               return (
-                <MachineListItem
-                  key={machine.id}
-                  machine={machine}
-                  selectedMuscle={muscleGroup}
-                  planDate={planDate}
-                  alreadyPlanned={alreadyPlanned}
-                  initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
-                  initialFavoriteId={favoriteByCode.get(machine.code)}
-                  showFavorite
-                />
+                <div key={machine.id}>
+                  {index === 3 ? (
+                    <AdSlot placement="SEARCH_NATIVE_MID" event="SEARCH_RESULT" />
+                  ) : null}
+                  <MachineListItem
+                    machine={machine}
+                    selectedMuscle={muscleGroup}
+                    planDate={planDate}
+                    alreadyPlanned={alreadyPlanned}
+                    initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
+                    initialFavoriteId={favoriteByCode.get(machine.code)}
+                    showFavorite
+                  />
+                </div>
               );
             })}
           </div>

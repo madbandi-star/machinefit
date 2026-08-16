@@ -84,6 +84,10 @@ export function WorkoutCompleteHost() {
 
       openReport(built, { todayLogs, repsByMachine });
       emitWorkoutCompleted({ report: built });
+      // After result is shown — never before. Server flags usually deny until enabled.
+      void import('@/ads/adEventBus').then(({ adEventBus }) => {
+        adEventBus.emit({ placement: 'WORKOUT_COMPLETE', event: 'WORKOUT_COMPLETE' });
+      });
     } catch {
       showToast(t('errors.loadFailed'), 'error');
       closeReport();

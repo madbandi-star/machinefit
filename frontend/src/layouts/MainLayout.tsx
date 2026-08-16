@@ -6,6 +6,7 @@ import { LegalFooter } from '@/components/layout/LegalFooter/LegalFooter';
 import { ConsentRedirect } from '@/components/auth/ConsentRedirect/ConsentRedirect';
 import { GlobalCountSessionHost } from '@/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost';
 import { GlobalRestTimerHost } from '@/components/recommendation/GlobalRestTimerHost/GlobalRestTimerHost';
+import { AdRuntimeHosts } from '@/ads/AdRuntimeHosts';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
@@ -51,6 +52,7 @@ export function MainLayout() {
       <Header />
       <GlobalRestTimerHost />
       <GlobalCountSessionHost />
+      <AdRuntimeHosts />
       <main className="layout__main">
         <div className="layout__content">
           <Outlet />

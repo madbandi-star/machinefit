@@ -134,6 +134,7 @@ export function AdminDashboardPage() {
       },
       { to: ROUTES.ADMIN_NOTICES, title: t('notices.nav'), desc: t('menu.noticesDesc') },
       { to: ROUTES.ADMIN_BANNERS, title: t('banners.nav'), desc: t('menu.bannersDesc') },
+      { to: ROUTES.ADMIN_ADS, title: t('ads.nav'), desc: t('menu.adsDesc') },
       { to: ROUTES.ADMIN_BANNER_SLOTS, title: t('banners.navSlots'), desc: t('menu.bannerSlotsDesc') },
       { to: ROUTES.ADMIN_BANNER_STATS, title: t('banners.navStats'), desc: t('menu.bannerStatsDesc') },
       { to: ROUTES.ADMIN_FORTUNE, title: t('fortuneAdmin.nav'), desc: t('menu.fortuneDesc') },
