@@ -5,7 +5,7 @@ Ad placements & policy admin page is denser: status pills, primary power toggles
 
 ## Git
 - Branch: `main`
-- Commit: (filled after push)
+- Commit: `04e930e9`
 
 ## Changed files
 - `frontend/src/pages/admin/ads/AdminAdsPage.tsx`

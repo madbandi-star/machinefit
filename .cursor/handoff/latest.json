@@ -3,7 +3,7 @@
   "summary": "Ad placements & policy admin page is denser: status pills, primary power toggles, scrollable placement list + side policy panel. Long guide collapsed behind details.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "04e930e9"
   },
   "changedFiles": [
     "frontend/src/pages/admin/ads/AdminAdsPage.tsx",
