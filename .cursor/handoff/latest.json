@@ -1,36 +1,27 @@
 {
-  "title": "Banner size guide + schedule UX",
-  "summary": "Admin banner edit shows recommended PC 1200x160 / mobile 750x120 sizes; replaced datetime-local with date+time cards, always-on toggle, and quick presets (now / 7d / 30d).",
+  "title": "My page banner?share spacing",
+  "summary": "Add gap between MY_BOTTOM promo banner and ShareAppButton so they are not flush.",
   "git": {
     "branch": "main",
-    "commit": "9b86d302"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/constants/banner.ts",
-    "frontend/src/pages/admin/banners/AdminBannerEditPage.tsx",
-    "frontend/src/pages/admin/banners/BannerScheduleFields.tsx",
-    "frontend/src/styles/banners.css",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "frontend/src/styles/components.css"
   ],
   "testFocus": [
-    "Admin banner create/edit: size guide shows 1200x160 and 750x120",
-    "Schedule: Always on clears dates; Limited splits date/time; presets work",
-    "Save still sends startAt/endAt as before"
+    "My page with marketing opt-in + live banner: space between banner and share button (~24?40px)",
+    "Without banner: share actions layout unchanged"
   ],
   "fastChecks": [
-    "rg -n \"BANNER_RECOMMENDED_SIZES|BannerScheduleFields|admin-banner-schedule\" shared frontend",
-    "node -e \"JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8'))\""
+    "rg -n \"promo-banner-slot \\+ .my-page__actions\" frontend/src/styles/components.css"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Open /admin/banners/new and verify size guide + schedule UI"
+    "My page bottom: banner and share not touching"
   ],
   "deploy": {
-    "expected": "Frontend Pages after push; shared rebuild in CI"
+    "expected": "Frontend Pages after push"
   },
-  "asIs": "No size guidance; raw datetime-local for schedule",
-  "toBe": "Clear recommended sizes + usable date/time schedule controls"
+  "asIs": "Banner and share button flush",
+  "toBe": "Comfortable vertical gap when banner is shown"
 }

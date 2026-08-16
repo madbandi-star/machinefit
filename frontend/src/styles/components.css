@@ -1339,6 +1339,15 @@
   gap: var(--space-sm);
 }
 
+/* Keep ad strip and share CTA from sitting flush when a banner is visible. */
+.my-page .promo-banner-slot {
+  margin-bottom: var(--space-lg);
+}
+
+.my-page .promo-banner-slot + .my-page__actions {
+  margin-top: var(--space-md);
+}
+
 .my-page__cta {
   display: flex;
   flex-direction: column;
