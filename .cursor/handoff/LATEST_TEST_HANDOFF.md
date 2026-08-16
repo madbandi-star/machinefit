@@ -5,7 +5,7 @@ Nine admin screens redesigned with shared `ag-*` glance pattern: KPI filters, ch
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: `8dfe317a`
 
 ## Test focus
 1. `/admin/usage` ? KPI + range chips + chart

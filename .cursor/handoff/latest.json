@@ -3,7 +3,7 @@
   "summary": "Nine admin screens redesigned with shared ag-* glance pattern: KPI filters, chips, dense expandable rows, and side editors for usage stats/users/policies, points policies/users, and data retention suite.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "8dfe317a"
   },
   "changedFiles": [
     "frontend/src/styles/admin-glance.css",
