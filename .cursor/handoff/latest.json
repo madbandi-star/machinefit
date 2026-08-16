@@ -3,7 +3,7 @@
   "summary": "Restyle home Recent Records and Favorites empty prompts to match the green accent card mock (section bar, circular icons, badge pill, chevron chip, dot grid). No query/route/logic changes.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a2c428a0"
   },
   "changedFiles": [
     "frontend/src/components/home/HomeSectionEmptyPrompt/HomeSectionEmptyPrompt.tsx",
