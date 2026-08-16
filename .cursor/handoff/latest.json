@@ -1,33 +1,34 @@
 {
-  "title": "Search brand-filter empty state polish",
-  "summary": "When the search page has no favorite brands, the empty area is now a compact gold-star action row (tappable) instead of a dashed box with long copy.",
+  "title": "Unify brand favorites into dense chip picker",
+  "summary": "Brand favorites page is one searchable chip grid (no logos, no separate mine/add sections). Favorites sort to the top; mobile shows 3–4 brands per row.",
   "git": {
     "branch": "main",
-    "commit": "96b18e74"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/styles/machines.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
+    "frontend/src/styles/brand-favorites.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Logged-in user with zero brand favorites: search brand section shows compact empty row",
-    "Tap row opens Brand favorites page",
-    "With favorites, chips render as before"
+    "Brand favorites: single list, favorites starred and sorted first",
+    "No brand logos/images in tiles",
+    "Mobile width: at least 3 chips per row",
+    "Toggle star updates count and search filter still works"
   ],
   "fastChecks": [
-    "rg -n \"brand-filter-empty|filterEmptyCta\" frontend/src/pages/machine-search/MachineSearchPage.tsx frontend/src/styles/machines.css frontend/src/i18n/locales/ko/machines.json"
+    "rg -n \"brand-favorites__chip|listLabel|resolveBrandLogoUrl\" frontend/src/pages/brand-favorites frontend/src/styles/brand-favorites.css frontend/src/i18n/locales/ko/common.json"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Hard refresh search with empty brand favorites"
+    "Hard refresh Brand favorites page"
   ],
   "deploy": {
     "expected": "Frontend Pages only"
   },
-  "asIs": "Dashed box + long path hint + secondary button",
-  "toBe": "Horizontal star nudge link with short copy and Add chip"
+  "asIs": "Two stacked sections with logo tiles, few brands visible",
+  "toBe": "One dense text chip grid, favorites on top, no images"
 }

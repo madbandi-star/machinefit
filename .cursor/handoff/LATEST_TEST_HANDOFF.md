@@ -1,31 +1,32 @@
-# Test handoff — Search brand-filter empty state polish
+# Test handoff — Unify brand favorites into dense chip picker
 
 ## Summary
-When the search page has no favorite brands, the empty area is now a compact gold-star action row (tappable) instead of a dashed box with long copy.
+Brand favorites page is one searchable chip grid (no logos, no separate mine/add sections). Favorites sort to the top; mobile shows 3–4 brands per row.
 
 ## Git
 - Branch: `main`
-- Commit: `96b18e74`
+- Commit: pending
 
 ## Changed files
-- `frontend/src/pages/machine-search/MachineSearchPage.tsx`
-- `frontend/src/styles/machines.css`
-- `frontend/src/i18n/locales/{ko,en,ja,zh}/machines.json`
+- `frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx`
+- `frontend/src/styles/brand-favorites.css`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/common.json`
 
 ## Test focus
-1. Logged-in, zero brand favorites → compact empty row.
-2. Tap row → Brand favorites.
-3. With favorites → chips unchanged.
+1. Single list; starred favorites first.
+2. No logos/images.
+3. Mobile: 3–4 chips per row.
+4. Toggle updates count; search filter on machine search still uses favorites.
 
 ## Fast checks
 ```bash
-rg -n "brand-filter-empty|filterEmptyCta" frontend/src/pages/machine-search/MachineSearchPage.tsx frontend/src/styles/machines.css frontend/src/i18n/locales/ko/machines.json
+rg -n "brand-favorites__chip|listLabel|resolveBrandLogoUrl" frontend/src/pages/brand-favorites frontend/src/styles/brand-favorites.css frontend/src/i18n/locales/ko/common.json
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 | --- | --- |
-| Dashed box + long hint + button | Compact star row + short copy + Add |
+| Mine + Add sections with logo tiles | One dense chip grid, text + star only |
 
 ## Deploy
 Frontend Pages only.
