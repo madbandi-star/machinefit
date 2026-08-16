@@ -3,7 +3,7 @@
   "summary": "Brand favorites page lists caption chips in admin brands.displayOrder (sort_order). Public brand list API now returns sortOrder and orders by sort_order ASC.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "6d50e8a8"
   },
   "changedFiles": [
     "backend/server/repositories/machine.repository.ts",
