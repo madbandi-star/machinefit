@@ -1,0 +1,394 @@
+/* Admin template-share moderation — glanceable KPIs + dense queues */
+
+.ats {
+  --ats-warn: #c77700;
+  --ats-danger: #c62828;
+  --ats-ok: color-mix(in srgb, var(--color-primary) 80%, #0a7a3e);
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ats-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+@media (min-width: 720px) {
+  .ats-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .ats-kpis {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+.ats-kpi {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-bg) 45%, var(--color-surface));
+  color: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+button.ats-kpi {
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+button.ats-kpi:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+}
+
+.ats-kpi.is-active {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+}
+
+.ats-kpi.is-warn .ats-kpi__value {
+  color: var(--ats-warn);
+}
+
+.ats-kpi__value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--color-primary-text, var(--color-primary));
+}
+
+.ats-kpi__label {
+  font-size: 0.7rem;
+  font-weight: 650;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.ats-tabs {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.ats-tab {
+  appearance: none;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ats-tab.is-active {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+}
+
+.ats-tab__count {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.ats-panel {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-bg) 35%, var(--color-surface));
+}
+
+.ats-toolbar {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.ats-search {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: inherit;
+  font: inherit;
+}
+
+.ats-chips {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.ats-chip {
+  appearance: none;
+  flex: 0 0 auto;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ats-chip.is-active {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+}
+
+.ats-empty {
+  margin: 0;
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  font-weight: 650;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+}
+
+.ats-queue {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.ats-queue__head {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .ats-queue__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 5rem 7rem 1.25rem;
+    gap: 0.55rem;
+    padding: 0 0.65rem 0.2rem;
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+}
+
+.ats-card {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.ats-card--hidden {
+  box-shadow: inset 3px 0 0 var(--ats-warn);
+}
+
+.ats-card--removed {
+  box-shadow: inset 3px 0 0 var(--ats-danger);
+  opacity: 0.88;
+}
+
+.ats-card__main {
+  appearance: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem 0.55rem;
+  align-items: center;
+  padding: 0.6rem 0.7rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  .ats-card__main {
+    grid-template-columns: minmax(0, 1fr) 5rem 7rem 1.25rem;
+  }
+}
+
+.ats-card__identity {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.ats-card__title {
+  font-size: 0.9rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ats-card__meta {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ats-card__chevron {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  justify-self: end;
+}
+
+.ats-metrics {
+  display: none;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 900px) {
+  .ats-metrics {
+    display: inline-flex;
+    justify-content: flex-end;
+  }
+}
+
+.ats-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0 0.7rem 0.7rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  padding-top: 0.55rem;
+}
+
+.ats-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.26rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 750;
+  line-height: 1;
+  background: color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+  white-space: nowrap;
+}
+
+.ats-pill--published {
+  background: color-mix(in srgb, var(--ats-ok) 14%, transparent);
+  color: var(--ats-ok);
+}
+
+.ats-pill--hidden {
+  background: color-mix(in srgb, var(--ats-warn) 16%, transparent);
+  color: var(--ats-warn);
+}
+
+.ats-pill--removed {
+  background: color-mix(in srgb, var(--ats-danger) 14%, transparent);
+  color: var(--ats-danger);
+}
+
+.ats-pill--report-open,
+.ats-pill--report-reviewed {
+  background: color-mix(in srgb, var(--ats-warn) 16%, transparent);
+  color: var(--ats-warn);
+}
+
+.ats-pill--report-actioned {
+  background: color-mix(in srgb, var(--ats-ok) 14%, transparent);
+  color: var(--ats-ok);
+}
+
+.ats-pill--report-dismissed {
+  color: var(--color-text-muted);
+}
+
+.ats-report {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+}
+
+.ats-report.is-open-report {
+  box-shadow: inset 3px 0 0 var(--ats-warn);
+}
+
+.ats-report__main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: start;
+}
+
+.ats-report__body {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.ats-report__body strong {
+  font-size: 0.88rem;
+  font-weight: 750;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ats-report__body strong a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.ats-report__body span {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ats-btn--danger {
+  color: var(--ats-danger) !important;
+}
+
+@media (max-width: 720px) {
+  .ats-card__main .ats-pill {
+    justify-self: start;
+  }
+}

@@ -1,20 +1,27 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { templateShareApi } from '@/api/template-share.api';
+import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { templateShareApi } from '@/api/template-share.api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
-import '@/styles/template-share.css';
+import '@/styles/admin-template-share.css';
+
+type TabId = 'posts' | 'reports';
+type StatusFilter = '' | 'published' | 'hidden' | 'removed';
 
 export function AdminTemplateSharePage() {
   const { t } = useTranslation(['admin', 'common']);
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
-  const [status, setStatus] = useState('');
+  const [tab, setTab] = useState<TabId>('posts');
+  const [status, setStatus] = useState<StatusFilter>('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const statsQuery = useQuery({
     queryKey: ['admin', 'template-shares', 'stats'],
@@ -43,6 +50,7 @@ export function AdminTemplateSharePage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'template-shares'] });
       showToast(t('admin:templateShare.updated'), 'success');
+      setExpandedId(null);
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
@@ -56,197 +64,350 @@ export function AdminTemplateSharePage() {
       next: 'actioned' | 'dismissed' | 'reviewed';
     }) => templateShareApi.adminResolveReport(reportId, next),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['admin', 'template-shares', 'reports'] });
+      await queryClient.invalidateQueries({ queryKey: ['admin', 'template-shares'] });
       showToast(t('admin:templateShare.reportResolved'), 'success');
     },
+    onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
   const stats = statsQuery.data;
+  const busy = statusMutation.isPending || resolveMutation.isPending;
+
+  const posts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const items = listQuery.data?.items ?? [];
+    if (!q) return items;
+    return items.filter((item) => {
+      const hay = `${item.title} ${item.authorName} ${item.status}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [listQuery.data?.items, search]);
+
+  const openReports = useMemo(
+    () =>
+      (reportsQuery.data ?? []).filter(
+        (r) => r.status === 'open' || r.status === 'reviewed'
+      ),
+    [reportsQuery.data]
+  );
+
+  const closedReports = useMemo(
+    () =>
+      (reportsQuery.data ?? []).filter(
+        (r) => r.status !== 'open' && r.status !== 'reviewed'
+      ),
+    [reportsQuery.data]
+  );
+
+  const reportRows = tab === 'reports' ? [...openReports, ...closedReports] : [];
 
   return (
-    <div className="admin-page">
-      <header className="admin-page__header">
-        <div className="admin-page__heading">
-          <h1 className="admin-page__title">{t('admin:templateShare.title')}</h1>
-          <p className="admin-page__subtitle">{t('admin:templateShare.subtitle')}</p>
-        </div>
-      </header>
-
-      <div className="admin-page__body">
-        {statsQuery.isLoading ? <Skeleton count={2} height={72} /> : null}
+    <AdminPageShell
+      title={t('admin:templateShare.title')}
+      subtitle={t('admin:templateShare.subtitle')}
+    >
+      <div className="ats">
+        {statsQuery.isLoading ? <Skeleton count={1} height={72} /> : null}
         {stats ? (
-          <section className="admin-panel" style={{ marginBottom: '1rem' }}>
-            <h2 className="admin-panel__title">{t('admin:templateShare.stats')}</h2>
-            <div className="admin-stats">
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.published')}</span>
-                <strong className="admin-stat__value">{stats.totalPublished}</strong>
-              </div>
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.hidden')}</span>
-                <strong className="admin-stat__value">{stats.totalHidden}</strong>
-              </div>
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.downloads')}</span>
-                <strong className="admin-stat__value">{stats.totalDownloads}</strong>
-              </div>
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.uses')}</span>
-                <strong className="admin-stat__value">{stats.totalUses}</strong>
-              </div>
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.likes')}</span>
-                <strong className="admin-stat__value">{stats.totalLikes}</strong>
-              </div>
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.comments')}</span>
-                <strong className="admin-stat__value">{stats.totalComments}</strong>
-              </div>
-              <div className="admin-stat">
-                <span className="admin-stat__label">{t('admin:templateShare.openReports')}</span>
-                <strong className="admin-stat__value">{stats.openReports}</strong>
-              </div>
+          <section className="ats-kpis" aria-label={t('admin:templateShare.stats')}>
+            <button
+              type="button"
+              className={`ats-kpi${status === 'published' && tab === 'posts' ? ' is-active' : ''}`}
+              onClick={() => {
+                setTab('posts');
+                setStatus('published');
+              }}
+            >
+              <span className="ats-kpi__value">{stats.totalPublished}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.published')}</span>
+            </button>
+            <button
+              type="button"
+              className={`ats-kpi${status === 'hidden' && tab === 'posts' ? ' is-active' : ''}`}
+              onClick={() => {
+                setTab('posts');
+                setStatus('hidden');
+              }}
+            >
+              <span className="ats-kpi__value">{stats.totalHidden}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.hidden')}</span>
+            </button>
+            <div className="ats-kpi">
+              <span className="ats-kpi__value">{stats.totalDownloads}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.downloads')}</span>
             </div>
+            <div className="ats-kpi">
+              <span className="ats-kpi__value">{stats.totalUses}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.uses')}</span>
+            </div>
+            <div className="ats-kpi">
+              <span className="ats-kpi__value">{stats.totalLikes}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.likes')}</span>
+            </div>
+            <div className="ats-kpi">
+              <span className="ats-kpi__value">{stats.totalComments}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.comments')}</span>
+            </div>
+            <button
+              type="button"
+              className={`ats-kpi${tab === 'reports' ? ' is-active' : ''}${
+                stats.openReports > 0 ? ' is-warn' : ''
+              }`}
+              onClick={() => setTab('reports')}
+            >
+              <span className="ats-kpi__value">{stats.openReports}</span>
+              <span className="ats-kpi__label">{t('admin:templateShare.openReports')}</span>
+            </button>
           </section>
         ) : null}
 
-        <div className="admin-banners-filters" style={{ marginBottom: '0.75rem' }}>
-          <select
-            className="input"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            aria-label={t('admin:templateShare.filterStatus')}
+        <div className="ats-tabs" role="tablist" aria-label={t('admin:templateShare.title')}>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'posts'}
+            className={`ats-tab${tab === 'posts' ? ' is-active' : ''}`}
+            onClick={() => setTab('posts')}
           >
-            <option value="">{t('admin:templateShare.allStatus')}</option>
-            <option value="published">{t('admin:templateShare.statusPublished')}</option>
-            <option value="hidden">{t('admin:templateShare.statusHidden')}</option>
-            <option value="removed">{t('admin:templateShare.statusRemoved')}</option>
-          </select>
+            {t('admin:templateShare.tabPosts')}
+            <span className="ats-tab__count">{listQuery.data?.total ?? posts.length}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'reports'}
+            className={`ats-tab${tab === 'reports' ? ' is-active' : ''}`}
+            onClick={() => setTab('reports')}
+          >
+            {t('admin:templateShare.reports')}
+            <span className="ats-tab__count">{stats?.openReports ?? openReports.length}</span>
+          </button>
         </div>
 
-        {listQuery.isLoading ? <Skeleton count={3} height={64} /> : null}
-        {listQuery.isError ? <QueryErrorMessage /> : null}
-        {!listQuery.isLoading && !listQuery.isError ? (
-          <section className="admin-panel" style={{ overflowX: 'auto', marginBottom: '1rem' }}>
-            <table className="admin-banners-table">
-              <thead>
-                <tr>
-                  <th>{t('admin:templateShare.colTitle')}</th>
-                  <th>{t('admin:templateShare.colAuthor')}</th>
-                  <th>{t('admin:templateShare.colStatus')}</th>
-                  <th>📥</th>
-                  <th>🏋️</th>
-                  <th>❤️</th>
-                  <th>{t('admin:templateShare.colActions')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(listQuery.data?.items ?? []).map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      <Link to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(':postId', item.id)}>
-                        {item.title}
-                      </Link>
-                    </td>
-                    <td>{item.authorName}</td>
-                    <td>{item.status}</td>
-                    <td>{item.downloadCount}</td>
-                    <td>{item.useCount}</td>
-                    <td>{item.likeCount}</td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                        {item.status !== 'published' ? (
+        {tab === 'posts' ? (
+          <section className="ats-panel">
+            <div className="ats-toolbar">
+              <input
+                className="ats-search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('admin:templateShare.searchPlaceholder')}
+                aria-label={t('admin:templateShare.searchPlaceholder')}
+              />
+              <div
+                className="ats-chips"
+                role="group"
+                aria-label={t('admin:templateShare.filterStatus')}
+              >
+                {(
+                  [
+                    ['', t('admin:templateShare.allStatus')],
+                    ['published', t('admin:templateShare.statusPublished')],
+                    ['hidden', t('admin:templateShare.statusHidden')],
+                    ['removed', t('admin:templateShare.statusRemoved')],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value || 'all'}
+                    type="button"
+                    className={`ats-chip${status === value ? ' is-active' : ''}`}
+                    aria-pressed={status === value}
+                    onClick={() => setStatus(value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {listQuery.isLoading ? <Skeleton count={3} height={56} /> : null}
+            {listQuery.isError ? <QueryErrorMessage /> : null}
+            {!listQuery.isLoading && !listQuery.isError && posts.length === 0 ? (
+              <p className="ats-empty">{t('admin:templateShare.emptyPosts')}</p>
+            ) : null}
+            {!listQuery.isLoading && !listQuery.isError && posts.length > 0 ? (
+              <div className="ats-queue">
+                <div className="ats-queue__head" aria-hidden>
+                  <span>{t('admin:templateShare.colTitle')}</span>
+                  <span>{t('admin:templateShare.colStatus')}</span>
+                  <span>{t('admin:templateShare.metrics')}</span>
+                  <span />
+                </div>
+                {posts.map((item) => {
+                  const open = expandedId === item.id;
+                  return (
+                    <article
+                      key={item.id}
+                      className={`ats-card ats-card--${item.status}${open ? ' is-open' : ''}`}
+                    >
+                      <button
+                        type="button"
+                        className="ats-card__main"
+                        onClick={() =>
+                          setExpandedId((prev) => (prev === item.id ? null : item.id))
+                        }
+                      >
+                        <span className="ats-card__identity">
+                          <span className="ats-card__title">{item.title}</span>
+                          <span className="ats-card__meta">
+                            {item.authorName}
+                            {' · '}
+                            {item.category}
+                          </span>
+                        </span>
+                        <span className={`ats-pill ats-pill--${item.status}`}>
+                          {t(`admin:templateShare.status.${item.status}`, {
+                            defaultValue: item.status,
+                          })}
+                        </span>
+                        <span className="ats-metrics">
+                          <span title={t('admin:templateShare.downloads')}>
+                            ↓{item.downloadCount}
+                          </span>
+                          <span title={t('admin:templateShare.uses')}>↻{item.useCount}</span>
+                          <span title={t('admin:templateShare.likes')}>♥{item.likeCount}</span>
+                        </span>
+                        <span className="ats-card__chevron" aria-hidden>
+                          {open ? '▾' : '▸'}
+                        </span>
+                      </button>
+                      {open ? (
+                        <div className="ats-card__actions">
+                          <Link
+                            className="btn btn--ghost btn--sm"
+                            to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(':postId', item.id)}
+                          >
+                            {t('admin:templateShare.view')}
+                          </Link>
+                          {item.status !== 'published' ? (
+                            <button
+                              type="button"
+                              className="btn btn--secondary btn--sm"
+                              disabled={busy}
+                              onClick={() =>
+                                statusMutation.mutate({ id: item.id, next: 'published' })
+                              }
+                            >
+                              {t('admin:templateShare.publish')}
+                            </button>
+                          ) : null}
+                          {item.status !== 'hidden' ? (
+                            <button
+                              type="button"
+                              className="btn btn--secondary btn--sm"
+                              disabled={busy}
+                              onClick={() =>
+                                statusMutation.mutate({ id: item.id, next: 'hidden' })
+                              }
+                            >
+                              {t('admin:templateShare.hide')}
+                            </button>
+                          ) : null}
+                          {item.status !== 'removed' ? (
+                            <button
+                              type="button"
+                              className="btn btn--ghost btn--sm ats-btn--danger"
+                              disabled={busy}
+                              onClick={() =>
+                                statusMutation.mutate({ id: item.id, next: 'removed' })
+                              }
+                            >
+                              {t('admin:templateShare.remove')}
+                            </button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        {tab === 'reports' ? (
+          <section className="ats-panel">
+            {reportsQuery.isLoading ? <Skeleton count={2} height={48} /> : null}
+            {!reportsQuery.isLoading && reportRows.length === 0 ? (
+              <p className="ats-empty">{t('admin:templateShare.emptyReports')}</p>
+            ) : null}
+            {reportRows.length > 0 ? (
+              <div className="ats-queue">
+                {reportRows.map((report) => {
+                  const needsAction =
+                    report.status === 'open' || report.status === 'reviewed';
+                  return (
+                    <article
+                      key={report.id}
+                      className={`ats-report${needsAction ? ' is-open-report' : ''}`}
+                    >
+                      <div className="ats-report__main">
+                        <span className={`ats-pill ats-pill--report-${report.status}`}>
+                          {t(`admin:templateShare.reportStatus.${report.status}`, {
+                            defaultValue: report.status,
+                          })}
+                        </span>
+                        <div className="ats-report__body">
+                          <strong>
+                            {report.postId ? (
+                              <Link
+                                to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(
+                                  ':postId',
+                                  report.postId
+                                )}
+                              >
+                                {report.postTitle || report.postId}
+                              </Link>
+                            ) : (
+                              report.commentId || '—'
+                            )}
+                          </strong>
+                          <span>
+                            {t(`admin:templateShare.reason.${report.reason}`, {
+                              defaultValue: String(report.reason),
+                            })}
+                            {report.description ? ` · ${report.description}` : ''}
+                          </span>
+                        </div>
+                      </div>
+                      {needsAction ? (
+                        <div className="ats-card__actions">
                           <button
                             type="button"
                             className="btn btn--secondary btn--sm"
+                            disabled={busy}
                             onClick={() =>
-                              statusMutation.mutate({ id: item.id, next: 'published' })
+                              resolveMutation.mutate({
+                                reportId: report.id,
+                                next: 'actioned',
+                              })
                             }
                           >
-                            {t('admin:templateShare.publish')}
+                            {t('admin:templateShare.action')}
                           </button>
-                        ) : null}
-                        {item.status !== 'hidden' ? (
-                          <button
-                            type="button"
-                            className="btn btn--secondary btn--sm"
-                            onClick={() => statusMutation.mutate({ id: item.id, next: 'hidden' })}
-                          >
-                            {t('admin:templateShare.hide')}
-                          </button>
-                        ) : null}
-                        {item.status !== 'removed' ? (
                           <button
                             type="button"
                             className="btn btn--ghost btn--sm"
-                            onClick={() => statusMutation.mutate({ id: item.id, next: 'removed' })}
+                            disabled={busy}
+                            onClick={() =>
+                              resolveMutation.mutate({
+                                reportId: report.id,
+                                next: 'dismissed',
+                              })
+                            }
                           >
-                            {t('admin:templateShare.remove')}
+                            {t('admin:templateShare.dismiss')}
                           </button>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
+              </div>
+            ) : null}
           </section>
         ) : null}
-
-        <section className="admin-panel" style={{ overflowX: 'auto' }}>
-          <h2 className="admin-panel__title">{t('admin:templateShare.reports')}</h2>
-          {reportsQuery.isLoading ? <Skeleton count={2} height={48} /> : null}
-          <table className="admin-banners-table">
-            <thead>
-              <tr>
-                <th>{t('admin:templateShare.colTitle')}</th>
-                <th>{t('admin:templateShare.colReason')}</th>
-                <th>{t('admin:templateShare.colStatus')}</th>
-                <th>{t('admin:templateShare.colActions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(reportsQuery.data ?? []).map((report) => (
-                <tr key={report.id}>
-                  <td>
-                    {report.postId ? (
-                      <Link to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(':postId', report.postId)}>
-                        {report.postTitle || report.postId}
-                      </Link>
-                    ) : (
-                      report.commentId || '—'
-                    )}
-                  </td>
-                  <td>{report.reason}</td>
-                  <td>{report.status}</td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '0.35rem' }}>
-                      <button
-                        type="button"
-                        className="btn btn--secondary btn--sm"
-                        onClick={() =>
-                          resolveMutation.mutate({ reportId: report.id, next: 'actioned' })
-                        }
-                      >
-                        {t('admin:templateShare.action')}
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn--ghost btn--sm"
-                        onClick={() =>
-                          resolveMutation.mutate({ reportId: report.id, next: 'dismissed' })
-                        }
-                      >
-                        {t('admin:templateShare.dismiss')}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
       </div>
-    </div>
+    </AdminPageShell>
   );
 }
