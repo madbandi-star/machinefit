@@ -1,0 +1,258 @@
+/* Admin Ads / Placement / Policy — glanceable + guided copy */
+
+.admin-ads {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.admin-ads__guide {
+  padding: 1rem 1.05rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+}
+
+.admin-ads__guide-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.admin-ads__guide-lead {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.admin-ads__steps {
+  margin: 0;
+  padding: 0 0 0 1.15rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-ads__steps li {
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.admin-ads__steps strong {
+  color: var(--color-text);
+  font-weight: 750;
+}
+
+.admin-ads__guide-note {
+  margin: 0.85rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.admin-ads__guide-note a {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.admin-ads__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.9rem 0.95rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 90%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+}
+
+.admin-ads__section-head {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-ads__section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.admin-ads__section-hint,
+.admin-ads__card-hint,
+.admin-ads__footnote {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.admin-ads__subhead {
+  margin: 0 0 0.35rem;
+  font-size: 0.86rem;
+  font-weight: 750;
+  color: var(--color-text);
+}
+
+.admin-ads__cards {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-ads__card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.8rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--glass-border) 85%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 35%, var(--color-surface));
+}
+
+.admin-ads__card--placement.is-selected {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.admin-ads__card-top,
+.admin-ads__card-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.admin-ads__card-select {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+.admin-ads__card-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 750;
+  color: var(--color-text);
+}
+
+.admin-ads__card-code,
+.admin-ads__card-meta {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  word-break: break-all;
+}
+
+.admin-ads__card-where {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.admin-ads__switch,
+.admin-ads__check {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  color: var(--color-text);
+}
+
+.admin-ads__switch span {
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.admin-ads__audience {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.admin-ads__check span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.admin-ads__check strong {
+  font-weight: 750;
+}
+
+.admin-ads__check em,
+.admin-ads__field-label em {
+  font-style: normal;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.admin-ads__field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.admin-ads__field-label {
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.admin-ads__limits {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.admin-ads__selected {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.admin-ads__empty {
+  margin: 0;
+  padding: 0.75rem 0.2rem;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.admin-ads__stat-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.admin-ads__stat-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-bg) 40%, transparent);
+  font-size: 0.82rem;
+}
+
+.admin-ads__stat-key {
+  font-weight: 650;
+  color: var(--color-text);
+}
+
+.admin-ads__stat-nums {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.admin-ads__footnote {
+  padding: 0 0.15rem 0.5rem;
+}
