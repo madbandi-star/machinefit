@@ -45,6 +45,7 @@ export function FavoriteMachinesRow() {
           icon="heart"
           title={t('pages.home.favoritesEmptyAction')}
           description={t('pages.home.favoritesEmptyHint')}
+          badge={t('pages.home.favoritesEmptyBadge')}
           to={ROUTES.FAVORITES_EMPTY}
         />
       ) : (

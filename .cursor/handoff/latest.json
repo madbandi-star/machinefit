@@ -1,28 +1,35 @@
 {
-  "title": "Search brand chips follow admin sortOrder",
-  "summary": "Machine search BrandFilterChips now order by admin brand display order (sortOrder) instead of the hardcoded BODYWEIGHT/FREE_WEIGHT/… list.",
+  "title": "Home empty recent/favorites UI polish",
+  "summary": "Restyle home Recent Records and Favorites empty prompts to match the green accent card mock (section bar, circular icons, badge pill, chevron chip, dot grid). No query/route/logic changes.",
   "git": {
     "branch": "main",
-    "commit": "a4a9a78f"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/utils/sortBrandsForSearch.ts"
+    "frontend/src/components/home/HomeSectionEmptyPrompt/HomeSectionEmptyPrompt.tsx",
+    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
+    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
+    "frontend/src/styles/home.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Search page brand chip row order matches Admin → Brands sortOrder (asc)",
-    "Easy mode machine picker brand chips follow the same order"
+    "Home with empty recent + empty favorites: cards match mock layout",
+    "Tapping cards still navigates to machines / favorites-empty (unchanged routes)",
+    "When data exists, carousel still works (only empty UI changed)"
   ],
   "fastChecks": [
-    "rg -n \"compareBrandsByDisplayOrder|BRAND_SEARCH_ORDER\" frontend/src/utils/sortBrandsForSearch.ts"
+    "rg -n \"home-section-empty__badge|recentEmptyBadge\" frontend/src/components/home frontend/src/styles/home.css"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Render backend already serving sortOrder on GET /brands (from prior commit)",
-    "Hard refresh search"
+    "Hard refresh home empty states"
   ],
   "deploy": {
-    "expected": "Frontend Pages; backend already has sortOrder if prior deploy ran"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Search brands used fixed code priority list",
-  "toBe": "Search brands ordered by admin display order"
+  "asIs": "Plain empty prompt rows",
+  "toBe": "Mock-matched empty cards with bar title, badge, dots"
 }

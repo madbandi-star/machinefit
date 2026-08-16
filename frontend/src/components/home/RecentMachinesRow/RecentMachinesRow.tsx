@@ -70,6 +70,7 @@ export function RecentMachinesRow() {
           icon="history"
           title={t('pages.home.recentEmptyAction')}
           description={t('pages.home.recentEmptyHint')}
+          badge={t('pages.home.recentEmptyBadge')}
           to={ROUTES.MACHINES}
         />
       ) : (

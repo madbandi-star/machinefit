@@ -1,21 +1,18 @@
-# Test handoff — Search brands = admin display order
+# Test handoff — Home recent/favorites empty UI
 
 ## Summary
-검색(및 Easy mode 피커) 브랜드 칩 정렬을 하드코딩 우선순위에서 관리자 **표시순서(`sortOrder`)** 로 변경.
+홈 「최근 기록」「즐겨찾기」 빈 상태 카드를 캡처 UI에 맞게 스타일만 개선. 링크/쿼리/데이터 로직 변경 없음.
 
 ## Test focus
-1. 검색 페이지 브랜드 칩 순서 = 관리자 브랜드 표시순서
-2. Easy mode 머신 피커 브랜드 칩도 동일
-3. API에 없는 맨몸/프리만 fallback으로 끼워 넣음 (있으면 admin 순서 따름)
+1. 기록·즐겨찾기 비어 있을 때: 초록 바 제목, 원형 아이콘, 배지, 점 패턴, 원형 chevron
+2. 탭 시 기존과 동일 경로로 이동
+3. 데이터가 있으면 기존 가로 스크롤 카드 유지
 
 ## Fast checks
 ```
-rg -n "compareBrandsByDisplayOrder|BRAND_SEARCH_ORDER" frontend/src/utils/sortBrandsForSearch.ts
+rg -n "home-section-empty__badge|recentEmptyBadge" frontend/src
 ```
 
-## Note
-공개 `/brands`에 `sortOrder`가 있어야 함 (이전 BE 커밋). Render 미배포면 순서가 전부 0으로 보일 수 있음.
-
 ## As-is → To-be
-- as-is: BODYWEIGHT → FREE_WEIGHT → Hammer… 고정
-- to-be: admin sort_order ASC
+- as-is: 단순 empty row
+- to-be: 캡처와 같은 프리미엄 empty 카드
