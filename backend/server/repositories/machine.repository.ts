@@ -47,6 +47,7 @@ interface BrandRow {
   website_url: string | null;
   country_id: string | null;
   is_active: boolean;
+  sort_order?: number | null;
   logo_version?: number | null;
   has_logo_data?: boolean | null;
 }
@@ -70,6 +71,7 @@ function mapBrand(row: BrandRow): Brand {
     logoUrl,
     websiteUrl: row.website_url ?? undefined,
     countryId: row.country_id ?? undefined,
+    sortOrder: row.sort_order ?? 0,
     isActive: row.is_active,
   };
 }
@@ -388,20 +390,13 @@ export const brandRepository = {
 
     const result = await pool.query<BrandRow>(
       `SELECT b.id, b.code, b.name, b.description, b.logo_url, b.website_url, b.country_id, b.is_active,
+              b.sort_order,
               ba.logo_version,
               (ba.logo_data IS NOT NULL) AS has_logo_data
        FROM brands b
        LEFT JOIN brand_assets ba ON ba.brand_id = b.id
        WHERE b.is_active = true
-       ORDER BY CASE b.code
-         WHEN 'BODYWEIGHT' THEN 1
-         WHEN 'FREE_WEIGHT' THEN 2
-         WHEN 'HAMMER_STRENGTH' THEN 3
-         WHEN 'LIFE_FITNESS' THEN 4
-         WHEN 'CYBEX' THEN 5
-         WHEN 'TECHNOGYM' THEN 6
-         ELSE 99
-       END, b.code ASC`
+       ORDER BY b.sort_order ASC, b.code ASC`
     );
     return result.rows.map(mapBrand);
   },
@@ -412,6 +407,7 @@ export const brandRepository = {
 
     const result = await pool.query<BrandRow>(
       `SELECT b.id, b.code, b.name, b.description, b.logo_url, b.website_url, b.country_id, b.is_active,
+              b.sort_order,
               ba.logo_version,
               (ba.logo_data IS NOT NULL) AS has_logo_data
        FROM brands b

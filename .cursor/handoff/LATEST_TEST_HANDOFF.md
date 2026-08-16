@@ -1,17 +1,22 @@
-# Test handoff — Home notice / fortune spacing
+# Test handoff — My Brands order = admin display order
 
 ## Summary
-홈 공지 배너와 오늘의 헬창운세가 여백 없이 붙던 문제에 `home-notice-banner` 하단 여백 `0.75rem` 추가.
+마이페이지 「내 브랜드」 캡션 칩을 관리자 브랜드 **표시순서(`sort_order`)** 기준으로 정렬. 공개 브랜드 목록 API도 `sortOrder` 반환 + `ORDER BY sort_order`.
 
 ## Test focus
-1. 홈에서 공지 배너 표시 + (오늘 계획/미완료 배너 없음) → 운세 카드 위 간격이 적당히 떨어짐
-2. 너무 벌어지지 않음 (대략 12px)
+1. 관리자 브랜드 표시순서와 내 브랜드 칩 순서가 일치
+2. 즐겨찾기(별)는 표시만 바꾸고 순서를 앞으로 끌어올리지 않음
+3. 검색 필터 후에도 남은 항목은 sortOrder 유지
 
 ## Fast checks
 ```
-rg -n "margin: 0 0 0.75rem" frontend/src/styles/notices.css
+rg -n "sort_order ASC|\\(a\\.sortOrder" backend/server/repositories/machine.repository.ts frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx
 ```
 
+## Production
+- Render 백엔드 재배포 필수 (API에 sortOrder 포함)
+- Pages FE 배포
+
 ## As-is → To-be
-- as-is: 공지·운세 딱 붙음
-- to-be: 공지 아래 적당한 여백
+- as-is: 즐겨찾기 우선 + 가나다/알파벳
+- to-be: 관리자 표시순서

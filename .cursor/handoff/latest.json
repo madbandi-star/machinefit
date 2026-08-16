@@ -1,26 +1,29 @@
 {
-  "title": "Home notice–fortune spacing",
-  "summary": "Add modest margin below the home notice banner so it is not flush against Today’s Helchang Fortune when intermediate home cards are absent.",
+  "title": "My Brands chips follow admin sortOrder",
+  "summary": "Brand favorites page lists caption chips in admin brands.displayOrder (sort_order). Public brand list API now returns sortOrder and orders by sort_order ASC.",
   "git": {
     "branch": "main",
-    "commit": "65dbe7a3"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/styles/notices.css"
+    "backend/server/repositories/machine.repository.ts",
+    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx"
   ],
   "testFocus": [
-    "Home: with notice banner visible and no planned/missed banners, gap above Helchang fortune looks ~12px — not flush, not sparse"
+    "My Page → 내 브랜드: chip order matches Admin → Brands default sortOrder (asc)",
+    "Favoriting a brand only toggles star — does not jump that chip to the top"
   ],
   "fastChecks": [
-    "rg -n \"home-notice-banner\" -A 12 frontend/src/styles/notices.css"
+    "rg -n \"sort_order ASC|sortOrder\" backend/server/repositories/machine.repository.ts frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx"
   ],
   "productionChecks": [
+    "Deploy Backend to Render success (required)",
     "Pages Deploy Frontend success",
-    "Hard refresh home"
+    "Hard refresh 내 브랜드"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Notice and fortune cards flush with no gap",
-  "toBe": "About 0.75rem space under notice before next home block / fortune"
+  "asIs": "My Brands chips sorted favorites-first then alphabetically",
+  "toBe": "My Brands chips ordered by admin brand display order (sort_order)"
 }

@@ -49,15 +49,11 @@ export function BrandFavoritesPage() {
     return [...brands]
       .filter((b) => brandMatchesQuery(b, normalizedQuery, i18n.language))
       .sort((a, b) => {
-        const aFav = favoriteIds.has(a.id) ? 0 : 1;
-        const bFav = favoriteIds.has(b.id) ? 0 : 1;
-        if (aFav !== bFav) return aFav - bFav;
-        return brandChipLabel(a, i18n.language).localeCompare(
-          brandChipLabel(b, i18n.language),
-          i18n.language
-        );
+        const byOrder = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+        if (byOrder !== 0) return byOrder;
+        return a.code.localeCompare(b.code);
       });
-  }, [brands, favoriteIds, normalizedQuery, i18n.language]);
+  }, [brands, normalizedQuery, i18n.language]);
 
   const loading = brandsLoading || favoritesLoading;
   const favoriteCount = favoriteIds.size;
