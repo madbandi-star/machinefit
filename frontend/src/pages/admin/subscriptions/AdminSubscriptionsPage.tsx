@@ -9,6 +9,7 @@ import {
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { adminBillingApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
@@ -232,7 +233,11 @@ export function AdminSubscriptionsPage() {
               placeholder={t('subscriptions.searchPlaceholder')}
               aria-label={t('subscriptions.searchPlaceholder')}
             />
-            <div className="ag-chips" role="group" aria-label={t('subscriptions.allStatuses')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="ag-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('subscriptions.allStatuses') }}
+            >
               {STATUS_CHIPS.map((chip) => {
                 const active = status === chip;
                 const label = chip
@@ -266,7 +271,7 @@ export function AdminSubscriptionsPage() {
                   ))}
                 </select>
               </label>
-            </div>
+            </ScrollCarousel>
           </div>
 
           {items.length === 0 ? (

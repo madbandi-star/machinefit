@@ -1,26 +1,22 @@
-# Glanceable admin dashboard / ops / backup / users / subs / brands
+# Chevron carousel nav on horizontal scrolls
 
 ## Summary
-Six more admin screens use shared `ag-*` KPIs, chips, dense expandable queues, and searchable menus: dashboard, ops, backup, users, subscriptions, brands.
+Added reusable `ScrollCarousel` chevron buttons for home recent/favorites, search muscle/brand chips, plus overflow-prone admin chip rows and a few user extras.
 
 ## Git
 - branch: `main`
-- commit: `2de23002`
+- commit: pending
 
 ## Test focus
-1. `/admin` ? KPI overview, attention queue, searchable menu
-2. `/admin/ops` ? chip tabs, overview KPIs, dense error/log/alert rows
-3. `/admin/backup` ? KPI strip, settings expand, history queue, restore YES flow
-4. `/admin/users` ? KPI filters, expandable role/username actions
-5. `/admin/subscriptions` ? live search, status chips, step-up + expand actions
-6. `/admin/brands` ? KPI/search chips, dense logo rows, create/edit modal
+1. Home recent/favorites ? chevrons when overflow; click scrolls
+2. Search muscle/brand chips ? same
+3. Admin ops tabs / long chip rows ? chevrons when overflow; hidden when not
 
 ## Fast checks
 ```bash
-rg -n "admin-glance|className=\"ag\"" frontend/src/pages/admin/dashboard frontend/src/pages/admin/ops frontend/src/pages/admin/backup frontend/src/pages/admin/users frontend/src/pages/admin/subscriptions frontend/src/pages/admin/brands
-node -e "JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8')); console.log('ok')"
+rg -n "ScrollCarousel|scroll-carousel|chevronLeft" frontend/src/components frontend/src/pages/admin frontend/src/styles/scroll-carousel.css
 ```
 
-## as-is ï¿½ï¿½ to-be
-- **as-is:** Tall panels, wide tabs, bulky user/sub/brand cards
-- **to-be:** Shared ag-* KPI + chips + dense queues across six screens
+## as-is ¡æ to-be
+- **as-is:** Horizontal rows only swipe/scrollbar
+- **to-be:** Chevron prev/next when content overflows

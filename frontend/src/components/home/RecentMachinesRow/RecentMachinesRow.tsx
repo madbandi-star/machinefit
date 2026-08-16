@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { isFreeWeightMachineCode } from '@machinefit/shared';
 import { HomeSectionEmptyPrompt } from '@/components/home/HomeSectionEmptyPrompt/HomeSectionEmptyPrompt';
 import { MachineMiniCard } from '@/components/home/MachineMiniCard/MachineMiniCard';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { historyApi, type HistoryItem } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -72,22 +73,24 @@ export function RecentMachinesRow() {
           to={ROUTES.MACHINES}
         />
       ) : (
-        <div className="home-scroll-row-scroller">
-          <div className="home-scroll-row" role="list">
-            {unique.map((item) => (
-              <MachineMiniCard
-                key={recentItemKey(item)}
-                machineCode={item.machineCode}
-                machineName={item.machineName}
-                brandName={item.brandName}
-                muscleGroup={item.muscleGroup}
-                targetMuscleGroup={item.targetMuscleGroup}
-                imageUrl={item.primaryImageUrl}
-                recommendationId={item.recommendationId}
-              />
-            ))}
-          </div>
-        </div>
+        <ScrollCarousel
+          className="home-scroll-row-scroller"
+          scrollerClassName="home-scroll-row"
+          scrollerProps={{ role: 'list' }}
+        >
+          {unique.map((item) => (
+            <MachineMiniCard
+              key={recentItemKey(item)}
+              machineCode={item.machineCode}
+              machineName={item.machineName}
+              brandName={item.brandName}
+              muscleGroup={item.muscleGroup}
+              targetMuscleGroup={item.targetMuscleGroup}
+              imageUrl={item.primaryImageUrl}
+              recommendationId={item.recommendationId}
+            />
+          ))}
+        </ScrollCarousel>
       )}
     </section>
   );

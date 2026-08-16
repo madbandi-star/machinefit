@@ -7,6 +7,7 @@ import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { adminQaApi } from '@/api/qa.api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -161,7 +162,11 @@ export function AdminQaPage() {
               placeholder={t('admin:qa.searchPlaceholder')}
               aria-label={t('admin:qa.searchPlaceholder')}
             />
-            <div className="aqa-chips" role="group" aria-label={t('admin:qa.colCategory')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="aqa-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('admin:qa.colCategory') }}
+            >
               <button
                 type="button"
                 className={`aqa-chip${category === '' ? ' is-active' : ''}`}
@@ -182,7 +187,7 @@ export function AdminQaPage() {
                   ) : null}
                 </button>
               ))}
-            </div>
+            </ScrollCarousel>
           </div>
 
           <div className="aqa-layout">

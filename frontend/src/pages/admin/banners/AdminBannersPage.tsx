@@ -7,6 +7,7 @@ import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
@@ -180,7 +181,11 @@ export function AdminBannersPage() {
                 <span className="ag-chip__count">{stats.inactive}</span>
               </button>
             </div>
-            <div className="ag-chips" role="group" aria-label={t('admin:banners.colSlots')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="ag-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('admin:banners.colSlots') }}
+            >
               <button
                 type="button"
                 className={`ag-chip${slotKey === '' ? ' is-active' : ''}`}
@@ -200,7 +205,7 @@ export function AdminBannersPage() {
                   <span className="ag-chip__count">{slotCounts.get(slot.slotKey) ?? 0}</span>
                 </button>
               ))}
-            </div>
+            </ScrollCarousel>
           </div>
 
           {listQuery.isLoading ? <Skeleton count={5} height={52} /> : null}

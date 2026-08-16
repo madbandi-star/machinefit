@@ -7,6 +7,7 @@ import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { adminApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -707,7 +708,11 @@ export function AdminBrandsPage() {
               placeholder={t('brands.searchPlaceholder')}
               aria-label={t('brands.searchPlaceholder')}
             />
-            <div className="ag-chips" role="group" aria-label={t('brands.filterAll')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="ag-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('brands.filterAll') }}
+            >
               <button
                 type="button"
                 className={`ag-chip${isActive === 'all' ? ' is-active' : ''}`}
@@ -732,7 +737,7 @@ export function AdminBrandsPage() {
                 {t('inactive')}
                 <span className="ag-chip__count">{pageInactive}</span>
               </button>
-            </div>
+            </ScrollCarousel>
             <div className="ag-field-row">
               <label className="ag-field">
                 <span>{t('brands.sortOrder')}</span>

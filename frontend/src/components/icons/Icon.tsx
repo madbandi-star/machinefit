@@ -9,6 +9,7 @@ export type IconName =
   | 'bodyweight'
   | 'search'
   | 'qr'
+  | 'chevronLeft'
   | 'chevronRight'
   | 'chevronDown'
   | 'dumbbell'
@@ -106,6 +107,9 @@ const PATHS: Record<IconName, ReactElement> = {
     <>
       <path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 3h2v2h-2v-2Zm4 0h2v2h-2v-2ZM14 18h2v2h-2v-2Zm4 4h2v2h-2v-2Z" />
     </>
+  ),
+  chevronLeft: (
+    <path d="m15 6-5 6 5 6" />
   ),
   chevronRight: (
     <path d="m9 6 5 6-5 6" />

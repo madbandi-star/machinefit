@@ -55,6 +55,10 @@
     "prev": "Previous",
     "next": "Next"
   },
+  "carousel": {
+    "prev": "Scroll previous",
+    "next": "Scroll next"
+  },
   "collapse": "Collapse",
   "expand": "Expand",
   "expandCardDetails": "Show details",

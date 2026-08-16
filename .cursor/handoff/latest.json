@@ -1,39 +1,46 @@
 {
-  "title": "Glanceable admin dashboard / ops / backup / users / subs / brands",
-  "summary": "Six more admin screens use shared ag-* KPIs, chips, dense expandable queues, and searchable menus: dashboard, ops, backup, users, subscriptions, brands.",
+  "title": "Chevron carousel nav on horizontal scrolls",
+  "summary": "Added reusable ScrollCarousel chevron buttons for home recent/favorites, search muscle/brand chips, plus overflow-prone admin chip rows and a few user extras.",
   "git": {
     "branch": "main",
-    "commit": "2de23002"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/admin/dashboard/AdminDashboardPage.tsx",
+    "frontend/src/components/navigation/ScrollCarousel/ScrollCarousel.tsx",
+    "frontend/src/styles/scroll-carousel.css",
+    "frontend/src/components/icons/Icon.tsx",
+    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
+    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
+    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
+    "frontend/src/components/machines/RecommendCTA/RecommendCTA.tsx",
+    "frontend/src/components/progressive-overload/GrowthMachineSelector/GrowthMachineSelector.tsx",
     "frontend/src/pages/admin/ops/AdminOpsPage.tsx",
-    "frontend/src/pages/admin/backup/AdminBackupPage.tsx",
-    "frontend/src/pages/admin/users/AdminUsersPage.tsx",
+    "frontend/src/pages/admin/qa/AdminQaPage.tsx",
+    "frontend/src/pages/admin/fortune/AdminFortunePage.tsx",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionPage.tsx",
+    "frontend/src/pages/admin/data-retention/AdminDataRetentionScheduledPage.tsx",
     "frontend/src/pages/admin/subscriptions/AdminSubscriptionsPage.tsx",
     "frontend/src/pages/admin/brands/AdminBrandsPage.tsx",
-    "frontend/src/styles/admin-glance.css",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json"
+    "frontend/src/pages/admin/banners/AdminBannersPage.tsx",
+    "frontend/src/pages/admin/usage/AdminUsagePoliciesPage.tsx",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "/admin ? KPI overview, attention queue, searchable menu",
-    "/admin/ops ? chip tabs, overview KPIs, dense error/log/alert rows",
-    "/admin/backup ? KPI strip, settings expand, history queue, restore YES flow",
-    "/admin/users ? KPI filters, expandable role/username actions",
-    "/admin/subscriptions ? live search, status chips, step-up + expand actions",
-    "/admin/brands ? KPI/search chips, dense logo rows, create/edit modal"
+    "Home recent/favorites: chevrons appear when overflow; scroll by click",
+    "Search muscle/brand chips: same chevron behavior",
+    "Admin ops tabs and long chip rows: chevrons when overflow; hide when not"
   ],
   "fastChecks": [
-    "rg -n \"admin-glance|className=\\\"ag\\\"\" frontend/src/pages/admin/dashboard frontend/src/pages/admin/ops frontend/src/pages/admin/backup frontend/src/pages/admin/users frontend/src/pages/admin/subscriptions frontend/src/pages/admin/brands",
-    "node -e \"JSON.parse(require('fs').readFileSync('frontend/src/i18n/locales/ko/admin.json','utf8')); console.log('ok')\""
+    "rg -n \"ScrollCarousel|scroll-carousel|chevronLeft\" frontend/src/components frontend/src/pages/admin frontend/src/styles/scroll-carousel.css"
   ],
   "productionChecks": [
-    "Pages: open each listed admin route after Deploy Frontend success"
+    "Pages: home + machine search + admin ops after Deploy Frontend"
   ],
   "deploy": {
     "expected": "GitHub Pages FE success"
   },
-  "asIs": "Tall panels, wide tabs, bulky user/sub/brand cards",
-  "toBe": "Shared ag-* KPI + chips + dense queues across six screens"
+  "asIs": "Horizontal rows only swipe/scrollbar, hard to nudge on desktop",
+  "toBe": "Chevron prev/next overlay buttons when content overflows"
 }

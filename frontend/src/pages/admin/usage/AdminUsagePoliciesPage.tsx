@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { UsagePolicy, UsagePolicyUpdateInput } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { adminUsageApi } from '@/api/usage.api';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
@@ -175,7 +176,11 @@ export function AdminUsagePoliciesPage() {
               placeholder={t('usage.policySearchPlaceholder')}
               aria-label={t('usage.policySearchPlaceholder')}
             />
-            <div className="ag-chips" role="group" aria-label={t('usage.policyFilter')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="ag-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('usage.policyFilter') }}
+            >
               <button
                 type="button"
                 className={`ag-chip${filter === 'all' ? ' is-active' : ''}`}
@@ -200,7 +205,7 @@ export function AdminUsagePoliciesPage() {
                 {t('usage.filterActive')}
                 <span className="ag-chip__count">{stats.active}</span>
               </button>
-            </div>
+            </ScrollCarousel>
           </div>
 
           <div className={`ag-layout${editorOpen ? ' is-editing' : ''}`}>

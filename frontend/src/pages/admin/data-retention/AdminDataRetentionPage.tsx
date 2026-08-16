@@ -6,6 +6,7 @@ import type { RetentionPolicy, RetentionPolicyUpdateInput } from '@machinefit/sh
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { dataRetentionApi } from '@/api/data-retention.api';
 import { ROUTES } from '@/constants/routes';
 import { useUIStore } from '@/store/ui.store';
@@ -260,7 +261,11 @@ export function AdminDataRetentionPage() {
               aria-label={t('dataRetention.search')}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <div className="ag-chips" role="group" aria-label={t('dataRetention.colCategory')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="ag-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('dataRetention.colCategory') }}
+            >
               <button
                 type="button"
                 className={`ag-chip${category === '' ? ' is-active' : ''}`}
@@ -283,7 +288,7 @@ export function AdminDataRetentionPage() {
                   </button>
                 );
               })}
-            </div>
+            </ScrollCarousel>
           </div>
 
           <div className={`ag-layout${selectedId ? ' is-editing' : ''}`}>

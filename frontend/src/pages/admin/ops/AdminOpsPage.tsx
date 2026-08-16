@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { OpsRange, OpsSeriesPoint, OpsStatusColor } from '@machinefit/shared';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { opsApi } from '@/api/ops.api';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
@@ -298,7 +299,11 @@ export function AdminOpsPage() {
     >
       <div className="admin-ops ag">
         <div className="ag-toolbar">
-          <div className="ag-chips" role="group" aria-label={t('ops.range')}>
+          <ScrollCarousel
+            className="chip-carousel"
+            scrollerClassName="ag-chips"
+            scrollerProps={{ role: 'group', 'aria-label': t('ops.range') }}
+          >
             {ranges.map((r) => (
               <button
                 key={r}
@@ -309,8 +314,12 @@ export function AdminOpsPage() {
                 {rangeLabel(r)}
               </button>
             ))}
-          </div>
-          <nav className="ag-chips" aria-label={t('ops.title')}>
+          </ScrollCarousel>
+          <ScrollCarousel
+            className="chip-carousel"
+            scrollerClassName="ag-chips"
+            scrollerProps={{ role: 'navigation', 'aria-label': t('ops.title') }}
+          >
             {TABS.map((id) => {
               const count = tabBadge(id);
               return (
@@ -330,7 +339,7 @@ export function AdminOpsPage() {
                 </button>
               );
             })}
-          </nav>
+          </ScrollCarousel>
         </div>
 
         {tab === 'overview' && kpi && health && (
@@ -927,7 +936,11 @@ export function AdminOpsPage() {
         {tab === 'logs' && (
           <section className="ag-panel">
             <div className="ag-toolbar">
-              <div className="ag-chips" role="group" aria-label={t('ops.kind')}>
+              <ScrollCarousel
+                className="chip-carousel"
+                scrollerClassName="ag-chips"
+                scrollerProps={{ role: 'group', 'aria-label': t('ops.kind') }}
+              >
                 {[
                   { value: '', label: t('ops.allKinds') },
                   { value: 'application', label: 'Application' },
@@ -946,7 +959,7 @@ export function AdminOpsPage() {
                     {opt.label}
                   </button>
                 ))}
-              </div>
+              </ScrollCarousel>
               <input
                 className="ag-search"
                 value={logQ}

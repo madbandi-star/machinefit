@@ -7,6 +7,7 @@ import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
 import '@/styles/admin-fortune.css';
@@ -270,7 +271,11 @@ export function AdminFortunePage() {
               placeholder={t('fortuneAdmin.searchPlaceholder')}
               aria-label={t('fortuneAdmin.searchPlaceholder')}
             />
-            <div className="aft-chips" role="group" aria-label={t('fortuneAdmin.category')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="aft-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('fortuneAdmin.category') }}
+            >
               <button
                 type="button"
                 className={`aft-chip${category === '' ? ' is-active' : ''}`}
@@ -293,7 +298,7 @@ export function AdminFortunePage() {
                   </button>
                 );
               })}
-            </div>
+            </ScrollCarousel>
           </div>
 
           <div className={`aft-layout${editorOpen ? ' is-editing' : ''}`}>

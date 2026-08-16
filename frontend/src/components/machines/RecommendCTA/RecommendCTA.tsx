@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Role, hasMinRole, type TargetMuscleGroup } from '@machinefit/shared';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import { useAuthStore } from '@/store/auth.store';
@@ -89,7 +90,10 @@ export function RecommendCTA({
       {needsMusclePicker ? (
         <div className="recommend-cta__muscle-picker" role="group" aria-label={t('targetMuscleLabel')}>
           <p className="recommend-cta__muscle-label">{t('targetMuscleLabel')}</p>
-          <div className="filter-chips recommend-cta__muscle-chips">
+          <ScrollCarousel
+            className="filter-chips-scroller chip-carousel"
+            scrollerClassName="filter-chips recommend-cta__muscle-chips"
+          >
             {MUSCLE_GROUPS.map((group) => (
               <button
                 key={group}
@@ -102,7 +106,7 @@ export function RecommendCTA({
                 <span>{t(`muscleGroups.${group}`)}</span>
               </button>
             ))}
-          </div>
+          </ScrollCarousel>
         </div>
       ) : null}
       {showTradeActions && canTrade ? (

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AdminPageShell } from '@/components/admin/AdminPageShell/AdminPageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import { dataRetentionApi } from '@/api/data-retention.api';
 import { useUIStore } from '@/store/ui.store';
 import '@/styles/admin.css';
@@ -162,7 +163,11 @@ export function AdminDataRetentionScheduledPage() {
 
         <section className="ag-panel">
           <div className="ag-toolbar">
-            <div className="ag-chips" role="group" aria-label={t('dataRetention.window')}>
+            <ScrollCarousel
+              className="chip-carousel"
+              scrollerClassName="ag-chips"
+              scrollerProps={{ role: 'group', 'aria-label': t('dataRetention.window') }}
+            >
               {WINDOWS.map(({ value, labelKey }) => (
                 <button
                   key={value}
@@ -173,7 +178,7 @@ export function AdminDataRetentionScheduledPage() {
                   {t(labelKey)}
                 </button>
               ))}
-            </div>
+            </ScrollCarousel>
           </div>
 
           <div className="ag-main">

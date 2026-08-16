@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SegmentedControl } from '@/components/form/SegmentedControl/SegmentedControl';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
+import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
 import type { TargetMuscleGroup } from '@machinefit/shared';
 import '@/styles/growth-analysis.css';
 import '@/styles/machines.css';
@@ -131,10 +132,10 @@ export function GrowthMachineSelector({
         className="growth-machine-selector__groups"
       />
 
-      <div
-        className="filter-chips growth-machine-selector__chips"
-        role="listbox"
-        aria-label={label}
+      <ScrollCarousel
+        className="filter-chips-scroller chip-carousel"
+        scrollerClassName="filter-chips growth-machine-selector__chips"
+        scrollerProps={{ role: 'listbox', 'aria-label': label }}
       >
         {filteredOptions.map((option) => {
           const isActive = option.optionKey === value;
@@ -162,7 +163,7 @@ export function GrowthMachineSelector({
             </button>
           );
         })}
-      </div>
+      </ScrollCarousel>
     </div>
   );
 }

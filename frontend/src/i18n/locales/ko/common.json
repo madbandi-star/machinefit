@@ -55,6 +55,10 @@
     "prev": "이전",
     "next": "다음"
   },
+  "carousel": {
+    "prev": "이전으로 스크롤",
+    "next": "다음으로 스크롤"
+  },
   "collapse": "접기",
   "expand": "펼치기",
   "expandCardDetails": "상세 내용 펼치기",
