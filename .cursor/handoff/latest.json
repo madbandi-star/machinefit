@@ -1,27 +1,22 @@
 {
-  "title": "Compact missed-plans strip on Home",
-  "summary": "MissedWorkoutPlansBanner redesigned as a single-row home strip (like today’s plan): short labels, compact chips, less vertical space.",
-  "git": { "branch": "main", "commit": "d821a988" },
+  "title": "Home missed-plans: dismiss only",
+  "summary": "Removed Today/Date/Delete actions from the home missed-plans strip; only dismiss remains.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
     "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
-    "frontend/src/styles/home.css",
-    "frontend/src/styles/records.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/styles/home.css"
   ],
   "testFocus": [
-    "Home with missed plans: one compact row — title · machine · MM-DD · (+more)",
-    "Actions still work: Today / Date / Delete / Skip",
-    "Height similar to “오늘의 운동 계획” strip, not a tall orange banner"
+    "Home missed strip shows info + 무시 only",
+    "오늘로/날짜/삭제 buttons absent",
+    "무시 still dismisses the current missed plan"
   ],
   "fastChecks": [
-    "rg -n \"home-missed-plans\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx frontend/src/styles/home.css",
-    "rg -n \"missed-plans-banner\" frontend/src || true"
+    "rg -n \"move_today|planMissedMoveToday|PlanDatePickerDialog\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx || true",
+    "rg -n \"planMissedDismiss\" frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
   ],
-  "productionChecks": ["Pages home: compact missed-plans strip above fortune"],
+  "productionChecks": ["Pages home: missed strip has only dismiss"],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "Tall orange banner with full-size buttons and multi-line copy",
-  "toBe": "Compact one-row strip with short labels and chip actions"
+  "asIs": "Missed strip had Today/Date/Delete/Skip",
+  "toBe": "Missed strip shows info + Skip only"
 }

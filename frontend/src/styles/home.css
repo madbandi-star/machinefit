@@ -50,22 +50,14 @@
   color: #ea580c;
 }
 
-.home-missed-plans__actions {
-  display: flex;
-  flex: 0 0 auto;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.25rem;
-  margin-left: auto;
-}
-
 .home-missed-plans__btn {
-  margin: 0;
-  padding: 0.22rem 0.45rem;
-  border: 1px solid color-mix(in srgb, #f97316 25%, var(--glass-border));
+  flex-shrink: 0;
+  margin: 0 0 0 auto;
+  padding: 0.2rem 0.35rem;
+  border: 0;
   border-radius: 0.35rem;
-  background: color-mix(in srgb, #f97316 6%, var(--glass-bg));
-  color: var(--color-text);
+  background: transparent;
+  color: var(--color-text-muted);
   font-size: 0.6875rem;
   font-weight: 600;
   line-height: 1.2;
@@ -73,31 +65,9 @@
   cursor: pointer;
 }
 
-.home-missed-plans__btn:hover,
-.home-missed-plans__btn:focus-visible {
-  background: color-mix(in srgb, #f97316 14%, var(--glass-bg));
-}
-
 .home-missed-plans__btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
-}
-
-.home-missed-plans__btn--primary {
-  border-color: color-mix(in srgb, #ea580c 55%, transparent);
-  background: color-mix(in srgb, #ea580c 88%, #9a3412);
-  color: #fff;
-}
-
-.home-missed-plans__btn--primary:hover,
-.home-missed-plans__btn--primary:focus-visible {
-  background: color-mix(in srgb, #ea580c 96%, #9a3412);
-}
-
-.home-missed-plans__btn--ghost {
-  border-color: transparent;
-  background: transparent;
-  color: var(--color-text-muted);
 }
 
 .home-missed-plans__btn--ghost:hover,

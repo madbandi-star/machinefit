@@ -11,9 +11,8 @@ import { useActiveMember } from '@/hooks/useActiveMember';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
-import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
 import { dismissForToday, isDismissedToday } from '@/utils/dismissToday';
-import { getTodayDateKey, getTomorrowDateKey, normalizeDateKey } from '@/utils/historyDate';
+import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import '@/styles/home.css';
 
 const HOME_PLANNED_DISMISS_KEY = 'home-planned-workout';
@@ -66,7 +65,6 @@ export function MissedWorkoutPlansBanner() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
-  const [datePickerCardId, setDatePickerCardId] = useState<string | null>(null);
   const memberKey = activeMemberId ?? '';
   const gymReady =
     isAuthenticated &&
@@ -93,20 +91,13 @@ export function MissedWorkoutPlansBanner() {
     [missed, dismissedIds]
   );
 
-  const resolveMutation = useMutation({
-    mutationFn: async (payload: {
-      id: string;
-      action: 'move_today' | 'move_date' | 'delete' | 'dismiss';
-      scheduledDate?: string;
-    }) => {
-      const res = await workoutCardApi.resolveMissed(payload.id, {
-        action: payload.action,
-        ...(payload.scheduledDate ? { scheduledDate: payload.scheduledDate } : {}),
-      });
+  const dismissMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await workoutCardApi.resolveMissed(id, { action: 'dismiss' });
       return res.data.data;
     },
-    onSuccess: async (_data, variables) => {
-      setDismissedIds((prev) => new Set(prev).add(variables.id));
+    onSuccess: async (_data, id) => {
+      setDismissedIds((prev) => new Set(prev).add(id));
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
         queryClient.invalidateQueries({
@@ -118,101 +109,48 @@ export function MissedWorkoutPlansBanner() {
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),
   });
 
-  const datePickerCard =
-    datePickerCardId != null
-      ? (visible.find((c) => c.id === datePickerCardId) ??
-        missed.find((c) => c.id === datePickerCardId) ??
-        null)
-      : null;
+  if (!gymReady || visible.length === 0) return null;
 
-  if (!gymReady || (visible.length === 0 && !datePickerCard)) return null;
-
-  const card = visible[0] ?? datePickerCard!;
+  const card = visible[0];
   const moreCount = Math.max(0, visible.length - 1);
   const machineLabel = card.machineName ?? card.machineCode;
   const dateKey = normalizeDateKey(card.scheduledDate);
   const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(dateKey) ? dateKey.slice(5) : dateKey;
-  const busy = resolveMutation.isPending;
 
   return (
-    <>
-      {visible.length > 0 ? (
-        <section
-          className="home-missed-plans"
-          role="status"
-          aria-label={t('machines:history.planMissedTitle')}
-        >
-          <div className="home-missed-plans__main">
-            <span className="home-missed-plans__title">
-              {t('machines:history.planMissedTitle')}
+    <section
+      className="home-missed-plans"
+      role="status"
+      aria-label={t('machines:history.planMissedTitle')}
+    >
+      <div className="home-missed-plans__main">
+        <span className="home-missed-plans__title">
+          {t('machines:history.planMissedTitle')}
+        </span>
+        <span className="home-missed-plans__sep" aria-hidden>
+          ·
+        </span>
+        <span className="home-missed-plans__detail" title={`${machineLabel} · ${dateLabel}`}>
+          {machineLabel}
+          <span className="home-missed-plans__sep" aria-hidden>
+            ·
+          </span>
+          {dateLabel}
+          {moreCount > 0 ? (
+            <span className="home-missed-plans__more">
+              {t('machines:history.planMissedMore', { count: moreCount })}
             </span>
-            <span className="home-missed-plans__sep" aria-hidden>
-              ·
-            </span>
-            <span className="home-missed-plans__detail" title={`${machineLabel} · ${dateLabel}`}>
-              {machineLabel}
-              <span className="home-missed-plans__sep" aria-hidden>
-                ·
-              </span>
-              {dateLabel}
-              {moreCount > 0 ? (
-                <span className="home-missed-plans__more">
-                  {t('machines:history.planMissedMore', { count: moreCount })}
-                </span>
-              ) : null}
-            </span>
-          </div>
-          <div className="home-missed-plans__actions">
-            <button
-              type="button"
-              className="home-missed-plans__btn home-missed-plans__btn--primary"
-              disabled={busy}
-              onClick={() => resolveMutation.mutate({ id: card.id, action: 'move_today' })}
-            >
-              {t('machines:history.planMissedMoveToday')}
-            </button>
-            <button
-              type="button"
-              className="home-missed-plans__btn"
-              disabled={busy}
-              onClick={() => setDatePickerCardId(card.id)}
-            >
-              {t('machines:history.planMissedChangeDate')}
-            </button>
-            <button
-              type="button"
-              className="home-missed-plans__btn"
-              disabled={busy}
-              onClick={() => resolveMutation.mutate({ id: card.id, action: 'delete' })}
-            >
-              {t('machines:history.planMissedDelete')}
-            </button>
-            <button
-              type="button"
-              className="home-missed-plans__btn home-missed-plans__btn--ghost"
-              disabled={busy}
-              onClick={() => resolveMutation.mutate({ id: card.id, action: 'dismiss' })}
-            >
-              {t('machines:history.planMissedDismiss')}
-            </button>
-          </div>
-        </section>
-      ) : null}
-
-      <PlanDatePickerDialog
-        open={Boolean(datePickerCard)}
-        title={t('machines:history.planDateMoveTitle')}
-        message={t('machines:history.planDatePrompt')}
-        initialDate={getTomorrowDateKey()}
-        confirmLabel={t('machines:history.planDateMoveConfirm')}
-        onClose={() => setDatePickerCardId(null)}
-        onConfirm={(scheduledDate) => {
-          if (!datePickerCard) return;
-          const id = datePickerCard.id;
-          setDatePickerCardId(null);
-          resolveMutation.mutate({ id, action: 'move_date', scheduledDate });
-        }}
-      />
-    </>
+          ) : null}
+        </span>
+      </div>
+      <button
+        type="button"
+        className="home-missed-plans__btn home-missed-plans__btn--ghost"
+        disabled={dismissMutation.isPending}
+        onClick={() => dismissMutation.mutate(card.id)}
+      >
+        {t('machines:history.planMissedDismiss')}
+      </button>
+    </section>
   );
 }
