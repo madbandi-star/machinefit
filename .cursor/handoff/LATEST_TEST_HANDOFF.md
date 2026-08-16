@@ -1,25 +1,25 @@
 # Missed plans date shows weekday
 
 ## Summary
-È¨ ³õÄ£ ¿îµ¿ °èÈ¹ ³¯Â¥¸¦ `08-15(Åä)`Ã³·³ **¿ù-ÀÏ(¿äÀÏ)** ·Î Ç¥½ÃÇÕ´Ï´Ù.
+È¨ ï¿½ï¿½Ä£ ï¿½îµ¿ ï¿½ï¿½È¹ ï¿½ï¿½Â¥ï¿½ï¿½ `08-15(ï¿½ï¿½)`Ã³ï¿½ï¿½ **ï¿½ï¿½-ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)** ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 
 ## Git
 - branch: `main`
-- commit: pending
+- commit: 52224e4f
 
 ## Changed files
 - `frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx`
 - `frontend/src/utils/historyDate.ts` (`formatShortDateWithWeekday`)
 
 ## Test focus
-1. ³õÄ£ °èÈ¹ ³¯Â¥°¡ `MM-DD(¿äÀÏ)` Çü½Ä
-2. ¹«½Ã µ¿ÀÛ À¯Áö
+1. ï¿½ï¿½Ä£ ï¿½ï¿½È¹ ï¿½ï¿½Â¥ï¿½ï¿½ `MM-DD(ï¿½ï¿½ï¿½ï¿½)` ï¿½ï¿½ï¿½ï¿½
+2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 ## Fast checks
 ```bash
 rg -n "formatShortDateWithWeekday" frontend/src/utils/historyDate.ts frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx
 ```
 
-## As-is ¡æ To-be
+## As-is ï¿½ï¿½ To-be
 - **As-is:** `08-15`
-- **To-be:** `08-15(Åä)`
+- **To-be:** `08-15(ï¿½ï¿½)`

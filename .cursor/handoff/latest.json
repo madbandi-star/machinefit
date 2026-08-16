@@ -1,7 +1,10 @@
 {
   "title": "Missed plans date shows weekday",
   "summary": "Home missed-plans date now shows compact MM-DD(weekday), e.g. 08-15(?).",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": {
+    "branch": "main",
+    "commit": "52224e4f"
+  },
   "changedFiles": [
     "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
     "frontend/src/utils/historyDate.ts"
@@ -13,8 +16,12 @@
   "fastChecks": [
     "rg -n \"formatShortDateWithWeekday\" frontend/src/utils/historyDate.ts frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
   ],
-  "productionChecks": ["Pages home: missed date includes weekday"],
-  "deploy": { "expected": "GitHub Pages FE success" },
+  "productionChecks": [
+    "Pages home: missed date includes weekday"
+  ],
+  "deploy": {
+    "expected": "GitHub Pages FE success"
+  },
   "asIs": "Missed strip showed MM-DD only",
   "toBe": "Missed strip shows MM-DD(weekday)"
 }
