@@ -1,35 +1,33 @@
 {
-  "title": "Align home workout report with Records totals",
-  "summary": "Home TODAY'S WORKOUT report now uses the same set-count filter, free-weight muscle identity, and fitRating volume reps as the Records day summary so 종목/총세트/총볼륨 match.",
+  "title": "Search brand-filter empty state polish",
+  "summary": "When the search page has no favorite brands, the empty area is now a compact gold-star action row (tappable) instead of a dashed box with long copy.",
   "git": {
     "branch": "main",
-    "commit": "fc5becee"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/utils/effective-load.ts",
-    "shared/src/utils/workout-complete-report.ts",
-    "shared/src/utils/effective-load.test.ts",
-    "shared/src/utils/workout-complete-report.test.ts",
-    "frontend/src/utils/historySummaryStats.ts",
-    "frontend/src/services/workoutCompleteReport.service.ts"
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+    "frontend/src/styles/machines.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "End session → home report 종목/총세트/총볼륨",
-    "Records ?date=today summary 총세트/총볼륨 for same logs",
-    "Partial setCompleted: both sides count completed only when any true",
-    "FW_DUMBBELL chest+back same day → 2 exercises on report"
+    "Logged-in user with zero brand favorites → search brand section shows compact empty row",
+    "Tap row → Brand favorites page",
+    "With favorites → chips render as before"
   ],
   "fastChecks": [
-    "node --import tsx --test shared/src/utils/effective-load.test.ts shared/src/utils/workout-complete-report.test.ts",
-    "rg -n \"countPerformedSets|fitRating|exerciseAggregateKey|buildLogVolumeContexts\" shared/src/utils/effective-load.ts shared/src/utils/workout-complete-report.ts frontend/src/utils/historySummaryStats.ts frontend/src/services/workoutCompleteReport.service.ts"
+    "rg -n \"brand-filter-empty|filterEmptyCta\" frontend/src/pages/machine-search/MachineSearchPage.tsx frontend/src/styles/machines.css frontend/src/i18n/locales/ko/machines.json"
   ],
   "productionChecks": [
     "Pages Deploy Frontend success",
-    "Hard refresh: end workout vs Records date filter for today"
+    "Hard refresh search with empty brand favorites"
   ],
   "deploy": {
-    "expected": "Frontend Pages only (shared bundled into FE)"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Home counted sets/exercises/volume with different rules than Records",
-  "toBe": "Shared countPerformedSets + fitRating contexts + FW muscle keys on both sides"
+  "asIs": "Dashed dashed box + long path hint + secondary button",
+  "toBe": "Horizontal star nudge link with short copy and Add chip"
 }

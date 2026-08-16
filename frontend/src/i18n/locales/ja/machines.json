@@ -11,9 +11,9 @@
   "muscleSectionTitle": "Muscle groups",
   "brandSectionTitle": "Brands",
   "brandFavorites": {
-    "filterEmptyTitle": "お気に入りブランドがありません。",
-    "filterEmptyHint": "マイページ > ブランドお気に入りでよく使うブランドを追加してください。",
-    "filterEmptyCta": "ブランドお気に入り"
+    "filterEmptyTitle": "お気に入りブランドがありません",
+    "filterEmptyHint": "よく使うブランドを追加すると、ここですぐに選べます。",
+    "filterEmptyCta": "追加"
   },
   "recommendedMachinesTitle": "Recommended machines",
   "recentSearches": {

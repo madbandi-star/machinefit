@@ -11,9 +11,9 @@
   "muscleSectionTitle": "Muscle groups",
   "brandSectionTitle": "Brands",
   "brandFavorites": {
-    "filterEmptyTitle": "还没有收藏品牌。",
-    "filterEmptyHint": "请在我的页面 > 品牌收藏中添加常用品牌。",
-    "filterEmptyCta": "品牌收藏"
+    "filterEmptyTitle": "还没有收藏品牌",
+    "filterEmptyHint": "添加常用品牌后，可在这里快速筛选。",
+    "filterEmptyCta": "添加"
   },
   "recommendedMachinesTitle": "Recommended machines",
   "recentSearches": {

@@ -11,9 +11,9 @@
   "muscleSectionTitle": "근육군",
   "brandSectionTitle": "브랜드",
   "brandFavorites": {
-    "filterEmptyTitle": "즐겨찾기한 브랜드가 없습니다.",
-    "filterEmptyHint": "마이페이지 > 브랜드 즐겨찾기에서 자주 사용하는 브랜드를 추가해 주세요.",
-    "filterEmptyCta": "브랜드 즐겨찾기"
+    "filterEmptyTitle": "즐겨찾기 브랜드가 없어요",
+    "filterEmptyHint": "자주 쓰는 브랜드를 추가하면 여기서 바로 고를 수 있어요.",
+    "filterEmptyCta": "추가"
   },
   "recommendedMachinesTitle": "추천 머신",
   "recentSearches": {

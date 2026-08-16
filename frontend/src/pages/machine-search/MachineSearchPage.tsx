@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { ChevronRight, Star } from 'lucide-react';
 import type { Machine } from '@machinefit/shared';
 import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -371,13 +372,25 @@ export function MachineSearchPage() {
           includeFallbacks={!isAuthenticated}
           emptyState={
             favoriteBrandEmpty ? (
-              <div className="brand-filter-empty">
-                <p className="brand-filter-empty__title">{t('brandFavorites.filterEmptyTitle')}</p>
-                <p className="brand-filter-empty__hint">{t('brandFavorites.filterEmptyHint')}</p>
-                <Link to={ROUTES.BRAND_FAVORITES} className="btn btn--secondary brand-filter-empty__cta">
-                  {t('brandFavorites.filterEmptyCta')}
-                </Link>
-              </div>
+              <Link to={ROUTES.BRAND_FAVORITES} className="brand-filter-empty">
+                <span className="brand-filter-empty__icon" aria-hidden>
+                  <Star size={18} strokeWidth={2.1} fill="currentColor" />
+                </span>
+                <span className="brand-filter-empty__body">
+                  <span className="brand-filter-empty__title">
+                    {t('brandFavorites.filterEmptyTitle')}
+                  </span>
+                  <span className="brand-filter-empty__hint">
+                    {t('brandFavorites.filterEmptyHint')}
+                  </span>
+                </span>
+                <span className="brand-filter-empty__cta">
+                  <span className="brand-filter-empty__cta-label">
+                    {t('brandFavorites.filterEmptyCta')}
+                  </span>
+                  <ChevronRight size={16} strokeWidth={2.25} aria-hidden />
+                </span>
+              </Link>
             ) : undefined
           }
         />

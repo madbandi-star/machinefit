@@ -1,37 +1,31 @@
-# Test handoff — Align home workout report with Records totals
+# Test handoff — Search brand-filter empty state polish
 
 ## Summary
-Home TODAY'S WORKOUT report now uses the same set-count filter, free-weight muscle identity, and fitRating volume reps as the Records day summary so 종목/총세트/총볼륨 match.
+When the search page has no favorite brands, the empty area is now a compact gold-star action row (tappable) instead of a dashed box with long copy.
 
 ## Git
 - Branch: `main`
-- Commit: `fc5becee`
+- Commit: (filled after push)
 
 ## Changed files
-- `shared/src/utils/effective-load.ts` (+ exported `countPerformedSets`)
-- `shared/src/utils/workout-complete-report.ts`
-- `frontend/src/utils/historySummaryStats.ts`
-- `frontend/src/services/workoutCompleteReport.service.ts`
-- tests under `shared/src/utils/*.test.ts`
+- `frontend/src/pages/machine-search/MachineSearchPage.tsx`
+- `frontend/src/styles/machines.css`
+- `frontend/src/i18n/locales/{ko,en,ja,zh}/machines.json`
 
 ## Test focus
-1. End session → home report exercises / sets / volume.
-2. Open Records with `?date=today` — summary sets & volume match the report for the same logs.
-3. Logs with some incomplete sets: both count only completed when any `setCompleted` is true.
-4. Same-day FW dumbbell chest + back → report exercise count 2.
+1. Logged-in, zero brand favorites → brand filter empty row visible.
+2. Tap row → Brand favorites.
+3. With favorites → chips unchanged.
 
 ## Fast checks
 ```bash
-node --import tsx --test shared/src/utils/effective-load.test.ts shared/src/utils/workout-complete-report.test.ts
-rg -n "countPerformedSets|fitRating|exerciseAggregateKey|buildLogVolumeContexts" shared/src/utils/effective-load.ts shared/src/utils/workout-complete-report.ts frontend/src/utils/historySummaryStats.ts frontend/src/services/workoutCompleteReport.service.ts
+rg -n "brand-filter-empty|filterEmptyCta" frontend/src/pages/machine-search/MachineSearchPage.tsx frontend/src/styles/machines.css frontend/src/i18n/locales/ko/machines.json
 ```
 
 ## as-is → to-be
 | as-is | to-be |
 | --- | --- |
-| Home sets from any completed flags; Records always `setCount` | Shared `countPerformedSets` (volume filter) |
-| Home volume ignored fitRating | Home loads feedback like Records |
-| Home FW merged by machine only | Split by target muscle like Records cards |
+| Dashed box + long hint + button | Compact star row + short copy + Add |
 
 ## Deploy
-Frontend Pages only (shared is bundled into the frontend build).
+Frontend Pages only.
