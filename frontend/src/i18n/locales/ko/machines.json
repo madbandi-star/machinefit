@@ -107,6 +107,8 @@
     "setIncomplete": "미완료",
     "setCompletePendingAria": "{{number}}세트 완료 처리",
     "setCompleteDoneAria": "{{number}}세트 완료됨, 탭하면 취소",
+    "allSetsCompleteAria": "모든 세트 수행 완료",
+    "allSetsUndoAria": "모든 세트 수행 취소",
     "planSave": "계획 저장",
     "planSaving": "계획 저장 중...",
     "planSaved": "세트·무게·운동일지·나만의 팁을 저장했어요.",

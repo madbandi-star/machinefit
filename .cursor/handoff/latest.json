@@ -1,40 +1,33 @@
 {
-  "title": "Unified ad placement system",
-  "summary": "Adds placement/policy/frequency-cap engine over existing CMS banners. Inline CMS stays on; interstitial/sticky/rewarded/native/page-transition are flag-off until admin enables. Apply migration 140 + Render redeploy.",
+  "title": "All-sets complete toggle on history workout log",
+  "summary": "Icon-only toggle beside plan-save marks all sets complete or undoes all completions on history/machine-card performance logs.",
   "git": {
     "branch": "main",
-    "commit": "f7bb6915"
+    "commit": "pending"
   },
   "changedFiles": [
-    "database/migrations/140_ad_placement_system.sql",
-    "shared/src/constants/ads.ts",
-    "backend/server/repositories/ad.repository.ts",
-    "backend/server/services/ad-policy.service.ts",
-    "backend/server/routes/ad.routes.ts",
-    "frontend/src/ads/",
-    "frontend/src/pages/admin/ads/AdminAdsPage.tsx",
-    "docs/ad-placement-system.md"
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Apply migration 140",
-    "CMS BannerSlot still shows for free+marketingOptIn",
-    "Paid/admin: CMS hidden by default policy",
-    "Flags OFF: no interstitial/sticky/rewarded UI",
-    "Admin /admin/ads flags + placements toggle",
-    "Quota 429 emits LIMIT_REACHED (rewarded denied while flag off)"
+    "History/machine card: plan-save right shows CheckCheck; tap completes all sets + silent save",
+    "When all complete: icon becomes ListRestart (red); tap undoes all",
+    "No visible text on the new control; aria-label/title present",
+    "Below-tip plan-save row also shows the icon button"
   ],
   "fastChecks": [
-    "npm run build --workspace=shared",
-    "rg -n \"adRouter|/ads/decision|AdSlot|140_ad_placement\" backend frontend database shared"
+    "rg -n \"allSetsCompleteAria|history-workout-log__all-complete|CheckCheck\" frontend/src"
   ],
   "productionChecks": [
-    "Render: migration 140 then backend redeploy",
-    "Pages Deploy Frontend success",
-    "GET /ads/decision?placement=MAIN_BOTTOM returns show true/false with reason"
+    "Pages Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages + backend Render after migration 140"
+    "expected": "Frontend Pages after push"
   },
-  "asIs": "Only client-gated bottom CMS banners, no policy engine",
-  "toBe": "Central AdSlot + server decision/frequency caps + admin ads console"
+  "asIs": "Only per-set complete buttons",
+  "toBe": "One icon toggle for complete-all / undo-all next to plan save"
 }

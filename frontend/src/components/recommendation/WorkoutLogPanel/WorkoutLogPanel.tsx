@@ -47,7 +47,7 @@ import {
   clampVoiceHoldFlowMode,
   type VoiceHoldFlowMode,
 } from '@/utils/voiceHold';
-import { Check, PenLine } from 'lucide-react';
+import { Check, CheckCheck, ListRestart, PenLine } from 'lucide-react';
 import { MuscleGroupIcon } from '@/components/muscle/MuscleGroupIcon/MuscleGroupIcon';
 import { MUSCLE_GROUPS } from '@/constants/muscle-groups';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -1494,6 +1494,39 @@ export function WorkoutLogPanel({
     saveMutation.mutate({ setCompleted: next, silent: true });
   };
 
+  const allSetsCompleted =
+    setCompleted.length > 0 && setCompleted.every((done) => done === true);
+
+  const handleToggleAllSetsComplete = () => {
+    if (isFreeWeight && !activeTargetMuscle) {
+      showToast(t('machines:targetMuscleRequired'), 'error');
+      return;
+    }
+
+    const markComplete = !allSetsCompleted;
+    const next = Array.from({ length: setCount }, () => markComplete);
+    setSetCompleted(next);
+
+    if (markComplete) {
+      if (shouldShowRestAfterSetComplete(next, restTimerAfterAllSetsComplete)) {
+        unlockVoiceCoachAudio(sessionVoicePack);
+        startRestTimer(setCount, clampRestDurationSeconds(restDurationSeconds));
+        void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+          trackFeature('rest_timer')
+        );
+        void import('@/utils/usageTelemetry').then(({ trackUsage }) =>
+          trackUsage('rest_timer')
+        );
+      } else {
+        stopRestTimer();
+      }
+    } else {
+      stopRestTimer();
+    }
+
+    saveMutation.mutate({ setCompleted: next, silent: true });
+  };
+
   const isDiaryDirty =
     diary.trim() !== (baseline?.diary ?? existingLog?.diary ?? '').trim();
 
@@ -1844,6 +1877,60 @@ export function WorkoutLogPanel({
     </button>
   );
 
+  const renderAllSetsCompleteToggle = (placement: 'header' | 'below-tip') => (
+    <button
+      type="button"
+      className={[
+        'btn btn--secondary history-workout-log__all-complete',
+        placement === 'below-tip' ? 'history-workout-log__all-complete--below-tip' : '',
+        allSetsCompleted ? 'history-workout-log__all-complete--undo' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      onClick={handleToggleAllSetsComplete}
+      disabled={isActionPending || isLoading || setCount < 1}
+      aria-pressed={allSetsCompleted}
+      aria-label={
+        allSetsCompleted
+          ? t('machines:workoutLog.allSetsUndoAria')
+          : t('machines:workoutLog.allSetsCompleteAria')
+      }
+      title={
+        allSetsCompleted
+          ? t('machines:workoutLog.allSetsUndoAria')
+          : t('machines:workoutLog.allSetsCompleteAria')
+      }
+    >
+      {allSetsCompleted ? (
+        <ListRestart
+          className="history-workout-log__all-complete-icon"
+          strokeWidth={2.75}
+          aria-hidden
+        />
+      ) : (
+        <CheckCheck
+          className="history-workout-log__all-complete-icon"
+          strokeWidth={2.75}
+          aria-hidden
+        />
+      )}
+    </button>
+  );
+
+  const renderPlanActionGroup = (placement: 'header' | 'below-tip') => (
+    <div
+      className={[
+        'history-workout-log__plan-actions',
+        placement === 'below-tip' ? 'history-workout-log__plan-actions--below-tip' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {renderPlanSaveButton(placement)}
+      {renderAllSetsCompleteToggle(placement)}
+    </div>
+  );
+
   const personalTipField =
     isHistory && showPersonalTip && isAuthenticated ? (
       <div className="history-workout-log__personal-tip">
@@ -1857,7 +1944,7 @@ export function WorkoutLogPanel({
           onChange={(e) => handlePersonalTipChange(e.target.value)}
           disabled={isActionPending}
         />
-        {renderPlanSaveButton('below-tip')}
+        {renderPlanActionGroup('below-tip')}
       </div>
     ) : null;
 
@@ -1975,7 +2062,7 @@ export function WorkoutLogPanel({
                 {t('machines:history.performanceTitle', { count: setCount })}
               </span>
               {setCountControl}
-              {renderPlanSaveButton('header')}
+              {renderPlanActionGroup('header')}
             </div>
           </div>
           {weightList}

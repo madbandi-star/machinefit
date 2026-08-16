@@ -107,6 +107,8 @@
     "setIncomplete": "Not done",
     "setCompletePendingAria": "Mark set {{number}} complete",
     "setCompleteDoneAria": "Set {{number}} complete, tap to undo",
+    "allSetsCompleteAria": "Complete all sets",
+    "allSetsUndoAria": "Undo all set completions",
     "planSave": "Save plan",
     "planSaving": "Saving plan...",
     "planSaved": "Set/weight plan, diary, and personal tip saved.",
