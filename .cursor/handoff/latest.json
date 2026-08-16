@@ -3,7 +3,7 @@
   "summary": "Settings birth/body/location saves always send feature consent attestation after the checkbox gate, so Pages/Render version skew no longer rejects saves with CONSENT_REQUIRED after the user checked all items.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "c3f837af"
   },
   "changedFiles": [
     "frontend/src/pages/settings/SettingsPage.tsx",

@@ -5,7 +5,7 @@ Settings birth/body/location saves always send feature consent attestation after
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `c3f837af`
 
 ## Test focus
 1. Settings → 생년월일·탄생시 → 전체 선택 → 저장 → success.
