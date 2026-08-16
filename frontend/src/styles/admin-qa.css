@@ -1,0 +1,369 @@
+/* Admin Q&A management — glanceable KPIs + dense queue */
+
+.aqa {
+  --aqa-warn: #c77700;
+  --aqa-danger: #c62828;
+  --aqa-ok: color-mix(in srgb, var(--color-primary) 80%, #0a7a3e);
+  display: grid;
+  gap: 0.85rem;
+}
+
+.aqa-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+@media (min-width: 720px) {
+  .aqa-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .aqa-kpis {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.aqa-kpi {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-bg) 45%, var(--color-surface));
+  color: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+button.aqa-kpi {
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+button.aqa-kpi:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+}
+
+.aqa-kpi.is-active {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+}
+
+.aqa-kpi.is-warn .aqa-kpi__value {
+  color: var(--aqa-warn);
+}
+
+.aqa-kpi__value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--color-primary-text, var(--color-primary));
+}
+
+.aqa-kpi__label {
+  font-size: 0.7rem;
+  font-weight: 650;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.aqa-panel {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-bg) 35%, var(--color-surface));
+}
+
+.aqa-toolbar {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.aqa-search {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: inherit;
+  font: inherit;
+}
+
+.aqa-chips {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.aqa-chip {
+  appearance: none;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.74rem;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.aqa-chip.is-active {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+}
+
+.aqa-chip__count {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.aqa-layout {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 1100px) {
+  .aqa-layout {
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    align-items: start;
+  }
+}
+
+.aqa-main {
+  min-width: 0;
+}
+
+.aqa-empty {
+  margin: 0;
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  font-weight: 650;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+}
+
+.aqa-queue {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.aqa-card {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.aqa-card.is-draft {
+  box-shadow: inset 3px 0 0 var(--color-text-muted);
+}
+
+.aqa-card.is-review {
+  box-shadow: inset 3px 0 0 var(--aqa-warn);
+}
+
+.aqa-card__main {
+  appearance: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  gap: 0.45rem 0.55rem;
+  align-items: center;
+  padding: 0.6rem 0.7rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  .aqa-card__main {
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto 7.5rem 1.25rem;
+  }
+}
+
+.aqa-card__order {
+  font-size: 0.75rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.aqa-card__identity {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.aqa-card__title {
+  font-size: 0.9rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aqa-card__meta {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aqa-metrics {
+  display: none;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  .aqa-metrics {
+    display: inline-flex;
+  }
+}
+
+.aqa-card__chevron {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  justify-self: end;
+}
+
+.aqa-card__detail {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0 0.7rem 0.7rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  padding-top: 0.55rem;
+}
+
+.aqa-card__excerpt {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.aqa-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.aqa-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.26rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.aqa-pill--on {
+  background: color-mix(in srgb, var(--aqa-ok) 14%, transparent);
+  color: var(--aqa-ok);
+}
+
+.aqa-pill--off {
+  background: color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+  color: var(--color-text-muted);
+}
+
+.aqa-btn--danger {
+  color: var(--aqa-danger) !important;
+}
+
+.aqa-side {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+}
+
+.aqa-side__title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.aqa-side__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.aqa-side__list li {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.aqa-side__rank {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.aqa-side__list a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aqa-side__list a:hover {
+  color: var(--color-primary-text, var(--color-primary));
+}
+
+.aqa-side__count {
+  font-size: 0.72rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
