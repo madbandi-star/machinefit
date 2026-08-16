@@ -3,7 +3,7 @@
   "summary": "Added useAsyncAction + axios 429/Retry-After handling, in-memory Idempotency-Key middleware for push/checkout, and stricter push rate limit. Wired billing and push send paths.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a6613294"
   },
   "changedFiles": [
     "frontend/src/hooks/useAsyncAction.ts",

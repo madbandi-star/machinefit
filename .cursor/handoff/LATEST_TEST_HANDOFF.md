@@ -5,7 +5,7 @@ Global `useAsyncAction` / `asyncActionGuard` (ref lock + 3s failure cooldown), a
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: a6613294
 
 ## Ops
 - Redeploy Render backend (no new migration).
