@@ -1,25 +1,28 @@
-# Missed plans date shows weekday
+# Home recent/favorites horizontal scroll
 
 ## Summary
-Home missed-plans date now shows compact `MM-DD(weekday)`, e.g. `08-15(≈‰)`.
+Home recent machines and favorites match search muscle-chip horizontal scroll (edge fades + thin scrollbar). Removed the 8-item cap so long lists scroll sideways.
 
 ## Git
 - branch: `main`
-- commit: `52224e4f`
+- commit: pending
 
 ## Changed files
-- `frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx`
-- `frontend/src/utils/historyDate.ts` (`formatShortDateWithWeekday`)
+- `frontend/src/styles/home.css`
+- `frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx`
+- `frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx`
 
 ## Test focus
-1. Missed plan date format is `MM-DD(weekday)`
-2. Dismiss still works
+1. Many recent/favorite cards °Ê horizontal scroll works
+2. Edge fades + thin scrollbar like search filters
+3. More than 8 items can appear
 
 ## Fast checks
 ```bash
-rg -n "formatShortDateWithWeekday" frontend/src/utils/historyDate.ts frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx
+rg -n "home-scroll-row-scroller" frontend/src/styles/home.css frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx
+rg -n "slice\\(0, 8\\)" frontend/src/components/home/RecentMachinesRow frontend/src/components/home/FavoriteMachinesRow || true
 ```
 
 ## As-is °Ê To-be
-- **As-is:** `08-15`
-- **To-be:** `08-15(≈‰)`
+- **As-is:** Cap at 8, scrollbar hidden
+- **To-be:** Search-style horizontal scroller for full rows

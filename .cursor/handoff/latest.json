@@ -1,27 +1,23 @@
 {
-  "title": "Missed plans date shows weekday",
-  "summary": "Home missed-plans date now shows compact MM-DD(weekday), e.g. 08-15(?).",
-  "git": {
-    "branch": "main",
-    "commit": "52224e4f"
-  },
+  "title": "Home recent/favorites horizontal scroll",
+  "summary": "Recent machines and favorites use search-style horizontal scroll with edge fades and a thin scrollbar; item caps removed so long lists scroll.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx",
-    "frontend/src/utils/historyDate.ts"
+    "frontend/src/styles/home.css",
+    "frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx",
+    "frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx"
   ],
   "testFocus": [
-    "Home missed strip date like 08-15(?) for ko locale",
-    "Dismiss still works"
+    "Home recent/favorites: swipe/scroll horizontally when many cards",
+    "Edge fades + thin scrollbar visible like search muscle chips",
+    "More than 8 favorites/recent machines appear in the row"
   ],
   "fastChecks": [
-    "rg -n \"formatShortDateWithWeekday\" frontend/src/utils/historyDate.ts frontend/src/components/home/HomePlannedWorkoutCard/HomePlannedWorkoutCard.tsx"
+    "rg -n \"home-scroll-row-scroller\" frontend/src/styles/home.css frontend/src/components/home/RecentMachinesRow/RecentMachinesRow.tsx frontend/src/components/home/FavoriteMachinesRow/FavoriteMachinesRow.tsx",
+    "rg -n \"slice\\(0, 8\\)\" frontend/src/components/home/RecentMachinesRow frontend/src/components/home/FavoriteMachinesRow || true"
   ],
-  "productionChecks": [
-    "Pages home: missed date includes weekday"
-  ],
-  "deploy": {
-    "expected": "GitHub Pages FE success"
-  },
-  "asIs": "Missed strip showed MM-DD only",
-  "toBe": "Missed strip shows MM-DD(weekday)"
+  "productionChecks": ["Pages home: recent/favorites horizontal scroll"],
+  "deploy": { "expected": "GitHub Pages FE success" },
+  "asIs": "Hidden scrollbar, 8-item cap, weak scroll affordance",
+  "toBe": "Filter-chips-style scroller with fades; full list scrolls horizontally"
 }

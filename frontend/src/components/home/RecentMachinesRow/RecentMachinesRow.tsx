@@ -37,7 +37,6 @@ export function RecentMachinesRow() {
     },
     enabled: Boolean(activeGymId) && memberScopeReady,
     staleTime: 60_000,
-    select: (items) => items.slice(0, 8),
   });
 
   const unique = useMemo(() => {
@@ -73,19 +72,21 @@ export function RecentMachinesRow() {
           to={ROUTES.MACHINES}
         />
       ) : (
-        <div className="home-scroll-row">
-          {unique.map((item) => (
-            <MachineMiniCard
-              key={recentItemKey(item)}
-              machineCode={item.machineCode}
-              machineName={item.machineName}
-              brandName={item.brandName}
-              muscleGroup={item.muscleGroup}
-              targetMuscleGroup={item.targetMuscleGroup}
-              imageUrl={item.primaryImageUrl}
-              recommendationId={item.recommendationId}
-            />
-          ))}
+        <div className="home-scroll-row-scroller">
+          <div className="home-scroll-row" role="list">
+            {unique.map((item) => (
+              <MachineMiniCard
+                key={recentItemKey(item)}
+                machineCode={item.machineCode}
+                machineName={item.machineName}
+                brandName={item.brandName}
+                muscleGroup={item.muscleGroup}
+                targetMuscleGroup={item.targetMuscleGroup}
+                imageUrl={item.primaryImageUrl}
+                recommendationId={item.recommendationId}
+              />
+            ))}
+          </div>
         </div>
       )}
     </section>

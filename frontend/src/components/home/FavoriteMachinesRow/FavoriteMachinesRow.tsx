@@ -47,20 +47,22 @@ export function FavoriteMachinesRow() {
           to={ROUTES.FAVORITES_EMPTY}
         />
       ) : (
-        <div className="home-scroll-row">
-          {data.slice(0, 8).map((item) => (
-            <MachineMiniCard
-              key={item.id}
-              machineCode={item.machineCode}
-              machineName={item.machineName}
-              brandName={item.brandName}
-              muscleGroup={
-                shouldShowDefaultMachineMuscle(item.machineCode) ? item.muscleGroup : undefined
-              }
-              imageUrl={item.primaryImageUrl}
-              recommendationId={item.recommendationId}
-            />
-          ))}
+        <div className="home-scroll-row-scroller">
+          <div className="home-scroll-row" role="list">
+            {data.map((item) => (
+              <MachineMiniCard
+                key={item.id}
+                machineCode={item.machineCode}
+                machineName={item.machineName}
+                brandName={item.brandName}
+                muscleGroup={
+                  shouldShowDefaultMachineMuscle(item.machineCode) ? item.muscleGroup : undefined
+                }
+                imageUrl={item.primaryImageUrl}
+                recommendationId={item.recommendationId}
+              />
+            ))}
+          </div>
         </div>
       )}
     </section>
