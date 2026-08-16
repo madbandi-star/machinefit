@@ -1,43 +1,24 @@
 {
-  "title": "Admin category correct/delete for privacy rights",
-  "summary": "Admins can apply member-requested correction fields and deletion categories from /admin/privacy-rights. Members can select deletion categories when filing.",
-  "git": {
-    "branch": "main",
-    "commit": "7529a1db"
-  },
+  "title": "Glanceable admin privacy-rights queue UX",
+  "summary": "Compact dense queue rows, status via KPI only, overdue-first sort, bulk dock for multi-select, fulfill panel first in drawer.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "shared/src/constants/privacy-rights.ts",
-    "shared/src/validators/compliance.schema.ts",
-    "backend/server/services/privacy-rights-fulfillment.service.ts",
-    "backend/server/services/compliance.service.ts",
-    "backend/server/controllers/compliance.controller.ts",
-    "backend/server/routes/compliance.routes.ts",
-    "backend/server/repositories/privacy-rights.repository.ts",
-    "frontend/src/api/compliance.api.ts",
     "frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx",
-    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
     "frontend/src/styles/admin-privacy-rights.css",
-    "frontend/src/styles/privacy-rights.css",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json"
   ],
   "testFocus": [
-    "Member deletion request: select categories, submit",
-    "Admin /admin/privacy-rights: open deletion ? check categories ? Apply delete",
-    "Admin correction: apply field value ? mark completed",
-    "Retained categories never deleted"
+    "Admin /admin/privacy-rights: dense list shows type/requester/glance/status/due",
+    "KPI filters status; type chips only below search",
+    "Multi-select shows sticky bulk dock; single open uses drawer",
+    "Drawer shows fulfill panel near top"
   ],
   "fastChecks": [
-    "rg -n \"adminFulfillPrivacyRightsRequest|delete_categories|apply_correction\" backend/server frontend/src",
-    "rg -n \"fulfillTitle|fulfillDeleteCta\" frontend/src/i18n/locales/ko/common.json"
+    "rg -n \"apr-queue__head|requestGlance|showDock\" frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx"
   ],
-  "productionChecks": [
-    "Render backend redeploy required",
-    "Pages FE: admin privacy rights fulfill panel"
-  ],
-  "deploy": {
-    "expected": "GitHub Pages FE + Render backend"
-  },
-  "asIs": "Admin could only mark tickets; no category delete/correct apply",
-  "toBe": "Admin applies requested categories/fields via fulfill API+UI"
+  "productionChecks": ["Pages admin privacy rights glanceable queue"],
+  "deploy": { "expected": "GitHub Pages FE success" },
+  "asIs": "Tall cards, duplicate status filters, bulk dock always, fulfill buried",
+  "toBe": "Dense queue, KPI status filter, action-first drawer"
 }

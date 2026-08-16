@@ -26,14 +26,6 @@ type TypeFilter =
   | 'access'
   | 'consent_withdraw';
 
-const STATUS_OPTIONS: Array<Exclude<StatusFilter, '' | 'overdue'>> = [
-  'received',
-  'reviewing',
-  'completed',
-  'rejected',
-  'cancelled',
-];
-
 const TYPE_OPTIONS: Array<Exclude<TypeFilter, ''>> = [
   'correction',
   'deletion',
@@ -90,16 +82,58 @@ function payloadLines(r: PrivacyRightsRequest): Array<{ label: string; value: st
   return lines;
 }
 
+function requestGlance(
+  r: PrivacyRightsRequest,
+  t: (key: string, options?: { defaultValue?: string; count?: number }) => string
+): string {
+  const p = r.payload ?? {};
+  if (r.requestType === 'correction') {
+    const field = String(p.fieldKey ?? '');
+    const requested = String(p.requestedValue ?? '').trim();
+    const fieldLabel = field
+      ? t(`compliance.rights.correctionFields.${field}`, { defaultValue: field })
+      : '';
+    if (fieldLabel && requested) return `${fieldLabel} → ${requested}`;
+    if (fieldLabel) return fieldLabel;
+  }
+  if (r.requestType === 'deletion') {
+    const cats = Array.isArray(p.categories) ? p.categories : [];
+    if (cats.length > 0) {
+      return t('compliance.rights.admin.glanceDeletion', { count: cats.length });
+    }
+  }
+  if (r.requestType === 'consent_withdraw' && p.consentTarget) {
+    return String(p.consentTarget);
+  }
+  return (r.detail || r.subject || '').trim();
+}
+
 function formatDate(value: string, locale: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString(locale.startsWith('en') ? 'en-US' : 'ko-KR');
+  return date.toLocaleDateString(locale.startsWith('en') ? 'en-US' : 'ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+  });
 }
 
 function formatDateTime(value: string, locale: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleString(locale.startsWith('en') ? 'en-US' : 'ko-KR');
+  return date.toLocaleString(locale.startsWith('en') ? 'en-US' : 'ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function duePriority(row: PrivacyRightsRequest): number {
+  if (row.dueState === 'overdue') return 0;
+  if (row.dueState === 'soon') return 1;
+  if (row.status === 'received') return 2;
+  if (row.status === 'reviewing') return 3;
+  return 4;
 }
 
 export function AdminPrivacyRightsPage() {
@@ -158,26 +192,33 @@ export function AdminPrivacyRightsPage() {
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return allRows.filter((row) => {
-      if (statusFilter === 'overdue') {
-        if (row.dueState !== 'overdue') return false;
-      } else if (statusFilter && row.status !== statusFilter) {
-        return false;
-      }
-      if (typeFilter && row.requestType !== typeFilter) return false;
-      if (!q) return true;
-      const hay = [
-        row.requesterDisplayName,
-        row.requesterEmail,
-        row.subject,
-        row.detail,
-        row.requestType,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-      return hay.includes(q);
-    });
+    return allRows
+      .filter((row) => {
+        if (statusFilter === 'overdue') {
+          if (row.dueState !== 'overdue') return false;
+        } else if (statusFilter && row.status !== statusFilter) {
+          return false;
+        }
+        if (typeFilter && row.requestType !== typeFilter) return false;
+        if (!q) return true;
+        const hay = [
+          row.requesterDisplayName,
+          row.requesterEmail,
+          row.subject,
+          row.detail,
+          row.requestType,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return hay.includes(q);
+      })
+      .slice()
+      .sort((a, b) => {
+        const d = duePriority(a) - duePriority(b);
+        if (d !== 0) return d;
+        return new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime();
+      });
   }, [allRows, statusFilter, typeFilter, search]);
 
   const detail = useMemo(
@@ -343,7 +384,7 @@ export function AdminPrivacyRightsPage() {
     bulkUpdateMutation.mutate(status);
   };
 
-  const showDock = selectedIds.length > 0;
+  const showDock = selectedIds.length > 1;
 
   return (
     <AdminPageShell
@@ -463,38 +504,6 @@ export function AdminPrivacyRightsPage() {
               </button>
             ))}
           </div>
-
-          <div
-            className="apr-chips"
-            role="group"
-            aria-label={t('compliance.rights.admin.filterStatus')}
-          >
-            <button
-              type="button"
-              className={`apr-chip${statusFilter === '' ? ' is-active' : ''}`}
-              aria-pressed={statusFilter === ''}
-              onClick={() => {
-                setStatusFilter('');
-                setSelectedIds([]);
-              }}
-            >
-              {t('compliance.rights.admin.allStatuses')}
-            </button>
-            {STATUS_OPTIONS.map((status) => (
-              <button
-                key={status}
-                type="button"
-                className={`apr-chip${statusFilter === status ? ' is-active' : ''}`}
-                aria-pressed={statusFilter === status}
-                onClick={() => {
-                  setStatusFilter(status);
-                  setSelectedIds([]);
-                }}
-              >
-                {t(`compliance.rights.status.${status}`)}
-              </button>
-            ))}
-          </div>
         </section>
 
         {showDock ? (
@@ -607,10 +616,19 @@ export function AdminPrivacyRightsPage() {
         ) : rows.length === 0 ? (
           <p className="apr-empty">{t('compliance.rights.admin.empty')}</p>
         ) : (
-          <section className="apr-queue">
+          <section className="apr-queue" aria-label={t('compliance.rights.admin.title')}>
+            <div className="apr-queue__head" aria-hidden>
+              <span />
+              <span>{t('compliance.rights.admin.colType')}</span>
+              <span>{t('compliance.rights.admin.requester')}</span>
+              <span>{t('compliance.rights.admin.status')}</span>
+              <span>{t('compliance.rights.admin.dueAt')}</span>
+              <span />
+            </div>
             {rows.map((r) => {
               const checked = selectedIds.includes(r.id);
               const requester = r.requesterDisplayName || r.requesterEmail || '—';
+              const glance = requestGlance(r, t);
               return (
                 <article
                   key={r.id}
@@ -619,6 +637,7 @@ export function AdminPrivacyRightsPage() {
                     checked ? 'is-selected' : '',
                     detailId === r.id ? 'is-active' : '',
                     r.dueState === 'overdue' ? 'is-overdue' : '',
+                    r.dueState === 'soon' ? 'is-soon' : '',
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -631,69 +650,48 @@ export function AdminPrivacyRightsPage() {
                       aria-label={t('compliance.rights.admin.selectRow')}
                     />
                   </div>
-                  <div className="apr-card__main">
-                    <div className="apr-card__top">
-                      <span className={`apr-type apr-type--${r.requestType}`}>
-                        {t(`compliance.rights.requestType.${r.requestType}`)}
+                  <span className={`apr-type apr-type--${r.requestType}`}>
+                    {t(`compliance.rights.requestType.${r.requestType}`)}
+                  </span>
+                  <button
+                    type="button"
+                    className="apr-card__identity"
+                    onClick={() => openDetail(r)}
+                  >
+                    <span className="apr-card__name">{requester}</span>
+                    {glance ? <span className="apr-card__glance">{glance}</span> : null}
+                  </button>
+                  <div className="apr-card__badges">
+                    <span className={`apr-status apr-status--${r.status}`}>
+                      {t(`compliance.rights.status.${r.status}`)}
+                    </span>
+                    {r.dueState === 'overdue' ? (
+                      <span className="apr-flag apr-flag--danger">
+                        {t('compliance.rights.admin.overdue')}
                       </span>
-                      <span className={`apr-status apr-status--${r.status}`}>
-                        {t(`compliance.rights.status.${r.status}`)}
+                    ) : r.dueState === 'soon' ? (
+                      <span className="apr-flag">
+                        {t('compliance.rights.admin.dueSoon')}
                       </span>
-                      {r.dueState === 'overdue' ? (
-                        <span className="apr-flag apr-flag--danger">
-                          {t('compliance.rights.admin.overdue')}
-                        </span>
-                      ) : r.dueState === 'soon' ? (
-                        <span className="apr-flag">
-                          {t('compliance.rights.admin.dueSoon')}
-                        </span>
-                      ) : null}
-                    </div>
-                    <h3 className="apr-card__title">
-                      <button
-                        type="button"
-                        className="apr-card__title-btn"
-                        onClick={() => openDetail(r)}
-                      >
-                        {requester}
-                      </button>
-                    </h3>
-                    <p className="apr-card__meta">
-                      {r.requesterEmail || '—'}
-                      {' · '}
-                      {t('compliance.rights.admin.createdAt')}:{' '}
-                      {formatDateTime(r.createdAt, i18n.language)}
-                    </p>
-                    {r.detail || r.subject ? (
-                      <p className="apr-card__detail">{r.detail || r.subject}</p>
                     ) : null}
                   </div>
-                  <div className="apr-card__due">
+                  <div
+                    className={`apr-card__due${
+                      r.dueState === 'overdue' ? ' is-overdue' : ''
+                    }${r.dueState === 'soon' ? ' is-soon' : ''}`}
+                  >
                     <span className="apr-card__due-date">
                       {formatDate(r.dueAt, i18n.language)}
                     </span>
-                    <span className="apr-card__due-sub">
-                      {t('compliance.rights.admin.dueAt')}
-                    </span>
                   </div>
-                  <div className="apr-card__actions">
-                    <button
-                      type="button"
-                      className="btn btn--sm btn--secondary"
-                      disabled={busy}
-                      onClick={() => openDetail(r)}
-                    >
-                      {t('compliance.rights.admin.open')}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn--sm btn--ghost apr-btn--danger"
-                      disabled={busy}
-                      onClick={() => setPendingDeleteIds([r.id])}
-                    >
-                      {t('compliance.rights.admin.deleteOne')}
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="btn btn--sm btn--primary apr-card__open"
+                    disabled={busy}
+                    onClick={() => openDetail(r)}
+                  >
+                    {t('compliance.rights.admin.open')}
+                  </button>
                 </article>
               );
             })}
@@ -736,7 +734,7 @@ export function AdminPrivacyRightsPage() {
             </header>
 
             <div className="apr-drawer__body">
-              <div className="apr-card__top">
+              <div className="apr-drawer__status">
                 <span className={`apr-status apr-status--${detail.status}`}>
                   {t(`compliance.rights.status.${detail.status}`)}
                 </span>
@@ -749,66 +747,10 @@ export function AdminPrivacyRightsPage() {
                     {t('compliance.rights.admin.dueSoon')}
                   </span>
                 ) : null}
+                <span className="apr-drawer__due">
+                  {t('compliance.rights.admin.dueAt')} {formatDateTime(detail.dueAt, i18n.language)}
+                </span>
               </div>
-
-              <dl className="apr-detail__grid">
-                <div>
-                  <dt>{t('compliance.rights.admin.requester')}</dt>
-                  <dd>
-                    {detail.requesterDisplayName || '—'}
-                    {detail.requesterEmail ? ` (${detail.requesterEmail})` : ''}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{t('compliance.rights.admin.dueAt')}</dt>
-                  <dd>{formatDateTime(detail.dueAt, i18n.language)}</dd>
-                </div>
-                <div>
-                  <dt>{t('compliance.rights.admin.createdAt')}</dt>
-                  <dd>{formatDateTime(detail.createdAt, i18n.language)}</dd>
-                </div>
-                <div>
-                  <dt>{t('compliance.rights.admin.detail')}</dt>
-                  <dd>{detail.detail || detail.subject || '—'}</dd>
-                </div>
-              </dl>
-
-              <div className="apr-payload">
-                <h4>{t('compliance.rights.admin.payload')}</h4>
-                {payloadLines(detail).length > 0 ? (
-                  <ul>
-                    {payloadLines(detail).map((line) => (
-                      <li key={line.label}>
-                        <strong>
-                          {t(`compliance.rights.admin.payloadFields.${line.label}`, {
-                            defaultValue: line.label,
-                          })}
-                        </strong>
-                        <span>{line.value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <pre>{JSON.stringify(detail.payload, null, 2)}</pre>
-                )}
-              </div>
-
-              {detail.resultMessage || detail.rejectionReason ? (
-                <div className="apr-result-prev">
-                  {detail.resultMessage ? (
-                    <p>
-                      <strong>{t('compliance.rights.admin.resultMessage')}</strong>
-                      {detail.resultMessage}
-                    </p>
-                  ) : null}
-                  {detail.rejectionReason ? (
-                    <p>
-                      <strong>{t('compliance.rights.admin.rejectionReason')}</strong>
-                      {detail.rejectionReason}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
 
               {(detail.requestType === 'deletion' ||
                 detail.requestType === 'correction') &&
@@ -899,6 +841,61 @@ export function AdminPrivacyRightsPage() {
                       ? t('compliance.rights.admin.fulfillDeleteCta')
                       : t('compliance.rights.admin.fulfillCorrectCta')}
                   </button>
+                </div>
+              ) : null}
+
+              <dl className="apr-detail__grid">
+                <div>
+                  <dt>{t('compliance.rights.admin.requester')}</dt>
+                  <dd>
+                    {detail.requesterDisplayName || '—'}
+                    {detail.requesterEmail ? ` (${detail.requesterEmail})` : ''}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t('compliance.rights.admin.createdAt')}</dt>
+                  <dd>{formatDateTime(detail.createdAt, i18n.language)}</dd>
+                </div>
+                <div className="apr-detail__grid-span">
+                  <dt>{t('compliance.rights.admin.detail')}</dt>
+                  <dd>{detail.detail || detail.subject || '—'}</dd>
+                </div>
+              </dl>
+
+              <div className="apr-payload">
+                <h4>{t('compliance.rights.admin.payload')}</h4>
+                {payloadLines(detail).length > 0 ? (
+                  <ul>
+                    {payloadLines(detail).map((line) => (
+                      <li key={line.label}>
+                        <strong>
+                          {t(`compliance.rights.admin.payloadFields.${line.label}`, {
+                            defaultValue: line.label,
+                          })}
+                        </strong>
+                        <span>{line.value}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <pre>{JSON.stringify(detail.payload, null, 2)}</pre>
+                )}
+              </div>
+
+              {detail.resultMessage || detail.rejectionReason ? (
+                <div className="apr-result-prev">
+                  {detail.resultMessage ? (
+                    <p>
+                      <strong>{t('compliance.rights.admin.resultMessage')}</strong>
+                      {detail.resultMessage}
+                    </p>
+                  ) : null}
+                  {detail.rejectionReason ? (
+                    <p>
+                      <strong>{t('compliance.rights.admin.rejectionReason')}</strong>
+                      {detail.rejectionReason}
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
 

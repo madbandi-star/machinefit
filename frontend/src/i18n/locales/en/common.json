@@ -1756,7 +1756,8 @@
       "admin": {
         "nav": "Privacy rights requests",
         "title": "Privacy rights management",
-        "subtitle": "Review access/correction/deletion/processing-stop/consent-withdraw requests. Due in 10 days.",
+        "subtitle": "Scan due dates and types, open a request, then apply correction or deletion.",
+        "glanceDeletion": "{{count}} categories",
         "filterStatus": "Status filter",
         "filterType": "Request type",
         "allStatuses": "All",

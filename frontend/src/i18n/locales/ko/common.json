@@ -1871,7 +1871,8 @@
       "admin": {
         "nav": "개인정보 권리행사 관리",
         "title": "개인정보 권리행사 관리",
-        "subtitle": "열람·정정·삭제·처리정지·동의 철회 요청을 처리합니다. 처리기한은 접수일부터 10일입니다.",
+        "subtitle": "접수·기한·유형을 한눈에 보고, 요청을 열어 정정/삭제를 반영하세요.",
+        "glanceDeletion": "삭제 {{count}}항목",
         "filterStatus": "상태 필터",
         "filterType": "요청 유형",
         "allStatuses": "전체",

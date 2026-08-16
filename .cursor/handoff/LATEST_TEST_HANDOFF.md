@@ -1,28 +1,19 @@
-# Admin category correct/delete for privacy rights
+# Glanceable admin privacy-rights queue UX
 
 ## Summary
-Admins can apply member-requested **correction** and **deletion categories** from `/admin/privacy-rights` (Actual apply panel). Members select deletion categories when filing.
+Admin privacy-rights page is denser and easier to scan: compact rows, overdue-first, KPI status filters only, fulfill panel first in drawer.
 
 ## Git
 - branch: `main`
-- commit: 7529a1db
+- commit: pending
 
-## How to use (admin)
-1. Open `/admin/privacy-rights`
-2. Open a `deletion` or `correction` request
-3. Use **ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½** panel:
-   - Deletion: check categories ï¿½ï¿½ Delete selected
-   - Correction: field + value ï¿½ï¿½ Apply correction
-4. Optionally mark completed
+## Test focus
+1. Queue shows type ¡¤ requester ¡¤ glance ¡¤ status ¡¤ due in one row
+2. Stats filter status; no duplicate status chip row
+3. Multi-select ¡æ sticky bulk dock
+4. Drawer: fulfill near top
 
 ## Fast checks
 ```bash
-rg -n "adminFulfillPrivacyRightsRequest|delete_categories" backend/server frontend/src
+rg -n "apr-queue__head|requestGlance|showDock" frontend/src/pages/admin/compliance/AdminPrivacyRightsPage.tsx
 ```
-
-## As-is ï¿½ï¿½ To-be
-- **As-is:** Status-only ticket handling
-- **To-be:** Category/field apply against live user data + audit log
-
-## Note
-Backend change ? **Render redeploy** required.
