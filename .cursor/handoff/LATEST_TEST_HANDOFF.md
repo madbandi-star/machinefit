@@ -1,16 +1,17 @@
-# Test handoff — Calendar top-3 muscles by count
+# Test handoff — Naver SEO crawl fixes
 
 ## Summary
-Muscle summary under dates: max 3 lines sorted by exercise count (desc), then +N.
+robots Allow:/, sitemap includes https://machine-fit.com/, home canonical/OG/JSON-LD on apex, brand title updated. Cloudflare 301→rewrite still required (docs/NAVER_SEO.md).
 
 ## Git
 - Branch: `main`
-- Commit: _0bb12915_
+- Commit: _(after push)_
 
 ## Test focus
-1. Max 3 muscle chips
-2. Highest count first
+1. npm run seo:validate in frontend
+2. After deploy: robots/sitemap content
+3. CF rewrite for / → 200
 
 ## As-is → To-be
-- **As-is:** 4 lines, encounter order
-- **To-be:** 3 lines by count desc + +N
+- **As-is:** Apex 301 + weak brand home signals
+- **To-be:** Code-side SEO aligned to apex; CF rewrite ops step

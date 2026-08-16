@@ -51,9 +51,9 @@ const INDEX_RULES: Rule[] = [
     match: (p) => p === '/',
     policy: {
       robots: 'index,follow',
-      defaultTitle: '머신핏 | 헬스 머신 운동 기록·분석',
+      defaultTitle: '머신핏 - 헬스장 운동기구 운동 기록 서비스',
       defaultDescription:
-        '머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다.',
+        '머신핏(MACHINE FIT)은 헬스장 머신·운동기구와 프리웨이트·맨몸운동을 기록하고 운동량·볼륨을 분석하는 피트니스 서비스입니다.',
     },
   },
   {
@@ -62,7 +62,7 @@ const INDEX_RULES: Rule[] = [
       robots: 'index,follow',
       defaultTitle: '헬스장 머신 검색',
       defaultDescription:
-        '머신핏에서 해머 스트렝스, 사이벡스, 라이프 피트니스, 테크노짐 등 헬스장 머신을 검색하고 맞춤 세팅을 확인하세요.',
+        '머신핏에서 해머 스트렝스, 사이벡스, 라이프 피트니스, 테크노짐 등 헬스장 머신·운동기구를 검색하고 맞춤 세팅을 확인하세요.',
     },
   },
   {

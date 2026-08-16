@@ -3,9 +3,12 @@
  *
  * Brand:
  * - KO: 머신핏
- * - EN: MachineFit
- * - Marketing origin: https://machine-fit.com/ (301 → /machinefit/)
- * - App / page canonicals: https://machine-fit.com/machinefit/...
+ * - EN: MachineFit / MACHINE FIT
+ * - Marketing origin (preferred brand URL): https://machine-fit.com/
+ * - App deep links: https://machine-fit.com/machinefit/...
+ *
+ * Cloudflare should URL-Rewrite `/` → `/machinefit/` (200) instead of 301,
+ * so the marketing origin and home canonical stay aligned for Naver/Google.
  */
 import { SITE_APP_URL, SITE_DOMAIN, SITE_URL } from '@machinefit/shared';
 
@@ -21,11 +24,11 @@ export const SEO_SITE_NAME_FULL = '머신핏(MachineFit)';
 export const SEO_THEME_COLOR = '#000000';
 
 /** Home document title — Korean brand first, concise product phrase. */
-export const SEO_HOME_TITLE = '머신핏 | 헬스 머신 운동 기록·분석';
+export const SEO_HOME_TITLE = '머신핏 - 헬스장 운동기구 운동 기록 서비스';
 
 /** Home meta description — factual product summary with brand + core terms. */
 export const SEO_HOME_DESCRIPTION =
-  '머신핏은 헬스 머신, 프리웨이트, 맨몸운동을 기록하고 운동량과 볼륨을 분석할 수 있는 피트니스 서비스입니다.';
+  '머신핏(MACHINE FIT)은 헬스장 머신·운동기구와 프리웨이트·맨몸운동을 기록하고 운동량·볼륨을 분석하는 피트니스 서비스입니다.';
 
 /** Absolute default OG / Twitter image (exists in public/). */
 export const SEO_DEFAULT_IMAGE = `${SITE_APP_URL}/icon-512.png`;
@@ -46,16 +49,20 @@ export type PageSeoInput = {
   titleAbsolute?: boolean;
 };
 
-/** Build absolute canonical URL for an in-app path (basename-aware). */
+/**
+ * Build absolute canonical URL for an in-app path (basename-aware).
+ * Home (`/`) uses the marketing origin https://machine-fit.com/ so brand search
+ * resolves to the primary domain (requires Cloudflare rewrite, not 301).
+ */
 export function absoluteAppUrl(path = '/'): string {
   const clean = path.startsWith('/') ? path : `/${path}`;
-  if (clean === '/') return `${SITE_APP_URL}/`;
+  if (clean === '/') return `${SITE_URL}/`;
   return `${SITE_APP_URL}${clean}`.replace(/\/+$/, '');
 }
 
 /** True when title already contains the brand (KO or EN). */
 export function titleIncludesBrand(title: string): boolean {
-  return /머신핏|machinefit/i.test(title);
+  return /머신핏|machinefit|machine fit/i.test(title);
 }
 
 export function formatDocumentTitle(title: string, absolute = false): string {

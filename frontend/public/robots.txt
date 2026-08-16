@@ -1,24 +1,7 @@
 User-agent: *
-# Production SPA lives under /machinefit/ (Vite base + GitHub Pages).
-# Googlebot / Naver Yeti inherit this group — CSS/JS under /machinefit/ are not blocked.
+Allow: /
 
-Allow: /machinefit/$
-Allow: /machinefit/machines
-Allow: /machinefit/brands
-Allow: /machinefit/gyms$
-Allow: /machinefit/community$
-Allow: /machinefit/community/notices$
-Allow: /machinefit/terms
-Allow: /machinefit/privacy
-Allow: /machinefit/security
-Allow: /machinefit/refund
-Allow: /machinefit/legal/
-Allow: /machinefit/location-policy
-Allow: /machinefit/community-policy
-Allow: /machinefit/copyright
-Allow: /machinefit/support$
-
-# Auth / account / private
+# Private / account surfaces (SPA under /machinefit/)
 Disallow: /machinefit/login
 Disallow: /machinefit/auth/
 Disallow: /machinefit/my-page/
@@ -49,4 +32,3 @@ Disallow: /machinefit/community/templates
 Disallow: /machinefit/community/posts
 
 Sitemap: https://machine-fit.com/sitemap.xml
-Sitemap: https://machine-fit.com/machinefit/sitemap.xml

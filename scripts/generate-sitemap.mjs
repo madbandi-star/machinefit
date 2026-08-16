@@ -15,11 +15,16 @@ const root = path.resolve(__dirname, '..');
 const catalogDir = path.join(root, 'database/catalog');
 const outFile = path.join(root, 'frontend/public/sitemap.xml');
 
-const SITE_APP = 'https://machine-fit.com/machinefit';
+const SITE = 'https://machine-fit.com';
+const SITE_APP = `${SITE}/machinefit`;
 
 function abs(p) {
   if (p === '/') return `${SITE_APP}/`;
   return `${SITE_APP}${p.startsWith('/') ? p : `/${p}`}`;
+}
+
+function marketingHome() {
+  return `${SITE}/`;
 }
 
 function urlEntry(loc, { lastmod, changefreq, priority } = {}) {
@@ -39,14 +44,18 @@ const today = new Date().toISOString().slice(0, 10);
 const urls = [];
 const seen = new Set();
 
-function add(pathPart, opts) {
-  const loc = abs(pathPart);
+function addLoc(loc, opts) {
   if (seen.has(loc)) return;
   seen.add(loc);
   urls.push(urlEntry(loc, opts));
 }
 
-// Core public pages
+function add(pathPart, opts) {
+  addLoc(abs(pathPart), opts);
+}
+
+// Marketing apex + SPA home (Cloudflare should rewrite / → /machinefit/ as 200)
+addLoc(marketingHome(), { lastmod: today, changefreq: 'daily', priority: '1.0' });
 add('/', { lastmod: today, changefreq: 'daily', priority: '1.0' });
 add('/machines', { lastmod: today, changefreq: 'weekly', priority: '0.9' });
 add('/brands', { lastmod: today, changefreq: 'weekly', priority: '0.8' });

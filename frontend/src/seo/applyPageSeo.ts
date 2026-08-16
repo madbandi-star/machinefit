@@ -77,6 +77,7 @@ export function applyPageSeo(input: PageSeoInput): void {
   upsertMeta('name', 'description', description);
   upsertMeta('name', 'robots', robots);
   upsertMeta('name', 'googlebot', robots);
+  upsertMeta('name', 'Yeti', robots);
   upsertMeta('name', 'theme-color', SEO_THEME_COLOR);
 
   upsertLink('canonical', url);

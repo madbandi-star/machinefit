@@ -70,7 +70,7 @@ export function AuthLandingScreen() {
         <img
           className="auth-landing__logo"
           src={MARK_SRC}
-          alt=""
+          alt="머신핏"
           width={72}
           height={72}
         />

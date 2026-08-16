@@ -17,14 +17,14 @@ export function organizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SEO_SITE_NAME,
-    alternateName: SEO_SITE_NAME_EN,
+    alternateName: [SEO_SITE_NAME_EN, 'MACHINE FIT'],
     url: SITE_URL,
     logo: absoluteAppUrl('/icon-512.png'),
   };
 }
 
 /**
- * Site entity. url is marketing origin; app pages live under /machinefit/.
+ * Site entity. url is marketing origin https://machine-fit.com/.
  * No SearchAction — in-app search is not a stable public URL pattern.
  */
 export function websiteJsonLd() {
@@ -32,13 +32,13 @@ export function websiteJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SEO_SITE_NAME,
-    alternateName: SEO_SITE_NAME_EN,
+    alternateName: [SEO_SITE_NAME_EN, 'MACHINE FIT'],
     url: SITE_URL,
     inLanguage: ['ko', 'en', 'ja', 'zh'],
     publisher: {
       '@type': 'Organization',
       name: SEO_SITE_NAME,
-      alternateName: SEO_SITE_NAME_EN,
+      alternateName: [SEO_SITE_NAME_EN, 'MACHINE FIT'],
       url: SITE_URL,
     },
   };
@@ -50,7 +50,7 @@ export function softwareApplicationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: SEO_SITE_NAME,
-    alternateName: SEO_SITE_NAME_EN,
+    alternateName: [SEO_SITE_NAME_EN, 'MACHINE FIT'],
     url: absoluteAppUrl('/'),
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Web',

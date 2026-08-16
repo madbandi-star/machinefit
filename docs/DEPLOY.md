@@ -6,6 +6,7 @@
 2. Workflow: `.github/workflows/frontend-deploy.yml`
 3. Marketing / custom domain: `https://machine-fit.com` (Cloudflare → GitHub Pages; `frontend/public/CNAME`)
 4. Legacy Pages URL (fallback): `https://madbandi-star.github.io/machinefit`
+5. **SEO / Naver:** Cloudflare must **rewrite** `/` → `/machinefit/` as HTTP **200** (not 301). See `docs/NAVER_SEO.md`.
 
 ## Backend (Render)
 

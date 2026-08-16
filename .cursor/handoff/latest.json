@@ -1,21 +1,35 @@
 {
-  "title": "Calendar muscles: top 3 by count + +N",
-  "summary": "Date calendar muscle chips show at most 3 groups sorted by exercise count desc, with +N for the rest; cell height tightened.",
-  "git": { "branch": "main", "commit": "0bb12915" },
+  "title": "Naver SEO: robots/sitemap/canonical brand home fixes",
+  "summary": "Fixed crawl policy (Allow: /), sitemap apex URL, home canonical/OG/JSON-LD to https://machine-fit.com/, brand title/description, retained Naver/Google verification. Cloudflare must rewrite /→/machinefit/ as 200 (docs/NAVER_SEO.md).",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
-    "frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx",
-    "frontend/src/styles/records.css",
-    "frontend/src/components/records/HistoryDateCalendarDialog/HistoryDateCalendarDialog.css"
+    "frontend/public/robots.txt",
+    "frontend/public/sitemap.xml",
+    "frontend/index.html",
+    "frontend/src/seo/siteSeo.ts",
+    "frontend/src/seo/jsonLd.ts",
+    "frontend/src/seo/applyPageSeo.ts",
+    "frontend/src/seo/routeSeoPolicy.ts",
+    "frontend/src/components/auth/AuthLandingScreen/AuthLandingScreen.tsx",
+    "scripts/generate-sitemap.mjs",
+    "scripts/seo-validate.mjs",
+    "docs/NAVER_SEO.md",
+    "docs/DEPLOY.md"
   ],
   "testFocus": [
-    "Calendar: max 3 muscle lines; 4+ shows +N",
-    "Lines ordered by highest exercise count first"
+    "seo-validate PASS",
+    "dist contains robots/sitemap/favicon with machine-fit.com/",
+    "Cloudflare rewrite checklist in docs/NAVER_SEO.md"
   ],
   "fastChecks": [
-    "rg -n \"MAX_CALENDAR_MUSCLE_LABELS = 3|rankedMuscles|b.count - a.count\" frontend/src/components/records/HistoryDateCalendar/HistoryDateCalendar.tsx"
+    "cd frontend && npm run seo:validate"
   ],
-  "productionChecks": ["Pages: /records calendar muscle order"],
+  "productionChecks": [
+    "curl -sI https://machine-fit.com/ should become 200 after CF rewrite",
+    "https://machine-fit.com/robots.txt Allow: /",
+    "https://machine-fit.com/sitemap.xml includes apex /"
+  ],
   "deploy": { "expected": "GitHub Pages FE success" },
-  "asIs": "4 muscle lines in first-seen order",
-  "toBe": "3 lines by count desc + +N"
+  "asIs": "301 /→/machinefit/; restrictive robots; canonical /machinefit/",
+  "toBe": "SEO tags on apex; Allow:/; CF rewrite still required for 200 at /"
 }

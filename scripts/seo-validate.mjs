@@ -32,12 +32,12 @@ if (fs.existsSync(sitemap)) ok('sitemap.xml exists');
 else fail('sitemap.xml missing');
 
 const robotsText = fs.existsSync(robots) ? fs.readFileSync(robots, 'utf8') : '';
-if (
-  robotsText.includes('Sitemap: https://machine-fit.com/sitemap.xml') ||
-  robotsText.includes('Sitemap: https://machine-fit.com/machinefit/sitemap.xml')
-) {
+if (robotsText.includes('Sitemap: https://machine-fit.com/sitemap.xml')) {
   ok('robots.txt sitemap URL uses production domain');
 } else fail('robots.txt sitemap URL incorrect');
+
+if (/^Allow:\s*\/\s*$/m.test(robotsText)) ok('robots Allow: /');
+else fail('robots should Allow: /');
 
 if (robotsText.includes('Disallow: /machinefit/admin/')) ok('robots blocks admin');
 else fail('robots should disallow admin');
@@ -54,8 +54,14 @@ const uniq = new Set(locs);
 if (uniq.size === locs.length) ok('sitemap has no duplicate locs');
 else fail('sitemap has duplicate locs');
 
+if (locs.includes('https://machine-fit.com/')) ok('sitemap includes marketing home /');
+else fail('sitemap missing https://machine-fit.com/');
+
+if (locs.includes('https://machine-fit.com/machinefit/')) ok('sitemap includes SPA home /machinefit/');
+else fail('sitemap missing https://machine-fit.com/machinefit/');
+
 for (const u of locs) {
-  if (!u.startsWith('https://machine-fit.com/machinefit')) {
+  if (!u.startsWith('https://machine-fit.com/')) {
     fail(`bad sitemap host: ${u}`);
     break;
   }
@@ -75,8 +81,9 @@ ok('sitemap URLs look production-safe');
 const html = fs.readFileSync(indexHtml, 'utf8');
 if (html.includes('machine-fit.com')) ok('index.html references production domain');
 else fail('index.html missing production domain');
-if (html.includes('rel="canonical"')) ok('index.html has canonical');
-else fail('index.html missing canonical');
+if (html.includes('rel="canonical"') && html.includes('href="https://machine-fit.com/"')) {
+  ok('index.html canonical is https://machine-fit.com/');
+} else fail('index.html canonical should be https://machine-fit.com/');
 if (html.includes('og:image')) ok('index.html has og:image');
 else fail('index.html missing og:image');
 if (html.includes('<title>머신핏')) ok('index.html title leads with 머신핏');
@@ -92,6 +99,9 @@ else ok('index.html has no GSC placeholder token');
 if (html.includes('SeatFit') || html.includes('seatfit')) {
   fail('index.html still mentions SeatFit');
 } else ok('index.html has no SeatFit remnants');
+if (/\bnoindex\b/i.test(html) && !html.includes('content="index,follow"')) {
+  fail('index.html appears to noindex');
+} else ok('index.html robots is indexable');
 
 const faviconIco = path.join(fe, 'public/favicon.ico');
 if (fs.existsSync(faviconIco)) ok('favicon.ico exists');
