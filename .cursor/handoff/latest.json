@@ -3,7 +3,7 @@
   "summary": "Production /banners/public/* returned empty for all slots (not a marketing-consent-only issue). Public list now accepts mobile_image_url fallback; mobile upload fills desktop when empty; admin edit/list shows explicit publish blockers (inactive/no image/slots/schedule).",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "612f43b2"
   },
   "changedFiles": [
     "backend/server/repositories/banner.repository.ts",
