@@ -178,7 +178,9 @@ export async function setMachineActive(req: Request, res: Response, next: NextFu
 
 export async function deleteMachine(req: Request, res: Response, next: NextFunction) {
   try {
-    const data = await adminCatalogService.deleteMachine(getParam(req.params.id));
+    const forceRaw = String(req.query.force ?? '').toLowerCase();
+    const force = forceRaw === '1' || forceRaw === 'true' || forceRaw === 'yes';
+    const data = await adminCatalogService.deleteMachine(getParam(req.params.id), { force });
     res.json({ success: true, data });
   } catch (error) {
     next(error);

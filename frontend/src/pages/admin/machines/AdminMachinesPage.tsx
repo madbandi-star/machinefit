@@ -289,6 +289,7 @@ export function AdminMachinesPage() {
   const [editor, setEditor] = useState<'create' | Machine | null>(null);
   const [form, setForm] = useState<MachineFormState>(EMPTY_FORM);
   const [pendingDelete, setPendingDelete] = useState<Machine | null>(null);
+  const [pendingForcePurge, setPendingForcePurge] = useState<Machine | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [formStatus, setFormStatus] = useState<{
     type: 'pending' | 'success' | 'error';
@@ -510,14 +511,16 @@ export function AdminMachinesPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => adminApi.deleteCatalogMachine(id),
+    mutationFn: ({ id, force }: { id: string; force?: boolean }) =>
+      adminApi.deleteCatalogMachine(id, { force }),
     onMutate: () => showToast(t('admin:catalogMachines.deleting'), 'info'),
-    onSuccess: async (res) => {
-      if (pendingDelete) {
+    onSuccess: async (res, vars) => {
+      const target = vars.force ? pendingForcePurge : pendingDelete;
+      if (target) {
         syncMachineCaches(
           {
-            ...pendingDelete,
-            isActive: res.data.data.deactivated ? false : pendingDelete.isActive,
+            ...target,
+            isActive: res.data.data.deactivated ? false : target.isActive,
           },
           res.data.data.deactivated ? 'upsert' : 'delete'
         );
@@ -525,10 +528,14 @@ export function AdminMachinesPage() {
       await invalidate();
       if (res.data.data.deactivated) {
         showToast(t('admin:catalogMachines.deactivatedInstead'), 'success');
+        if (pendingDelete) setPendingForcePurge(pendingDelete);
+      } else if (res.data.data.forcePurged) {
+        showToast(t('admin:catalogMachines.forceDeleteSuccess'), 'success');
       } else {
         showToast(t('admin:catalogMachines.deleteSuccess'), 'success');
       }
       setPendingDelete(null);
+      if (!res.data.data.deactivated) setPendingForcePurge(null);
       setFormStatus(null);
       setEditor(null);
     },
@@ -539,6 +546,7 @@ export function AdminMachinesPage() {
           : t('admin:error');
       showToast(message, 'error');
       setPendingDelete(null);
+      setPendingForcePurge(null);
     },
   });
 
@@ -1308,7 +1316,31 @@ export function AdminMachinesPage() {
         }}
         onConfirm={() => {
           if (pendingDelete && !deleteMutation.isPending) {
-            deleteMutation.mutate(pendingDelete.id);
+            deleteMutation.mutate({ id: pendingDelete.id });
+          }
+        }}
+      />
+
+      <ConfirmDialog
+        open={Boolean(pendingForcePurge)}
+        title={t('admin:catalogMachines.forceDeleteTitle')}
+        message={t('admin:catalogMachines.forceDeleteMessage', {
+          name: pendingForcePurge
+            ? getLocalizedName(pendingForcePurge.name, i18n.language, pendingForcePurge.code)
+            : '',
+        })}
+        confirmLabel={
+          deleteMutation.isPending
+            ? t('admin:catalogMachines.deleting')
+            : t('admin:catalogMachines.forceDelete')
+        }
+        confirmVariant="danger"
+        onClose={() => {
+          if (!deleteMutation.isPending) setPendingForcePurge(null);
+        }}
+        onConfirm={() => {
+          if (pendingForcePurge && !deleteMutation.isPending) {
+            deleteMutation.mutate({ id: pendingForcePurge.id, force: true });
           }
         }}
       />

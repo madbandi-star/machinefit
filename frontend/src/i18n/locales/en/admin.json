@@ -417,6 +417,10 @@
     "deleteMessage": "Delete {{name}}. If it has history, it will be deactivated instead.",
     "deleteSuccess": "Machine deleted.",
     "deactivatedInstead": "Referenced elsewhere — deactivated instead of deleting.",
+    "forceDeleteTitle": "Delete with reference history?",
+    "forceDeleteMessage": "Permanently delete {{name}} and linked recommendations/history. This cannot be undone.",
+    "forceDelete": "Delete with history",
+    "forceDeleteSuccess": "Machine and reference history deleted.",
     "types": {
       "selectorized": "Selectorized",
       "plate_loaded": "Plate loaded",

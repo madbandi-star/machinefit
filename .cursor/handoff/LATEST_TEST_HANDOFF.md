@@ -1,18 +1,15 @@
-# Test handoff — Search default brand = 맨몸
+# Test handoff — Purge DEMO1 + force catalog delete
 
 ## Summary
-검색 페이지 진입 시 근육군 **전체**, 브랜드 **맨몸**이 기본 선택. 브랜드 「전체」는 `brand=all`로 유지되어 다시 맨몸으로 되돌아가지 않음.
+기구코드 `DEMO1`(로우로우)를 추천·최근이력·운동기록과 함께 DB에서 완전 삭제. 기구관리에서 참조로 비활성화된 경우 **이력 포함 삭제** 확인 다이얼로그 추가 (`?force=true`).
+
+## Already applied
+- Production migration `144_purge_catalog_machine_demo1.sql` (DEMO1 gone)
 
 ## Test focus
-1. `/machines` 진입 → 근육 전체, 브랜드 맨몸
-2. 브랜드 전체 선택 유지
-3. `?brand=OTHER` 딥링크 유지
-
-## Fast checks
-```
-rg -n "DEFAULT_SEARCH_BRAND_CODE|brand === null" frontend/src/constants/machine-search-defaults.ts frontend/src/pages/machine-search/MachineSearchPage.tsx
-```
+1. 기구관리에서 DEMO1 검색 → 없음
+2. 다른 이력 있는 기구 삭제 → 비활성 토스트 후 「이력 포함 삭제」로 완전 삭제
 
 ## As-is → To-be
-- as-is: 브랜드도 전체
-- to-be: 브랜드 맨몸 기본
+- as-is: DEMO1 비활성만 가능
+- to-be: DEMO1 삭제 완료 + force purge UI/API

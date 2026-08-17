@@ -523,6 +523,10 @@
     "deleteMessage": "{{name}}을(를) 삭제합니다. 사용 이력이 있으면 비활성화됩니다.",
     "deleteSuccess": "기구를 삭제했습니다.",
     "deactivatedInstead": "참조 이력이 있어 삭제 대신 비활성화했습니다.",
+    "forceDeleteTitle": "참조 이력까지 삭제할까요?",
+    "forceDeleteMessage": "{{name}}과(와) 연결된 추천·이용 이력을 함께 영구 삭제합니다. 복구할 수 없습니다.",
+    "forceDelete": "이력 포함 삭제",
+    "forceDeleteSuccess": "기구와 참조 이력을 삭제했습니다.",
     "types": {
       "selectorized": "셀렉터라이즈드",
       "plate_loaded": "플레이트 로드",

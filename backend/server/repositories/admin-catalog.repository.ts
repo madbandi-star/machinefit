@@ -637,22 +637,54 @@ export const adminCatalogRepository = {
     return updated;
   },
 
-  async deleteMachine(id: string): Promise<{ deleted: boolean; deactivated: boolean }> {
+  /**
+   * Remove rows that block `DELETE FROM machines` (NO ACTION / RESTRICT FKs).
+   * Cascading children (settings, images, logs, favorites, …) follow the machine row.
+   */
+  async purgeMachineBlockingRefs(client: {
+    query: (text: string, params?: unknown[]) => Promise<unknown>;
+  }, machineId: string): Promise<void> {
+    await client.query('DELETE FROM machine_trades WHERE machine_id = $1', [machineId]);
+    await client.query('DELETE FROM recent_history WHERE machine_id = $1', [machineId]);
+    await client.query('DELETE FROM machine_recommendations WHERE machine_id = $1', [machineId]);
+    await client.query('DELETE FROM gym_machines WHERE machine_id = $1', [machineId]);
+  },
+
+  async deleteMachine(
+    id: string,
+    options: { force?: boolean } = {}
+  ): Promise<{ deleted: boolean; deactivated: boolean; forcePurged: boolean }> {
     const pool = getPool();
     if (!pool) throw new AppError(503, 'DB_UNAVAILABLE', 'Database not configured');
     const existing = await this.getMachine(id);
     if (!existing) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
 
+    if (options.force) {
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        await this.purgeMachineBlockingRefs(client, existing.id);
+        await client.query('DELETE FROM machines WHERE id = $1', [existing.id]);
+        await client.query('COMMIT');
+        return { deleted: true, deactivated: false, forcePurged: true };
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      } finally {
+        client.release();
+      }
+    }
+
     try {
       await pool.query('DELETE FROM machines WHERE id = $1', [existing.id]);
-      return { deleted: true, deactivated: false };
+      return { deleted: true, deactivated: false, forcePurged: false };
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === '23503') {
         await pool.query('UPDATE machines SET is_active = FALSE, updated_at = NOW() WHERE id = $1', [
           existing.id,
         ]);
-        return { deleted: false, deactivated: true };
+        return { deleted: false, deactivated: true, forcePurged: false };
       }
       throw err;
     }

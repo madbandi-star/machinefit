@@ -171,8 +171,11 @@ export const adminCatalogService = {
     return adminCatalogRepository.setMachineActive(id, isActive);
   },
 
-  deleteMachine(id: string): Promise<{ deleted: boolean; deactivated: boolean }> {
-    return adminCatalogRepository.deleteMachine(id);
+  deleteMachine(
+    id: string,
+    options: { force?: boolean } = {}
+  ): Promise<{ deleted: boolean; deactivated: boolean; forcePurged: boolean }> {
+    return adminCatalogRepository.deleteMachine(id, options);
   },
 
   updateMachineTips(id: string, input: AdminMachineTipsUpdateInput): Promise<Machine> {

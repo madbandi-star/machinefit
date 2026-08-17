@@ -1,29 +1,37 @@
 {
-  "title": "Search defaults: all muscles + bodyweight brand",
-  "summary": "Machine search entry defaults to muscle=전체 and brand=맨몸 (BODYWEIGHT). Explicit brand=all keeps brand chip on 전체 without snapping back to bodyweight.",
+  "title": "Purge DEMO1 catalog machine + force-delete",
+  "summary": "Hard-deleted catalog machine DEMO1 (로우로우) with recommendation/history/logs. Admin catalog delete now offers force purge when soft-deactivate would apply.",
   "git": {
     "branch": "main",
-    "commit": "222e6870"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/constants/machine-search-defaults.ts",
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx"
+    "database/migrations/144_purge_catalog_machine_demo1.sql",
+    "backend/server/repositories/admin-catalog.repository.ts",
+    "backend/server/services/admin-catalog.service.ts",
+    "backend/server/controllers/admin-catalog.controller.ts",
+    "frontend/src/api/admin.api.ts",
+    "frontend/src/pages/admin/machines/AdminMachinesPage.tsx",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Open /machines with no query: muscle 전체 + brand 맨몸 selected",
-    "Select brand 전체 stays on 전체 (URL brand=all)",
-    "Deep link ?brand=CYBEX still opens Cybex"
+    "Admin machines list: DEMO1 gone",
+    "Delete a machine with history → deactivate toast → force-delete confirm removes it"
   ],
   "fastChecks": [
-    "rg -n \"DEFAULT_SEARCH_BRAND_CODE|brand === 'all'|BODYWEIGHT\" frontend/src/constants/machine-search-defaults.ts frontend/src/pages/machine-search/MachineSearchPage.tsx"
+    "rg -n \"forcePurged|purgeMachineBlockingRefs|forceDeleteTitle\" backend/server/repositories/admin-catalog.repository.ts frontend/src/pages/admin/machines/AdminMachinesPage.tsx"
   ],
   "productionChecks": [
-    "Pages Deploy Frontend success",
-    "Hard refresh search entry"
+    "DEMO1 absent from admin catalog",
+    "Render backend redeploy for force=true delete API"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "Frontend Pages + Render backend",
+    "migrationApplied": "144_purge_catalog_machine_demo1.sql"
   },
-  "asIs": "Search opened with all muscles and all brands",
-  "toBe": "Search opens with all muscles and bodyweight brand"
+  "asIs": "DEMO1 soft-deactivated due to FK refs; admin could not hard-delete",
+  "toBe": "DEMO1 purged; admin can force-delete with history"
 }

@@ -210,10 +210,12 @@ export const adminApi = {
   setCatalogMachineActive: (id: string, isActive: boolean) =>
     apiClient.patch<ApiResponse<Machine>>(`/admin/catalog/machines/${id}/active`, { isActive }),
 
-  deleteCatalogMachine: (id: string) =>
-    apiClient.delete<ApiResponse<{ deleted: boolean; deactivated: boolean }>>(
-      `/admin/catalog/machines/${id}`
-    ),
+  deleteCatalogMachine: (id: string, options?: { force?: boolean }) =>
+    apiClient.delete<
+      ApiResponse<{ deleted: boolean; deactivated: boolean; forcePurged?: boolean }>
+    >(`/admin/catalog/machines/${id}`, {
+      params: options?.force ? { force: true } : undefined,
+    }),
 
   uploadCatalogMachineImage: (id: string, file: File, onProgress?: (percent: number) => void) => {
     const form = new FormData();
