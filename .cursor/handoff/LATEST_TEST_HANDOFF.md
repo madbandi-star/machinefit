@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: `97b37637`
 
 ## Changed files
 - `frontend/src/pages/machine-search/MachineSearchPage.tsx`

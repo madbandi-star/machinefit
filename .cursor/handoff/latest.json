@@ -3,7 +3,7 @@
   "summary": "Logged-in search no longer hides the brand row while favorite brands load. Chips keep showing (catalog then favorites); BrandFilterChips always renders at least ??; nav prefetches brand favorites.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "97b37637"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
