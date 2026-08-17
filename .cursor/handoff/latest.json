@@ -3,7 +3,7 @@
   "summary": "삭제 후 history invalidate/refetch가 실패하면 isError만으로 기록 전체가 loadFailed로 덮이던 문제. placeholderData 유지, 낙관적 캐시 제거, 에러는 데이터 없을 때만 표시, home-bootstrap 무효화는 비차단.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "558f492c"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
