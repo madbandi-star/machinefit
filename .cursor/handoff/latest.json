@@ -3,7 +3,7 @@
   "summary": "Optimistic set-complete without invalidate storms; IndexedDB draft+sync queue; login cache scoped clear; share/muscle assets compressed; admin layout/i18n deferred.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "9033ca00"
   },
   "changedFiles": [
     "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
