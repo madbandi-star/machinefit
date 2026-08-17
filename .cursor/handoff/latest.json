@@ -1,29 +1,30 @@
 {
-  "title": "Fix production boot crash (useLocation outside Router)",
-  "summary": "ServiceUnavailableScreen called useLocation while mounted in AppProviders outside RouterProvider, emptying #root on machine-fit.com. Use window.location.pathname instead.",
+  "title": "Fix banners missing until refresh after SPA navigation",
+  "summary": "AdSlot decided before auth hydration and cached anonymous/empty results without userId in the query key. Gate on authReady, key by viewer, clear ads cache on login, do not swallow decide errors as null.",
   "git": {
     "branch": "main",
-    "commit": "235762bd"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/feedback/ServiceUnavailableScreen/ServiceUnavailableScreen.tsx"
+    "frontend/src/ads/AdSlot.tsx",
+    "frontend/src/app/providers/QueryProvider.tsx",
+    "frontend/src/pages/admin/banners/AdminBannerEditPage.tsx",
+    "frontend/src/pages/admin/banners/AdminBannersPage.tsx"
   ],
   "testFocus": [
-    "Open https://machine-fit.com/ — app must render (not blank)",
-    "No useLocation Router error in console",
-    "Music/video header buttons still present after login/home"
+    "Login → navigate Home/Records/My/Community without F5 — banners appear",
+    "Hard refresh still shows banners",
+    "Logout/login switches ads cache"
   ],
   "fastChecks": [
-    "npm run typecheck --prefix frontend",
-    "curl -sL https://machine-fit.com/ and verify #root not empty via Playwright"
+    "npm run typecheck --prefix frontend"
   ],
   "productionChecks": [
-    "machine-fit.com loads home UI",
-    "motivation music/video buttons visible when Header is shown"
+    "SPA nav between pages with BannerSlot — banner without full reload"
   ],
   "deploy": {
-    "expected": "GitHub Pages Deploy Frontend success after push"
+    "expected": "GitHub Pages after push"
   },
-  "asIs": "Blank page; PAGEERROR useLocation outside Router",
-  "toBe": "App boots; outage screen still suppresses on workout paths via window.location"
+  "asIs": "Banner empty after client nav until F5",
+  "toBe": "Decide after authReady; cache keyed by viewer; banners show on nav"
 }

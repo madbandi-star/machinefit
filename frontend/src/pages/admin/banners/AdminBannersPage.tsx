@@ -58,6 +58,8 @@ export function AdminBannersPage() {
     onSuccess: async () => {
       setPendingDelete(null);
       await queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
+      await queryClient.invalidateQueries({ queryKey: ['ads', 'decision'] });
+      await queryClient.invalidateQueries({ queryKey: ['banners', 'public'] });
       showToast(t('admin:banners.deleted'), 'success');
     },
     onError: () => showToast(t('common:errors.submitFailed'), 'error'),

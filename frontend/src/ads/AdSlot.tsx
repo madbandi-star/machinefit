@@ -5,6 +5,7 @@ import { BANNER_SLOT_TO_AD_PLACEMENT } from '@machinefit/shared';
 import { adApi } from '@/api/ad.api';
 import { bannerApi } from '@/api/banner.api';
 import { SponsoredBadge } from '@/components/compliance/LegalDisclaimerBanner';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { getAdSessionId, shouldDedupe } from '@/ads/adSession';
 import '@/styles/banners.css';
@@ -42,24 +43,34 @@ export function AdSlot({
 }: AdSlotProps) {
   const regionId = useId();
   const impressed = useRef(new Set<string>());
+  const authReady = useAuthHydration();
+  const viewerId = useAuthStore((s) => s.user?.id ?? null);
   const marketingOptIn = useAuthStore((s) => Boolean(s.user?.marketingOptIn));
   const sessionId = getAdSessionId();
+  // Identity for cache: persisted marketingOptIn alone is not enough — a decide
+  // fired before JWT restore was cached as "no ad" and stuck across SPA navigations.
+  const viewerKey = viewerId ?? 'anon';
 
   const { data: decision } = useQuery({
-    queryKey: ['ads', 'decision', placement, event ?? '', eventCount ?? 0, marketingOptIn],
+    queryKey: [
+      'ads',
+      'decision',
+      placement,
+      event ?? '',
+      eventCount ?? 0,
+      viewerKey,
+      marketingOptIn,
+    ],
     queryFn: async () => {
-      try {
-        const res = await adApi.decide({
-          placement,
-          event,
-          sessionId,
-          eventCount,
-        });
-        return res.data.data;
-      } catch {
-        return null;
-      }
+      const res = await adApi.decide({
+        placement,
+        event,
+        sessionId,
+        eventCount,
+      });
+      return res.data.data;
     },
+    enabled: authReady,
     staleTime: 30_000,
     refetchOnWindowFocus: false,
     retry: false,
@@ -74,12 +85,12 @@ export function AdSlot({
       : null;
 
   const { data: legacyBanners = [] } = useQuery({
-    queryKey: ['banners', 'public', 'legacy', legacySlot],
+    queryKey: ['banners', 'public', 'legacy', legacySlot, viewerKey],
     queryFn: async () => {
       const res = await bannerApi.listPublic(legacySlot!);
       return res.data.data?.banners ?? [];
     },
-    enabled: Boolean(legacySlot) && marketingOptIn,
+    enabled: authReady && Boolean(legacySlot) && marketingOptIn,
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });

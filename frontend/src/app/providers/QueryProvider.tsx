@@ -26,6 +26,10 @@ function AuthScopedQueryInvalidator() {
   useEffect(() => {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machineRequestsRoot });
     void queryClient.removeQueries({ queryKey: QUERY_KEYS.brandFavorites });
+    // Ads/banners are audience + marketing-opt-in scoped; an early anonymous deny
+    // must not stick after login (SPA nav would otherwise stay blank until F5).
+    void queryClient.removeQueries({ queryKey: ['ads', 'decision'] });
+    void queryClient.removeQueries({ queryKey: ['banners', 'public'] });
   }, [viewerId]);
 
   return null;

@@ -116,6 +116,8 @@ export function AdminBannerEditPage() {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
+      await queryClient.invalidateQueries({ queryKey: ['ads', 'decision'] });
+      await queryClient.invalidateQueries({ queryKey: ['banners', 'public'] });
       const blockers = getBannerPublishBlockers({
         status: data.status,
         imageUrl: data.imageUrl,
@@ -143,6 +145,8 @@ export function AdminBannerEditPage() {
     },
     onSuccess: async (data, vars) => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'banners'] });
+      await queryClient.invalidateQueries({ queryKey: ['ads', 'decision'] });
+      await queryClient.invalidateQueries({ queryKey: ['banners', 'public'] });
       if (vars.kind === 'mobile') {
         setMobilePreview(data.mobileImageUrl ?? null);
         if (data.imageUrl) setDesktopPreview(data.imageUrl);
