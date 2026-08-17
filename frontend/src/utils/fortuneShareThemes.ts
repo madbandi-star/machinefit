@@ -17,7 +17,7 @@ export type FortuneShareTheme = {
 };
 
 const DEFAULT: FortuneShareTheme = {
-  bgFile: 'super-set-day.png',
+  bgFile: 'super-set-day.jpg',
   accent: '#ffd24a',
   accentSoft: '#f6c453',
   eyebrow: '#f8fafc',
@@ -28,10 +28,10 @@ const DEFAULT: FortuneShareTheme = {
   glow: 'rgba(255, 210, 80, 0.35)',
 };
 
-/** Order: PR → DUMBBELL → FREE WEIGHT → DROP SET → VOLUME → RECOVERY → CARDIO → CONTROL → LEG → CHEST → BACK (+ SUPER SET) */
+/** Order: PR ??DUMBBELL ??FREE WEIGHT ??DROP SET ??VOLUME ??RECOVERY ??CARDIO ??CONTROL ??LEG ??CHEST ??BACK (+ SUPER SET) */
 export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
   PR_DAY: {
-    bgFile: 'pr-day.png',
+    bgFile: 'pr-day.jpg',
     accent: '#c084fc',
     accentSoft: '#e9d5ff',
     eyebrow: '#f3e8ff',
@@ -42,7 +42,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(168, 85, 247, 0.4)',
   },
   DUMBBELL_DAY: {
-    bgFile: 'dumbbell-day.png',
+    bgFile: 'dumbbell-day.jpg',
     accent: '#22d3ee',
     accentSoft: '#a5f3fc',
     eyebrow: '#ecfeff',
@@ -53,7 +53,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(34, 211, 238, 0.38)',
   },
   FREE_WEIGHT_DAY: {
-    bgFile: 'free-weight-day.png',
+    bgFile: 'free-weight-day.jpg',
     accent: '#a3e635',
     accentSoft: '#d9f99d',
     eyebrow: '#f7fee7',
@@ -64,7 +64,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(163, 230, 53, 0.35)',
   },
   DROP_SET_DAY: {
-    bgFile: 'drop-set-day.png',
+    bgFile: 'drop-set-day.jpg',
     accent: '#f43f5e',
     accentSoft: '#fda4af',
     eyebrow: '#fff1f2',
@@ -76,10 +76,10 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
   },
   SUPER_SET_DAY: {
     ...DEFAULT,
-    bgFile: 'super-set-day.png',
+    bgFile: 'super-set-day.jpg',
   },
   VOLUME_DAY: {
-    bgFile: 'volume-day.png',
+    bgFile: 'volume-day.jpg',
     accent: '#fbbf24',
     accentSoft: '#fde68a',
     eyebrow: '#fffbeb',
@@ -90,7 +90,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(251, 191, 36, 0.38)',
   },
   RECOVERY_DAY: {
-    bgFile: 'recovery-day.png',
+    bgFile: 'recovery-day.jpg',
     accent: '#2dd4bf',
     accentSoft: '#99f6e4',
     eyebrow: '#f0fdfa',
@@ -101,7 +101,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(45, 212, 191, 0.38)',
   },
   CARDIO_DAY: {
-    bgFile: 'cardio-day.png',
+    bgFile: 'cardio-day.jpg',
     accent: '#fb923c',
     accentSoft: '#fdba74',
     eyebrow: '#fff7ed',
@@ -112,7 +112,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(249, 115, 22, 0.4)',
   },
   CONTROL_DAY: {
-    bgFile: 'control-day.png',
+    bgFile: 'control-day.jpg',
     accent: '#38bdf8',
     accentSoft: '#bae6fd',
     eyebrow: '#f0f9ff',
@@ -123,7 +123,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(14, 165, 233, 0.38)',
   },
   LEG_DAY: {
-    bgFile: 'leg-day.png',
+    bgFile: 'leg-day.jpg',
     accent: '#84cc16',
     accentSoft: '#d9f99d',
     eyebrow: '#f7fee7',
@@ -134,7 +134,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(132, 204, 22, 0.38)',
   },
   CHEST_DAY: {
-    bgFile: 'chest-day.png',
+    bgFile: 'chest-day.jpg',
     accent: '#ef4444',
     accentSoft: '#fca5a5',
     eyebrow: '#fef2f2',
@@ -145,7 +145,7 @@ export const FORTUNE_SHARE_THEMES: Record<string, FortuneShareTheme> = {
     glow: 'rgba(239, 68, 68, 0.38)',
   },
   BACK_DAY: {
-    bgFile: 'back-day.png',
+    bgFile: 'back-day.jpg',
     accent: '#3b82f6',
     accentSoft: '#93c5fd',
     eyebrow: '#eff6ff',

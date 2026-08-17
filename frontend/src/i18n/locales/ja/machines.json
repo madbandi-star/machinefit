@@ -97,6 +97,7 @@
     "saved": "Today's workout log is saved.",
     "savedOnDate": "Workout log for {{date}} is saved.",
     "updated": "Your workout log changes are saved.",
+    "syncDelayed": "Saving is delayed. Your entries stay on screen and will sync automatically.",
     "canceled": "Today's workout log was cleared.",
     "canceledOnDate": "Workout log for {{date}} was cleared.",
     "loginRequired": "Sign in to save your sets and weights.",
@@ -132,7 +133,8 @@
       "per_hand": "Dumbbell: shown & logged weight is per hand. Total volume counts both hands (×2).",
       "implement": "Kettlebell: shown & logged weight is the implement weight as used.",
       "stack": "Cable: shown & logged weight is the stack (pin) weight."
-    }
+    },
+    "syncDelayed": "Saving is delayed. Your entries stay on screen and will sync automatically."
   },
   "restTimer": {
     "label": "Rest after set {{setNumber}}",

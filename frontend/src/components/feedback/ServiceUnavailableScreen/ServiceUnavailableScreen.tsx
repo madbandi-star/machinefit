@@ -1,18 +1,34 @@
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApiHealthStore } from '@/store/apiHealth.store';
+import { useWorkoutSessionTimerStore } from '@/store/workoutSessionTimer.store';
 import './ServiceUnavailableScreen.css';
+
+function isWorkoutCriticalPath(pathname: string): boolean {
+  const p = pathname.toLowerCase();
+  return (
+    p.includes('/history') ||
+    p.includes('/records') ||
+    p.includes('/machines') ||
+    p.includes('/easy') ||
+    p.includes('/recommend')
+  );
+}
 
 /**
  * Full-screen recovery UI for API / network outages.
- * Mounted only when apiHealthStore.outage is set — does not alter normal screens.
+ * Suppressed during active workout / records paths so users keep logging offline.
  */
 export function ServiceUnavailableScreen() {
   const { t } = useTranslation();
+  const location = useLocation();
   const outage = useApiHealthStore((s) => s.outage);
   const lastStatus = useApiHealthStore((s) => s.lastStatus);
   const clearOutage = useApiHealthStore((s) => s.clearOutage);
+  const sessionRunning = useWorkoutSessionTimerStore((s) => s.status === 'running');
 
   if (!outage) return null;
+  if (sessionRunning || isWorkoutCriticalPath(location.pathname)) return null;
 
   const titleKey =
     outage === 'network'

@@ -244,11 +244,12 @@ export function HistoryListPanel() {
     queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', memberKey, {
       limit: HISTORY_WORKOUT_LOG_LIMIT,
     }),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       fetchWorkoutLogs({
         gymId: activeGymId!,
         memberId: activeMemberId!,
         limit: HISTORY_WORKOUT_LOG_LIMIT,
+        signal,
       }),
     enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
   });
@@ -578,11 +579,6 @@ export function HistoryListPanel() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
       queryClient.invalidateQueries({ queryKey: displayOrderQueryKey }),
-      queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] }),
-      queryClient.invalidateQueries({ queryKey: ['user', 'growth-timeline'] }),
-      queryClient.invalidateQueries({ queryKey: ['user', 'lifter-dna'] }),
-      queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] }),
-      queryClient.invalidateQueries({ queryKey: ['user', 'lifted-weight'] }),
       queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
     ]);
   }, [displayOrderQueryKey, queryClient]);

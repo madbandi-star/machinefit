@@ -5,7 +5,6 @@ import { Role, FREE_OPEN_MEMBER_FEATURES_MIN_ROLE } from '@machinefit/shared';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
-import { AdminLayout } from '@/layouts/AdminLayout';
 import { EasyLayout } from '@/layouts/EasyLayout';
 import { AuthGuard } from '@/routes/guards/AuthGuard';
 import { GuestGuard } from '@/routes/guards/GuestGuard';
@@ -728,7 +727,9 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
     {
       element: (
         <AuthGuard minRole={Role.ADMIN}>
-          <AdminLayout />
+          {lazyRoute(() =>
+            import('@/layouts/AdminLayout').then((m) => ({ default: m.AdminLayout }))
+          )}
         </AuthGuard>
       ),
       errorElement: <RouterErrorElement />,

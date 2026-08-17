@@ -14,6 +14,11 @@
     "desc": "しばらくしてからもう一度お試しください。",
     "refresh": "再読み込み"
   },
+  "network": {
+    "offlineSafe": "インターネット未接続 · 記録はこの端末に安全に保存されます",
+    "syncing": "接続復旧 · 記録を同期中",
+    "synced": "すべての記録が保存されました"
+  },
   "emptyState": {
     "browseMachines": "マシンを探す"
   },
@@ -2230,5 +2235,10 @@
   "carousel": {
     "prev": "Scroll previous",
     "next": "Scroll next"
+  },
+  "network": {
+    "offlineSafe": "No internet · Your workout log is saved safely on this device",
+    "syncing": "Back online · Syncing workout logs",
+    "synced": "All workout logs are saved"
   }
 }

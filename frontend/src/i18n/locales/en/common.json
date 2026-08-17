@@ -19,6 +19,11 @@
     "desc": "Please try again in a moment.",
     "refresh": "Refresh"
   },
+  "network": {
+    "offlineSafe": "No internet · Your workout log is saved safely on this device",
+    "syncing": "Back online · Syncing workout logs",
+    "synced": "All workout logs are saved"
+  },
   "emptyState": {
     "browseMachines": "Browse machines"
   },

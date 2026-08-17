@@ -14,6 +14,11 @@
     "desc": "请稍后再试。",
     "refresh": "刷新"
   },
+  "network": {
+    "offlineSafe": "无网络 · 记录已安全保存在本机",
+    "syncing": "已恢复连接 · 正在同步记录",
+    "synced": "所有记录已保存"
+  },
   "emptyState": {
     "browseMachines": "浏览器械"
   },
@@ -2230,5 +2235,10 @@
   "carousel": {
     "prev": "Scroll previous",
     "next": "Scroll next"
+  },
+  "network": {
+    "offlineSafe": "No internet · Your workout log is saved safely on this device",
+    "syncing": "Back online · Syncing workout logs",
+    "synced": "All workout logs are saved"
   }
 }

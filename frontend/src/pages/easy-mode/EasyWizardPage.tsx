@@ -490,11 +490,8 @@ export function EasyWizardPage() {
       }
 
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
-        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
         queryClient.invalidateQueries({ queryKey: ['easy-history'] }),
-        queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
       ]);
 
       const settings = recommendation?.settings;

@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Icon, type IconName } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
+import { ensureAdminNamespace } from '@/i18n';
 import '@/styles/admin.css';
 
 type AdminNavItem = {
@@ -174,10 +175,14 @@ function AdminNavLinks({
 }
 
 export function AdminLayout() {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const drawerTitleId = useId();
+
+  useEffect(() => {
+    void ensureAdminNamespace(i18n.language);
+  }, [i18n.language]);
 
   useEffect(() => {
     setMobileNavOpen(false);

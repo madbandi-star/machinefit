@@ -162,7 +162,7 @@ export const WORKOUT_SHARE_THEMES: WorkoutShareTheme[] = [
   {
     id: 'industrial_photo',
     layout: 'photo',
-    bgFile: 'industrial-plates.png',
+    bgFile: 'industrial-plates.jpg',
     brand: '#f8fafc',
     title: '#ffffff',
     date: '#e5e7eb',
@@ -223,7 +223,7 @@ export const WORKOUT_SHARE_THEMES: WorkoutShareTheme[] = [
   {
     id: 'cinematic_gym',
     layout: 'cinematic',
-    bgFile: 'cinematic-gym.png',
+    bgFile: 'cinematic-gym.jpg',
     brand: '#b8ff3c',
     title: '#f8fafc',
     date: '#e5e7eb',
@@ -287,7 +287,7 @@ function persistDeck(): void {
       JSON.stringify({ deck: themeDeck, last: lastThemeId })
     );
   } catch {
-    /* private mode — ignore */
+    /* private mode ??ignore */
   }
 }
 
@@ -330,7 +330,7 @@ export function pickRandomWorkoutShareTheme(
   return themes.find((t) => t.id === id) ?? themes[0]!;
 }
 
-/** Test / debug helper — clears the in-session shuffle bag. */
+/** Test / debug helper ??clears the in-session shuffle bag. */
 export function resetWorkoutShareThemeDeck(): void {
   themeDeck = [];
   lastThemeId = null;

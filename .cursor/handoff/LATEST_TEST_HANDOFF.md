@@ -1,15 +1,18 @@
-# Test handoff — Purge DEMO1 + force catalog delete
+# Test handoff — Perf / network / workout UX
 
 ## Summary
-기구코드 `DEMO1`(로우로우)를 추천·최근이력·운동기록과 함께 DB에서 완전 삭제. 기구관리에서 참조로 비활성화된 경우 **이력 포함 삭제** 확인 다이얼로그 추가 (`?force=true`).
+운동기록 silent 저장의 invalidate 폭주·패널 잠금 제거, IndexedDB draft+sync queue, 네트워크 배너, 로그인 시 캐시 부분 삭제, 공유/근육 이미지 압축, AdminLayout·admin i18n 지연 로드.
 
-## Already applied
-- Production migration `144_purge_catalog_machine_demo1.sql` (DEMO1 gone)
+## Fast checks
+```
+npm run typecheck --prefix frontend
+rg -n "enqueueSilentSave|flushWorkoutSyncQueue|API_TIMEOUT_MS" frontend/src
+```
 
-## Test focus
-1. 기구관리에서 DEMO1 검색 → 없음
-2. 다른 이력 있는 기구 삭제 → 비활성 토스트 후 「이력 포함 삭제」로 완전 삭제
+## Production
+- Pages: FE
+- Render: workout-log `Idempotency-Key` middleware
 
 ## As-is → To-be
-- as-is: DEMO1 비활성만 가능
-- to-be: DEMO1 삭제 완료 + force purge UI/API
+- as-is: 세트 완료마다 전체 refetch + 버튼 잠금
+- to-be: 즉시 UI + 백그라운드 sync, 오프라인 유지

@@ -1,12 +1,12 @@
 import type { MuscleGroup } from '@/constants/muscle-groups';
-import muscleArms from '@/assets/muscle-groups/muscle-arms.png';
-import muscleBack from '@/assets/muscle-groups/muscle-back.png';
-import muscleBiceps from '@/assets/muscle-groups/muscle-biceps.png';
-import muscleChest from '@/assets/muscle-groups/muscle-chest.png';
-import muscleCore from '@/assets/muscle-groups/muscle-core.png';
-import muscleLegs from '@/assets/muscle-groups/muscle-legs.png';
-import muscleShoulders from '@/assets/muscle-groups/muscle-shoulders.png';
-import muscleTriceps from '@/assets/muscle-groups/muscle-triceps.png';
+import muscleArms from '@/assets/muscle-groups/muscle-arms.webp';
+import muscleBack from '@/assets/muscle-groups/muscle-back.webp';
+import muscleBiceps from '@/assets/muscle-groups/muscle-biceps.webp';
+import muscleChest from '@/assets/muscle-groups/muscle-chest.webp';
+import muscleCore from '@/assets/muscle-groups/muscle-core.webp';
+import muscleLegs from '@/assets/muscle-groups/muscle-legs.webp';
+import muscleShoulders from '@/assets/muscle-groups/muscle-shoulders.webp';
+import muscleTriceps from '@/assets/muscle-groups/muscle-triceps.webp';
 
 /** Bundled MachineFit muscle-group cover illustrations (fallback when admin has no upload). */
 export const MUSCLE_GROUP_IMAGES: Record<MuscleGroup, string> = {

@@ -8,8 +8,17 @@ export interface SafeImageProps extends ImgHTMLAttributes<HTMLImageElement> {
 /**
  * Image that falls back on load error to avoid console 404 noise
  * and broken thumbnails when remote/static assets are missing.
+ * Defaults favor below-the-fold list performance; heroes can override.
  */
-export function SafeImage({ src, fallbackSrc, onError, alt = '', ...props }: SafeImageProps) {
+export function SafeImage({
+  src,
+  fallbackSrc,
+  onError,
+  alt = '',
+  loading = 'lazy',
+  decoding = 'async',
+  ...props
+}: SafeImageProps) {
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -25,6 +34,8 @@ export function SafeImage({ src, fallbackSrc, onError, alt = '', ...props }: Saf
       {...props}
       alt={alt}
       src={resolved}
+      loading={loading}
+      decoding={decoding}
       onError={(event) => {
         if (!failed && fallbackSrc && src !== fallbackSrc) {
           setFailed(true);

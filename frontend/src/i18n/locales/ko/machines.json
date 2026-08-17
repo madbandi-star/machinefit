@@ -97,6 +97,7 @@
     "saved": "오늘 운동 기록을 저장했어요.",
     "savedOnDate": "{{date}} 운동 기록을 저장했어요.",
     "updated": "운동 기록 변경을 저장했어요.",
+    "syncDelayed": "기록 저장이 잠시 지연되고 있습니다. 입력한 내용은 화면에 유지됩니다.",
     "canceled": "오늘 운동 기록을 해제했어요.",
     "canceledOnDate": "{{date}} 운동 기록을 해제했어요.",
     "loginRequired": "로그인하면 세트와 무게를 저장할 수 있어요.",

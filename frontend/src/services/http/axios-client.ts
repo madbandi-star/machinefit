@@ -8,16 +8,25 @@ import { clearKakaoOAuthStaging } from '@/utils/oauthClient';
 import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
 
 export { API_BASE_URL };
+/** Default for normal JSON APIs. Uploads/heavy routes override per-request. */
+export const API_TIMEOUT_MS = 12_000;
+export const API_TIMEOUT_FAST_MS = 8_000;
+
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 15_000,
+  timeout: API_TIMEOUT_MS,
   withCredentials: true,
 });
 
 type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean; _getRetry?: number };
 
 const MAX_GET_RETRIES = 2;
+
+function jitterDelayMs(attempt: number): number {
+  const base = 350 * (attempt + 1);
+  return base + Math.floor(Math.random() * 200);
+}
 
 function isRetryableGet(error: unknown): boolean {
   if (!axios.isAxiosError(error)) return true;
@@ -130,7 +139,7 @@ apiClient.interceptors.response.use(
       const attempt = originalRequest._getRetry ?? 0;
       if (attempt < MAX_GET_RETRIES) {
         originalRequest._getRetry = attempt + 1;
-        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+        await new Promise((r) => setTimeout(r, jitterDelayMs(attempt)));
         return apiClient(originalRequest);
       }
     }

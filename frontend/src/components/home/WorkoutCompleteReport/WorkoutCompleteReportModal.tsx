@@ -186,7 +186,7 @@ export function WorkoutCompleteReportModal({
     }
   };
 
-  const bgUrl = `${String(import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')}assets/share/workout/cinematic-gym.png`;
+  const bgUrl = `${String(import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')}assets/share/workout/cinematic-gym.jpg`;
 
   return (
     <div className="dialog-overlay wcr-overlay" role="presentation">

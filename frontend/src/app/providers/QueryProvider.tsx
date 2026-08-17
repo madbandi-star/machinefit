@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60_000,
       gcTime: 30 * 60_000,
-      retry: 1,
+      retry: false, // axios-client already retries GET network/5xx with backoff
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     },

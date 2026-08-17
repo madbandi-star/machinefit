@@ -8,7 +8,6 @@ import koMachines from './locales/ko/machines.json';
 import koGyms from './locales/ko/gyms.json';
 import koCommunity from './locales/ko/community.json';
 import koNotifications from './locales/ko/notifications.json';
-import koAdmin from './locales/ko/admin.json';
 import koTrade from './locales/ko/trade.json';
 import koOnlinePt from './locales/ko/online-pt.json';
 import koPush from './locales/ko/push.json';
@@ -189,7 +188,6 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         gyms: koGyms,
         community: koCommunity,
         notifications: koNotifications,
-        admin: koAdmin,
         trade: koTrade,
         'online-pt': koOnlinePt,
         push: koPush,
@@ -198,6 +196,21 @@ async function loadLocaleBundles(locale: Locale): Promise<Record<string, Namespa
         fortune: koFortune,
       };
   }
+}
+
+/** Load admin namespace on demand (keeps member boot smaller). */
+export async function ensureAdminNamespace(locale = i18n.language): Promise<void> {
+  const normalized = (locale.split('-')[0] || DEFAULT_LOCALE) as Locale;
+  if (i18n.hasResourceBundle(normalized, 'admin')) return;
+  const loaders: Record<Locale, () => Promise<{ default: NamespaceBundle }>> = {
+    ko: () => import('./locales/ko/admin.json'),
+    en: () => import('./locales/en/admin.json'),
+    ja: () => import('./locales/ja/admin.json'),
+    zh: () => import('./locales/zh/admin.json'),
+  };
+  const loader = loaders[normalized] ?? loaders.ko;
+  const mod = await loader();
+  i18n.addResourceBundle(normalized, 'admin', mod.default, true, true);
 }
 
 /** Ensure locale JSON is registered before changeLanguage (keeps switching correct). */
@@ -228,7 +241,6 @@ void i18n
         gyms: koGyms,
         community: koCommunity,
         notifications: koNotifications,
-        admin: koAdmin,
         trade: koTrade,
         'online-pt': koOnlinePt,
         push: koPush,
@@ -248,6 +260,7 @@ void i18n
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
     ns: [...NS_LIST],
+    partialBundledLanguages: true,
     interpolation: { escapeValue: false },
     returnEmptyString: false,
     returnNull: false,
@@ -261,7 +274,6 @@ void i18n
       caches: ['localStorage'],
       lookupLocalStorage: 'i18nextLng',
     },
-    partialBundledLanguages: true,
   });
 
 export default i18n;

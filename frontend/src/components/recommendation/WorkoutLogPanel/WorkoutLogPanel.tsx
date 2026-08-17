@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import {
   getUtf8ByteLength,
   clampRestDurationSeconds,
@@ -21,6 +22,8 @@ import {
   type SettingsActiveSource,
 } from '@machinefit/shared';
 import { workoutCardApi, workoutLogApi, machinePreferenceApi, recommendationApi } from '@/api';
+import { draftKey, getWorkoutDraft, putWorkoutDraft } from '@/offline/workoutOfflineDb';
+import { enqueueWorkoutLogUpsert } from '@/offline/workoutSyncQueue';
 import { VoiceCoachPanel } from '@/components/recommendation/VoiceCoachPanel/VoiceCoachPanel';
 import { useVoiceCoachSession } from '@/hooks/useVoiceCoachSession';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
@@ -881,12 +884,37 @@ export function WorkoutLogPanel({
         diary.trim() !== baseline.diary.trim())) ||
     isPersonalTipDirty;
 
-  const invalidateLogSideEffects = () => {
+  /** Heavy refetches — only after explicit save/remove, never on silent set-complete. */
+  const invalidateLogSideEffects = useCallback(() => {
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
     void queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
-  };
+  }, [queryClient]);
+
+  /** Achievements/insights only — cache already patched for logs. */
+  const invalidateSoftSideEffects = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
+    void queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
+  }, [queryClient]);
+
+  const sideEffectDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scheduleSoftSideEffects = useCallback(() => {
+    if (sideEffectDebounceRef.current) clearTimeout(sideEffectDebounceRef.current);
+    sideEffectDebounceRef.current = setTimeout(() => {
+      sideEffectDebounceRef.current = null;
+      invalidateSoftSideEffects();
+    }, 30_000);
+  }, [invalidateSoftSideEffects]);
+
+  useEffect(
+    () => () => {
+      if (sideEffectDebounceRef.current) clearTimeout(sideEffectDebounceRef.current);
+    },
+    []
+  );
+
+  const pendingSilentSaveRef = useRef<SaveWorkoutLogVariables | null>(null);
 
   const workoutLogsAllKey = QUERY_KEYS.workoutLogsAll(
     activeGymId ?? '',
@@ -967,6 +995,40 @@ export function WorkoutLogPanel({
     planProtectedRef.current = protectedFlags;
     setBaseline(cloneWorkoutFormSnapshot(snapshot));
     lastAppliedSeedKeyRef.current = seedKey;
+
+    if (activeGymId && activeMemberId) {
+      const key = draftKey({
+        gymId: activeGymId,
+        memberId: activeMemberId,
+        machineCode,
+        logDate,
+        targetMuscleGroup: queryTargetMuscle,
+      });
+      void getWorkoutDraft(key).then((draft) => {
+        if (!draft) return;
+        const serverUpdated = existingLog?.updatedAt
+          ? Date.parse(existingLog.updatedAt)
+          : 0;
+        if (draft.updatedAt <= serverUpdated) return;
+        if (lastHydrateKeyRef.current !== hydrateKey) return;
+        const restored = {
+          setCount: draft.setCount,
+          weights: draft.setWeightsKg,
+          setCompleted: draft.setCompleted,
+          diary: draft.diary ?? '',
+        };
+        applyWorkoutFormSnapshot(restored, {
+          setSetCount,
+          setWeights,
+          setSetCompleted,
+          setDiary,
+        });
+        setCountRef.current = restored.setCount;
+        weightsRef.current = restored.weights;
+        setCompletedRef.current = restored.setCompleted;
+        setBaseline(cloneWorkoutFormSnapshot(restored));
+      });
+    }
   }, [
     isAuthenticated,
     queryEnabled,
@@ -976,6 +1038,11 @@ export function WorkoutLogPanel({
     suggestedWeightKg,
     hasPlanSeed,
     planSeed,
+    activeGymId,
+    activeMemberId,
+    machineCode,
+    logDate,
+    queryTargetMuscle,
   ]);
 
   // Incomplete + unplanned sets follow live fit-feedback seed weight when the
@@ -1068,14 +1135,37 @@ export function WorkoutLogPanel({
     removeLogParams,
   ]);
 
+  const patchWorkoutLogCaches = useCallback(
+    (log: WorkoutLog) => {
+      queryClient.setQueryData(workoutLogQueryKey, [log]);
+      onSavedChange?.(true);
+      queryClient.setQueryData(
+        workoutLogsAllKey,
+        upsertWorkoutLogInCache(
+          queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
+          log,
+          removeLogParams
+        )
+      );
+      queryClient.setQueriesData<WorkoutLog[]>(
+        { queryKey: QUERY_KEYS.workoutLogs },
+        (old) => {
+          if (!Array.isArray(old) || old.length === 0) return old;
+          const sample = old[0];
+          if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
+            return old;
+          }
+          return upsertWorkoutLogInCache(old, log, removeLogParams);
+        }
+      );
+    },
+    [onSavedChange, queryClient, removeLogParams, workoutLogQueryKey, workoutLogsAllKey]
+  );
+
   const saveMutation = useMutation({
     mutationFn: async (variables?: SaveWorkoutLogVariables) => {
       if (!activeGymId || !activeMemberId) throw new Error('missing_gym_or_member');
-      // Only attach recommendationId for *today* upserts. Older backends mirror
-      // recent_history with viewed_at=NOW() whenever recommendationId is present,
-      // which spawns a today Records card on future 완료↔미완료 toggles.
-      // COALESCE keeps an existing recommendation_id on the log row.
-      const res = await workoutLogApi.upsert({
+      const body = {
         gymId: activeGymId,
         memberId: activeMemberId,
         machineCode,
@@ -1086,12 +1176,124 @@ export function WorkoutLogPanel({
         diary: diary.trim() || undefined,
         ...(recommendationId && isTodayLog ? { recommendationId } : {}),
         ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
+      };
+
+      const draftKeyValue = draftKey({
+        gymId: activeGymId,
+        memberId: activeMemberId,
+        machineCode,
+        logDate,
+        targetMuscleGroup: queryTargetMuscle,
       });
-      return res.data.data;
+      void putWorkoutDraft({
+        key: draftKeyValue,
+        gymId: activeGymId,
+        memberId: activeMemberId,
+        machineCode,
+        logDate,
+        targetMuscleGroup: queryTargetMuscle,
+        setCount: body.setCount,
+        setWeightsKg: [...body.setWeightsKg],
+        setCompleted: [...(body.setCompleted ?? [])],
+        diary: body.diary,
+        updatedAt: Date.now(),
+      });
+
+      const idempotencyKey = [
+        'wl',
+        activeGymId,
+        activeMemberId,
+        machineCode,
+        logDate,
+        queryTargetMuscle ?? '',
+        String(body.setCount),
+        (body.setCompleted ?? []).map((v) => (v ? '1' : '0')).join(''),
+        body.setWeightsKg.map((w) => String(w)).join(','),
+      ]
+        .join(':')
+        .slice(0, 120);
+
+      try {
+        const started = performance.now();
+        const res = await workoutLogApi.upsert(body, { idempotencyKey });
+        void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+          trackFeature('workout_save_ms', {
+            ms: Math.round(performance.now() - started),
+            silent: Boolean(variables?.silent),
+          })
+        );
+        return res.data.data;
+      } catch (error) {
+        const transient =
+          !navigator.onLine ||
+          (axios.isAxiosError(error) &&
+            (!error.response ||
+              error.code === 'ECONNABORTED' ||
+              [408, 409, 429, 500, 502, 503, 504].includes(error.response?.status ?? 0)));
+        if (variables?.silent && transient) {
+          const clientActionId =
+            typeof crypto !== 'undefined' && 'randomUUID' in crypto
+              ? crypto.randomUUID()
+              : `wl-${Date.now()}`;
+          await enqueueWorkoutLogUpsert({
+            clientActionId,
+            idempotencyKey,
+            body,
+          });
+          // Keep optimistic UI; queue will flush when online.
+          return {
+            id: `queued-${clientActionId}`,
+            gymId: activeGymId,
+            memberId: activeMemberId,
+            machineCode,
+            logDate,
+            setCount: body.setCount,
+            setWeightsKg: body.setWeightsKg,
+            setCompleted: body.setCompleted,
+            diary: body.diary,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
+          } satisfies WorkoutLog;
+        }
+        throw error;
+      }
     },
-    onMutate: async () => {
+    onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: workoutLogQueryKey });
       await queryClient.cancelQueries({ queryKey: workoutLogsAllKey });
+
+      if (!variables?.silent) return {};
+
+      const previousLogs = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
+      const previousAllLogs = queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey);
+      const base =
+        previousLogs?.[0] ??
+        existingLog ??
+        ({
+          id: `optimistic-${machineCode}-${logDate}`,
+          gymId: activeGymId ?? '',
+          memberId: activeMemberId ?? '',
+          machineCode,
+          logDate,
+          setCount: variables.setCount ?? setCountRef.current,
+          setWeightsKg: variables.setWeightsKg ?? weightsRef.current,
+          setCompleted: variables.setCompleted ?? setCompletedRef.current,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          ...(queryTargetMuscle ? { targetMuscleGroup: queryTargetMuscle } : {}),
+        } satisfies WorkoutLog);
+
+      const optimistic: WorkoutLog = {
+        ...base,
+        setCount: variables.setCount ?? setCountRef.current,
+        setWeightsKg: [...(variables.setWeightsKg ?? weightsRef.current)],
+        setCompleted: [...(variables.setCompleted ?? setCompletedRef.current)],
+        diary: diary.trim() || base.diary,
+        updatedAt: new Date().toISOString(),
+      };
+      patchWorkoutLogCaches(optimistic);
+      return { previousLogs, previousAllLogs, silent: true as const };
     },
     onSuccess: async (savedLog, variables) => {
       void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
@@ -1143,29 +1345,16 @@ export function WorkoutLogPanel({
         }
       }
 
-      queryClient.setQueryData(workoutLogQueryKey, [savedLog]);
-      onSavedChange?.(true);
-      queryClient.setQueryData(
-        workoutLogsAllKey,
-        upsertWorkoutLogInCache(
-          queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
-          savedLog,
-          removeLogParams
-        )
-      );
-      // Keep history list / 「총 중량」 in sync (same prefix as workoutLogsList).
-      queryClient.setQueriesData<WorkoutLog[]>(
-        { queryKey: QUERY_KEYS.workoutLogs },
-        (old) => {
-          if (!Array.isArray(old) || old.length === 0) return old;
-          const sample = old[0];
-          if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
-            return old;
-          }
-          return upsertWorkoutLogInCache(old, savedLog, removeLogParams);
+      patchWorkoutLogCaches(savedLog);
+      if (variables?.silent) {
+        scheduleSoftSideEffects();
+      } else {
+        if (sideEffectDebounceRef.current) {
+          clearTimeout(sideEffectDebounceRef.current);
+          sideEffectDebounceRef.current = null;
         }
-      );
-      invalidateLogSideEffects();
+        invalidateSoftSideEffects();
+      }
       if (personalTipSaved && !variables?.silent) {
         if (variables?.asPlan) {
           showToast(t('machines:workoutLog.planSaved'), 'success');
@@ -1179,12 +1368,52 @@ export function WorkoutLogPanel({
         }
       }
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      if (context?.previousLogs !== undefined) {
+        queryClient.setQueryData(workoutLogQueryKey, context.previousLogs);
+        onSavedChange?.(Boolean(context.previousLogs?.[0]));
+      }
+      if (context?.previousAllLogs !== undefined) {
+        queryClient.setQueryData(workoutLogsAllKey, context.previousAllLogs);
+      }
       const current = queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey);
       onSavedChange?.(Boolean(current?.[0]));
-      showToast(resolveApiErrorMessage(error, t, 'common:errors.submitFailed'), 'error');
+      if (!variables?.silent) {
+        showToast(resolveApiErrorMessage(error, t, 'common:errors.submitFailed'), 'error');
+      } else {
+        showToast(
+          resolveApiErrorMessage(error, t, 'machines:workoutLog.syncDelayed'),
+          'info'
+        );
+      }
+    },
+    onSettled: () => {
+      const queued = pendingSilentSaveRef.current;
+      if (!queued) return;
+      pendingSilentSaveRef.current = null;
+      queueMicrotask(() => {
+        saveMutation.mutate(queued);
+      });
     },
   });
+
+  const enqueueSilentSave = useCallback(
+    (variables: SaveWorkoutLogVariables) => {
+      const payload: SaveWorkoutLogVariables = {
+        ...variables,
+        silent: true,
+        setCount: variables.setCount ?? setCountRef.current,
+        setWeightsKg: variables.setWeightsKg ?? weightsRef.current,
+        setCompleted: variables.setCompleted ?? setCompletedRef.current,
+      };
+      if (saveMutation.isPending) {
+        pendingSilentSaveRef.current = payload;
+        return;
+      }
+      saveMutation.mutate(payload);
+    },
+    [saveMutation]
+  );
 
   const removeMutation = useMutation({
     mutationFn: () => {
@@ -1251,8 +1480,12 @@ export function WorkoutLogPanel({
     },
   });
 
-  const isActionPending =
-    saveMutation.isPending || removeMutation.isPending || companionSavePending;
+  const isBlockingPending =
+    removeMutation.isPending ||
+    companionSavePending ||
+    Boolean(saveMutation.isPending && !saveMutation.variables?.silent);
+  /** Panel lock for Save/Remove — silent set-complete does not block set taps. */
+  const isActionPending = isBlockingPending;
 
   const translateMuscleGroup = (group: string) =>
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
@@ -1491,7 +1724,7 @@ export function WorkoutLogPanel({
       stopRestTimer();
     }
 
-    saveMutation.mutate({ setCompleted: next, silent: true });
+    enqueueSilentSave({ setCompleted: next });
   };
 
   const allSetsCompleted =
@@ -1524,7 +1757,7 @@ export function WorkoutLogPanel({
       stopRestTimer();
     }
 
-    saveMutation.mutate({ setCompleted: next, silent: true });
+    enqueueSilentSave({ setCompleted: next });
   };
 
   const isDiaryDirty =

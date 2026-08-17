@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   type ReactNode,
 } from 'react';
@@ -29,18 +28,13 @@ export function PremiumProvider({ children }: { children: ReactNode }) {
     queryKey: QUERY_KEYS.subscriptionStatus,
     queryFn: async () => (await billingApi.getStatus()).data.data,
     enabled: Boolean(user),
-    staleTime: 15_000,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
 
   const refresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.subscriptionStatus });
   }, [queryClient]);
-
-  useEffect(() => {
-    if (!user) return;
-    void refresh();
-  }, [user?.id, refresh]);
 
   const value = useMemo<PremiumContextValue>(
     () => ({

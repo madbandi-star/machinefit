@@ -19,6 +19,11 @@
     "desc": "잠시 후 다시 시도해주세요.",
     "refresh": "새로고침"
   },
+  "network": {
+    "offlineSafe": "인터넷 연결 없음 · 기록은 안전하게 저장됩니다",
+    "syncing": "연결됨 · 기록 동기화 중",
+    "synced": "모든 기록이 저장되었습니다"
+  },
   "emptyState": {
     "browseMachines": "기구 찾아보기"
   },

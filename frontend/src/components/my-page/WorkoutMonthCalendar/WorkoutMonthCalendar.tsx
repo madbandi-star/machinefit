@@ -57,12 +57,13 @@ export function WorkoutMonthCalendar() {
       from: range.from,
       to: range.to,
     }),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       fetchWorkoutLogs({
         gymId: activeGymId!,
         memberId: activeMemberId!,
         from: range.from,
         to: range.to,
+        signal,
       }),
     enabled: canFetch && expanded,
     staleTime: 30_000,

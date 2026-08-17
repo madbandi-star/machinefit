@@ -7,8 +7,10 @@ import { ThemeProvider } from './ThemeProvider';
 import { Toast } from '@/components/feedback/Toast/Toast';
 import { PremiumUpgradeModalGlobal } from '@/components/premium/PremiumUpgradeModal/PremiumUpgradeModal';
 import { ServiceUnavailableScreen } from '@/components/feedback/ServiceUnavailableScreen/ServiceUnavailableScreen';
+import { NetworkSyncBanner } from '@/components/network/NetworkSyncBanner';
 import { PremiumProvider } from '@/providers/PremiumProvider';
 import { API_BASE_URL } from '@/services/http/axios-client';
+import { bindWorkoutSyncLifecycle } from '@/offline/workoutSyncQueue';
 import '@/i18n';
 
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -19,6 +21,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  useEffect(() => bindWorkoutSyncLifecycle(), []);
+
   return (
     <QueryProvider>
       <AuthHydrationProvider>
@@ -26,6 +30,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         <I18nProvider>
           <ThemeProvider>
             <PremiumProvider>
+              <NetworkSyncBanner />
               {children}
               <Toast />
               <PremiumUpgradeModalGlobal />

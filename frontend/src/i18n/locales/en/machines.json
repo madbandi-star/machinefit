@@ -97,6 +97,7 @@
     "saved": "Today's workout log is saved.",
     "savedOnDate": "Workout log for {{date}} is saved.",
     "updated": "Your workout log changes are saved.",
+    "syncDelayed": "Saving is delayed. Your entries stay on screen and will sync automatically.",
     "canceled": "Today's workout log was cleared.",
     "canceledOnDate": "Workout log for {{date}} was cleared.",
     "loginRequired": "Sign in to save your sets and weights.",

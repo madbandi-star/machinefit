@@ -160,11 +160,12 @@ export function GrowthAnalysisPage() {
 
   const { data: logs = [], isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', memberKey, logsQueryOptions),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       fetchWorkoutLogs({
         gymId: activeGymId!,
         memberId: activeMemberId!,
         ...logsQueryOptions,
+        signal,
       }),
     enabled: Boolean(activeGymId) && memberScopeReady,
   });

@@ -11,6 +11,7 @@ import {
 } from '@machinefit/shared';
 import * as workoutLogController from '../controllers/workout-log.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { idempotencyMiddleware } from '../middlewares/idempotency.middleware.js';
 import {
   validateBody,
   validateParams,
@@ -40,7 +41,12 @@ workoutLogRouter.get(
   validateQuery(workoutLogListQuerySchema),
   workoutLogController.listWorkoutLogs
 );
-workoutLogRouter.put('/', validateBody(upsertWorkoutLogSchema), workoutLogController.upsertWorkoutLog);
+workoutLogRouter.put(
+  '/',
+  idempotencyMiddleware(180_000),
+  validateBody(upsertWorkoutLogSchema),
+  workoutLogController.upsertWorkoutLog
+);
 workoutLogRouter.delete(
   '/date/:date',
   validateParams(deleteWorkoutLogsByDateParamsSchema),

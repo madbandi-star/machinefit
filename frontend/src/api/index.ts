@@ -421,8 +421,12 @@ export const workoutLogApi = {
     limit?: number;
     targetMuscleGroup?: string;
   }) => apiClient.get<ApiResponse<WorkoutLog[]>>('/workout-logs', { params }),
-  upsert: (body: UpsertWorkoutLogInput) =>
-    apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body),
+  upsert: (body: UpsertWorkoutLogInput, options?: { idempotencyKey?: string }) =>
+    apiClient.put<ApiResponse<WorkoutLog>>('/workout-logs', body, {
+      headers: options?.idempotencyKey
+        ? { 'Idempotency-Key': options.idempotencyKey }
+        : undefined,
+    }),
   remove: (body: {
     gymId: string;
     memberId: string;
