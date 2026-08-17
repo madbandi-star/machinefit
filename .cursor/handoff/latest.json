@@ -3,7 +3,7 @@
   "summary": "Remove the no-favorite-brands empty CTA on machine search; favorites are always >= 1.",
   "git": {
     "branch": "main",
-    "commit": null
+    "commit": "63441ed9"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
