@@ -3,7 +3,7 @@
   "summary": "Brand chips stay on skeletons until favorites+catalog resolve (not just isFetched). Machine list never shows load-failed/retry ? skeleton + silent retry instead.",
   "git": {
     "branch": "main",
-    "commit": "bdb10d6b"
+    "commit": "a329d3aa"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
