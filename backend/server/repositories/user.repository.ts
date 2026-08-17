@@ -162,6 +162,33 @@ export const userRepository = {
     return result.rows[0] ? mapUser(result.rows[0]) : null;
   },
 
+  /** Slim auth lookup — id / active / role only (hot path). */
+  async findAuthSnapshotById(
+    id: string
+  ): Promise<{ id: string; isActive: boolean; roleCode: string } | null> {
+    const pool = getPool();
+    if (!pool) return null;
+
+    const result = await pool.query<{
+      id: string;
+      is_active: boolean;
+      role_code: string;
+    }>(
+      `SELECT u.id, u.is_active, r.code AS role_code
+       FROM users u
+       JOIN roles r ON r.id = u.role_id
+       WHERE u.id = $1`,
+      [id]
+    );
+    const row = result.rows[0];
+    if (!row) return null;
+    return {
+      id: row.id,
+      isActive: row.is_active,
+      roleCode: row.role_code,
+    };
+  },
+
   async create(data: {
     email?: string | null;
     displayName: string;

@@ -39,6 +39,34 @@ function roundKg(value: number): number {
   return Math.round(value);
 }
 
+/** Mirrors workoutLogRepository.getReferenceWeightKg SQL predicates in-memory. */
+function referenceWeightFromSettings(
+  rules: Array<{
+    gender: string;
+    experienceLevel: string;
+    heightMinCm: number;
+    heightMaxCm: number;
+    weightKg?: number | null;
+  }>,
+  gender: string,
+  experienceLevel: string,
+  heightCm: number
+): number | null {
+  const matches = rules.filter(
+    (r) =>
+      r.gender === gender &&
+      r.experienceLevel === experienceLevel &&
+      heightCm >= r.heightMinCm &&
+      heightCm <= r.heightMaxCm &&
+      r.weightKg != null &&
+      Number(r.weightKg) > 0
+  );
+  if (matches.length === 0) return null;
+  matches.sort((a, b) => b.heightMinCm - a.heightMinCm);
+  const value = matches[0]?.weightKg;
+  return value != null ? Number(value) : null;
+}
+
 function maxWeight(weights: number[]): number {
   return weights.length === 0 ? 0 : Math.max(...weights);
 }
@@ -198,6 +226,17 @@ export async function computeRecommendationWeight(options: {
   memberId?: string;
   machineType?: string | null;
   bodyweightLoadFactor?: number | null;
+  /**
+   * Already-loaded machine_settings rows for this machine.
+   * When provided, reference weight is resolved in-memory (same predicates as DB).
+   */
+  machineSettings?: Array<{
+    gender: string;
+    experienceLevel: string;
+    heightMinCm: number;
+    heightMaxCm: number;
+    weightKg?: number | null;
+  }>;
 }): Promise<{ recommendedWeightKg?: number; weightBasis: WeightRecommendationBasis }> {
   const {
     input,
@@ -208,6 +247,7 @@ export async function computeRecommendationWeight(options: {
     memberId,
     machineType,
     bodyweightLoadFactor,
+    machineSettings,
   } = options;
   const isBodyweight = isBodyweightExercise({
     machineCode: input.machineCode,
@@ -298,12 +338,22 @@ export async function computeRecommendationWeight(options: {
     });
   }
 
-  const machineReferencePromise = workoutLogRepository.getReferenceWeightKg(
-    machineId,
-    input.gender,
-    input.experienceLevel,
-    input.heightCm
-  );
+  const machineReferencePromise =
+    machineSettings != null
+      ? Promise.resolve(
+          referenceWeightFromSettings(
+            machineSettings,
+            input.gender,
+            input.experienceLevel,
+            input.heightCm
+          )
+        )
+      : workoutLogRepository.getReferenceWeightKg(
+          machineId,
+          input.gender,
+          input.experienceLevel,
+          input.heightCm
+        );
 
   const targetMuscleKey = normalizeWorkoutLogTargetMuscle(
     input.machineCode,

@@ -96,15 +96,25 @@ function mapPolicy(row: PolicyRow): AdPolicy {
   };
 }
 
+let tablesReadyCache: { value: boolean; at: number } | null = null;
+
 async function tablesReady(): Promise<boolean> {
   const pool = getPool();
   if (!pool) return false;
+  // Schema presence rarely changes after boot — avoid information_schema on every decide.
+  if (tablesReadyCache?.value === true) return true;
+  if (tablesReadyCache && Date.now() - tablesReadyCache.at < 5_000) {
+    return tablesReadyCache.value;
+  }
   try {
     const r = await pool.query(
       `SELECT 1 FROM information_schema.tables WHERE table_name = 'ad_placements' LIMIT 1`
     );
-    return (r.rowCount ?? 0) > 0;
+    const value = (r.rowCount ?? 0) > 0;
+    tablesReadyCache = { value, at: Date.now() };
+    return value;
   } catch {
+    tablesReadyCache = { value: false, at: Date.now() };
     return false;
   }
 }
@@ -120,6 +130,15 @@ export const adRepository = {
       `SELECT flag_key, enabled, updated_at FROM ad_feature_flags ORDER BY flag_key`
     );
     return r.rows.map(mapFlag);
+  },
+
+  /** Single-query flag map for decide() — same freshness as repeated getFlag in one request. */
+  async getFlagsMap(): Promise<Map<string, boolean>> {
+    const pool = requirePool();
+    const r = await pool.query<{ flag_key: string; enabled: boolean }>(
+      `SELECT flag_key, enabled FROM ad_feature_flags`
+    );
+    return new Map(r.rows.map((row) => [row.flag_key, Boolean(row.enabled)]));
   },
 
   async getFlag(flagKey: string): Promise<boolean> {

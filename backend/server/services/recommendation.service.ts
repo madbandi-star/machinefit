@@ -112,6 +112,7 @@ export const recommendationService = {
       memberId: input.memberId,
       machineType: machine.machineType,
       bodyweightLoadFactor: machine.bodyweightLoadFactor,
+      machineSettings: rules,
     });
 
     // Progressive / growth targets already come from the user's real logs for that

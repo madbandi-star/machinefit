@@ -1,30 +1,33 @@
 {
-  "title": "Hide search empty brand favorites UI",
-  "summary": "Remove the no-favorite-brands empty CTA on machine search; favorites are always >= 1.",
-  "git": {
-    "branch": "main",
-    "commit": "63441ed9"
-  },
+  "title": "API performance safe optimizations",
+  "summary": "Zero-behavior-change API speedups: auth reuse, ads flag batch, recommend settings reuse, brand-favorite seed memo, trgm index, perf logs.",
+  "git": { "branch": "main", "commit": null },
   "changedFiles": [
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
-    "frontend/src/styles/machines.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "backend/server/middlewares/auth.middleware.ts",
+    "backend/server/middlewares/api-perf.middleware.ts",
+    "backend/server/app.ts",
+    "backend/server/repositories/user.repository.ts",
+    "backend/server/repositories/ad.repository.ts",
+    "backend/server/repositories/brand-favorite.repository.ts",
+    "backend/server/services/ad-policy.service.ts",
+    "backend/server/services/recommendation.service.ts",
+    "backend/server/services/recommendation-weight.service.ts",
+    "database/migrations/145_perf_machines_name_trgm.sql",
+    "frontend/src/styles/machines.css"
   ],
   "testFocus": [
-    "Search page does not show favorite-brand empty CTA",
-    "Favorite brand chips still render when present",
-    "Guest brand filter still works"
+    "Auth and role gates unchanged",
+    "Ads decide outcomes unchanged",
+    "Recommendation weightBasis unchanged",
+    "Brand favorites + min-1 unchanged",
+    "Machine search results unchanged"
   ],
   "fastChecks": ["npm run test:smoke:changed"],
-  "productionChecks": ["Pages: /search no empty brand CTA"],
+  "productionChecks": ["Render redeploy for backend; migrate 145 optional"],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backend": "not required"
+    "backend": "Render redeploy required"
   },
-  "asIs": "Empty favorite brands CTA shown on search",
-  "toBe": "CTA removed; brand section hidden if no chips"
+  "asIs": "Duplicate auth/settings/flag queries on hot paths",
+  "toBe": "Fewer round-trips with identical API results"
 }

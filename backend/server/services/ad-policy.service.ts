@@ -40,8 +40,10 @@ async function classifyUser(
     const user = await userRepository.findById(userId);
     return { status: 'ADMIN', marketingOptIn: Boolean(user?.marketingOptIn) };
   }
-  const premium = await billingService.userHasPremiumEntitlement(userId, roleCode);
-  const user = await userRepository.findById(userId);
+  const [premium, user] = await Promise.all([
+    billingService.userHasPremiumEntitlement(userId, roleCode),
+    userRepository.findById(userId),
+  ]);
   if (premium) {
     return { status: 'PAID_USER', marketingOptIn: Boolean(user?.marketingOptIn) };
   }
@@ -75,12 +77,15 @@ export const adPolicyService = {
     }
 
     try {
-      if (!(await adRepository.getFlag('ADS_ENABLED'))) {
+      const flags = await adRepository.getFlagsMap();
+      if (!flags.get('ADS_ENABLED')) {
         return deny(query.placement, 'ANONYMOUS', 'ADS_DISABLED');
       }
 
-      const { status, marketingOptIn } = await classifyUser(auth?.userId, auth?.roleCode);
-      const placement = await adRepository.getPlacementByKey(query.placement);
+      const [{ status, marketingOptIn }, placement] = await Promise.all([
+        classifyUser(auth?.userId, auth?.roleCode),
+        adRepository.getPlacementByKey(query.placement),
+      ]);
       if (!placement) {
         return deny(query.placement, status, 'PLACEMENT_NOT_FOUND');
       }
@@ -89,13 +94,13 @@ export const adPolicyService = {
       }
 
       const typeFlag = AD_TYPE_FEATURE_FLAG[placement.adType];
-      if (typeFlag && !(await adRepository.getFlag(typeFlag))) {
+      if (typeFlag && !flags.get(typeFlag)) {
         return deny(query.placement, status, 'TYPE_FLAG_OFF', placement.adType);
       }
       if (
         placement.adType === 'interstitial' &&
         query.event === 'PAGE_TRANSITION' &&
-        !(await adRepository.getFlag('PAGE_TRANSITION_AD_ENABLED'))
+        !flags.get('PAGE_TRANSITION_AD_ENABLED')
       ) {
         return deny(query.placement, status, 'PAGE_TRANSITION_FLAG_OFF', placement.adType);
       }

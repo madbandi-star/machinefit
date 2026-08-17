@@ -226,7 +226,6 @@
   margin-top: 0.35rem;
 }
 
-
 .brand-detail__title-row {
   display: flex;
   align-items: center;
@@ -268,7 +267,7 @@
   padding-left: 0.22rem;
 }
 
-/* Quiet left glyph for 맨몸 / ?�리 ??not competing with OEM logo circles */
+/* Quiet left glyph for 맨몸 / 프리 — not competing with OEM logo circles */
 .filter-chip--brand-has-glyph {
   gap: 0.38rem;
   padding-left: 0.42rem;
@@ -523,7 +522,7 @@
   background: color-mix(in srgb, var(--color-text) 8%, transparent);
 }
 
-/* Search ?�추�?머신??list only ??edge-to-edge thumbs, taller rows */
+/* Search “추천 머신” list only — edge-to-edge thumbs, taller rows */
 .machine-search .machine-list {
   gap: 0.7rem;
 }

@@ -1,6 +1,9 @@
 import type { Locale, LocalizedString } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 
+/** Process-local: user already seeded (or confirmed seeded) this instance. */
+const seedCompletedUsers = new Set<string>();
+
 export interface FavoriteBrandRow {
   id: string;
   brandId: string;
@@ -138,6 +141,7 @@ export const brandFavoriteRepository = {
 
   /** Returns true if this user still needs the admin default-favorite seed. */
   async needsDefaultSeed(userId: string): Promise<boolean> {
+    if (seedCompletedUsers.has(userId)) return false;
     const pool = getPool();
     if (!pool) return false;
     const result = await pool.query<{ brand_favorites_seeded_at: string | null }>(
@@ -151,7 +155,11 @@ export const brandFavoriteRepository = {
   async seedDefaultsIfNeeded(userId: string): Promise<void> {
     const pool = getPool();
     if (!pool) return;
-    if (!(await this.needsDefaultSeed(userId))) return;
+    if (seedCompletedUsers.has(userId)) return;
+    if (!(await this.needsDefaultSeed(userId))) {
+      seedCompletedUsers.add(userId);
+      return;
+    }
 
     await pool.query(
       `INSERT INTO user_favorite_brands (user_id, brand_id)
@@ -167,5 +175,6 @@ export const brandFavoriteRepository = {
       `UPDATE users SET brand_favorites_seeded_at = NOW(), updated_at = NOW() WHERE id = $1`,
       [userId]
     );
+    seedCompletedUsers.add(userId);
   },
 };

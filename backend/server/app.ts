@@ -9,6 +9,7 @@ import { errorMiddleware } from './middlewares/error.middleware.js';
 import { rateLimitMiddleware } from './middlewares/rate-limit.middleware.js';
 import { cacheHeadersMiddleware } from './middlewares/cache-headers.middleware.js';
 import { opsMetricsMiddleware } from './middlewares/ops-metrics.middleware.js';
+import { apiPerfMiddleware } from './middlewares/api-perf.middleware.js';
 import { requestIdMiddleware } from './middlewares/request-id.middleware.js';
 import { requestTimeoutMiddleware } from './middlewares/request-timeout.middleware.js';
 import { drainGuardMiddleware } from './middlewares/drain-guard.middleware.js';
@@ -79,6 +80,7 @@ export function createApp() {
   app.use(drainGuardMiddleware);
   app.use(rateLimitMiddleware);
   app.use(env.API_BASE_PATH, cacheHeadersMiddleware);
+  app.use(env.API_BASE_PATH, apiPerfMiddleware);
   app.use(env.API_BASE_PATH, opsMetricsMiddleware);
 
   // Root probes: /health /ready /live (outside product /api/v1/live dashboard).

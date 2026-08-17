@@ -22,6 +22,8 @@ declare global {
   namespace Express {
     interface Request {
       user?: AuthPayload;
+      /** Set when optionalAuth / auth already resolved live role for this request. */
+      authLiveResolved?: boolean;
     }
   }
 }
@@ -47,7 +49,7 @@ function forbidden(res: Response): void {
 async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null> {
   const pool = getPool();
   if (pool) {
-    const user = await userRepository.findById(payload.userId);
+    const user = await userRepository.findAuthSnapshotById(payload.userId);
     if (!user || !user.isActive) return null;
     return {
       userId: user.id,
@@ -72,6 +74,18 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
   };
 }
 
+async function resolveLiveAuthTimed(
+  req: Request,
+  payload: AuthPayload
+): Promise<AuthPayload | null> {
+  const started = Date.now();
+  try {
+    return await resolveLiveAuth(payload);
+  } finally {
+    req.apiPerf?.markAuth(Date.now() - started);
+  }
+}
+
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
@@ -88,13 +102,20 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
     return;
   }
 
-  void resolveLiveAuth(payload)
+  // optionalAuthMiddleware already resolved live role for this same token/request.
+  if (req.authLiveResolved && req.user?.userId === payload.userId) {
+    next();
+    return;
+  }
+
+  void resolveLiveAuthTimed(req, payload)
     .then((live) => {
       if (!live) {
         unauthorized(res, 'UNAUTHORIZED', 'Authentication required');
         return;
       }
       req.user = live;
+      req.authLiveResolved = true;
       next();
     })
     .catch((err) => next(err));
@@ -120,9 +141,12 @@ export function optionalAuthMiddleware(
     return;
   }
 
-  void resolveLiveAuth(payload)
+  void resolveLiveAuthTimed(req, payload)
     .then((live) => {
-      if (live) req.user = live;
+      if (live) {
+        req.user = live;
+        req.authLiveResolved = true;
+      }
       next();
     })
     .catch(() => next());
