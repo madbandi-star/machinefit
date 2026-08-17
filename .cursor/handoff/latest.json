@@ -3,7 +3,7 @@
   "summary": "Logged-in search brand filter chips show only brands favorited on ????? > ? ???. Guests still see the full catalog. Favorite order preserved; invalid brand selection clears to ??.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "0bdd0f3a"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
