@@ -3,7 +3,7 @@
   "summary": "Search FilterChips MuscleGroupIcon uses adminOnly ? only ??? ????? ?? URLs. Bundled green anatomy seed art is never shown on search chips.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "ecc859bb"
   },
   "changedFiles": [
     "frontend/src/components/machines/FilterChips/FilterChips.tsx",
