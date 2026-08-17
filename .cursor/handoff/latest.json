@@ -1,29 +1,30 @@
 {
-  "title": "Search brand chips = My Brands favorites only",
-  "summary": "Logged-in search brand filter chips show only brands favorited on ????? > ? ???. Guests still see the full catalog. Favorite order preserved; invalid brand selection clears to ??.",
+  "title": "Search muscle/brand chips show skeleton until ready",
+  "summary": "Search page muscle chips wait for admin muscle-group image catalog; brand chips wait for brands (guest) or My Brands favorites (logged-in). Chip-shaped skeletons replace empty/partial rows.",
   "git": {
     "branch": "main",
-    "commit": "0bdd0f3a"
+    "commit": "PENDING"
   },
   "changedFiles": [
+    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx"
+    "frontend/src/styles/machines.css"
   ],
   "testFocus": [
-    "Login ? search: brand chips match ? ??? favorites only (+ ??)",
-    "Unfavorite a brand on ? ??? ? search chip disappears after refresh/nav",
-    "Guest search: all brands including ??/??",
-    "brand=?? still lists machines"
+    "Cold open search: muscle row shows skeletons then admin covers",
+    "Cold open search logged-in: brand row skeletons then favorite brands",
+    "Guest: brand skeletons then full catalog"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend: compare /machines brand chips vs /brand-favorites starred brands"
+    "After Deploy Frontend: hard refresh /machines and watch chip skeletons"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Search showed full brand catalog for everyone.",
-  "toBe": "Logged-in search brand chips = My Brands favorites only."
+  "asIs": "Muscle/brand chips flashed incomplete (letters / only ??) while loading.",
+  "toBe": "Chip skeletons until muscle images and brand list are ready."
 }

@@ -19,6 +19,8 @@ interface BrandFilterChipsProps {
   onChange: (brandCode: string | null) => void;
   /** When false, do not inject bodyweight/free-weight fallbacks (favorites filter). */
   includeFallbacks?: boolean;
+  /** Show chip-shaped skeletons until brand list is ready. */
+  loading?: boolean;
 }
 
 function brandChipLabel(
@@ -98,6 +100,7 @@ export function BrandFilterChips({
   value,
   onChange,
   includeFallbacks = true,
+  loading = false,
 }: BrandFilterChipsProps) {
   const { t, i18n } = useTranslation('machines');
   const orderedBrands = prepareBrandsForMachineSearch(brands, { includeFallbacks });
@@ -106,9 +109,8 @@ export function BrandFilterChips({
     freeWeight: t('brandFreeWeightShort'),
   };
   const sectionTitle = t('brandSectionTitle');
+  const skeletonCount = Math.max(6, orderedBrands.length + 1);
 
-  // Always render the section (at least “전체”). Returning null hid the whole brand
-  // row while logged-in favorite brands were still loading.
   return (
     <section className="filter-section filter-section--brand" aria-labelledby="search-brand-section-title">
       <h2 id="search-brand-section-title" className="filter-section__title">
@@ -117,25 +119,43 @@ export function BrandFilterChips({
       <ScrollCarousel
         className="filter-chips-scroller"
         scrollerClassName="filter-chips filter-chips--brand"
-        scrollerProps={{ role: 'group', 'aria-label': t('filterByBrand') }}
+        scrollerProps={{
+          role: 'group',
+          'aria-label': t('filterByBrand'),
+          'aria-busy': loading || undefined,
+        }}
       >
-        <button
-          type="button"
-          className={`filter-chip filter-chip--brand${value === null ? ' filter-chip--active' : ''}`}
-          onClick={() => onChange(null)}
-          aria-pressed={value === null}
-        >
-          <span className="filter-chip__label">{t('filterAll')}</span>
-        </button>
-        {orderedBrands.map((brand) => (
-          <BrandLogoChip
-            key={brand.code}
-            brand={brand}
-            label={brandChipLabel(brand, i18n.language, shortLabels)}
-            active={value === brand.code}
-            onSelect={() => onChange(brand.code)}
-          />
-        ))}
+        {loading
+          ? Array.from({ length: skeletonCount }, (_, i) => (
+              <div
+                key={`brand-skel-${i}`}
+                className="filter-chip filter-chip--brand filter-chip--skeleton"
+                aria-hidden
+              >
+                <span className="filter-chip__skeleton-brand skeleton" />
+              </div>
+            ))
+          : (
+            <>
+              <button
+                type="button"
+                className={`filter-chip filter-chip--brand${value === null ? ' filter-chip--active' : ''}`}
+                onClick={() => onChange(null)}
+                aria-pressed={value === null}
+              >
+                <span className="filter-chip__label">{t('filterAll')}</span>
+              </button>
+              {orderedBrands.map((brand) => (
+                <BrandLogoChip
+                  key={brand.code}
+                  brand={brand}
+                  label={brandChipLabel(brand, i18n.language, shortLabels)}
+                  active={value === brand.code}
+                  onSelect={() => onChange(brand.code)}
+                />
+              ))}
+            </>
+          )}
       </ScrollCarousel>
     </section>
   );

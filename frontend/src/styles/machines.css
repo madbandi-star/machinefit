@@ -748,6 +748,49 @@
   box-shadow: var(--glow-primary-soft);
 }
 
+.filter-chip--skeleton {
+  pointer-events: none;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  gap: 0.4rem;
+}
+
+.filter-chip--muscle.filter-chip--skeleton {
+  flex-direction: column;
+  min-width: 3.25rem;
+  padding: 0.25rem 0.35rem;
+}
+
+.filter-chip__skeleton-icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  margin: 0;
+}
+
+.filter-chip__skeleton-label {
+  display: block;
+  width: 2rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  margin: 0.15rem auto 0;
+}
+
+.filter-chip--brand.filter-chip--skeleton {
+  min-width: 4.5rem;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.75rem;
+}
+
+.filter-chip__skeleton-brand {
+  display: block;
+  width: 3.25rem;
+  height: 0.85rem;
+  border-radius: 999px;
+}
+
 .filter-chip-scope {
   flex-shrink: 0;
   display: inline-flex;

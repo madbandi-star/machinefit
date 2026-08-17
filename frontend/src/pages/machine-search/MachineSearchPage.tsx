@@ -343,10 +343,10 @@ export function MachineSearchPage() {
   });
 
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
-  const brandChipsReady = !isAuthenticated || favoriteBrandsFetched;
+  const brandChipsLoading = isAuthenticated ? !favoriteBrandsFetched : brandsLoading;
   // Never treat a stuck empty placeholder as “no machines” while a fetch is in flight.
   const showMachineSkeleton =
-    brandsLoading || !brandChipsReady || ((isLoading || isFetching) && !data?.length);
+    brandChipsLoading || ((isLoading || isFetching) && !data?.length);
   const recordsForDateUrl = planDate
     ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
     : ROUTES.RECORDS;
@@ -402,6 +402,7 @@ export function MachineSearchPage() {
           value={brandCode}
           onChange={handleBrandChange}
           includeFallbacks={!isAuthenticated}
+          loading={brandChipsLoading}
         />
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}
