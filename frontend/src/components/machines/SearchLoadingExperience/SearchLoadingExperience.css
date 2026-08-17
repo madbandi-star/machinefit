@@ -1,0 +1,135 @@
+/* Search-page Loading Experience — matches machines.css tokens */
+
+.search-loading-xp {
+  margin: 0 0 0.75rem;
+  padding: 0.9rem 0.95rem 0.85rem;
+  border-radius: var(--radius-lg, 14px);
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-bg) 35%, var(--glass-bg, var(--color-surface)));
+  box-shadow: var(--shadow-md, none);
+  max-width: 100%;
+}
+
+.search-loading-xp__brand {
+  margin: 0 0 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary, #3b82f6);
+  text-align: center;
+}
+
+.search-loading-xp__headline {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.search-loading-xp__progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.search-loading-xp__track {
+  flex: 1;
+  min-width: 0;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text-muted) 18%, transparent);
+  overflow: hidden;
+}
+
+.search-loading-xp__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary, #3b82f6);
+  transition: width 0.28s ease-out;
+}
+
+.search-loading-xp__pct {
+  flex-shrink: 0;
+  min-width: 2.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+.search-loading-xp__stage {
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.search-loading-xp__divider {
+  margin: 0.7rem 0 0.55rem;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.search-loading-xp__tip-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent, var(--color-primary));
+}
+
+.search-loading-xp__tip-text {
+  margin: 0;
+  min-height: 2.7em;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-text);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.search-loading-xp__tip-text.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.search-loading-xp__tip-index {
+  margin: 0.4rem 0 0;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-loading-xp__fill,
+  .search-loading-xp__tip-text {
+    transition: none;
+  }
+
+  .search-loading-xp__tip-text {
+    transform: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .search-loading-xp {
+    padding: 0.75rem 0.8rem 0.7rem;
+  }
+
+  .search-loading-xp__headline {
+    font-size: 0.875rem;
+  }
+
+  .search-loading-xp__tip-text {
+    font-size: 0.75rem;
+    min-height: 3em;
+  }
+}

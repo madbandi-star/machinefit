@@ -11,6 +11,7 @@ import { BrandFilterChips } from '@/components/machines/BrandFilterChips/BrandFi
 import { MachineListItem } from '@/components/machines/MachineListItem/MachineListItem';
 import { RecentMachineSearches } from '@/components/machines/RecentMachineSearches/RecentMachineSearches';
 import { MachineEmptyState } from '@/components/machines/MachineEmptyState/MachineEmptyState';
+import { SearchLoadingExperience } from '@/components/machines/SearchLoadingExperience/SearchLoadingExperience';
 import { AdSlot } from '@/ads/AdSlot';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import {
@@ -26,6 +27,8 @@ import { useAuthStore } from '@/store/auth.store';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useBrandFavorites } from '@/hooks/useBrandFavorites';
+import { useMuscleGroupImageMap } from '@/hooks/useMuscleGroupImages';
+import { useSearchInitialLoadingExperience } from '@/hooks/useSearchInitialLoadingExperience';
 import {
   getLocalDayRange,
   getTodayDateKey,
@@ -340,6 +343,7 @@ export function MachineSearchPage() {
   }, [dayPlans, dayHistory, dayLogs]);
 
   const { data: favorites, isFetched: favoritesFetched } = useFavoritesList();
+  const { ready: muscleImagesReady } = useMuscleGroupImageMap();
   const favoriteByCode = useMemo(() => {
     const map = new Map<string, string>();
     for (const item of favorites ?? []) {
@@ -388,6 +392,25 @@ export function MachineSearchPage() {
     machinesError ||
     !machinesSuccess ||
     data === undefined;
+
+  // First-entry data bundle only (excludes background isFetching-only refetches).
+  const initialBundlePending =
+    !muscleImagesReady ||
+    brandChipsLoading ||
+    isLoading ||
+    machinesError ||
+    !machinesSuccess ||
+    data === undefined;
+  const machinesReady =
+    machinesSuccess && !machinesError && data !== undefined && !isLoading;
+  const loadingExperience = useSearchInitialLoadingExperience({
+    muscleReady: muscleImagesReady,
+    brandsReady: !brandChipsLoading,
+    machinesReady,
+    initialBundlePending,
+  });
+  const showListSkeleton = showMachineSkeleton || loadingExperience.visible;
+
   const recordsForDateUrl = planDate
     ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
     : ROUTES.RECORDS;
@@ -448,7 +471,13 @@ export function MachineSearchPage() {
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}
         </h2>
-        {showMachineSkeleton ? (
+        {loadingExperience.visible ? (
+          <SearchLoadingExperience
+            progress={loadingExperience.progress}
+            stageLabel={loadingExperience.stageLabel}
+          />
+        ) : null}
+        {showListSkeleton ? (
           <Skeleton count={5} height={120} />
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />
