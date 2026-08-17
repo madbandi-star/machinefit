@@ -1,31 +1,29 @@
 {
-  "title": "Fix search page missing admin machine cover photos",
-  "summary": "resolveMachineImageUrl only accepted /media/machine-covers/ paths, so Supabase public cover URLs from admin upload were dropped to placeholder. Accept remote/API covers; persist canonical media URLs on upload.",
+  "title": "Fix opaque recommend failure toast",
+  "summary": "추천받기 실패 시 항상 submitFailed만 보이던 문제. API 코드(한도/429/권한/네트워크)를 resolveApiErrorMessage로 표시하고, stale gym FORBIDDEN 시 프로필만으로 재시도.",
   "git": {
     "branch": "main",
-    "commit": "a329d3aa"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/utils/catalogAssets.ts",
-    "frontend/src/utils/catalogAssets.resolveMachineImageUrl.test.ts",
-    "backend/server/services/machine-cover-image.service.ts"
+    "frontend/src/hooks/useRecommendMachine.ts",
+    "frontend/src/utils/apiErrorCatalog.ts"
   ],
   "testFocus": [
-    "Admin upload cover → search list shows photo without F5 quirks",
-    "BODYWEIGHT / custom machines without packaged SVG show cover",
-    "Unlicensed HS PNGs still blocked"
+    "Recommend CTA → success still navigates",
+    "On failure toast shows specific reason (quota/rate/network) not only generic",
+    "Stale gym FORBIDDEN still can recommend via profile retry"
   ],
   "fastChecks": [
-    "npm run typecheck --prefix frontend",
-    "npx vitest run src/utils/catalogAssets.resolveMachineImageUrl.test.ts --prefix frontend"
+    "npm run typecheck --prefix frontend"
   ],
   "productionChecks": [
-    "Search list primaryImageUrl (supabase or media) renders photo",
-    "Re-upload cover after BE deploy uses /media/machine-covers/ URL"
+    "Search → machine → 추천받기 with complete profile",
+    "If limit hit, see dailyQuota/rateLimit copy"
   ],
   "deploy": {
-    "expected": "Pages for FE; Render for BE URL persist change"
+    "expected": "GitHub Pages after push"
   },
-  "asIs": "Admin shows cover; search shows placeholder",
-  "toBe": "Search uses admin/API primaryImageUrl when present"
+  "asIs": "추천받기 → 요청을 처리하지 못했어요",
+  "toBe": "원인별 Toast + gym scope 실패 시 재시도"
 }

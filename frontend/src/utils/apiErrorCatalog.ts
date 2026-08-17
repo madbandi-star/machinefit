@@ -28,13 +28,16 @@ const CODE_TO_KEY: Record<string, string> = {
   USAGE_LIMIT: 'errors.usageLimit',
   DAILY_QUOTA_EXCEEDED: 'errors.dailyQuotaExceeded',
   MONTHLY_QUOTA_EXCEEDED: 'errors.dailyQuotaExceeded',
+  RECOMMENDATION_LIMIT_EXCEEDED: 'errors.dailyQuotaExceeded',
   STOCK_LIMIT_EXCEEDED: 'errors.stockLimitExceeded',
   RATE_LIMIT: 'errors.rateLimit',
   RATE_LIMIT_EXCEEDED: 'errors.rateLimit',
   REQUEST_IN_PROGRESS: 'errors.rateLimit',
+  BURST_REQUEST_DETECTED: 'errors.rateLimit',
   PLAN_LIMIT: 'errors.usageLimit',
   CSRF_REJECTED: 'errors.csrfRejected',
   MIN_BRAND_FAVORITES: 'brandFavorites.minRequired',
+  MEMBER_PROFILE_INCOMPLETE: 'auth.memberProfileRequiredForRecommend',
 };
 
 export function translateApiErrorCode(code: string | undefined, t: TFunction): string | null {
@@ -64,12 +67,6 @@ export function resolveApiErrorMessage(
   if (status === 403) {
     return t('errors.forbidden');
   }
-  if (status === 429) {
-    return t('errors.rateLimit');
-  }
-  if (status >= 500) {
-    return t('errors.serverError');
-  }
 
   const code = (error.response.data as { error?: { code?: string; message?: string } } | undefined)
     ?.error?.code;
@@ -78,15 +75,24 @@ export function resolveApiErrorMessage(
     code === 'DAILY_QUOTA_EXCEEDED' ||
     code === 'MONTHLY_QUOTA_EXCEEDED' ||
     code === 'STOCK_LIMIT_EXCEEDED' ||
-    code === 'USAGE_LIMIT'
+    code === 'USAGE_LIMIT' ||
+    code === 'RECOMMENDATION_LIMIT_EXCEEDED'
   ) {
     void import('@/ads/adEventBus').then(({ adEventBus }) => {
       adEventBus.emit({ placement: 'LIMIT_REACHED', event: 'FREE_LIMIT_REACHED' });
     });
   }
 
+  // Prefer typed quota/rate codes before the generic HTTP 429 copy.
   const byCode = translateApiErrorCode(code, t);
   if (byCode) return byCode;
+
+  if (status === 429) {
+    return t('errors.rateLimit');
+  }
+  if (status >= 500) {
+    return t('errors.serverError');
+  }
 
   // Prefer FE copy; avoid showing raw KO/EN server prose when we have a generic fallback.
   return t(fallbackKey);

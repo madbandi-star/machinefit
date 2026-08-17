@@ -24,6 +24,7 @@ import {
   assertNoDuplicateToday,
 } from '@/utils/recommendationDuplicate';
 import { getApiErrorCode } from '@/utils/motivationAudio';
+import { resolveApiErrorMessage } from '@/utils/apiErrorCatalog';
 import { sortMembersByRegistrationOrder } from '@/utils/gymMemberDefault';
 
 function isUsableBodyMetric(heightCm?: number, weightKg?: number): boolean {
@@ -266,6 +267,21 @@ export function useRecommendMachine(machineCode: string | undefined) {
       const res = await recommendationApi.create({
         ...input,
         ...(options.skipHistory ? { skipHistory: true } : {}),
+      }).catch(async (error: unknown) => {
+        // Stale gym/member selection → FORBIDDEN; retry with account profile only.
+        const code = getApiErrorCode(error);
+        if (
+          (code === 'FORBIDDEN' || code === 'NOT_FOUND') &&
+          input.gymId &&
+          input.memberId
+        ) {
+          const { gymId: _g, memberId: _m, ...profileOnly } = input;
+          return recommendationApi.create({
+            ...profileOnly,
+            ...(options.skipHistory ? { skipHistory: true } : {}),
+          });
+        }
+        throw error;
       });
       return {
         result: res.data.data,
@@ -314,10 +330,6 @@ export function useRecommendMachine(machineCode: string | undefined) {
       if (apiCode === 'MEMBER_PROFILE_INCOMPLETE') {
         showToast(t('common:auth.memberProfileRequiredForRecommend'), 'error');
         navigate(ROUTES.MY_GYMS);
-        return;
-      }
-      if (apiCode === 'INTERNAL_ERROR') {
-        showToast(t('common:errors.serverError'), 'error');
         return;
       }
 
@@ -383,7 +395,8 @@ export function useRecommendMachine(machineCode: string | undefined) {
         showToast(t('common:errors.recommendValidation'), 'error');
         return;
       }
-      showToast(t('common:errors.submitFailed'), 'error');
+      // Surface quota / rate-limit / network / not-found instead of a generic submitFailed.
+      showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error');
     },
   });
 
