@@ -253,6 +253,52 @@ export const gymMemberRepository = {
     });
   },
 
+  /** Keep is_self gym member body metrics in sync with account profile. */
+  async syncSelfMemberBodyMetrics(
+    ownerUserId: string,
+    data: {
+      gender?: string | null;
+      heightCm?: number | null;
+      weightKg?: number | null;
+      experienceLevel?: string | null;
+    }
+  ): Promise<number> {
+    const pool = getPool();
+    if (!pool) return 0;
+
+    const fields: string[] = [];
+    const values: unknown[] = [];
+    let index = 1;
+
+    if (data.gender !== undefined) {
+      fields.push(`gender = $${index++}`);
+      values.push(data.gender);
+    }
+    if (data.heightCm !== undefined) {
+      fields.push(`height_cm = $${index++}`);
+      values.push(data.heightCm);
+    }
+    if (data.weightKg !== undefined) {
+      fields.push(`weight_kg = $${index++}`);
+      values.push(data.weightKg);
+    }
+    if (data.experienceLevel !== undefined) {
+      fields.push(`experience_level = $${index++}`);
+      values.push(data.experienceLevel);
+    }
+    if (fields.length === 0) return 0;
+
+    fields.push(`updated_at = NOW()`);
+    values.push(ownerUserId);
+    const result = await pool.query(
+      `UPDATE gym_members
+       SET ${fields.join(', ')}
+       WHERE owner_user_id = $${index} AND is_self = TRUE`,
+      values
+    );
+    return result.rowCount ?? 0;
+  },
+
   /** Keep is_self gym member labels in sync with account username (display_name). */
   async syncSelfMemberNames(ownerUserId: string, displayName: string): Promise<number> {
     const pool = getPool();

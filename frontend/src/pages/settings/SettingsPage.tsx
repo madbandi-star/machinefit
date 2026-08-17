@@ -393,6 +393,9 @@ export function SettingsPage() {
     mutationFn: (payload: Parameters<typeof userApi.updateMe>[0]) => userApi.updateMe(payload),
     onSuccess: (res) => {
       const updatedUser = res.data.data as User;
+      // Prevent in-flight / stale /me from wiping body metrics (gender) after save.
+      void queryClient.cancelQueries({ queryKey: QUERY_KEYS.me });
+      queryClient.setQueryData(QUERY_KEYS.me, updatedUser);
       updateUser(updatedUser);
       setUnitHeight(draftUnitHeight);
       setUnitWeight(draftUnitWeight);
@@ -507,6 +510,10 @@ export function SettingsPage() {
             className="btn btn--primary btn--block"
             style={{ marginTop: 'var(--space-md)' }}
             onClick={() => {
+              if (!gender) {
+                showToast(t('auth.genderRequired'), 'error');
+                return;
+              }
               if (!workoutGoal) {
                 setWorkoutGoalInvalid(true);
                 showToast(t('auth.workoutGoalRequired'), 'error');

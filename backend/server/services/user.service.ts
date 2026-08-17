@@ -222,6 +222,14 @@ export const userService = {
       if (payload.displayName !== undefined) {
         await gymMemberRepository.syncSelfMemberNames(userId, user.displayName);
       }
+      if (touchesBodyMetrics) {
+        await gymMemberRepository.syncSelfMemberBodyMetrics(userId, {
+          gender: user.gender ?? null,
+          heightCm: user.heightCm ?? null,
+          weightKg: user.weightKg ?? null,
+          experienceLevel: user.experienceLevel ?? null,
+        });
+      }
       if (touchesBirth) {
         fortuneService.invalidateUser(userId);
       }

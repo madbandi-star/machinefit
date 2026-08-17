@@ -7,10 +7,11 @@ import type {
   GymMember,
   RecommendationInput,
   TargetMuscleGroup,
+  User,
   UserGym,
 } from '@machinefit/shared';
 import { ageFromBirthDate, isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
-import { gymMemberApi, recommendationApi, userGymApi, type UserGymsResponse } from '@/api';
+import { gymMemberApi, recommendationApi, userApi, userGymApi, type UserGymsResponse } from '@/api';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
 import { useSettingsStore } from '@/store/settings.store';
@@ -31,6 +32,32 @@ function isUsableBodyMetric(heightCm?: number, weightKg?: number): boolean {
   if (heightCm == null || heightCm < 100 || heightCm > 250) return false;
   if (weightKg == null || weightKg < 30 || weightKg > 300) return false;
   return true;
+}
+
+/** Prefer in-memory user; if body metrics were stripped by persist/stale /me, refresh once. */
+async function ensureOwnerProfileUser(
+  queryClient: ReturnType<typeof useQueryClient>
+): Promise<User | null> {
+  const fromStore = useAuthStore.getState().user;
+  if (fromStore?.gender && isUsableBodyMetric(fromStore.heightCm, fromStore.weightKg)) {
+    return fromStore;
+  }
+
+  const cached = queryClient.getQueryData<User>(QUERY_KEYS.me);
+  if (cached?.gender && isUsableBodyMetric(cached.heightCm, cached.weightKg)) {
+    useAuthStore.getState().updateUser(cached);
+    return { ...(fromStore ?? cached), ...cached };
+  }
+
+  try {
+    const res = await userApi.getMe();
+    const me = res.data.data;
+    queryClient.setQueryData(QUERY_KEYS.me, me);
+    useAuthStore.getState().updateUser(me);
+    return me;
+  } catch {
+    return fromStore;
+  }
 }
 
 async function loadUserGyms(
@@ -109,11 +136,12 @@ async function resolveGymAndMember(
 
 function requireOwnerProfileInput(
   machineCode: string,
-  targetMuscleGroup?: TargetMuscleGroup
+  targetMuscleGroup?: TargetMuscleGroup,
+  owner?: User | null
 ): RecommendationInput {
-  const input = buildOwnerProfileInput(machineCode, targetMuscleGroup);
+  const input = buildOwnerProfileInput(machineCode, targetMuscleGroup, owner);
   if (input) return input;
-  const user = useAuthStore.getState().user;
+  const user = owner ?? useAuthStore.getState().user;
   if (!user?.gender) throw new Error('missing_gender');
   const heightOk = user?.heightCm != null && user.heightCm >= 100 && user.heightCm <= 250;
   const weightOk = user?.weightKg != null && user.weightKg >= 30 && user.weightKg <= 300;
@@ -125,9 +153,10 @@ function requireOwnerProfileInput(
 
 function buildOwnerProfileInput(
   machineCode: string,
-  targetMuscleGroup?: TargetMuscleGroup
+  targetMuscleGroup?: TargetMuscleGroup,
+  owner?: User | null
 ): RecommendationInput | null {
-  const user = useAuthStore.getState().user;
+  const user = owner ?? useAuthStore.getState().user;
   const { unitHeight, unitWeight, weightDifficulty } = useSettingsStore.getState();
 
   if (!isUsableBodyMetric(user?.heightCm, user?.weightKg) || !user?.gender) {
@@ -208,14 +237,15 @@ export function useRecommendMachine(machineCode: string | undefined) {
       let input: RecommendationInput | null = null;
 
       if (isAuthenticated) {
+        const owner = await ensureOwnerProfileUser(queryClient);
         const scope = await resolveGymAndMember(queryClient);
 
         if (!scope) {
           // No gym registered yet — recommend from account profile (backend legacy path).
-          input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup);
+          input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup, owner);
         } else if (scope.member.isSelf) {
           input = {
-            ...requireOwnerProfileInput(machineCode, options?.targetMuscleGroup),
+            ...requireOwnerProfileInput(machineCode, options?.targetMuscleGroup, owner),
             gymId: scope.gymId,
             memberId: scope.member.id,
           };
@@ -261,7 +291,8 @@ export function useRecommendMachine(machineCode: string | undefined) {
           }
         }
       } else {
-        input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup);
+        const owner = await ensureOwnerProfileUser(queryClient);
+        input = requireOwnerProfileInput(machineCode, options?.targetMuscleGroup, owner);
       }
 
       const res = await recommendationApi.create({

@@ -122,8 +122,25 @@ export const useAuthStore = create<AuthState>()(
       },
       updateUser: (partial) =>
         set((state) => {
-          const next = state.user ? { ...state.user, ...partial } : null;
-          if (next?.id) setSentryUser({ id: next.id });
+          if (!state.user) {
+            if (!('id' in partial) || !partial.id) return state;
+            const next = partial as User;
+            if (next.id) setSentryUser({ id: next.id });
+            return { user: next };
+          }
+          const current = state.user;
+          const incomingTs = partial.updatedAt ? Date.parse(String(partial.updatedAt)) : NaN;
+          const currentTs = current.updatedAt ? Date.parse(String(current.updatedAt)) : NaN;
+          // Ignore stale /me responses that lose a race with a newer PATCH (e.g. gender save).
+          if (
+            Number.isFinite(incomingTs) &&
+            Number.isFinite(currentTs) &&
+            incomingTs < currentTs
+          ) {
+            return state;
+          }
+          const next = { ...current, ...partial };
+          if (next.id) setSentryUser({ id: next.id });
           return { user: next };
         }),
     }),
