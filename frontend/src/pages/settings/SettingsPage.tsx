@@ -414,6 +414,8 @@ export function SettingsPage() {
     mutationFn: (payload: Parameters<typeof userApi.updateMe>[0]) => userApi.updateMe(payload),
     onSuccess: async (res) => {
       const updatedUser = res.data.data as User;
+      void queryClient.cancelQueries({ queryKey: QUERY_KEYS.me });
+      queryClient.setQueryData(QUERY_KEYS.me, updatedUser);
       updateUser(updatedUser);
       setBirthDate(updatedUser.birthDate ?? '');
       setBirthTime(updatedUser.birthTime ?? '');
