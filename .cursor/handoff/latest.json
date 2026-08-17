@@ -3,7 +3,7 @@
   "summary": "추천받기 실패 시 항상 submitFailed만 보이던 문제. API 코드(한도/429/권한/네트워크)를 resolveApiErrorMessage로 표시하고, stale gym FORBIDDEN 시 프로필만으로 재시도.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "9eb0935e"
   },
   "changedFiles": [
     "frontend/src/hooks/useRecommendMachine.ts",
