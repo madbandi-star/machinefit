@@ -890,12 +890,14 @@ export function WorkoutLogPanel({
     void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs });
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
     void queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
+    void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.pointsBalance });
   }, [queryClient]);
 
   /** Achievements/insights only — cache already patched for logs. */
   const invalidateSoftSideEffects = useCallback(() => {
     void queryClient.invalidateQueries({ queryKey: ['workout-logs', 'insights'] });
     void queryClient.invalidateQueries({ queryKey: ['user', 'achievements'] });
+    void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.pointsBalance });
   }, [queryClient]);
 
   const sideEffectDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);

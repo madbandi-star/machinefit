@@ -86,7 +86,11 @@ export function MyPage() {
     queryKey: QUERY_KEYS.pointsBalance,
     queryFn: async () => (await pointsApi.getMine()).data.data,
     enabled: Boolean(user),
-    staleTime: 30_000,
+    // Match Points page: always refresh when opening My Page so earned Power
+    // (workout awards, power box, etc.) is not stuck behind a stale 0 cache.
+    staleTime: 0,
+    refetchOnMount: 'always',
+    retry: 2,
   });
 
   useEffect(() => {
@@ -105,6 +109,14 @@ export function MyPage() {
       /* ignore storage */
     }
   }, [pointsQuery.data?.balance, showToast, t, user?.id]);
+
+  const pointsBalance = pointsQuery.data?.balance;
+  const pointsBalanceLabel =
+    pointsBalance == null
+      ? pointsQuery.isError
+        ? '—'
+        : null
+      : pointsBalance.toLocaleString();
 
   const homeGymDisplay =
     resolveHomeGymName(meQuery.data ?? user, activeGym, gyms) || t('myPage.homeGymUnset');
@@ -154,9 +166,21 @@ export function MyPage() {
             <div className="profile-card__row profile-card__row--full profile-card__row--power">
               <dt>{t('points.myPoints')}</dt>
               <dd className="profile-card__power-dd">
-                <Link to={ROUTES.POINTS} className="profile-card__email-value profile-card__power-link">
-                  {(pointsQuery.data?.balance ?? 0).toLocaleString()}
-                  {t('points.unit')}
+                <Link
+                  to={ROUTES.POINTS}
+                  className="profile-card__email-value profile-card__power-link"
+                  aria-busy={pointsBalanceLabel == null && !pointsQuery.isError ? true : undefined}
+                >
+                  {pointsBalanceLabel == null && !pointsQuery.isError ? (
+                    <span className="profile-card__power-skeleton" aria-hidden>
+                      ···
+                    </span>
+                  ) : (
+                    <>
+                      {pointsBalanceLabel ?? '0'}
+                      {t('points.unit')}
+                    </>
+                  )}
                 </Link>
                 <PowerBox />
               </dd>

@@ -997,6 +997,13 @@
   align-self: center;
 }
 
+.profile-card__power-skeleton {
+  display: inline-block;
+  min-width: 3.5rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.12em;
+}
+
 .power-box {
   flex: 0 0 auto;
   display: inline-flex;
