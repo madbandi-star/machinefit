@@ -1,30 +1,29 @@
 {
-  "title": "Search muscle chips: admin covers only, never seed anatomy",
-  "summary": "Search FilterChips MuscleGroupIcon uses adminOnly ? only ??? ????? ?? URLs. Bundled green anatomy seed art is never shown on search chips.",
+  "title": "Search brand chips = My Brands favorites only",
+  "summary": "Logged-in search brand filter chips show only brands favorited on ????? > ? ???. Guests still see the full catalog. Favorite order preserved; invalid brand selection clears to ??.",
   "git": {
     "branch": "main",
-    "commit": "ecc859bb"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
-    "frontend/src/components/muscle/MuscleGroupIcon/MuscleGroupIcon.tsx",
-    "frontend/src/hooks/useMuscleGroupImages.ts",
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
     "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx"
   ],
   "testFocus": [
-    "Search muscle chips show admin ????? management covers",
-    "No green fluorescent bundled anatomy seed images on search chips",
-    "While catalog loads: letter fallback OK, not seed art"
+    "Login ? search: brand chips match ? ??? favorites only (+ ??)",
+    "Unfavorite a brand on ? ??? ? search chip disappears after refresh/nav",
+    "Guest search: all brands including ??/??",
+    "brand=?? still lists machines"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend: /machines muscle chips match admin media URLs"
+    "After Deploy Frontend: compare /machines brand chips vs /brand-favorites starred brands"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Search chips used preferSeed (bundled green anatomy).",
-  "toBe": "Search chips use admin-only muscle group covers."
+  "asIs": "Search showed full brand catalog for everyone.",
+  "toBe": "Logged-in search brand chips = My Brands favorites only."
 }

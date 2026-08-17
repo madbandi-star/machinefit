@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import type { Machine } from '@machinefit/shared';
+import type { Brand, Machine } from '@machinefit/shared';
 import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
@@ -25,6 +25,7 @@ import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
+import { useBrandFavorites } from '@/hooks/useBrandFavorites';
 import {
   getLocalDayRange,
   getTodayDateKey,
@@ -190,9 +191,47 @@ export function MachineSearchPage() {
     staleTime: 10 * 60_000,
   });
 
-  // Search brand chips = full catalog (favorites live on 내 브랜드). Filtering to
-  // favorites left only “전체” when the intersection was empty / still loading.
-  const brandsForFilter = brands;
+  const {
+    data: favoriteBrandItems,
+    isFetched: favoriteBrandsFetched,
+  } = useBrandFavorites();
+
+  // Logged-in: only My Brands favorites (same list as 마이페이지 > 내 브랜드).
+  // Guests: full catalog. Prefer catalog Brand rows; fall back to favorite payload fields.
+  const brandsForFilter = useMemo((): Brand[] => {
+    if (!isAuthenticated) return brands;
+    if (!favoriteBrandsFetched) return [];
+    const byId = new Map(brands.map((brand) => [brand.id, brand]));
+    const ordered: Brand[] = [];
+    for (const fav of favoriteBrandItems ?? []) {
+      const fromCatalog = byId.get(fav.brandId);
+      if (fromCatalog) {
+        ordered.push(fromCatalog);
+        continue;
+      }
+      if (!fav.brandCode) continue;
+      ordered.push({
+        id: fav.brandId,
+        code: fav.brandCode,
+        name: fav.brandName,
+        logoUrl: fav.logoUrl,
+        sortOrder: 0,
+        isActive: true,
+      });
+    }
+    return ordered;
+  }, [brands, favoriteBrandItems, favoriteBrandsFetched, isAuthenticated]);
+
+  // Drop a selected brand that is no longer in the user's favorites.
+  useEffect(() => {
+    if (!isAuthenticated || !favoriteBrandsFetched) return;
+    if (!brandCode) return;
+    if (brandsForFilter.some((brand) => brand.code === brandCode)) return;
+    setBrandCode(null);
+    writeSearchParams({ brand: null });
+    // writeSearchParams closes over muscle/brand — intentional one-shot clear
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [brandCode, brandsForFilter, favoriteBrandsFetched, isAuthenticated]);
 
   const { data: dayPlans = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
@@ -304,9 +343,10 @@ export function MachineSearchPage() {
   });
 
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
+  const brandChipsReady = !isAuthenticated || favoriteBrandsFetched;
   // Never treat a stuck empty placeholder as “no machines” while a fetch is in flight.
   const showMachineSkeleton =
-    brandsLoading || ((isLoading || isFetching) && !data?.length);
+    brandsLoading || !brandChipsReady || ((isLoading || isFetching) && !data?.length);
   const recordsForDateUrl = planDate
     ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
     : ROUTES.RECORDS;
@@ -361,7 +401,7 @@ export function MachineSearchPage() {
           brands={brandsForFilter}
           value={brandCode}
           onChange={handleBrandChange}
-          includeFallbacks
+          includeFallbacks={!isAuthenticated}
         />
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}

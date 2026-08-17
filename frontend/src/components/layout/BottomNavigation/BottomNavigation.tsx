@@ -9,7 +9,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { queryClient } from '@/app/providers/QueryProvider';
-import { brandApi, favoriteApi, historyApi, machineApi, muscleGroupImageApi } from '@/api';
+import { brandApi, brandFavoriteApi, favoriteApi, historyApi, machineApi, muscleGroupImageApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
 import './BottomNavigation.css';
 
@@ -31,7 +31,8 @@ function prefetchForRoute(
   to: string,
   gymId: string | null,
   memberId: string | null,
-  isAuthenticated: boolean
+  isAuthenticated: boolean,
+  userId: string | null
 ) {
   if (to === ROUTES.MACHINES) {
     void queryClient.prefetchQuery({
@@ -55,6 +56,13 @@ function prefetchForRoute(
       queryFn: async () => (await muscleGroupImageApi.list()).data.data.items,
       staleTime: 5 * 60_000,
     });
+    if (userId) {
+      void queryClient.prefetchQuery({
+        queryKey: [...QUERY_KEYS.brandFavorites, userId] as const,
+        queryFn: async () => (await brandFavoriteApi.list()).data.data,
+        staleTime: 60_000,
+      });
+    }
   }
 
   if (!isAuthenticated || !gymId) return;
@@ -103,6 +111,7 @@ export function BottomNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   const gymId = useGymStore((s) => s.activeGymId);
   const memberId = useGymStore((s) => s.activeMemberId);
   const uiHydrated = usePersistHydration(useUIStore.persist);
@@ -149,7 +158,7 @@ export function BottomNavigation() {
     requireAuth: boolean,
     to: string
   ) => {
-    prefetchForRoute(to, gymId, memberId, isAuthenticated);
+    prefetchForRoute(to, gymId, memberId, isAuthenticated, userId);
     if (to === ROUTES.RECORDS) {
       setRecordsNavNudge(false);
       if (planSignature) markRecordsPlanDotSeen(planSignature);
@@ -177,8 +186,8 @@ export function BottomNavigation() {
             key={to}
             to={to}
             onClick={(e) => handleNavClick(e, requireAuth, to)}
-            onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
-            onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
+            onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated, userId)}
+            onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated, userId)}
             className={({ isActive }) =>
               [
                 'bottom-nav__item',
