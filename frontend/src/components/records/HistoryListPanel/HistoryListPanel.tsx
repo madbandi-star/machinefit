@@ -1,5 +1,10 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowDownUp, ArrowUpDown } from 'lucide-react';
@@ -7,7 +12,6 @@ import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { EmptyState } from '@/components/feedback/EmptyState/EmptyState';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
-import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { HistoryLogStatusFilter } from '@/components/records/HistoryLogStatusFilter/HistoryLogStatusFilter';
 import { PlanDatePickerDialog } from '@/components/records/PlanDatePickerDialog/PlanDatePickerDialog';
 import { HistoryDayActionsSheet } from '@/components/records/HistoryDayActionsSheet/HistoryDayActionsSheet';
@@ -228,24 +232,48 @@ export function HistoryListPanel() {
     limit: HISTORY_LIST_LIMIT,
   });
 
+  const historyQueryEnabled =
+    isAuthenticated &&
+    Boolean(activeGymId) &&
+    memberScopeReady &&
+    Boolean(activeMemberId);
+
   const {
     data: allHistory,
     isLoading: isAllHistoryLoading,
     isError,
+    isFetching: isHistoryFetching,
     refetch: refetchHistory,
   } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
       const res = await historyApi.list(activeGymId!, {
         limit: HISTORY_LIST_LIMIT,
-        memberId: activeMemberId ?? undefined,
+        memberId: activeMemberId!,
       });
-      return res.data.data;
+      return res.data.data ?? [];
     },
-    enabled: Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
-    // Keep prior list visible while a post-delete refetch runs (or fails).
-    placeholderData: (previous) => previous,
+    // Wait for auth — firing before token restore causes frequent 401 → loadFailed.
+    enabled: historyQueryEnabled,
+    staleTime: 30_000,
+    // Keep list across gym/member key changes and post-delete refetches.
+    placeholderData: keepPreviousData,
+    retry: (failureCount, error) => {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 401 || status === 403 || status === 404) return false;
+      return failureCount < 3;
+    },
+    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 8_000),
   });
+
+  // Transient failures: silently retry instead of blocking the Records UI.
+  useEffect(() => {
+    if (!historyQueryEnabled || !isError || isHistoryFetching) return;
+    const timer = window.setTimeout(() => {
+      void refetchHistory();
+    }, 2_000);
+    return () => window.clearTimeout(timer);
+  }, [historyQueryEnabled, isError, isHistoryFetching, refetchHistory, calendarQueryKey]);
 
   const { data: workoutLogs } = useQuery({
     queryKey: QUERY_KEYS.workoutLogsList(activeGymId ?? '', memberKey, {
@@ -518,7 +546,10 @@ export function HistoryListPanel() {
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
 
   const isLoading =
-    (!activeGymId || !memberScopeReady || isAllHistoryLoading) && !allHistory;
+    (isAuthenticated &&
+      (!activeGymId || !memberScopeReady) &&
+      allHistory === undefined) ||
+    (historyQueryEnabled && isAllHistoryLoading && allHistory === undefined);
 
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;
@@ -1106,17 +1137,7 @@ export function HistoryListPanel() {
   const planAddUrl = `${ROUTES.MACHINES}?planDate=${encodeURIComponent(targetDeleteDate)}`;
 
   if (isLoading) return <Skeleton count={2} height={120} />;
-  // Only block the page when we have nothing to show. A post-delete refetch
-  // failure must not replace the whole Records UI with loadFailed.
-  if (isError && !allHistory) {
-    return (
-      <QueryErrorMessage
-        onRetry={() => {
-          void refetchHistory();
-        }}
-      />
-    );
-  }
+  // Never replace the whole Records page with loadFailed — empty/list UI + silent retry.
 
   const hasAnyRecords = allRecordCards.length > 0;
   const isEmptyList = !hasAnyRecords || displayCards.length === 0;
