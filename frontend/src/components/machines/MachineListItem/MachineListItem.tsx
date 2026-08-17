@@ -15,6 +15,7 @@ import { SafeImage } from '@/components/media/SafeImage';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { useAuthStore } from '@/store/auth.store';
+import { seedMachineDetailCache } from '@/utils/machineDetailCache';
 import '@/styles/machines.css';
 
 interface MachineListItemProps {
@@ -32,12 +33,31 @@ interface MachineListItemProps {
   alreadyPlanned?: boolean;
 }
 
-function prefetchMachineDetail(machineCode: string) {
+function prefetchMachineDetail(machineCode: string, muscle?: string | null) {
+  const muscleKey = muscle || undefined;
   void queryClient.prefetchQuery({
-    queryKey: QUERY_KEYS.machine(machineCode),
-    queryFn: async () => (await machineApi.getByCode(machineCode)).data.data,
+    queryKey: QUERY_KEYS.machine(machineCode, muscleKey),
+    queryFn: async () =>
+      (
+        await machineApi.getByCode(
+          machineCode,
+          muscleKey ? { muscle: muscleKey } : undefined
+        )
+      ).data.data,
     staleTime: 5 * 60_000,
   });
+  if (muscleKey) {
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.machine(machineCode),
+      queryFn: async () => (await machineApi.getByCode(machineCode)).data.data,
+      staleTime: 5 * 60_000,
+    });
+  }
+}
+
+function warmMachineDetailFromList(machine: Machine, muscle?: string | null) {
+  seedMachineDetailCache(queryClient, machine, muscle);
+  prefetchMachineDetail(machine.code, isFreeWeightMachineCode(machine.code) ? muscle : null);
 }
 
 function MachineFavoriteButton({
@@ -207,8 +227,18 @@ export function MachineListItem({
           type="button"
           className="machine-list-item__main"
           onClick={() => onSelect(machine)}
-          onMouseEnter={() => prefetchMachineDetail(machine.code)}
-          onTouchStart={() => prefetchMachineDetail(machine.code)}
+          onMouseEnter={() =>
+            warmMachineDetailFromList(
+              machine,
+              isFreeWeight && selectedMuscle ? selectedMuscle : null
+            )
+          }
+          onTouchStart={() =>
+            warmMachineDetailFromList(
+              machine,
+              isFreeWeight && selectedMuscle ? selectedMuscle : null
+            )
+          }
         >
           {main}
         </button>
@@ -222,8 +252,24 @@ export function MachineListItem({
       <Link
         to={detailTo}
         className="machine-list-item__main"
-        onMouseEnter={() => prefetchMachineDetail(machine.code)}
-        onTouchStart={() => prefetchMachineDetail(machine.code)}
+        onClick={() =>
+          warmMachineDetailFromList(
+            machine,
+            isFreeWeight && selectedMuscle ? selectedMuscle : null
+          )
+        }
+        onMouseEnter={() =>
+          warmMachineDetailFromList(
+            machine,
+            isFreeWeight && selectedMuscle ? selectedMuscle : null
+          )
+        }
+        onTouchStart={() =>
+          warmMachineDetailFromList(
+            machine,
+            isFreeWeight && selectedMuscle ? selectedMuscle : null
+          )
+        }
       >
         {main}
       </Link>

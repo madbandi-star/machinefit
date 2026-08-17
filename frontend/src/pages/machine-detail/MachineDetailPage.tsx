@@ -1,5 +1,11 @@
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Role,
@@ -9,7 +15,6 @@ import {
   type TargetMuscleGroup,
 } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
-import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { MachineHero } from '@/components/machines/MachineHero/MachineHero';
 import { LastRecommendationSnippet } from '@/components/machines/LastRecommendationSnippet/LastRecommendationSnippet';
@@ -27,6 +32,10 @@ import { useUIStore } from '@/store/ui.store';
 import { getTodayDateKey, normalizeDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
 import { getApiErrorCode } from '@/utils/motivationAudio';
+import {
+  findCachedMachine,
+  isMachineNotFoundError,
+} from '@/utils/machineDetailCache';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import { Seo } from '@/seo/Seo';
 import { breadcrumbJsonLd, webPageJsonLd } from '@/seo/jsonLd';
@@ -57,7 +66,14 @@ export function MachineDetailPage() {
   const { createRecommendationAsync, isPending: isRecommendPending } =
     useRecommendMachine(machineCode);
 
-  const { data: machine, isLoading, isError, refetch } = useQuery({
+  const {
+    data: machine,
+    isLoading,
+    isError,
+    isFetching,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: QUERY_KEYS.machine(machineCode!, muscleParam ?? undefined),
     queryFn: async () => {
       const res = await machineApi.getByCode(
@@ -67,9 +83,35 @@ export function MachineDetailPage() {
       return res.data.data;
     },
     enabled: !!machineCode,
+    staleTime: 5 * 60_000,
     // Keep hero visible while switching FW muscle covers (`?muscle=`).
-    placeholderData: (prev) => prev,
+    placeholderData: keepPreviousData,
+    initialData: () =>
+      machineCode
+        ? findCachedMachine(queryClient, machineCode, muscleParam)
+        : undefined,
+    initialDataUpdatedAt: () =>
+      machineCode
+        ? queryClient.getQueryState(
+            QUERY_KEYS.machine(machineCode, muscleParam ?? undefined)
+          )?.dataUpdatedAt
+        : undefined,
+    retry: (failureCount, err) => {
+      if (isMachineNotFoundError(err)) return false;
+      return failureCount < 3;
+    },
+    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 8_000),
   });
+
+  // Transient failures: keep UI usable (cached/list seed) and retry quietly.
+  useEffect(() => {
+    if (!machineCode || !isError || isFetching) return;
+    if (isMachineNotFoundError(error)) return;
+    const timer = window.setTimeout(() => {
+      void refetch();
+    }, 2_000);
+    return () => window.clearTimeout(timer);
+  }, [machineCode, isError, isFetching, error, refetch]);
 
   const planDate = planDateParam ? normalizeDateKey(planDateParam) : null;
   const todayDateKey = getTodayDateKey();
@@ -119,28 +161,38 @@ export function MachineDetailPage() {
         navigate(`${ROUTES.MACHINES}?planDate=${encodeURIComponent(planDate)}`);
       }
     },
-    onError: (error) => {
-      if (getApiErrorCode(error) === 'DUPLICATE_CARD') {
+    onError: (err) => {
+      if (getApiErrorCode(err) === 'DUPLICATE_CARD') {
         showToast(t('machines:history.planDuplicateMachine'), 'info');
         return;
       }
       // Profile / recommend errors already toasted by useRecommendMachine.
-      if (error instanceof Error && error.message.startsWith('missing_')) return;
-      if (getApiErrorCode(error)) return;
+      if (err instanceof Error && err.message.startsWith('missing_')) return;
+      if (getApiErrorCode(err)) return;
       showToast(t('common:errors.submitFailed'), 'error');
     },
   });
 
-  if (isLoading && !machine) return <Skeleton count={3} height={100} />;
-  if (isError && !machine) {
+  if ((isLoading || (isError && !isMachineNotFoundError(error))) && !machine) {
+    return <Skeleton count={3} height={100} />;
+  }
+  if (isError && !machine && isMachineNotFoundError(error)) {
     return (
-      <PageShell title={t('machines:error', { defaultValue: 'Error' })}>
-        <QueryErrorMessage onRetry={() => void refetch()} />
+      <PageShell title={t('machines:notFound', { defaultValue: 'Not Found' })}>
+        <Link to={ROUTES.MACHINES} className="btn btn--secondary btn--block">
+          {t('common:nav.machines')}
+        </Link>
       </PageShell>
     );
   }
   if (!machine) {
-    return <PageShell title={t('machines:notFound', { defaultValue: 'Not Found' })} />;
+    return (
+      <PageShell title={t('machines:notFound', { defaultValue: 'Not Found' })}>
+        <Link to={ROUTES.MACHINES} className="btn btn--secondary btn--block">
+          {t('common:nav.machines')}
+        </Link>
+      </PageShell>
+    );
   }
 
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
