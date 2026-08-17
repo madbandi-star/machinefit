@@ -1,29 +1,31 @@
 {
-  "title": "Search brand/machine keep skeletons ? no error UI",
-  "summary": "Brand chips stay on skeletons until favorites+catalog resolve (not just isFetched). Machine list never shows load-failed/retry ? skeleton + silent retry instead.",
+  "title": "Fix search page missing admin machine cover photos",
+  "summary": "resolveMachineImageUrl only accepted /media/machine-covers/ paths, so Supabase public cover URLs from admin upload were dropped to placeholder. Accept remote/API covers; persist canonical media URLs on upload.",
   "git": {
     "branch": "main",
     "commit": "a329d3aa"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/hooks/useBrandFavorites.ts",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
+    "frontend/src/utils/catalogAssets.ts",
+    "frontend/src/utils/catalogAssets.resolveMachineImageUrl.test.ts",
+    "backend/server/services/machine-cover-image.service.ts"
   ],
   "testFocus": [
-    "Cold open search: brand row skeletons until favorite brands appear (not only ??)",
-    "Machine list: skeletons while loading/failing ? never loadFailed + retry button",
-    "After success: machines list or true empty state only"
+    "Admin upload cover → search list shows photo without F5 quirks",
+    "BODYWEIGHT / custom machines without packaged SVG show cover",
+    "Unlicensed HS PNGs still blocked"
   ],
   "fastChecks": [
-    "npm run test:smoke:changed"
+    "npm run typecheck --prefix frontend",
+    "npx vitest run src/utils/catalogAssets.resolveMachineImageUrl.test.ts --prefix frontend"
   ],
   "productionChecks": [
-    "After Deploy Frontend: hard refresh /machines"
+    "Search list primaryImageUrl (supabase or media) renders photo",
+    "Re-upload cover after BE deploy uses /media/machine-covers/ URL"
   ],
   "deploy": {
-    "expected": "GitHub Pages Deploy Frontend on push to main"
+    "expected": "Pages for FE; Render for BE URL persist change"
   },
-  "asIs": "Brand showed only ??; machines showed loadFailed + retry.",
-  "toBe": "Brand and machines stay on skeletons until data succeeds."
+  "asIs": "Admin shows cover; search shows placeholder",
+  "toBe": "Search uses admin/API primaryImageUrl when present"
 }
