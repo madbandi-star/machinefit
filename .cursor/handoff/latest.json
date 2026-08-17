@@ -1,29 +1,27 @@
 {
-  "title": "Fix opaque recommend failure toast",
-  "summary": "추천받기 실패 시 항상 submitFailed만 보이던 문제. API 코드(한도/429/권한/네트워크)를 resolveApiErrorMessage로 표시하고, stale gym FORBIDDEN 시 프로필만으로 재시도.",
+  "title": "Fix Records loadFailed after deleting a machine card",
+  "summary": "삭제 후 history invalidate/refetch가 실패하면 isError만으로 기록 전체가 loadFailed로 덮이던 문제. placeholderData 유지, 낙관적 캐시 제거, 에러는 데이터 없을 때만 표시, home-bootstrap 무효화는 비차단.",
   "git": {
     "branch": "main",
-    "commit": "9eb0935e"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/hooks/useRecommendMachine.ts",
-    "frontend/src/utils/apiErrorCatalog.ts"
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx"
   ],
   "testFocus": [
-    "Recommend CTA → success still navigates",
-    "On failure toast shows specific reason (quota/rate/network) not only generic",
-    "Stale gym FORBIDDEN still can recommend via profile retry"
+    "Records에서 기구카드 삭제 → 목록 유지",
+    "삭제 후 다른 탭 갔다가 기록 복귀 → loadFailed 없음",
+    "진짜 첫 로드 실패 시에만 에러 + 다시 시도"
   ],
   "fastChecks": [
     "npm run typecheck --prefix frontend"
   ],
   "productionChecks": [
-    "Search → machine → 추천받기 with complete profile",
-    "If limit hit, see dailyQuota/rateLimit copy"
+    "Delete card on Records then leave/return — no loadFailed"
   ],
   "deploy": {
     "expected": "GitHub Pages after push"
   },
-  "asIs": "추천받기 → 요청을 처리하지 못했어요",
-  "toBe": "원인별 Toast + gym scope 실패 시 재시도"
+  "asIs": "삭제 후 기록 진입 시 loadFailed",
+  "toBe": "삭제 반영된 목록 유지, 실패 시에도 이전 데이터/재시도"
 }

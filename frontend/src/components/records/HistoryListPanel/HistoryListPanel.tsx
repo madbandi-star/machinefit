@@ -228,7 +228,12 @@ export function HistoryListPanel() {
     limit: HISTORY_LIST_LIMIT,
   });
 
-  const { data: allHistory, isLoading: isAllHistoryLoading, isError } = useQuery({
+  const {
+    data: allHistory,
+    isLoading: isAllHistoryLoading,
+    isError,
+    refetch: refetchHistory,
+  } = useQuery({
     queryKey: calendarQueryKey,
     queryFn: async () => {
       const res = await historyApi.list(activeGymId!, {
@@ -238,6 +243,8 @@ export function HistoryListPanel() {
       return res.data.data;
     },
     enabled: Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
+    // Keep prior list visible while a post-delete refetch runs (or fails).
+    placeholderData: (previous) => previous,
   });
 
   const { data: workoutLogs } = useQuery({
@@ -510,7 +517,8 @@ export function HistoryListPanel() {
   const translateMuscleGroup = (group: string) =>
     t(`machines:muscleGroups.${group}`, { defaultValue: group });
 
-  const isLoading = !activeGymId || !memberScopeReady || isAllHistoryLoading;
+  const isLoading =
+    (!activeGymId || !memberScopeReady || isAllHistoryLoading) && !allHistory;
 
   useEffect(() => {
     if (!focusId || isLoading || displayCards.length === 0) return;
@@ -574,13 +582,15 @@ export function HistoryListPanel() {
   };
 
   const invalidateAfterWorkoutDelete = useCallback(async () => {
+    // Soft refresh: do not block UI on home-bootstrap (it can race gym/member scope
+    // and leave the history query stuck in isError after delete).
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history }),
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutLogs }),
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.workoutCards }),
       queryClient.invalidateQueries({ queryKey: displayOrderQueryKey }),
-      queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
     ]);
+    void queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] });
   }, [displayOrderQueryKey, queryClient]);
 
   const invalidatePlans = useCallback(async () => {
@@ -628,8 +638,22 @@ export function HistoryListPanel() {
         }
       }
     },
-    onSuccess: async () => {
+    onSuccess: async (_data, deleted) => {
       setPendingDelete(null);
+      // Optimistic cache update so Records never flashes a full-page load error
+      // if the follow-up invalidate/refetch is slow or briefly fails.
+      if (deleted.historyId) {
+        queryClient.setQueryData(calendarQueryKey, (old: unknown) => {
+          if (!Array.isArray(old)) return old;
+          return old.filter((item: { id?: string }) => item.id !== deleted.historyId);
+        });
+      }
+      if (deleted.workoutCardId) {
+        queryClient.setQueryData(workoutCardsQueryKey, (old: unknown) => {
+          if (!Array.isArray(old)) return old;
+          return old.filter((item: { id?: string }) => item.id !== deleted.workoutCardId);
+        });
+      }
       await invalidateAfterWorkoutDelete();
       showToast(t('machines:history.removed'), 'success');
     },
@@ -1082,7 +1106,17 @@ export function HistoryListPanel() {
   const planAddUrl = `${ROUTES.MACHINES}?planDate=${encodeURIComponent(targetDeleteDate)}`;
 
   if (isLoading) return <Skeleton count={2} height={120} />;
-  if (isError) return <QueryErrorMessage />;
+  // Only block the page when we have nothing to show. A post-delete refetch
+  // failure must not replace the whole Records UI with loadFailed.
+  if (isError && !allHistory) {
+    return (
+      <QueryErrorMessage
+        onRetry={() => {
+          void refetchHistory();
+        }}
+      />
+    );
+  }
 
   const hasAnyRecords = allRecordCards.length > 0;
   const isEmptyList = !hasAnyRecords || displayCards.length === 0;
