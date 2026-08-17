@@ -21,6 +21,8 @@ export function useBrandFavorites() {
     },
     enabled: Boolean(userId),
     staleTime: 60_000,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 8_000),
   });
 }
 

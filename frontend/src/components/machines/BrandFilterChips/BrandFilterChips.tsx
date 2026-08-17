@@ -109,7 +109,7 @@ export function BrandFilterChips({
     freeWeight: t('brandFreeWeightShort'),
   };
   const sectionTitle = t('brandSectionTitle');
-  const skeletonCount = Math.max(6, orderedBrands.length + 1);
+  const skeletonCount = 6;
 
   return (
     <section className="filter-section filter-section--brand" aria-labelledby="search-brand-section-title">

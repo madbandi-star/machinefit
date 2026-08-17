@@ -70,6 +70,7 @@ export function MachineSearchPage() {
     resolveMuscleParam(searchParams.get('muscle'))
   );
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const userId = useAuthStore((s) => s.user?.id ?? null);
   const [brandCode, setBrandCode] = useState<string | null>(() =>
     resolveBrandParam(searchParams.get('brand'))
   );
@@ -182,25 +183,29 @@ export function MachineSearchPage() {
     setRecentSearches(clearRecentMachineSearches());
   };
 
-  const { data: brands = [], isLoading: brandsLoading } = useQuery({
-    queryKey: QUERY_KEYS.brands,
-    queryFn: async () => {
-      const res = await brandApi.list();
-      return res.data.data;
-    },
-    staleTime: 10 * 60_000,
-  });
+  const { data: brands = [], isLoading: brandsLoading, isError: brandsError, refetch: refetchBrands } =
+    useQuery({
+      queryKey: QUERY_KEYS.brands,
+      queryFn: async () => {
+        const res = await brandApi.list();
+        return res.data.data;
+      },
+      staleTime: 10 * 60_000,
+      retry: 3,
+      retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 8_000),
+    });
 
   const {
     data: favoriteBrandItems,
-    isFetched: favoriteBrandsFetched,
+    isPending: favoriteBrandsPending,
+    isError: favoriteBrandsError,
+    refetch: refetchFavoriteBrands,
   } = useBrandFavorites();
 
   // Logged-in: only My Brands favorites (same list as 마이페이지 > 내 브랜드).
   // Guests: full catalog. Prefer catalog Brand rows; fall back to favorite payload fields.
   const brandsForFilter = useMemo((): Brand[] => {
     if (!isAuthenticated) return brands;
-    if (!favoriteBrandsFetched) return [];
     const byId = new Map(brands.map((brand) => [brand.id, brand]));
     const ordered: Brand[] = [];
     for (const fav of favoriteBrandItems ?? []) {
@@ -220,18 +225,41 @@ export function MachineSearchPage() {
       });
     }
     return ordered;
-  }, [brands, favoriteBrandItems, favoriteBrandsFetched, isAuthenticated]);
+  }, [brands, favoriteBrandItems, isAuthenticated]);
+
+  // Keep brand chip skeletons until lists actually resolve (not just “fetched once”).
+  const brandChipsLoading = !isAuthenticated
+    ? brandsLoading || brandsError
+    : !userId ||
+      favoriteBrandsPending ||
+      favoriteBrandsError ||
+      brandsLoading ||
+      brandsError ||
+      // Favorites exist but chips not built yet (catalog / code race).
+      ((favoriteBrandItems?.length ?? 0) > 0 && brandsForFilter.length === 0);
+
+  useEffect(() => {
+    if (!brandsError) return;
+    const timer = window.setTimeout(() => void refetchBrands(), 1_500);
+    return () => window.clearTimeout(timer);
+  }, [brandsError, refetchBrands]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !favoriteBrandsError) return;
+    const timer = window.setTimeout(() => void refetchFavoriteBrands(), 1_500);
+    return () => window.clearTimeout(timer);
+  }, [favoriteBrandsError, isAuthenticated, refetchFavoriteBrands]);
 
   // Drop a selected brand that is no longer in the user's favorites.
   useEffect(() => {
-    if (!isAuthenticated || !favoriteBrandsFetched) return;
+    if (!isAuthenticated || brandChipsLoading) return;
     if (!brandCode) return;
     if (brandsForFilter.some((brand) => brand.code === brandCode)) return;
     setBrandCode(null);
     writeSearchParams({ brand: null });
     // writeSearchParams closes over muscle/brand — intentional one-shot clear
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brandCode, brandsForFilter, favoriteBrandsFetched, isAuthenticated]);
+  }, [brandCode, brandsForFilter, brandChipsLoading, isAuthenticated]);
 
   const { data: dayPlans = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
@@ -325,6 +353,7 @@ export function MachineSearchPage() {
     isLoading,
     isFetching,
     isError: machinesError,
+    isSuccess: machinesSuccess,
     refetch: refetchMachines,
   } = useQuery({
     queryKey: [...QUERY_KEYS.machines, 'search', debouncedQuery, muscleGroup, brandCode],
@@ -340,13 +369,25 @@ export function MachineSearchPage() {
       return Array.isArray(items) ? items : [];
     },
     staleTime: 5 * 60_000,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 8_000),
   });
 
+  useEffect(() => {
+    if (!machinesError) return;
+    const timer = window.setTimeout(() => void refetchMachines(), 1_500);
+    return () => window.clearTimeout(timer);
+  }, [machinesError, refetchMachines, debouncedQuery, muscleGroup, brandCode]);
+
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
-  const brandChipsLoading = isAuthenticated ? !favoriteBrandsFetched : brandsLoading;
-  // Never treat a stuck empty placeholder as “no machines” while a fetch is in flight.
+  // No error banners/buttons — keep skeletons until a successful list arrives.
   const showMachineSkeleton =
-    brandChipsLoading || ((isLoading || isFetching) && !data?.length);
+    brandChipsLoading ||
+    isLoading ||
+    isFetching ||
+    machinesError ||
+    !machinesSuccess ||
+    data === undefined;
   const recordsForDateUrl = planDate
     ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
     : ROUTES.RECORDS;
@@ -409,13 +450,6 @@ export function MachineSearchPage() {
         </h2>
         {showMachineSkeleton ? (
           <Skeleton count={5} height={120} />
-        ) : machinesError ? (
-          <div className="machine-search__load-error" role="alert">
-            <p>{t('search.loadFailed')}</p>
-            <button type="button" className="btn btn--secondary" onClick={() => void refetchMachines()}>
-              {t('search.retry')}
-            </button>
-          </div>
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />
         ) : (

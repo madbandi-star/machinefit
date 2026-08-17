@@ -1,30 +1,29 @@
 {
-  "title": "Search muscle/brand chips show skeleton until ready",
-  "summary": "Search page muscle chips wait for admin muscle-group image catalog; brand chips wait for brands (guest) or My Brands favorites (logged-in). Chip-shaped skeletons replace empty/partial rows.",
+  "title": "Search brand/machine keep skeletons ? no error UI",
+  "summary": "Brand chips stay on skeletons until favorites+catalog resolve (not just isFetched). Machine list never shows load-failed/retry ? skeleton + silent retry instead.",
   "git": {
     "branch": "main",
-    "commit": "d1905663"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/styles/machines.css"
+    "frontend/src/hooks/useBrandFavorites.ts",
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx"
   ],
   "testFocus": [
-    "Cold open search: muscle row shows skeletons then admin covers",
-    "Cold open search logged-in: brand row skeletons then favorite brands",
-    "Guest: brand skeletons then full catalog"
+    "Cold open search: brand row skeletons until favorite brands appear (not only ??)",
+    "Machine list: skeletons while loading/failing ? never loadFailed + retry button",
+    "After success: machines list or true empty state only"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend: hard refresh /machines and watch chip skeletons"
+    "After Deploy Frontend: hard refresh /machines"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Muscle/brand chips flashed incomplete (letters / only ??) while loading.",
-  "toBe": "Chip skeletons until muscle images and brand list are ready."
+  "asIs": "Brand showed only ??; machines showed loadFailed + retry.",
+  "toBe": "Brand and machines stay on skeletons until data succeeds."
 }
