@@ -3,7 +3,7 @@
   "summary": "Prevent removing the last favorite brand on My brands (UI toast + API MIN_BRAND_FAVORITES).",
   "git": {
     "branch": "main",
-    "commit": null
+    "commit": "733660b2"
   },
   "changedFiles": [
     "backend/server/services/brand-favorite.service.ts",

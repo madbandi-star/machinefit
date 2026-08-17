@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: (pending push)
+- commit: 733660b2
 
 ## Changed files
 - `backend/server/services/brand-favorite.service.ts`
