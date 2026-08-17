@@ -3,7 +3,7 @@
   "summary": "Logged-in users no longer default to 맨몸 brand (empty vs favorites). Muscle chips show seed photos immediately instead of letter fallbacks while the admin catalog loads.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "4524d8cd"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
