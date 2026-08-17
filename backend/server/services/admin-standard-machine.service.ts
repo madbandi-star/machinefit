@@ -16,6 +16,8 @@ import {
 } from '../config/admin-cover-image.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { publicApiBase } from '../utils/public-api-base.js';
+import { machineService } from './machine.service.js';
+import { brandService } from './brand.service.js';
 
 type UploadFile = {
   originalname: string;
@@ -38,6 +40,11 @@ function assertImageFile(file: UploadFile) {
   }
 }
 
+function invalidatePublicMachineCaches(): void {
+  machineService.invalidateCatalogCache();
+  brandService.invalidateMachinesCache();
+}
+
 export const adminStandardMachineService = {
   list(query: AdminStandardMachineListQuery): Promise<PaginatedResponse<StandardMachineType>> {
     return adminStandardMachineRepository.list(query);
@@ -47,20 +54,28 @@ export const adminStandardMachineService = {
     return adminStandardMachineRepository.get(id);
   },
 
-  create(input: AdminStandardMachineUpsertInput): Promise<StandardMachineType> {
-    return adminStandardMachineRepository.create(input);
+  async create(input: AdminStandardMachineUpsertInput): Promise<StandardMachineType> {
+    const created = await adminStandardMachineRepository.create(input);
+    invalidatePublicMachineCaches();
+    return created;
   },
 
-  update(id: string, input: AdminStandardMachineUpsertInput): Promise<StandardMachineType> {
-    return adminStandardMachineRepository.update(id, input);
+  async update(id: string, input: AdminStandardMachineUpsertInput): Promise<StandardMachineType> {
+    const updated = await adminStandardMachineRepository.update(id, input);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
-  setActive(id: string, isActive: boolean): Promise<StandardMachineType> {
-    return adminStandardMachineRepository.setActive(id, isActive);
+  async setActive(id: string, isActive: boolean): Promise<StandardMachineType> {
+    const updated = await adminStandardMachineRepository.setActive(id, isActive);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
-  delete(id: string): Promise<{ deleted: boolean; deactivated: boolean }> {
-    return adminStandardMachineRepository.delete(id);
+  async delete(id: string): Promise<{ deleted: boolean; deactivated: boolean }> {
+    const result = await adminStandardMachineRepository.delete(id);
+    invalidatePublicMachineCaches();
+    return result;
   },
 
   listOptions(activeOnly = true) {
@@ -84,7 +99,7 @@ export const adminStandardMachineService = {
     // Placeholder URL; repository rewrites to durable media route after insert.
     const placeholder = `${publicApiBase()}/media/standard-machine-images/pending/main`;
 
-    return adminStandardMachineRepository.insertImage({
+    const saved = await adminStandardMachineRepository.insertImage({
       standardTypeId,
       imageUrl: placeholder,
       thumbnailUrl: placeholder,
@@ -103,21 +118,29 @@ export const adminStandardMachineService = {
       imageData: processed.main.buffer,
       thumbnailData: processed.thumbnail.buffer,
     });
+    invalidatePublicMachineCaches();
+    return saved;
   },
 
-  updateImageMeta(
+  async updateImageMeta(
     imageId: string,
     meta: AdminStandardMachineImageMeta
   ): Promise<StandardMachineImage> {
-    return adminStandardMachineRepository.updateImageMeta(imageId, meta);
+    const updated = await adminStandardMachineRepository.updateImageMeta(imageId, meta);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
-  reorderImages(standardTypeId: string, orderedIds: string[]): Promise<StandardMachineImage[]> {
-    return adminStandardMachineRepository.reorderImages(standardTypeId, orderedIds);
+  async reorderImages(standardTypeId: string, orderedIds: string[]): Promise<StandardMachineImage[]> {
+    const items = await adminStandardMachineRepository.reorderImages(standardTypeId, orderedIds);
+    invalidatePublicMachineCaches();
+    return items;
   },
 
-  deleteImage(imageId: string): Promise<{ deleted: true }> {
-    return adminStandardMachineRepository.deleteImage(imageId);
+  async deleteImage(imageId: string): Promise<{ deleted: true }> {
+    const result = await adminStandardMachineRepository.deleteImage(imageId);
+    invalidatePublicMachineCaches();
+    return result;
   },
 
   getImageBlob(imageId: string, kind: 'main' | 'thumb') {
@@ -139,7 +162,7 @@ export const adminStandardMachineService = {
     const isPrimary = meta?.isPrimary ?? existing.length === 0;
     const placeholder = `${publicApiBase()}/media/machine-images/pending/main`;
 
-    return adminStandardMachineRepository.insertBrandMachineImage({
+    const saved = await adminStandardMachineRepository.insertBrandMachineImage({
       machineId,
       imageUrl: placeholder,
       imageType: meta?.imageType ?? 'other',
@@ -157,24 +180,35 @@ export const adminStandardMachineService = {
       imageData: processed.main.buffer,
       thumbnailData: processed.thumbnail.buffer,
     });
+    invalidatePublicMachineCaches();
+    return saved;
   },
 
-  updateBrandMachineImageMeta(
+  async updateBrandMachineImageMeta(
     imageId: string,
     meta: AdminBrandMachineImageMeta
   ): Promise<BrandMachineGalleryImage> {
-    return adminStandardMachineRepository.updateBrandMachineImageMeta(imageId, meta);
+    const updated = await adminStandardMachineRepository.updateBrandMachineImageMeta(imageId, meta);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
-  reorderBrandMachineImages(
+  async reorderBrandMachineImages(
     machineId: string,
     orderedIds: string[]
   ): Promise<BrandMachineGalleryImage[]> {
-    return adminStandardMachineRepository.reorderBrandMachineImages(machineId, orderedIds);
+    const items = await adminStandardMachineRepository.reorderBrandMachineImages(
+      machineId,
+      orderedIds
+    );
+    invalidatePublicMachineCaches();
+    return items;
   },
 
-  deleteBrandMachineImage(imageId: string): Promise<{ deleted: true }> {
-    return adminStandardMachineRepository.deleteBrandMachineImage(imageId);
+  async deleteBrandMachineImage(imageId: string): Promise<{ deleted: true }> {
+    const result = await adminStandardMachineRepository.deleteBrandMachineImage(imageId);
+    invalidatePublicMachineCaches();
+    return result;
   },
 
   getBrandMachineImageBlob(imageId: string, kind: 'main' | 'thumb') {

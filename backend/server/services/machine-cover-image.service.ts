@@ -15,6 +15,13 @@ import {
 import { AppError } from '../middlewares/error.middleware.js';
 import { machineCoverMediaUrl } from '../utils/public-api-base.js';
 import { env } from '../config/env.js';
+import { machineService } from './machine.service.js';
+import { brandService } from './brand.service.js';
+
+function invalidatePublicMachineCaches(): void {
+  machineService.invalidateCatalogCache();
+  brandService.invalidateMachinesCache();
+}
 
 async function trySupabaseStore(params: {
   machineCode: string;
@@ -157,6 +164,7 @@ export const machineCoverImageService = {
         await storageService.deleteMachineCoverImage(existing.thumbnailStoragePath);
       }
 
+      invalidatePublicMachineCaches();
       return saved;
     } catch (error) {
       if (error instanceof AppError) throw error;
@@ -184,6 +192,7 @@ export const machineCoverImageService = {
       if (removed.thumbnailStoragePath && !removed.thumbnailStoragePath.startsWith('db:')) {
         await storageService.deleteMachineCoverImage(removed.thumbnailStoragePath);
       }
+      invalidatePublicMachineCaches();
     }
     return {
       machineCode,

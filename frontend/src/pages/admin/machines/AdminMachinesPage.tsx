@@ -377,6 +377,9 @@ export function AdminMachinesPage() {
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminMachines });
     await queryClient.invalidateQueries({ queryKey: ['admin', 'machine-covers'] });
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machines });
+    await queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.history });
   };
 
   const syncMachineCaches = useCallback(

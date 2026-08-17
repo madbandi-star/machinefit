@@ -20,6 +20,7 @@ import { brandAssetMediaUrl } from '../utils/public-api-base.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
 import { brandService } from './brand.service.js';
 import { machineCoverImageService } from './machine-cover-image.service.js';
+import { machineService } from './machine.service.js';
 
 type UploadFile = {
   originalname: string;
@@ -47,6 +48,11 @@ function assertImageFile(file: UploadFile): void {
   }
 }
 
+function invalidatePublicMachineCaches(): void {
+  machineService.invalidateCatalogCache();
+  brandService.invalidateMachinesCache();
+}
+
 export const adminCatalogService = {
   listBrands(query: AdminBrandListQuery): Promise<PaginatedResponse<Brand>> {
     return adminCatalogRepository.listBrands(query);
@@ -57,19 +63,34 @@ export const adminCatalogService = {
   },
 
   createBrand(input: AdminBrandUpsertInput): Promise<Brand> {
-    return adminCatalogRepository.createBrand(input);
+    return adminCatalogRepository.createBrand(input).then((brand) => {
+      brandService.invalidateListCache();
+      return brand;
+    });
   },
 
   updateBrand(id: string, input: AdminBrandUpsertInput): Promise<Brand> {
-    return adminCatalogRepository.updateBrand(id, input);
+    return adminCatalogRepository.updateBrand(id, input).then((brand) => {
+      brandService.invalidateListCache();
+      brandService.invalidateMachinesCache();
+      return brand;
+    });
   },
 
   setBrandActive(id: string, isActive: boolean): Promise<Brand> {
-    return adminCatalogRepository.setBrandActive(id, isActive);
+    return adminCatalogRepository.setBrandActive(id, isActive).then((brand) => {
+      brandService.invalidateListCache();
+      brandService.invalidateMachinesCache();
+      invalidatePublicMachineCaches();
+      return brand;
+    });
   },
 
   setBrandDefaultFavorite(id: string, isDefaultFavorite: boolean): Promise<Brand> {
-    return adminCatalogRepository.setBrandDefaultFavorite(id, isDefaultFavorite);
+    return adminCatalogRepository.setBrandDefaultFavorite(id, isDefaultFavorite).then((brand) => {
+      brandService.invalidateListCache();
+      return brand;
+    });
   },
 
   async moveBrandSort(
@@ -82,7 +103,12 @@ export const adminCatalogService = {
   },
 
   deleteBrand(id: string): Promise<{ deleted: true }> {
-    return adminCatalogRepository.deleteBrand(id);
+    return adminCatalogRepository.deleteBrand(id).then((result) => {
+      brandService.invalidateListCache();
+      brandService.invalidateMachinesCache();
+      invalidatePublicMachineCaches();
+      return result;
+    });
   },
 
   async uploadBrandLogo(id: string, file: UploadFile): Promise<Brand> {
@@ -159,27 +185,37 @@ export const adminCatalogService = {
     return adminCatalogRepository.getMachine(id);
   },
 
-  createMachine(input: AdminMachineUpsertInput): Promise<Machine> {
-    return adminCatalogRepository.createMachine(input);
+  async createMachine(input: AdminMachineUpsertInput): Promise<Machine> {
+    const created = await adminCatalogRepository.createMachine(input);
+    invalidatePublicMachineCaches();
+    return created;
   },
 
-  updateMachine(id: string, input: AdminMachineUpsertInput): Promise<Machine> {
-    return adminCatalogRepository.updateMachine(id, input);
+  async updateMachine(id: string, input: AdminMachineUpsertInput): Promise<Machine> {
+    const updated = await adminCatalogRepository.updateMachine(id, input);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
-  setMachineActive(id: string, isActive: boolean): Promise<Machine> {
-    return adminCatalogRepository.setMachineActive(id, isActive);
+  async setMachineActive(id: string, isActive: boolean): Promise<Machine> {
+    const updated = await adminCatalogRepository.setMachineActive(id, isActive);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
-  deleteMachine(
+  async deleteMachine(
     id: string,
     options: { force?: boolean } = {}
   ): Promise<{ deleted: boolean; deactivated: boolean; forcePurged: boolean }> {
-    return adminCatalogRepository.deleteMachine(id, options);
+    const result = await adminCatalogRepository.deleteMachine(id, options);
+    invalidatePublicMachineCaches();
+    return result;
   },
 
-  updateMachineTips(id: string, input: AdminMachineTipsUpdateInput): Promise<Machine> {
-    return adminCatalogRepository.updateMachineTips(id, input);
+  async updateMachineTips(id: string, input: AdminMachineTipsUpdateInput): Promise<Machine> {
+    const updated = await adminCatalogRepository.updateMachineTips(id, input);
+    invalidatePublicMachineCaches();
+    return updated;
   },
 
   async uploadMachineImage(id: string, file: UploadFile): Promise<Machine> {
@@ -188,6 +224,7 @@ export const adminCatalogService = {
     await machineCoverImageService.upload({ machineCode: machine.code, file });
     const refreshed = await adminCatalogRepository.getMachine(machine.id);
     if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
+    invalidatePublicMachineCaches();
     return refreshed;
   },
 
@@ -197,6 +234,7 @@ export const adminCatalogService = {
     await machineCoverImageService.remove(machine.code);
     const refreshed = await adminCatalogRepository.getMachine(machine.id);
     if (!refreshed) throw new AppError(404, 'NOT_FOUND', 'Machine not found');
+    invalidatePublicMachineCaches();
     return refreshed;
   },
 };

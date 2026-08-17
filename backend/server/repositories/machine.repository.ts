@@ -381,6 +381,12 @@ export const machineRepository = {
     }
     return id;
   },
+
+  /** Clear code→id memo after admin rename/delete (or wipe all). */
+  clearIdByCodeCache(code?: string): void {
+    if (code) machineIdByCodeCache.delete(code);
+    else machineIdByCodeCache.clear();
+  },
 };
 
 export const brandRepository = {

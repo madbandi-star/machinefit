@@ -13,6 +13,11 @@ export const brandService = {
     brandByCodeCache.clear();
   },
 
+  /** Drop brand→machines list cache (admin machine mutations). */
+  invalidateMachinesCache(): void {
+    brandMachinesCache.clear();
+  },
+
   async list() {
     return brandsCache.getOrSet('all', () => brandRepository.findAll());
   },

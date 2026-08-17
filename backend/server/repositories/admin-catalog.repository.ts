@@ -16,6 +16,51 @@ import { primaryImageCoalesceSql } from '../utils/primary-image-sql.js';
 /** Prefer cover URL with version bust so re-uploads are not stuck on immutable browser cache. */
 const PRIMARY_IMAGE_URL_SQL = primaryImageCoalesceSql('m');
 
+type LocalizedBag = Record<string, string>;
+
+/** Keep ja/zh (and any extra locales) when admin form only posts ko/en. */
+function mergeLocalizedName(
+  existing: LocalizedBag | null | undefined,
+  incoming: { ko: string; en: string; ja?: string; zh?: string }
+): LocalizedBag {
+  const next: LocalizedBag = { ...(existing ?? {}) };
+  next.ko = incoming.ko;
+  next.en = incoming.en;
+  if (incoming.ja !== undefined) {
+    if (incoming.ja) next.ja = incoming.ja;
+    else delete next.ja;
+  }
+  if (incoming.zh !== undefined) {
+    if (incoming.zh) next.zh = incoming.zh;
+    else delete next.zh;
+  }
+  return next;
+}
+
+/**
+ * FE often omits description when ko/en are empty, or sends only ko/en.
+ * Preserve ja/zh; when omitted entirely, clear only ko/en (editable fields).
+ */
+function mergeLocalizedDescription(
+  existing: LocalizedBag | null | undefined,
+  incoming: { ko?: string; en?: string; ja?: string; zh?: string } | undefined
+): LocalizedBag | null {
+  const next: LocalizedBag = { ...(existing ?? {}) };
+  if (incoming === undefined) {
+    delete next.ko;
+    delete next.en;
+  } else {
+    for (const key of ['ko', 'en', 'ja', 'zh'] as const) {
+      if (Object.prototype.hasOwnProperty.call(incoming, key)) {
+        const value = incoming[key];
+        if (value) next[key] = value;
+        else delete next[key];
+      }
+    }
+  }
+  return Object.keys(next).length > 0 ? next : null;
+}
+
 interface BrandAdminRow {
   id: string;
   code: string;
@@ -551,6 +596,18 @@ export const adminCatalogRepository = {
             : input.bodyweightLoadFactor
           : null;
 
+      const nextName = mergeLocalizedName(
+        existing.name as LocalizedBag,
+        input.name
+      );
+      const nextDescription = mergeLocalizedDescription(
+        existing.description as LocalizedBag | null | undefined,
+        input.description
+      );
+      const romProvided = input.romType !== undefined;
+      const romValue =
+        input.romType === undefined ? null : input.romType.trim() || null;
+
       await pool.query(
         `UPDATE machines SET
            brand_id = $2,
@@ -565,28 +622,28 @@ export const adminCatalogRepository = {
            has_back_pad = COALESCE($11, has_back_pad),
            has_foot_plate = COALESCE($12, has_foot_plate),
            has_handle = COALESCE($13, has_handle),
-           rom_type = COALESCE($14, rom_type),
-           bodyweight_load_factor = $15,
-           standard_type_id = $16,
-           model_code = $17,
+           rom_type = CASE WHEN $14::boolean THEN $15 ELSE rom_type END,
+           bodyweight_load_factor = $16,
+           standard_type_id = $17,
+           model_code = $18,
            updated_at = NOW()
          WHERE id = $1`,
         [
           existing.id,
           input.brandId,
           input.code.trim().toUpperCase(),
-          input.name,
+          nextName,
           input.muscleGroup,
           nextType,
-          input.description ?? null,
+          nextDescription,
           input.sortOrder ?? 0,
           input.isActive ?? true,
           input.hasSeat ?? null,
           input.hasBackPad ?? null,
           input.hasFootPlate ?? null,
           input.hasHandle ?? null,
-          // undefined → preserve via COALESCE(null, rom_type); '' → clear to null
-          input.romType === undefined ? null : input.romType.trim() || null,
+          romProvided,
+          romValue,
           nextFactor,
           input.standardTypeId === undefined
             ? existing.standardTypeId ?? null
@@ -673,6 +730,23 @@ export const adminCatalogRepository = {
       } finally {
         client.release();
       }
+    }
+
+    // CASCADE FKs (workout_logs, favorites, …) do not raise 23503 — soft-deactivate
+    // when user data references the machine so a normal delete cannot wipe history.
+    const refs = await pool.query<{ logs: string; favs: string }>(
+      `SELECT
+         (SELECT COUNT(*)::text FROM workout_logs WHERE machine_id = $1) AS logs,
+         (SELECT COUNT(*)::text FROM favorites WHERE machine_id = $1) AS favs`,
+      [existing.id]
+    );
+    const logCount = Number(refs.rows[0]?.logs ?? 0);
+    const favCount = Number(refs.rows[0]?.favs ?? 0);
+    if (logCount > 0 || favCount > 0) {
+      await pool.query('UPDATE machines SET is_active = FALSE, updated_at = NOW() WHERE id = $1', [
+        existing.id,
+      ]);
+      return { deleted: false, deactivated: true, forcePurged: false };
     }
 
     try {

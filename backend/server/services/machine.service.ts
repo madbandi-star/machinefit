@@ -22,6 +22,13 @@ function listCacheKey(query: MachineListQuery): string {
 }
 
 export const machineService = {
+  /** Drop public catalog caches after admin create/update/delete/image changes. */
+  invalidateCatalogCache(): void {
+    machineListCache.clear();
+    machineByCodeCache.clear();
+    machineRepository.clearIdByCodeCache();
+  },
+
   async list(query: MachineListQuery) {
     // Cache unfiltered / lightly filtered catalog pages (search q changes too often).
     const canCache = !query.q?.trim();
