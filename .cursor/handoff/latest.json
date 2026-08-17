@@ -2,8 +2,7 @@
   "title": "Fix production boot crash (useLocation outside Router)",
   "summary": "ServiceUnavailableScreen called useLocation while mounted in AppProviders outside RouterProvider, emptying #root on machine-fit.com. Use window.location.pathname instead.",
   "git": {
-    "branch": "main",
-    "commit": "pending"
+    "branch": "main"
   },
   "changedFiles": [
     "frontend/src/components/feedback/ServiceUnavailableScreen/ServiceUnavailableScreen.tsx"
