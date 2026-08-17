@@ -3,7 +3,7 @@
   "summary": "UI open separated from play success; singleton audio + Media Session; classified failure toasts; no unmount pause; video overlay opens immediately with YouTube autoplay from user gesture.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "b10251ed"
   },
   "changedFiles": [
     "frontend/src/utils/motivationAudioEngine.ts",
