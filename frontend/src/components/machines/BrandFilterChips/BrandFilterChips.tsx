@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import type { Brand } from '@machinefit/shared';
-import type { ReactNode } from 'react';
 import { BRAND_CODES } from '@machinefit/shared';
 import { Icon, type IconName } from '@/components/icons/Icon';
 import { ScrollCarousel } from '@/components/navigation/ScrollCarousel/ScrollCarousel';
@@ -18,8 +17,6 @@ interface BrandFilterChipsProps {
   brands: Brand[];
   value: string | null;
   onChange: (brandCode: string | null) => void;
-  /** When brands is empty, show this instead of hiding the section. */
-  emptyState?: ReactNode;
   /** When false, do not inject bodyweight/free-weight fallbacks (favorites filter). */
   includeFallbacks?: boolean;
 }
@@ -100,7 +97,6 @@ export function BrandFilterChips({
   brands,
   value,
   onChange,
-  emptyState,
   includeFallbacks = true,
 }: BrandFilterChipsProps) {
   const { t, i18n } = useTranslation('machines');
@@ -112,15 +108,7 @@ export function BrandFilterChips({
   const sectionTitle = t('brandSectionTitle');
 
   if (orderedBrands.length === 0) {
-    if (!emptyState) return null;
-    return (
-      <section className="filter-section filter-section--brand" aria-labelledby="search-brand-section-title">
-        <h2 id="search-brand-section-title" className="filter-section__title">
-          {sectionTitle}
-        </h2>
-        <div className="filter-section__brand-empty">{emptyState}</div>
-      </section>
-    );
+    return null;
   }
 
   return (

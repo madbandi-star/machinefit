@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, Star } from 'lucide-react';
 import type { Machine } from '@machinefit/shared';
 import { isAllGymsId, isFreeWeightMachineCode } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
@@ -204,9 +203,6 @@ export function MachineSearchPage() {
     return brands.filter((brand) => ids.has(brand.id));
   }, [brands, favoriteBrandItems, favoriteBrandsFetched, isAuthenticated]);
 
-  const favoriteBrandEmpty =
-    isAuthenticated && favoriteBrandsFetched && brandsForFilter.length === 0;
-
   useEffect(() => {
     if (!isAuthenticated || !favoriteBrandsFetched) return;
     if (!brandCode) return;
@@ -376,29 +372,6 @@ export function MachineSearchPage() {
           value={brandCode}
           onChange={handleBrandChange}
           includeFallbacks={!isAuthenticated}
-          emptyState={
-            favoriteBrandEmpty ? (
-              <Link to={ROUTES.BRAND_FAVORITES} className="brand-filter-empty">
-                <span className="brand-filter-empty__icon" aria-hidden>
-                  <Star size={18} strokeWidth={2.1} fill="currentColor" />
-                </span>
-                <span className="brand-filter-empty__body">
-                  <span className="brand-filter-empty__title">
-                    {t('brandFavorites.filterEmptyTitle')}
-                  </span>
-                  <span className="brand-filter-empty__hint">
-                    {t('brandFavorites.filterEmptyHint')}
-                  </span>
-                </span>
-                <span className="brand-filter-empty__cta">
-                  <span className="brand-filter-empty__cta-label">
-                    {t('brandFavorites.filterEmptyCta')}
-                  </span>
-                  <ChevronRight size={16} strokeWidth={2.25} aria-hidden />
-                </span>
-              </Link>
-            ) : undefined
-          }
         />
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}

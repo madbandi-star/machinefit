@@ -10,11 +10,6 @@
   "filterByBrand": "Filter by brand",
   "muscleSectionTitle": "Muscle groups",
   "brandSectionTitle": "Brands",
-  "brandFavorites": {
-    "filterEmptyTitle": "还没有收藏品牌",
-    "filterEmptyHint": "添加常用品牌后，可在这里快速筛选。",
-    "filterEmptyCta": "添加"
-  },
   "recommendedMachinesTitle": "Recommended machines",
   "recentSearches": {
     "title": "Recent searches",

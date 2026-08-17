@@ -10,11 +10,6 @@
   "filterByBrand": "Filter by brand",
   "muscleSectionTitle": "Muscle groups",
   "brandSectionTitle": "Brands",
-  "brandFavorites": {
-    "filterEmptyTitle": "お気に入りブランドがありません",
-    "filterEmptyHint": "よく使うブランドを追加すると、ここですぐに選べます。",
-    "filterEmptyCta": "追加"
-  },
   "recommendedMachinesTitle": "Recommended machines",
   "recentSearches": {
     "title": "Recent searches",

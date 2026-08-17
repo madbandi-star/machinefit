@@ -10,11 +10,6 @@
   "filterByBrand": "브랜드별 필터",
   "muscleSectionTitle": "근육군",
   "brandSectionTitle": "브랜드",
-  "brandFavorites": {
-    "filterEmptyTitle": "즐겨찾기 브랜드가 없어요",
-    "filterEmptyHint": "자주 쓰는 브랜드를 추가하면 여기서 바로 고를 수 있어요.",
-    "filterEmptyCta": "추가"
-  },
   "recommendedMachinesTitle": "추천 머신",
   "recentSearches": {
     "title": "최근 검색",

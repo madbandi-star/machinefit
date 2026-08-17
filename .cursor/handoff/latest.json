@@ -1,35 +1,30 @@
 {
-  "title": "Min 1 brand favorite",
-  "summary": "Prevent removing the last favorite brand on My brands (UI toast + API MIN_BRAND_FAVORITES).",
+  "title": "Hide search empty brand favorites UI",
+  "summary": "Remove the no-favorite-brands empty CTA on machine search; favorites are always >= 1.",
   "git": {
     "branch": "main",
-    "commit": "733660b2"
+    "commit": null
   },
   "changedFiles": [
-    "backend/server/services/brand-favorite.service.ts",
-    "frontend/src/hooks/useBrandFavorites.ts",
-    "frontend/src/utils/apiErrorCatalog.ts",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
+    "frontend/src/styles/machines.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Cannot unfavorite when only one brand favorite remains",
-    "Can unfavorite when two or more remain",
-    "DELETE last favorite returns 400 MIN_BRAND_FAVORITES"
+    "Search page does not show favorite-brand empty CTA",
+    "Favorite brand chips still render when present",
+    "Guest brand filter still works"
   ],
-  "fastChecks": [
-    "npm run test:smoke:changed"
-  ],
-  "productionChecks": [
-    "Pages: /my-page/brand-favorites last-star toast",
-    "Render: brand-favorites DELETE last item rejected"
-  ],
+  "fastChecks": ["npm run test:smoke:changed"],
+  "productionChecks": ["Pages: /search no empty brand CTA"],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backend": "Render redeploy required"
+    "backend": "not required"
   },
-  "asIs": "Users could clear all brand favorites",
-  "toBe": "At least one favorite brand is always required"
+  "asIs": "Empty favorite brands CTA shown on search",
+  "toBe": "CTA removed; brand section hidden if no chips"
 }
