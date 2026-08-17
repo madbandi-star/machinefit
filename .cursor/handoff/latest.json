@@ -1,36 +1,33 @@
 {
-  "title": "Perf/network/workout UX overhaul",
-  "summary": "Optimistic set-complete without invalidate storms; IndexedDB draft+sync queue; login cache scoped clear; share/muscle assets compressed; admin layout/i18n deferred.",
+  "title": "Motivation media player stability",
+  "summary": "UI open separated from play success; singleton audio + Media Session; classified failure toasts; no unmount pause; video overlay opens immediately with YouTube autoplay from user gesture.",
   "git": {
     "branch": "main",
-    "commit": "9033ca00"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
-    "frontend/src/offline/*",
-    "frontend/src/services/http/axios-client.ts",
-    "frontend/src/utils/syncGymScope.ts",
-    "backend/server/routes/workout-log.routes.ts",
-    "frontend/public/assets/share/**",
-    "frontend/src/assets/muscle-groups/*"
+    "frontend/src/utils/motivationAudioEngine.ts",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
+    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
+    "frontend/src/i18n/locales/*/common.json"
   ],
   "testFocus": [
-    "Records: set complete stays snappy while silent save runs",
-    "Offline set complete → online auto sync banner",
-    "Login does not refetch brands/machines from scratch",
-    "Share/fortune images load as jpg"
+    "Header music button opens player shell even before play succeeds",
+    "Play failure shows specific toast; panel stays open",
+    "Navigate pages while music playing — audio continues",
+    "Video button opens overlay immediately"
   ],
   "fastChecks": [
     "npm run typecheck --prefix frontend",
-    "rg -n \"invalidateLogSideEffects|enqueueSilentSave|workoutOfflineDb\" frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx"
+    "rg -n \"playMotivationTrack|getMotivationAudio|playbackPhase\" frontend/src"
   ],
   "productionChecks": [
-    "Pages deploy",
-    "Render redeploy for workout-log idempotency middleware"
+    "Pages Deploy Frontend success",
+    "Hard refresh; test music + video on phone"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages only"
   },
-  "asIs": "Silent set save invalidated all history queries and locked the panel; no offline queue; ~58MB static images",
-  "toBe": "Optimistic local-first workout UX with sync queue; lean assets; scoped login cache"
+  "asIs": "Play failure hid useful feedback; play via useEffect lost gesture; remount paused audio",
+  "toBe": "Shell always opens; await play(); singleton + Media Session; toast with reason"
 }

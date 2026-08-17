@@ -28,7 +28,22 @@ import { motivationMediaApi, userMotivationTrackApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
-import { formatDuration, isBenignAudioPlayError, playHtmlAudio, sameMediaUrl } from '@/utils/motivationAudio';
+import { formatDuration, isBenignAudioPlayError } from '@/utils/motivationAudio';
+import {
+  bindMotivationAudioSrc,
+  getMotivationAudio,
+  isMotivationUserPaused,
+  logMotivationMedia,
+  motivationFailToastKey,
+  pauseMotivationAudio,
+  playMotivationTrack,
+  setMotivationMediaSessionPlaybackState,
+  setMotivationUserPaused,
+  shouldShowMotivationFailToast,
+  stopMotivationAudio,
+  updateMotivationMediaSession,
+  type MotivationPlaybackPhase,
+} from '@/utils/motivationAudioEngine';
 import {
   loadPlaylistOrder,
   loadShuffleEnabled,
@@ -179,13 +194,22 @@ export function MotivationMediaControls({
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [musicCompact, setMusicCompact] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
+  const [playbackPhase, setPlaybackPhase] = useState<MotivationPlaybackPhase>('idle');
   const [playAll, setPlayAll] = useState(false);
   const [musicIndex, setMusicIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  /** Singleton audio — not tied to this component's lifetime. */
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  if (!audioRef.current && typeof window !== 'undefined') {
+    audioRef.current = getMotivationAudio();
+  }
   const panelRef = useRef<HTMLDivElement | null>(null);
   const seekingRef = useRef(false);
+  const playGenRef = useRef(0);
+  const onMusicEndedRef = useRef<() => void>(() => undefined);
+  const playNextTrackRef = useRef<() => void>(() => undefined);
+  const playPrevTrackRef = useRef<() => void>(() => undefined);
   const musicRef = useRef(music);
   musicRef.current = music;
   const musicIndexRef = useRef(musicIndex);
@@ -216,50 +240,59 @@ export function MotivationMediaControls({
 
   const musicLabel = useMemo(() => {
     if (!music.length) return t('motivation.musicEmpty');
-    if (musicPlaying && currentMusic) {
+    if (playbackPhase === 'playing' && currentMusic) {
       return t('motivation.nowPlaying', { title: currentMusic.title });
     }
+    if (playbackPhase === 'opening' || playbackPhase === 'buffering') {
+      return t('motivation.preparing');
+    }
     return t('motivation.music');
-  }, [music.length, musicPlaying, currentMusic, t]);
+  }, [music.length, playbackPhase, currentMusic, t]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const reportPlayFailure = (reason: Parameters<typeof motivationFailToastKey>[0]) => {
+    if (!shouldShowMotivationFailToast(reason)) return;
+    showToast(t(motivationFailToastKey(reason)), 'error');
+  };
 
-    if (!musicPlaying || !currentMusicUrl) {
-      audio.pause();
+  /**
+   * Start playback from a user gesture when possible.
+   * Always opens the player UI first — UI open ≠ play success.
+   */
+  const startPlayback = async (url: string, options?: { compact?: boolean }) => {
+    setMusicPanelOpen(true);
+    if (options?.compact != null) setMusicCompact(options.compact);
+    setPlaybackPhase('opening');
+    setMotivationUserPaused(false);
+    logMotivationMedia('play requested', { url: url.slice(0, 120) });
+
+    const gen = ++playGenRef.current;
+    const result = await playMotivationTrack(url);
+    if (gen !== playGenRef.current) return;
+
+    if (result.ok) {
+      setMusicPlaying(true);
+      setPlaybackPhase('playing');
+      setMotivationMediaSessionPlaybackState('playing');
+      logMotivationMedia('play success');
       return;
     }
 
-    const controller = new AbortController();
+    if (isBenignAudioPlayError(result.error) || result.reason === 'ABORTED') {
+      logMotivationMedia('play aborted');
+      return;
+    }
 
-    const start = async () => {
-      try {
-        if (sameMediaUrl(audio.src, currentMusicUrl) && !audio.paused) {
-          return;
-        }
-        if (!sameMediaUrl(audio.src, currentMusicUrl)) {
-          setCurrentTime(0);
-          setDuration(0);
-        }
-        await playHtmlAudio(audio, currentMusicUrl, { signal: controller.signal });
-      } catch (error) {
-        if (controller.signal.aborted || isBenignAudioPlayError(error)) return;
-        setMusicPlaying(false);
-        showToast(t('motivation.playFailed'), 'error');
-      }
-    };
+    setMusicPlaying(false);
+    setPlaybackPhase('failed');
+    setMotivationMediaSessionPlaybackState('paused');
+    logMotivationMedia('play failed', { reason: result.reason });
+    reportPlayFailure(result.reason);
+  };
 
-    void start();
-    return () => {
-      controller.abort();
-    };
-  }, [musicPlaying, currentMusicUrl, showToast, t]);
-
-  // Keep seek bar in sync with the audio element.
+  // Wire singleton element events (time / ended / waiting). Do not pause on unmount.
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audio = getMotivationAudio();
+    audioRef.current = audio;
 
     const syncDuration = () => {
       const next = Number.isFinite(audio.duration) ? audio.duration : 0;
@@ -269,11 +302,42 @@ export function MotivationMediaControls({
       if (seekingRef.current) return;
       setCurrentTime(Number.isFinite(audio.currentTime) ? audio.currentTime : 0);
     };
+    const onPlaying = () => {
+      setMusicPlaying(true);
+      setPlaybackPhase('playing');
+      setMotivationMediaSessionPlaybackState('playing');
+    };
+    const onPause = () => {
+      // Ignore system/background hiccups unless user paused or we are stopping.
+      if (!musicPlayingRef.current) return;
+      if (audio.ended) return;
+      // Do not flip to paused on transient OS pauses while user wants play.
+    };
+    const onWaiting = () => {
+      if (musicPlayingRef.current) setPlaybackPhase('buffering');
+    };
+    const onEnded = () => {
+      setPlaybackPhase('ended');
+      onMusicEndedRef.current();
+    };
+    const onError = () => {
+      if (!musicPlayingRef.current) return;
+      setMusicPlaying(false);
+      setPlaybackPhase('failed');
+      if (shouldShowMotivationFailToast('MEDIA_LOAD_ERROR')) {
+        showToast(t(motivationFailToastKey('MEDIA_LOAD_ERROR')), 'error');
+      }
+    };
 
     audio.addEventListener('loadedmetadata', syncDuration);
     audio.addEventListener('durationchange', syncDuration);
     audio.addEventListener('timeupdate', syncTime);
     audio.addEventListener('seeked', syncTime);
+    audio.addEventListener('playing', onPlaying);
+    audio.addEventListener('pause', onPause);
+    audio.addEventListener('waiting', onWaiting);
+    audio.addEventListener('ended', onEnded);
+    audio.addEventListener('error', onError);
     syncDuration();
     syncTime();
 
@@ -282,21 +346,41 @@ export function MotivationMediaControls({
       audio.removeEventListener('durationchange', syncDuration);
       audio.removeEventListener('timeupdate', syncTime);
       audio.removeEventListener('seeked', syncTime);
+      audio.removeEventListener('playing', onPlaying);
+      audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('waiting', onWaiting);
+      audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('error', onError);
     };
-  }, [currentMusicUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- singleton bind once
+  }, []);
 
   // When panel opens on a selected track that isn't playing, load metadata for the seek bar.
   useEffect(() => {
     if (!musicPanelOpen || !currentMusicUrl || musicPlaying) return;
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (sameMediaUrl(audio.src, currentMusicUrl)) return;
-    audio.src = currentMusicUrl;
-    audio.preload = 'metadata';
-    audio.load();
+    bindMotivationAudioSrc(currentMusicUrl);
     setCurrentTime(0);
     setDuration(0);
   }, [musicPanelOpen, currentMusicUrl, musicPlaying]);
+
+  // Media Session metadata + lock-screen controls
+  useEffect(() => {
+    if (!currentMusic) return;
+    updateMotivationMediaSession({
+      title: currentMusic.title,
+      artworkUrl: currentMusic.coverImageUrl,
+      handlers: {
+        play: () => {
+          void startPlayback(currentMusic.mediaUrl, { compact: true });
+        },
+        pause: () => {
+          pauseMusic();
+        },
+        previoustrack: () => playPrevTrackRef.current(),
+        nexttrack: () => playNextTrackRef.current(),
+      },
+    });
+  }, [currentMusic]);
 
   // Duck music while voice coach / rest TTS is active so counts stay audible.
   useEffect(() => {
@@ -357,8 +441,9 @@ export function MotivationMediaControls({
     const audio = audioRef.current;
     if (!audio) return;
 
-    const tryResume = () => {
+  const tryResume = () => {
       if (!musicPlayingRef.current || !audio.paused) return;
+      if (isMotivationUserPaused()) return;
       void audio.play().catch(() => {
         // Autoplay / focus policy may reject; leave musicPlaying so UI stays honest.
       });
@@ -373,11 +458,7 @@ export function MotivationMediaControls({
     };
   }, [videoOpen, musicPlaying]);
 
-  useEffect(() => {
-    return () => {
-      audioRef.current?.pause();
-    };
-  }, []);
+  // Intentionally do not pause singleton audio on unmount (page nav / header remount).
 
   const musicUiRef = useRef<HTMLDivElement | null>(null);
   const musicDrag = useDraggableFloat({
@@ -423,13 +504,21 @@ export function MotivationMediaControls({
   }, [musicPanelOpen]);
 
   const stopMusic = () => {
+    playGenRef.current += 1;
     setMusicPlaying(false);
     setPlayAll(false);
-    audioRef.current?.pause();
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-    }
+    setPlaybackPhase('idle');
+    stopMotivationAudio();
+    setMotivationMediaSessionPlaybackState('none');
     setCurrentTime(0);
+  };
+
+  const pauseMusic = () => {
+    playGenRef.current += 1;
+    setMusicPlaying(false);
+    setPlaybackPhase('paused');
+    pauseMotivationAudio(true);
+    setMotivationMediaSessionPlaybackState('paused');
   };
 
   const seekTo = (seconds: number) => {
@@ -470,22 +559,29 @@ export function MotivationMediaControls({
     if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
       setPendingMusicAction(null);
+      // Keep panel open so the user sees why playback is empty.
+      setMusicPanelOpen(true);
+      setPlaybackPhase('failed');
       return;
     }
+    const list = musicRef.current;
+    const track = list[0];
     if (pendingMusicAction === 'panel') {
       setMusicPanelOpen(true);
       setMusicCompact(false);
+      setPlaybackPhase('idle');
     } else if (pendingMusicAction === 'playAll') {
       setPlayAll(true);
       setMusicIndex(0);
-      setMusicPlaying(true);
       setMusicPanelOpen(true);
       setMusicCompact(true);
+      if (track) void startPlayback(track.mediaUrl, { compact: true });
     } else {
       setPlayAll(false);
-      setMusicPlaying(true);
       setMusicPanelOpen(true);
       setMusicCompact(true);
+      const current = list[Math.min(musicIndexRef.current, Math.max(0, list.length - 1))];
+      if (current) void startPlayback(current.mediaUrl, { compact: true });
     }
     setPendingMusicAction(null);
   }, [pendingMusicAction, mediaReady, musicEmpty, showToast, t]);
@@ -494,36 +590,38 @@ export function MotivationMediaControls({
     if (!pendingVideoOpen || !mediaReady) return;
     if (videoEmpty) {
       showToast(t('motivation.videoEmpty'), 'info');
+      setVideoOpen(false);
       setPendingVideoOpen(false);
       return;
     }
     setMusicCompact(true);
     setVideoIndex(0);
     setVideoOpen(true);
+    setVideoCompact(false);
     setPendingVideoOpen(false);
   }, [pendingVideoOpen, mediaReady, videoEmpty, showToast, t]);
 
   const playSelected = () => {
     requestMedia();
+    setMusicPanelOpen(true);
+    setMusicCompact(true);
     if (!mediaReady) {
       setPendingMusicAction('play');
+      setPlaybackPhase('opening');
       return;
     }
     if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
+      setPlaybackPhase('failed');
       return;
     }
     setPlayAll(false);
-    setMusicPlaying(true);
-  };
-
-  const pauseMusic = () => {
-    setMusicPlaying(false);
-    audioRef.current?.pause();
+    const track = musicRef.current[Math.min(musicIndexRef.current, musicRef.current.length - 1)];
+    if (track) void startPlayback(track.mediaUrl, { compact: true });
   };
 
   const togglePlayPause = () => {
-    if (musicPlaying) {
+    if (musicPlaying || playbackPhase === 'opening' || playbackPhase === 'buffering') {
       pauseMusic();
       return;
     }
@@ -532,40 +630,47 @@ export function MotivationMediaControls({
 
   const playAllTracks = () => {
     requestMedia();
+    setMusicPanelOpen(true);
+    setMusicCompact(true);
     if (!mediaReady) {
       setPendingMusicAction('playAll');
+      setPlaybackPhase('opening');
       return;
     }
     if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
+      setPlaybackPhase('failed');
       return;
     }
     setPlayAll(true);
     setMusicIndex(0);
-    setMusicPlaying(true);
+    const track = musicRef.current[0];
+    if (track) void startPlayback(track.mediaUrl, { compact: true });
   };
 
   const openMusicPanel = () => {
     requestMedia();
+    // Always show player shell immediately (separate from play success).
+    setMusicPanelOpen(true);
     if (musicPanelOpen) {
-      // Toggle compact/expanded; do not dismiss (matches video player persistence).
       setMusicCompact((compact) => !compact);
       return;
     }
+    setMusicCompact(false);
     if (!mediaReady) {
       setPendingMusicAction('panel');
+      setPlaybackPhase('opening');
       return;
     }
     if (musicEmpty) {
       showToast(t('motivation.musicEmpty'), 'info');
+      setPlaybackPhase('failed');
       return;
     }
-    setMusicPanelOpen(true);
-    setMusicCompact(false);
+    setPlaybackPhase((prev) => (prev === 'playing' ? prev : 'idle'));
   };
 
   const dismissMusicPanel = () => {
-    // X always stops playback and closes the player (use Minimize for compact PiP).
     stopMusic();
     setMusicPanelOpen(false);
     setMusicCompact(false);
@@ -577,7 +682,9 @@ export function MotivationMediaControls({
       return;
     }
     setMusicIndex(index);
-    setMusicPlaying(true);
+    setPlayAll(false);
+    const track = musicRef.current[index];
+    if (track) void startPlayback(track.mediaUrl);
   };
 
   const goToAdjacentTrack = (direction: 'next' | 'prev') => {
@@ -588,19 +695,20 @@ export function MotivationMediaControls({
         ? pickNextIndex({ length: list.length, current, shuffle: shuffleRef.current })
         : pickPrevIndex({ length: list.length, current, shuffle: shuffleRef.current });
     if (nextIndex == null) {
-      setMusicPlaying(false);
-      setPlayAll(false);
+      stopMusic();
       return;
     }
     setMusicIndex(nextIndex);
-    setMusicPlaying(true);
+    const track = list[nextIndex];
+    if (track) void startPlayback(track.mediaUrl, { compact: musicCompact });
   };
 
   const playNextTrack = () => goToAdjacentTrack('next');
   const playPrevTrack = () => goToAdjacentTrack('prev');
+  playNextTrackRef.current = playNextTrack;
+  playPrevTrackRef.current = playPrevTrack;
 
   const onMusicEnded = () => {
-    // Auto-advance when another track follows (sequential or shuffle).
     const list = musicRef.current;
     const current = Math.min(musicIndexRef.current, Math.max(0, list.length - 1));
     const nextIndex = pickNextIndex({
@@ -611,11 +719,15 @@ export function MotivationMediaControls({
     if (nextIndex == null) {
       setMusicPlaying(false);
       setPlayAll(false);
+      setPlaybackPhase('ended');
+      setMotivationMediaSessionPlaybackState('none');
       return;
     }
     setMusicIndex(nextIndex);
-    setMusicPlaying(true);
+    const track = list[nextIndex];
+    if (track) void startPlayback(track.mediaUrl, { compact: true });
   };
+  onMusicEndedRef.current = onMusicEnded;
 
   const toggleShuffle = () => {
     setShuffle((prev) => {
@@ -647,19 +759,20 @@ export function MotivationMediaControls({
       return;
     }
     requestMedia();
+    // Always open overlay shell immediately; empty/error shown inside after fetch.
+    setMusicCompact(true);
+    setVideoOpen(true);
+    setVideoCompact(false);
     if (!mediaReady) {
       setPendingVideoOpen(true);
       return;
     }
     if (videoEmpty) {
       showToast(t('motivation.videoEmpty'), 'info');
+      setVideoOpen(false);
       return;
     }
-    // Keep motivation music UI as a compact PiP while the video overlay is open.
-    setMusicCompact(true);
     setVideoIndex(0);
-    setVideoOpen(true);
-    setVideoCompact(false);
   };
 
   const closeVideo = () => {
@@ -685,17 +798,17 @@ export function MotivationMediaControls({
       onPointerEnter={requestMedia}
       onFocusCapture={requestMedia}
     >
-      <audio ref={audioRef} preload="none" onEnded={onMusicEnded} />
+      {/* Singleton HTMLAudioElement lives in getMotivationAudio() — not remounted here. */}
 
       <button
         type="button"
-        className={`motivation-controls__btn${musicPlaying || musicPanelOpen ? ' motivation-controls__btn--active' : ''}`}
+        className={`motivation-controls__btn${musicPlaying || musicPanelOpen || playbackPhase === 'opening' ? ' motivation-controls__btn--active' : ''}`}
         aria-label={musicLabel}
         title={musicLabel}
         aria-expanded={musicPanelOpen}
         aria-haspopup="dialog"
         onClick={openMusicPanel}
-        disabled={musicEmpty}
+        disabled={mediaReady && musicEmpty}
       >
         <Music2 size={bundled ? 14 : 12} aria-hidden />
         {bundled ? null : musicPlaying ? <Pause size={11} aria-hidden /> : <Play size={11} aria-hidden />}
@@ -707,7 +820,7 @@ export function MotivationMediaControls({
         aria-label={t('motivation.video')}
         title={t('motivation.video')}
         onClick={toggleVideo}
-        disabled={videoEmpty}
+        disabled={mediaReady && videoEmpty}
       >
         {bundled ? (
           <Film size={14} aria-hidden />
@@ -743,7 +856,15 @@ export function MotivationMediaControls({
                     {currentMusic?.title ?? t('motivation.musicEmpty')}
                   </p>
                   <p className="mf-music-mini__status">
-                    {musicPlaying ? t('motivation.playing') : t('motivation.ready')}
+                    {playbackPhase === 'opening' || playbackPhase === 'buffering'
+                      ? t('motivation.preparing')
+                      : playbackPhase === 'failed'
+                        ? t('motivation.failedRetry')
+                        : musicPlaying
+                          ? t('motivation.playing')
+                          : playbackPhase === 'paused'
+                            ? t('motivation.pause')
+                            : t('motivation.ready')}
                   </p>
                 </div>
                 <button
@@ -875,13 +996,19 @@ export function MotivationMediaControls({
             </div>
             <div className="mf-music-popover__meta">
               <p className="mf-music-popover__status">
-                {musicPlaying
-                  ? shuffle
-                    ? t('motivation.shuffleMode')
-                    : playAll
-                      ? t('motivation.playAllMode')
-                      : t('motivation.playing')
-                  : t('motivation.ready')}
+                {playbackPhase === 'opening' || playbackPhase === 'buffering'
+                  ? t('motivation.preparing')
+                  : playbackPhase === 'failed'
+                    ? t('motivation.failedRetry')
+                    : musicPlaying
+                      ? shuffle
+                        ? t('motivation.shuffleMode')
+                        : playAll
+                          ? t('motivation.playAllMode')
+                          : t('motivation.playing')
+                      : playbackPhase === 'paused'
+                        ? t('motivation.pause')
+                        : t('motivation.ready')}
               </p>
               <p className="mf-music-popover__title" title={currentMusic?.title}>
                 {currentMusic?.title ?? t('motivation.musicEmpty')}
@@ -1116,12 +1243,24 @@ function VideoOverlay({
   const embedId = item?.youtubeId;
   const total = items.length;
   const [corner, setCorner] = useState<VideoMiniCorner>(() => loadVideoMiniCorner());
-  /** Click-to-play: defer YouTube iframe (and third-party cookies) until explicit play. */
-  const [iframeReady, setIframeReady] = useState(false);
+  /** Start YouTube on open — parent open is already a user gesture. */
+  const [iframeReady, setIframeReady] = useState(Boolean(item?.youtubeId));
+  const [videoFailed, setVideoFail] = useState(false);
+  const showToast = useUIStore((s) => s.showToast);
 
   useEffect(() => {
-    setIframeReady(false);
+    setIframeReady(Boolean(embedId));
+    setVideoFail(false);
   }, [embedId, index]);
+
+  useEffect(() => {
+    if (!item) {
+      showToast(t('motivation.failLoad'), 'error');
+    } else if (item && !embedId) {
+      showToast(t('motivation.failLoad'), 'error');
+      setVideoFail(true);
+    }
+  }, [item, embedId, showToast, t]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -1245,7 +1384,11 @@ function VideoOverlay({
               <span className="mf-video-overlay__facade-label">{t('motivation.clickToPlay')}</span>
             </button>
           ) : (
-            <p className="mf-video-overlay__error">{t('motivation.playFailed')}</p>
+            <p className="mf-video-overlay__error">
+              {videoFailed || !embedId
+                ? t('motivation.failLoad')
+                : t('motivation.playFailed')}
+            </p>
           )}
         </div>
 

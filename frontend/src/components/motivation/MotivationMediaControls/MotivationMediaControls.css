@@ -83,7 +83,7 @@
   right: auto;
   bottom: auto;
   transform: translateX(-50%);
-  z-index: 360;
+  z-index: 1300;
   width: auto;
   height: auto;
   padding: 0;
@@ -96,7 +96,7 @@
   right: auto;
   bottom: calc(var(--bottom-nav-height, 4.25rem) + 0.75rem);
   transform: none;
-  z-index: 360;
+  z-index: 1300;
 }
 
 /* Full panel: drag from the title bar only so playlist can still scroll. */
@@ -752,7 +752,7 @@
 .mf-video-overlay {
   position: fixed;
   inset: 0;
-  z-index: 400;
+  z-index: 1400;
   display: flex;
   align-items: flex-start;
   justify-content: center;
