@@ -1,6 +1,6 @@
 {
-  "title": "Search brand default = ?„ì²´ for everyone",
-  "summary": "Machine search (and easy picker) now default brand filter to ?„ì²´ (null / brand=all), including guests. No more ë§¨ëª¸ default.",
+  "title": "Search brand default = all for everyone",
+  "summary": "Machine search (and easy picker) now default brand filter to all (null / brand=all), including guests. No more bodyweight default.",
   "git": {
     "branch": "main",
     "commit": "c36a6a30"
@@ -10,19 +10,19 @@
     "frontend/src/pages/machine-search/MachineSearchPage.tsx"
   ],
   "testFocus": [
-    "Guest open ê²€?? brand chip ?„ì²´ selected, machines list non-empty",
-    "Logged-in open ê²€?? brand chip ?„ì²´ selected",
+    "Guest open search: brand chip All selected, machines list non-empty",
+    "Logged-in open search: brand chip All selected",
     "Picking a specific brand still filters correctly"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend: /machinefit/machines shows brand=?„ì²´ by default"
+    "After Deploy Frontend: /machinefit/machines shows brand=all by default"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Guest search defaulted brand to ë§¨ëª¸; logged-in already used ?„ì²´.",
-  "toBe": "Everyone defaults to brand ?„ì²´ on search entry."
+  "asIs": "Guest search defaulted brand to bodyweight; logged-in already used all.",
+  "toBe": "Everyone defaults to brand all on search entry."
 }
