@@ -138,20 +138,49 @@ function isUnlicensedPackagedPhotoUrl(url: string): boolean {
     || /\/assets\/brands\/life_fitness_wordmark\.png(\?|$)/i.test(url);
 }
 
+function isBundledMachineAssetUrl(url: string): boolean {
+  return /\/assets\/machines\//i.test(url);
+}
+
 function isAdminMachineCoverUrl(url: string): boolean {
   return /\/media\/machine-covers\//i.test(url);
 }
 
+/** Point `/media/machine-covers/...` at the configured API host (relative or wrong host). */
+function normalizeMachineCoverMediaUrl(url: string): string {
+  const apiBase = API_BASE_URL.replace(/\/+$/, '');
+  const marker = '/media/machine-covers/';
+  try {
+    const parsed = new URL(url);
+    const idx = parsed.pathname.indexOf(marker);
+    if (idx < 0) return url;
+    return `${apiBase}${parsed.pathname.slice(idx)}${parsed.search}`;
+  } catch {
+    const idx = url.indexOf(marker);
+    if (idx >= 0) return `${apiBase}${url.slice(idx)}`;
+    if (url.startsWith('/')) return `${apiBase}${url}`;
+    return url;
+  }
+}
+
 /**
- * Admin-uploaded covers win. Packaged catalog is original SVGs only —
- * unlicensed third-party product PNGs fall back to placeholder.
+ * Admin/API covers win over packaged catalog SVGs.
+ * Unlicensed bundled product PNGs stay blocked; other remote covers (incl. Supabase) show.
  */
 export function resolveMachineImageUrl(
   machineCode: string,
   primaryImageUrl?: string | null
 ): string | undefined {
-  if (primaryImageUrl && isAdminMachineCoverUrl(primaryImageUrl)) {
-    return primaryImageUrl;
+  if (primaryImageUrl && !isUnlicensedPackagedPhotoUrl(primaryImageUrl)) {
+    if (isAdminMachineCoverUrl(primaryImageUrl)) {
+      return normalizeMachineCoverMediaUrl(primaryImageUrl);
+    }
+    // Operator uploads often store Supabase public URLs — do not drop them for placeholder.
+    if (!isBundledMachineAssetUrl(primaryImageUrl)) {
+      return primaryImageUrl.startsWith('/')
+        ? `${API_BASE_URL.replace(/\/+$/, '')}${primaryImageUrl}`
+        : primaryImageUrl;
+    }
   }
 
   const packaged = packagedMachineAssetUrl(machineCode);
