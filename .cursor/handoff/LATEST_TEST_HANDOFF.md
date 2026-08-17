@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING
+- commit: c36a6a30
 
 ## Changed files
 - `frontend/src/constants/machine-search-defaults.ts`
