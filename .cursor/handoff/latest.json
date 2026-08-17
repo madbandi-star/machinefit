@@ -1,31 +1,28 @@
 {
-  "title": "Fix logged-in first search empty machines + muscle icons",
-  "summary": "Logged-in users no longer default to 맨몸 brand (empty vs favorites). Muscle chips show seed photos immediately instead of letter fallbacks while the admin catalog loads.",
+  "title": "Search brand default = 전체 for everyone",
+  "summary": "Machine search (and easy picker) now default brand filter to 전체 (null / brand=all), including guests. No more 맨몸 default.",
   "git": {
     "branch": "main",
-    "commit": "4524d8cd"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
     "frontend/src/constants/machine-search-defaults.ts",
-    "frontend/src/components/muscle/MuscleGroupIcon/MuscleGroupIcon.tsx",
-    "frontend/src/hooks/useMuscleGroupImages.ts"
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx"
   ],
   "testFocus": [
-    "Login → open 검색: muscle chips show representative photos (not 2-letter fallback)",
-    "Login → open 검색: recommended machines list is non-empty (not “등록된 머신이 없습니다”)",
-    "Guest search still defaults brand to 맨몸",
-    "Logged-in brand chips still only favorites; 전체 still works"
+    "Guest open 검색: brand chip 전체 selected, machines list non-empty",
+    "Logged-in open 검색: brand chip 전체 selected",
+    "Picking a specific brand still filters correctly"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend success: login on Pages, open /machinefit/machines — machines + muscle images"
+    "After Deploy Frontend: /machinefit/machines shows brand=전체 by default"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "After login, first search visit: muscle chips without photos; machines empty with 등록된 머신이 없습니다.",
-  "toBe": "After login, first search visit: muscle seed/admin photos + machine list under brand=all (전체)."
+  "asIs": "Guest search defaulted brand to 맨몸; logged-in already used 전체.",
+  "toBe": "Everyone defaults to brand 전체 on search entry."
 }

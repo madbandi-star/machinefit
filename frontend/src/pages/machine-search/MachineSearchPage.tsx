@@ -47,12 +47,10 @@ function resolveMuscleParam(raw: string | null): string | null {
   return trimmed;
 }
 
-function resolveBrandParam(raw: string | null, authenticated: boolean): string | null {
+function resolveBrandParam(raw: string | null): string | null {
   const trimmed = raw?.trim();
-  // Explicit “전체” — do not fall back to the guest entry default.
-  if (trimmed === 'all') return null;
-  // Logged-in: default 전체. Guest: 맨몸 (see machine-search-defaults).
-  if (!trimmed) return authenticated ? null : DEFAULT_SEARCH_BRAND_CODE;
+  // Explicit “전체” / missing → default 전체 (see machine-search-defaults).
+  if (!trimmed || trimmed === 'all') return DEFAULT_SEARCH_BRAND_CODE;
   return trimmed;
 }
 
@@ -73,7 +71,7 @@ export function MachineSearchPage() {
   );
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [brandCode, setBrandCode] = useState<string | null>(() =>
-    resolveBrandParam(searchParams.get('brand'), useAuthStore.getState().isAuthenticated)
+    resolveBrandParam(searchParams.get('brand'))
   );
   const [recentSearches, setRecentSearches] = useState(() => getRecentMachineSearches());
   const planDateRaw = searchParams.get('planDate');
@@ -93,10 +91,10 @@ export function MachineSearchPage() {
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
     setMuscleGroup(resolveMuscleParam(searchParams.get('muscle')));
-    setBrandCode(resolveBrandParam(searchParams.get('brand'), isAuthenticated));
-  }, [searchParams, isAuthenticated]);
+    setBrandCode(resolveBrandParam(searchParams.get('brand')));
+  }, [searchParams]);
 
-  // Default entry: muscle=전체 (omit). Guest brand=맨몸; logged-in brand=all (전체).
+  // Default entry: muscle=전체 (omit), brand=전체 (`brand=all`).
   useEffect(() => {
     setSearchParams(
       (prev) => {
@@ -107,20 +105,15 @@ export function MachineSearchPage() {
           changed = true;
         }
         if (!next.has('brand')) {
-          if (isAuthenticated) {
-            next.set('brand', 'all');
-            changed = true;
-          } else if (DEFAULT_SEARCH_BRAND_CODE) {
-            next.set('brand', DEFAULT_SEARCH_BRAND_CODE);
-            changed = true;
-          }
+          next.set('brand', 'all');
+          changed = true;
         }
         next.delete('scope');
         return changed ? next : prev;
       },
       { replace: true }
     );
-  }, [setSearchParams, isAuthenticated]);
+  }, [setSearchParams]);
 
   useEffect(() => {
     setSearchParams(
@@ -152,7 +145,7 @@ export function MachineSearchPage() {
         const brand = patch.brand !== undefined ? patch.brand : brandCode;
         if (muscle) next.set('muscle', muscle);
         else next.delete('muscle');
-        // null = 전체 → keep brand=all so entry default (맨몸) is not re-applied.
+        // null = 전체 → keep brand=all so entry default is not re-applied.
         if (brand === null) next.set('brand', 'all');
         else if (brand) next.set('brand', brand);
         else next.delete('brand');
