@@ -193,10 +193,13 @@ export function MachineSearchPage() {
 
   const { data: favoriteBrandItems, isFetched: favoriteBrandsFetched } = useBrandFavorites();
 
+  // Logged-in: chip list = favorite brands only. While favorites (or the brand catalog)
+  // are still loading, keep showing the full catalog so the brand row is not blank.
   const brandsForFilter = useMemo(() => {
     if (!isAuthenticated) return brands;
-    if (!favoriteBrandsFetched) return [];
+    if (!favoriteBrandsFetched || brands.length === 0) return brands;
     const ids = new Set((favoriteBrandItems ?? []).map((item) => item.brandId));
+    if (ids.size === 0) return brands;
     return brands.filter((brand) => ids.has(brand.id));
   }, [brands, favoriteBrandItems, favoriteBrandsFetched, isAuthenticated]);
 

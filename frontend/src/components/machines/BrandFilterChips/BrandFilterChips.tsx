@@ -107,10 +107,8 @@ export function BrandFilterChips({
   };
   const sectionTitle = t('brandSectionTitle');
 
-  if (orderedBrands.length === 0) {
-    return null;
-  }
-
+  // Always render the section (at least “전체”). Returning null hid the whole brand
+  // row while logged-in favorite brands were still loading.
   return (
     <section className="filter-section filter-section--brand" aria-labelledby="search-brand-section-title">
       <h2 id="search-brand-section-title" className="filter-section__title">

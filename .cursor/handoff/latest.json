@@ -1,28 +1,29 @@
 {
-  "title": "Search brand default = all for everyone",
-  "summary": "Machine search (and easy picker) now default brand filter to all (null / brand=all), including guests. No more bodyweight default.",
+  "title": "Fix brand chips missing on first search entry",
+  "summary": "Logged-in search no longer hides the brand row while favorite brands load. Chips keep showing (catalog then favorites); BrandFilterChips always renders at least ??; nav prefetches brand favorites.",
   "git": {
     "branch": "main",
-    "commit": "c36a6a30"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/constants/machine-search-defaults.ts",
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx"
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
+    "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx"
   ],
   "testFocus": [
-    "Guest open search: brand chip All selected, machines list non-empty",
-    "Logged-in open search: brand chip All selected",
-    "Picking a specific brand still filters correctly"
+    "Login ? open search: brand section visible immediately (?? + brands)",
+    "After favorites settle: chips narrow to favorite brands",
+    "Guest: brand chips still include bodyweight/free-weight fallbacks"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend: /machinefit/machines shows brand=all by default"
+    "After Deploy Frontend: login ? /machinefit/machines brand row not blank on first paint"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Guest search defaulted brand to bodyweight; logged-in already used all.",
-  "toBe": "Everyone defaults to brand all on search entry."
+  "asIs": "First search visit after login: brand filter section missing until favorites fetch.",
+  "toBe": "Brand section always shows; provisional full catalog then favorite brands."
 }
