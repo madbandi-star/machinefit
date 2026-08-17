@@ -83,7 +83,8 @@
     "addAria": "브랜드 즐겨찾기 추가",
     "removeAria": "브랜드 즐겨찾기 해제",
     "addNamed": "{{name}} 즐겨찾기 추가",
-    "removeNamed": "{{name}} 즐겨찾기 해제"
+    "removeNamed": "{{name}} 즐겨찾기 해제",
+    "minRequired": "즐겨찾기는 최소 1개 이상 유지해야 합니다."
   },
   "expandCardDetails": "상세 내용 펼치기",
   "collapseCardDetails": "상세 내용 접기",

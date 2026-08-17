@@ -74,7 +74,8 @@
     "addAria": "收藏品牌",
     "removeAria": "取消品牌收藏",
     "addNamed": "收藏 {{name}}",
-    "removeNamed": "取消收藏 {{name}}"
+    "removeNamed": "取消收藏 {{name}}",
+    "minRequired": "请至少保留 1 个收藏品牌。"
   },
   "expandCardDetails": "展开详情",
   "collapseCardDetails": "收起详情",

@@ -103,6 +103,11 @@ export function useBrandFavoriteToggle(brandId: string) {
       return;
     }
     if (mutation.isPending || tapGuardRef.current.isBlocked()) return;
+    // Keep at least one favorite brand (My brands / search filter).
+    if (isFavorited && favorites.length <= 1) {
+      showToast(t('common:brandFavorites.minRequired'), 'info');
+      return;
+    }
     void tapGuardRef.current
       .run(async () => {
         await mutation.mutateAsync(!isFavorited);

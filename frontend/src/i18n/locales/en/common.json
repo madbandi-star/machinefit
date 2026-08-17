@@ -83,7 +83,8 @@
     "addAria": "Add brand to favorites",
     "removeAria": "Remove brand from favorites",
     "addNamed": "Add {{name}} to favorites",
-    "removeNamed": "Remove {{name}} from favorites"
+    "removeNamed": "Remove {{name}} from favorites",
+    "minRequired": "Keep at least one favorite brand."
   },
   "expandCardDetails": "Show details",
   "collapseCardDetails": "Hide details",

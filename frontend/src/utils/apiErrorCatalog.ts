@@ -34,6 +34,7 @@ const CODE_TO_KEY: Record<string, string> = {
   REQUEST_IN_PROGRESS: 'errors.rateLimit',
   PLAN_LIMIT: 'errors.usageLimit',
   CSRF_REJECTED: 'errors.csrfRejected',
+  MIN_BRAND_FAVORITES: 'brandFavorites.minRequired',
 };
 
 export function translateApiErrorCode(code: string | undefined, t: TFunction): string | null {

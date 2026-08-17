@@ -74,7 +74,8 @@
     "addAria": "ブランドをお気に入りに追加",
     "removeAria": "ブランドのお気に入りを解除",
     "addNamed": "{{name}}をお気に入りに追加",
-    "removeNamed": "{{name}}のお気に入りを解除"
+    "removeNamed": "{{name}}のお気に入りを解除",
+    "minRequired": "お気に入りは1つ以上必要です。"
   },
   "expandCardDetails": "詳細を表示",
   "collapseCardDetails": "詳細を隠す",

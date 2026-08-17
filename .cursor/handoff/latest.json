@@ -1,30 +1,35 @@
 {
-  "title": "Fix banners missing until refresh after SPA navigation",
-  "summary": "AdSlot decided before auth hydration and cached anonymous/empty results without userId in the query key. Gate on authReady, key by viewer, clear ads cache on login, do not swallow decide errors as null.",
+  "title": "Min 1 brand favorite",
+  "summary": "Prevent removing the last favorite brand on My brands (UI toast + API MIN_BRAND_FAVORITES).",
   "git": {
     "branch": "main",
-    "commit": "94d8a44e"
+    "commit": null
   },
   "changedFiles": [
-    "frontend/src/ads/AdSlot.tsx",
-    "frontend/src/app/providers/QueryProvider.tsx",
-    "frontend/src/pages/admin/banners/AdminBannerEditPage.tsx",
-    "frontend/src/pages/admin/banners/AdminBannersPage.tsx"
+    "backend/server/services/brand-favorite.service.ts",
+    "frontend/src/hooks/useBrandFavorites.ts",
+    "frontend/src/utils/apiErrorCatalog.ts",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Login → navigate Home/Records/My/Community without F5 — banners appear",
-    "Hard refresh still shows banners",
-    "Logout/login switches ads cache"
+    "Cannot unfavorite when only one brand favorite remains",
+    "Can unfavorite when two or more remain",
+    "DELETE last favorite returns 400 MIN_BRAND_FAVORITES"
   ],
   "fastChecks": [
-    "npm run typecheck --prefix frontend"
+    "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "SPA nav between pages with BannerSlot — banner without full reload"
+    "Pages: /my-page/brand-favorites last-star toast",
+    "Render: brand-favorites DELETE last item rejected"
   ],
   "deploy": {
-    "expected": "GitHub Pages after push"
+    "frontend": "GitHub Pages via push to main",
+    "backend": "Render redeploy required"
   },
-  "asIs": "Banner empty after client nav until F5",
-  "toBe": "Decide after authReady; cache keyed by viewer; banners show on nav"
+  "asIs": "Users could clear all brand favorites",
+  "toBe": "At least one favorite brand is always required"
 }

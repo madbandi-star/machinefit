@@ -27,6 +27,14 @@ export const brandFavoriteService = {
 
   async remove(userId: string, brandId: string) {
     await brandFavoriteRepository.seedDefaultsIfNeeded(userId);
+    const ids = await brandFavoriteRepository.listBrandIds(userId);
+    if (ids.includes(brandId) && ids.length <= 1) {
+      throw new AppError(
+        400,
+        'MIN_BRAND_FAVORITES',
+        'At least one favorite brand is required'
+      );
+    }
     const removed = await brandFavoriteRepository.removeByBrandId(userId, brandId);
     if (!removed) {
       throw new AppError(404, 'NOT_FOUND', 'Brand favorite not found');
