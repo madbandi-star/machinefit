@@ -36,18 +36,23 @@ export function useMuscleGroupImageMap(): {
 
 /**
  * Prefer admin-uploaded URL; otherwise bundled seed illustration (unless allowSeedFallback is false).
+ * When preferSeed is true, bundled cover wins (search filter chips use this — admin anatomy
+ * uploads looked wrong as small circular chips).
  */
 export function resolveMuscleGroupDisplayUrl(
   group: string,
   remoteMap?: Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>>,
   preferThumb = false,
-  options?: { allowSeedFallback?: boolean }
+  options?: { allowSeedFallback?: boolean; preferSeed?: boolean }
 ): string | undefined {
+  const seed = getMuscleGroupImage(group);
+  if (options?.preferSeed && seed) return seed;
+
   const remote = remoteMap?.[group as MuscleGroupImageKey];
   const remoteUrl = preferThumb
     ? remote?.thumbnailUrl || remote?.imageUrl
     : remote?.imageUrl || remote?.thumbnailUrl;
   if (remoteUrl) return remoteUrl;
   if (options?.allowSeedFallback === false) return undefined;
-  return getMuscleGroupImage(group);
+  return seed;
 }

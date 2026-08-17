@@ -41,7 +41,9 @@
     "empty": "등록된 머신이 없습니다",
     "emptyHint": "다른 부위 필터를 선택하거나 검색어를 바꿔보세요.",
     "noResults": "검색 결과가 없습니다",
-    "noResultsHint": "검색어를 줄이거나 필터를 해제해 보세요."
+    "noResultsHint": "검색어를 줄이거나 필터를 해제해 보세요.",
+    "loadFailed": "머신 목록을 불러오지 못했습니다.",
+    "retry": "다시 시도"
   },
   "detail": {
     "lastRecommend": "마지막 추천 설정",

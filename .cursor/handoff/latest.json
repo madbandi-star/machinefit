@@ -1,29 +1,38 @@
 {
-  "title": "Fix brand chips missing on first search entry",
-  "summary": "Logged-in search no longer hides the brand row while favorite brands load. Chips keep showing (catalog then favorites); BrandFilterChips always renders at least ??; nav prefetches brand favorites.",
+  "title": "Fix search empty machines, brand chips, muscle seed icons",
+  "summary": "Search no longer filters brands to favorites (was leaving only ??). Machine list query no longer uses placeholderData that stuck on empty. Filter chips use bundled seed muscle covers. PWA cache bust v47.",
   "git": {
     "branch": "main",
-    "commit": "97b37637"
+    "commit": "PENDING"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/components/machines/BrandFilterChips/BrandFilterChips.tsx",
-    "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx"
+    "frontend/src/components/machines/FilterChips/FilterChips.tsx",
+    "frontend/src/components/muscle/MuscleGroupIcon/MuscleGroupIcon.tsx",
+    "frontend/src/hooks/useMuscleGroupImages.ts",
+    "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx",
+    "frontend/src/main.tsx",
+    "frontend/src/styles/machines.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Login ? open search: brand section visible immediately (?? + brands)",
-    "After favorites settle: chips narrow to favorite brands",
-    "Guest: brand chips still include bodyweight/free-weight fallbacks"
+    "Open search logged-in: brand chips show many brands (not only ??)",
+    "Open search: recommended machines list non-empty with brand=??",
+    "Muscle chips show bundled seed illustrations (not admin anatomy photos)",
+    "Hard refresh / PWA bust after deploy"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend: login ? /machinefit/machines brand row not blank on first paint"
+    "After Deploy Frontend success: https://machine-fit.com/machinefit/machines"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "First search visit after login: brand filter section missing until favorites fetch.",
-  "toBe": "Brand section always shows; provisional full catalog then favorite brands."
+  "asIs": "Search: only ?? brand, empty machines, weird admin muscle photos.",
+  "toBe": "Full brand chips, machine list loaded, seed muscle icons on filter chips."
 }

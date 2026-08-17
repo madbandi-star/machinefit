@@ -30,7 +30,6 @@ import {
   getTodayDateKey,
   normalizeDateKey,
 } from '@/utils/historyDate';
-import { useBrandFavorites } from '@/hooks/useBrandFavorites';
 import {
   clearRecentMachineSearches,
   getRecentMachineSearches,
@@ -182,7 +181,7 @@ export function MachineSearchPage() {
     setRecentSearches(clearRecentMachineSearches());
   };
 
-  const { data: brands = [] } = useQuery({
+  const { data: brands = [], isLoading: brandsLoading } = useQuery({
     queryKey: QUERY_KEYS.brands,
     queryFn: async () => {
       const res = await brandApi.list();
@@ -191,29 +190,9 @@ export function MachineSearchPage() {
     staleTime: 10 * 60_000,
   });
 
-  const { data: favoriteBrandItems, isFetched: favoriteBrandsFetched } = useBrandFavorites();
-
-  // Logged-in: chip list = favorite brands only. While favorites (or the brand catalog)
-  // are still loading, keep showing the full catalog so the brand row is not blank.
-  const brandsForFilter = useMemo(() => {
-    if (!isAuthenticated) return brands;
-    if (!favoriteBrandsFetched || brands.length === 0) return brands;
-    const ids = new Set((favoriteBrandItems ?? []).map((item) => item.brandId));
-    if (ids.size === 0) return brands;
-    return brands.filter((brand) => ids.has(brand.id));
-  }, [brands, favoriteBrandItems, favoriteBrandsFetched, isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated || !favoriteBrandsFetched) return;
-    // Wait for brand catalog — empty filter list must not clear a valid brand.
-    if (brands.length === 0) return;
-    if (!brandCode) return;
-    if (brandsForFilter.some((brand) => brand.code === brandCode)) return;
-    setBrandCode(null);
-    writeSearchParams({ brand: null });
-    // writeSearchParams closes over brandCode/muscle — intentional one-shot clear
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brandCode, brands.length, brandsForFilter, favoriteBrandsFetched, isAuthenticated]);
+  // Search brand chips = full catalog (favorites live on 내 브랜드). Filtering to
+  // favorites left only “전체” when the intersection was empty / still loading.
+  const brandsForFilter = brands;
 
   const { data: dayPlans = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
@@ -302,17 +281,14 @@ export function MachineSearchPage() {
     return map;
   }, [favorites]);
 
-  // Avoid querying 맨몸 (or any non-favorite) before favorites settle — empty [] +
-  // placeholderData would flash the hard empty state on first logged-in visit.
-  const machineQueryReady =
-    !isAuthenticated ||
-    !brandCode ||
-    (favoriteBrandsFetched &&
-      brands.length > 0 &&
-      brandsForFilter.some((brand) => brand.code === brandCode));
-
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode],
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError: machinesError,
+    refetch: refetchMachines,
+  } = useQuery({
+    queryKey: [...QUERY_KEYS.machines, 'search', debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = {
         limit: 100,
@@ -321,15 +297,16 @@ export function MachineSearchPage() {
       if (brandCode) params.brandCode = brandCode;
       if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
       const res = await machineApi.list(params);
-      return res.data.data.items;
+      const items = res.data.data?.items;
+      return Array.isArray(items) ? items : [];
     },
-    enabled: machineQueryReady,
     staleTime: 5 * 60_000,
-    placeholderData: (prev) => prev,
   });
 
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
-  const showMachineSkeleton = !machineQueryReady || (isLoading && !data);
+  // Never treat a stuck empty placeholder as “no machines” while a fetch is in flight.
+  const showMachineSkeleton =
+    brandsLoading || ((isLoading || isFetching) && !data?.length);
   const recordsForDateUrl = planDate
     ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
     : ROUTES.RECORDS;
@@ -384,13 +361,20 @@ export function MachineSearchPage() {
           brands={brandsForFilter}
           value={brandCode}
           onChange={handleBrandChange}
-          includeFallbacks={!isAuthenticated}
+          includeFallbacks
         />
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}
         </h2>
         {showMachineSkeleton ? (
           <Skeleton count={5} height={120} />
+        ) : machinesError ? (
+          <div className="machine-search__load-error" role="alert">
+            <p>{t('search.loadFailed')}</p>
+            <button type="button" className="btn btn--secondary" onClick={() => void refetchMachines()}>
+              {t('search.retry')}
+            </button>
+          </div>
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />
         ) : (

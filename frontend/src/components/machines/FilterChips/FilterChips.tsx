@@ -54,7 +54,12 @@ export function FilterChips({ value, onChange }: FilterChipsProps) {
               aria-pressed={value === group}
             >
               <span className="filter-chip__icon-wrap" aria-hidden>
-                <MuscleGroupIcon group={group} size={MUSCLE_ICON_SIZE} className="filter-chip__icon" />
+                <MuscleGroupIcon
+                  group={group}
+                  size={MUSCLE_ICON_SIZE}
+                  preferSeed
+                  className="filter-chip__icon"
+                />
               </span>
               <span className="filter-chip__label">{label}</span>
             </button>

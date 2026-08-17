@@ -370,6 +370,14 @@
   margin: 0.15rem 0 0.55rem;
 }
 
+.machine-search__load-error {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  padding: 1rem 0.25rem 1.5rem;
+  color: var(--color-text-muted, #9ca3af);
+}
+
 .machine-search__plan-banner {
   display: flex;
   align-items: center;

@@ -9,7 +9,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { queryClient } from '@/app/providers/QueryProvider';
-import { brandApi, favoriteApi, historyApi, machineApi, muscleGroupImageApi, brandFavoriteApi } from '@/api';
+import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
 import './BottomNavigation.css';
 
@@ -31,8 +31,7 @@ function prefetchForRoute(
   to: string,
   gymId: string | null,
   memberId: string | null,
-  isAuthenticated: boolean,
-  userId: string | null
+  isAuthenticated: boolean
 ) {
   if (to === ROUTES.MACHINES) {
     void queryClient.prefetchQuery({
@@ -40,28 +39,16 @@ function prefetchForRoute(
       queryFn: async () => (await brandApi.list()).data.data,
       staleTime: 10 * 60_000,
     });
-    // Must match MachineSearchPage unfiltered key: [...QUERY_KEYS.machines, '', null, null]
+    // Must match MachineSearchPage unfiltered key
     void queryClient.prefetchQuery({
-      queryKey: [...QUERY_KEYS.machines, '', null, null],
+      queryKey: [...QUERY_KEYS.machines, 'search', '', null, null],
       queryFn: async () => {
         const res = await machineApi.list({ limit: 100 });
-        return res.data.data.items;
+        const items = res.data.data?.items;
+        return Array.isArray(items) ? items : [];
       },
       staleTime: 5 * 60_000,
     });
-    // Avoid seed→admin cover flash on FilterChips MuscleGroupIcon.
-    void queryClient.prefetchQuery({
-      queryKey: QUERY_KEYS.muscleGroupImages,
-      queryFn: async () => (await muscleGroupImageApi.list()).data.data.items,
-      staleTime: 5 * 60_000,
-    });
-    if (userId) {
-      void queryClient.prefetchQuery({
-        queryKey: [...QUERY_KEYS.brandFavorites, userId] as const,
-        queryFn: async () => (await brandFavoriteApi.list()).data.data,
-        staleTime: 60_000,
-      });
-    }
   }
 
   if (!isAuthenticated || !gymId) return;
@@ -110,7 +97,6 @@ export function BottomNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const userId = useAuthStore((s) => s.user?.id ?? null);
   const gymId = useGymStore((s) => s.activeGymId);
   const memberId = useGymStore((s) => s.activeMemberId);
   const uiHydrated = usePersistHydration(useUIStore.persist);
@@ -157,7 +143,7 @@ export function BottomNavigation() {
     requireAuth: boolean,
     to: string
   ) => {
-    prefetchForRoute(to, gymId, memberId, isAuthenticated, userId);
+    prefetchForRoute(to, gymId, memberId, isAuthenticated);
     if (to === ROUTES.RECORDS) {
       setRecordsNavNudge(false);
       if (planSignature) markRecordsPlanDotSeen(planSignature);
@@ -185,8 +171,8 @@ export function BottomNavigation() {
             key={to}
             to={to}
             onClick={(e) => handleNavClick(e, requireAuth, to)}
-            onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated, userId)}
-            onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated, userId)}
+            onMouseEnter={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
+            onTouchStart={() => prefetchForRoute(to, gymId, memberId, isAuthenticated)}
             className={({ isActive }) =>
               [
                 'bottom-nav__item',

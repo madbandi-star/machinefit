@@ -9,6 +9,8 @@ import '@/styles/muscle-group-icon.css';
 interface MuscleGroupIconProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   group: MuscleGroup | string;
   size?: number;
+  /** Use bundled representative covers instead of admin anatomy uploads. */
+  preferSeed?: boolean;
 }
 
 function MuscleFallback({
@@ -37,16 +39,16 @@ function MuscleFallback({
 export function MuscleGroupIcon({
   group,
   size = 32,
+  preferSeed = false,
   className,
   style,
   ...props
 }: MuscleGroupIconProps) {
   const { map: remoteMap } = useMuscleGroupImageMap();
   const preferThumb = size <= 64;
-  // Seed covers immediately; remote admin URLs replace them when the catalog arrives.
-  // Blocking seed until ready left letter-only chips on first search-page visit.
   const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb, {
     allowSeedFallback: true,
+    preferSeed,
   });
   const [failed, setFailed] = useState(false);
 

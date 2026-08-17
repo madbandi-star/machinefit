@@ -41,7 +41,9 @@
     "empty": "No machines available",
     "emptyHint": "Try a different muscle filter or search term.",
     "noResults": "No results found",
-    "noResultsHint": "Shorten your search or clear filters."
+    "noResultsHint": "Shorten your search or clear filters.",
+    "loadFailed": "Could not load machines.",
+    "retry": "Retry"
   },
   "detail": {
     "lastRecommend": "Last recommendation",
