@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApiHealthStore } from '@/store/apiHealth.store';
 import { useWorkoutSessionTimerStore } from '@/store/workoutSessionTimer.store';
@@ -18,17 +17,21 @@ function isWorkoutCriticalPath(pathname: string): boolean {
 /**
  * Full-screen recovery UI for API / network outages.
  * Suppressed during active workout / records paths so users keep logging offline.
+ *
+ * Mounted from AppProviders (outside RouterProvider), so path checks must use
+ * window.location — useLocation() here crashes the whole app on boot.
  */
 export function ServiceUnavailableScreen() {
   const { t } = useTranslation();
-  const location = useLocation();
   const outage = useApiHealthStore((s) => s.outage);
   const lastStatus = useApiHealthStore((s) => s.lastStatus);
   const clearOutage = useApiHealthStore((s) => s.clearOutage);
   const sessionRunning = useWorkoutSessionTimerStore((s) => s.status === 'running');
+  const pathname =
+    typeof window !== 'undefined' ? window.location.pathname : '';
 
   if (!outage) return null;
-  if (sessionRunning || isWorkoutCriticalPath(location.pathname)) return null;
+  if (sessionRunning || isWorkoutCriticalPath(pathname)) return null;
 
   const titleKey =
     outage === 'network'

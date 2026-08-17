@@ -1,33 +1,29 @@
 {
-  "title": "Motivation media player stability",
-  "summary": "UI open separated from play success; singleton audio + Media Session; classified failure toasts; no unmount pause; video overlay opens immediately with YouTube autoplay from user gesture.",
+  "title": "Fix production boot crash (useLocation outside Router)",
+  "summary": "ServiceUnavailableScreen called useLocation while mounted in AppProviders outside RouterProvider, emptying #root on machine-fit.com. Use window.location.pathname instead.",
   "git": {
     "branch": "main",
-    "commit": "b10251ed"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/utils/motivationAudioEngine.ts",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.tsx",
-    "frontend/src/components/motivation/MotivationMediaControls/MotivationMediaControls.css",
-    "frontend/src/i18n/locales/*/common.json"
+    "frontend/src/components/feedback/ServiceUnavailableScreen/ServiceUnavailableScreen.tsx"
   ],
   "testFocus": [
-    "Header music button opens player shell even before play succeeds",
-    "Play failure shows specific toast; panel stays open",
-    "Navigate pages while music playing — audio continues",
-    "Video button opens overlay immediately"
+    "Open https://machine-fit.com/ — app must render (not blank)",
+    "No useLocation Router error in console",
+    "Music/video header buttons still present after login/home"
   ],
   "fastChecks": [
     "npm run typecheck --prefix frontend",
-    "rg -n \"playMotivationTrack|getMotivationAudio|playbackPhase\" frontend/src"
+    "curl -sL https://machine-fit.com/ and verify #root not empty via Playwright"
   ],
   "productionChecks": [
-    "Pages Deploy Frontend success",
-    "Hard refresh; test music + video on phone"
+    "machine-fit.com loads home UI",
+    "motivation music/video buttons visible when Header is shown"
   ],
   "deploy": {
-    "expected": "Frontend Pages only"
+    "expected": "GitHub Pages Deploy Frontend success after push"
   },
-  "asIs": "Play failure hid useful feedback; play via useEffect lost gesture; remount paused audio",
-  "toBe": "Shell always opens; await play(); singleton + Media Session; toast with reason"
+  "asIs": "Blank page; PAGEERROR useLocation outside Router",
+  "toBe": "App boots; outage screen still suppresses on workout paths via window.location"
 }
