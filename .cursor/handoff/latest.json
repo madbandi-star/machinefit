@@ -1,7 +1,7 @@
 {
   "title": "API performance safe optimizations",
   "summary": "Zero-behavior-change API speedups: auth reuse, ads flag batch, recommend settings reuse, brand-favorite seed memo, trgm index, perf logs.",
-  "git": { "branch": "main", "commit": null },
+  "git": { "branch": "main", "commit": "81645c9e" },
   "changedFiles": [
     "backend/server/middlewares/auth.middleware.ts",
     "backend/server/middlewares/api-perf.middleware.ts",
