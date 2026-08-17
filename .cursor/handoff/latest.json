@@ -3,7 +3,7 @@
   "summary": "Hard-deleted catalog machine DEMO1 (로우로우) with recommendation/history/logs. Admin catalog delete now offers force purge when soft-deactivate would apply.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "66b71373"
   },
   "changedFiles": [
     "database/migrations/144_purge_catalog_machine_demo1.sql",
