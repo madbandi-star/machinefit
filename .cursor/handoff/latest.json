@@ -1,33 +1,31 @@
 {
-  "title": "API performance safe optimizations",
-  "summary": "Zero-behavior-change API speedups: auth reuse, ads flag batch, recommend settings reuse, brand-favorite seed memo, trgm index, perf logs.",
-  "git": { "branch": "main", "commit": "81645c9e" },
+  "title": "Fix logged-in first search empty machines + muscle icons",
+  "summary": "Logged-in users no longer default to 맨몸 brand (empty vs favorites). Muscle chips show seed photos immediately instead of letter fallbacks while the admin catalog loads.",
+  "git": {
+    "branch": "main",
+    "commit": "PENDING"
+  },
   "changedFiles": [
-    "backend/server/middlewares/auth.middleware.ts",
-    "backend/server/middlewares/api-perf.middleware.ts",
-    "backend/server/app.ts",
-    "backend/server/repositories/user.repository.ts",
-    "backend/server/repositories/ad.repository.ts",
-    "backend/server/repositories/brand-favorite.repository.ts",
-    "backend/server/services/ad-policy.service.ts",
-    "backend/server/services/recommendation.service.ts",
-    "backend/server/services/recommendation-weight.service.ts",
-    "database/migrations/145_perf_machines_name_trgm.sql",
-    "frontend/src/styles/machines.css"
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+    "frontend/src/constants/machine-search-defaults.ts",
+    "frontend/src/components/muscle/MuscleGroupIcon/MuscleGroupIcon.tsx",
+    "frontend/src/hooks/useMuscleGroupImages.ts"
   ],
   "testFocus": [
-    "Auth and role gates unchanged",
-    "Ads decide outcomes unchanged",
-    "Recommendation weightBasis unchanged",
-    "Brand favorites + min-1 unchanged",
-    "Machine search results unchanged"
+    "Login → open 검색: muscle chips show representative photos (not 2-letter fallback)",
+    "Login → open 검색: recommended machines list is non-empty (not “등록된 머신이 없습니다”)",
+    "Guest search still defaults brand to 맨몸",
+    "Logged-in brand chips still only favorites; 전체 still works"
   ],
-  "fastChecks": ["npm run test:smoke:changed"],
-  "productionChecks": ["Render redeploy for backend; migrate 145 optional"],
+  "fastChecks": [
+    "npm run test:smoke:changed"
+  ],
+  "productionChecks": [
+    "After Deploy Frontend success: login on Pages, open /machinefit/machines — machines + muscle images"
+  ],
   "deploy": {
-    "frontend": "GitHub Pages via push to main",
-    "backend": "Render redeploy required"
+    "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Duplicate auth/settings/flag queries on hot paths",
-  "toBe": "Fewer round-trips with identical API results"
+  "asIs": "After login, first search visit: muscle chips without photos; machines empty with 등록된 머신이 없습니다.",
+  "toBe": "After login, first search visit: muscle seed/admin photos + machine list under brand=all (전체)."
 }

@@ -47,11 +47,12 @@ function resolveMuscleParam(raw: string | null): string | null {
   return trimmed;
 }
 
-function resolveBrandParam(raw: string | null): string | null {
+function resolveBrandParam(raw: string | null, authenticated: boolean): string | null {
   const trimmed = raw?.trim();
-  // Explicit “전체” — do not fall back to the entry default.
+  // Explicit “전체” — do not fall back to the guest entry default.
   if (trimmed === 'all') return null;
-  if (!trimmed) return DEFAULT_SEARCH_BRAND_CODE;
+  // Logged-in: default 전체. Guest: 맨몸 (see machine-search-defaults).
+  if (!trimmed) return authenticated ? null : DEFAULT_SEARCH_BRAND_CODE;
   return trimmed;
 }
 
@@ -70,13 +71,13 @@ export function MachineSearchPage() {
   const [muscleGroup, setMuscleGroup] = useState<string | null>(() =>
     resolveMuscleParam(searchParams.get('muscle'))
   );
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [brandCode, setBrandCode] = useState<string | null>(() =>
-    resolveBrandParam(searchParams.get('brand'))
+    resolveBrandParam(searchParams.get('brand'), useAuthStore.getState().isAuthenticated)
   );
   const [recentSearches, setRecentSearches] = useState(() => getRecentMachineSearches());
   const planDateRaw = searchParams.get('planDate');
   const planDate = planDateRaw ? normalizeDateKey(planDateRaw) : null;
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const { activeGymId } = useActiveGym();
   const { activeMemberId } = useActiveMember();
   // Plan-add uses planDate; plain search still marks today’s already-added machines.
@@ -92,10 +93,10 @@ export function MachineSearchPage() {
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
     setMuscleGroup(resolveMuscleParam(searchParams.get('muscle')));
-    setBrandCode(resolveBrandParam(searchParams.get('brand')));
-  }, [searchParams]);
+    setBrandCode(resolveBrandParam(searchParams.get('brand'), isAuthenticated));
+  }, [searchParams, isAuthenticated]);
 
-  // Default entry: muscle=전체 (omit), brand=맨몸. Keep brand=all as explicit “전체”.
+  // Default entry: muscle=전체 (omit). Guest brand=맨몸; logged-in brand=all (전체).
   useEffect(() => {
     setSearchParams(
       (prev) => {
@@ -106,7 +107,10 @@ export function MachineSearchPage() {
           changed = true;
         }
         if (!next.has('brand')) {
-          if (DEFAULT_SEARCH_BRAND_CODE) {
+          if (isAuthenticated) {
+            next.set('brand', 'all');
+            changed = true;
+          } else if (DEFAULT_SEARCH_BRAND_CODE) {
             next.set('brand', DEFAULT_SEARCH_BRAND_CODE);
             changed = true;
           }
@@ -116,7 +120,7 @@ export function MachineSearchPage() {
       },
       { replace: true }
     );
-  }, [setSearchParams]);
+  }, [setSearchParams, isAuthenticated]);
 
   useEffect(() => {
     setSearchParams(
@@ -205,13 +209,15 @@ export function MachineSearchPage() {
 
   useEffect(() => {
     if (!isAuthenticated || !favoriteBrandsFetched) return;
+    // Wait for brand catalog — empty filter list must not clear a valid brand.
+    if (brands.length === 0) return;
     if (!brandCode) return;
     if (brandsForFilter.some((brand) => brand.code === brandCode)) return;
     setBrandCode(null);
     writeSearchParams({ brand: null });
     // writeSearchParams closes over brandCode/muscle — intentional one-shot clear
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brandCode, brandsForFilter, favoriteBrandsFetched, isAuthenticated]);
+  }, [brandCode, brands.length, brandsForFilter, favoriteBrandsFetched, isAuthenticated]);
 
   const { data: dayPlans = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsList(activeGymId ?? '', activeMemberId ?? '', {
@@ -300,6 +306,15 @@ export function MachineSearchPage() {
     return map;
   }, [favorites]);
 
+  // Avoid querying 맨몸 (or any non-favorite) before favorites settle — empty [] +
+  // placeholderData would flash the hard empty state on first logged-in visit.
+  const machineQueryReady =
+    !isAuthenticated ||
+    !brandCode ||
+    (favoriteBrandsFetched &&
+      brands.length > 0 &&
+      brandsForFilter.some((brand) => brand.code === brandCode));
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [...QUERY_KEYS.machines, debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
@@ -312,11 +327,13 @@ export function MachineSearchPage() {
       const res = await machineApi.list(params);
       return res.data.data.items;
     },
+    enabled: machineQueryReady,
     staleTime: 5 * 60_000,
     placeholderData: (prev) => prev,
   });
 
   const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
+  const showMachineSkeleton = !machineQueryReady || (isLoading && !data);
   const recordsForDateUrl = planDate
     ? `${ROUTES.RECORDS}?tab=history&date=${encodeURIComponent(planDate)}`
     : ROUTES.RECORDS;
@@ -376,7 +393,7 @@ export function MachineSearchPage() {
         <h2 className="filter-section__title machine-search__results-title">
           {t('recommendedMachinesTitle')}
         </h2>
-        {isLoading && !data ? (
+        {showMachineSkeleton ? (
           <Skeleton count={5} height={120} />
         ) : !data?.length ? (
           <MachineEmptyState hasQuery={hasFilters} />

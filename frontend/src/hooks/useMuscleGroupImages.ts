@@ -30,15 +30,12 @@ export function useMuscleGroupImageMap(): {
     return next;
   }, [data]);
 
-  // Avoid painting bundled seed PNGs before admin covers arrive (search-page flash).
   // isPending = no cached data yet in React Query v5.
   return { map, ready: !isPending };
 }
 
 /**
- * Prefer admin-uploaded URL.
- * Bundled seed PNG is only used after the catalog is ready and that group has no remote asset —
- * otherwise callers should show a neutral fallback while loading.
+ * Prefer admin-uploaded URL; otherwise bundled seed illustration (unless allowSeedFallback is false).
  */
 export function resolveMuscleGroupDisplayUrl(
   group: string,

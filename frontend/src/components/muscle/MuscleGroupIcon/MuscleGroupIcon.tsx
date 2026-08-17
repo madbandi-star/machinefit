@@ -41,11 +41,12 @@ export function MuscleGroupIcon({
   style,
   ...props
 }: MuscleGroupIconProps) {
-  const { map: remoteMap, ready } = useMuscleGroupImageMap();
+  const { map: remoteMap } = useMuscleGroupImageMap();
   const preferThumb = size <= 64;
+  // Seed covers immediately; remote admin URLs replace them when the catalog arrives.
+  // Blocking seed until ready left letter-only chips on first search-page visit.
   const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb, {
-    // Never flash bundled seed art while waiting for admin cover URLs.
-    allowSeedFallback: ready,
+    allowSeedFallback: true,
   });
   const [failed, setFailed] = useState(false);
 
