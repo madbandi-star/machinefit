@@ -3,7 +3,7 @@
   "summary": "AdSlot decided before auth hydration and cached anonymous/empty results without userId in the query key. Gate on authReady, key by viewer, clear ads cache on login, do not swallow decide errors as null.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "94d8a44e"
   },
   "changedFiles": [
     "frontend/src/ads/AdSlot.tsx",
