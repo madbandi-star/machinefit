@@ -3,7 +3,7 @@
   "summary": "Search no longer filters brands to favorites (was leaving only ??). Machine list query no longer uses placeholderData that stuck on empty. Filter chips use bundled seed muscle covers. PWA cache bust v47.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "ab76ab4d"
   },
   "changedFiles": [
     "frontend/src/pages/machine-search/MachineSearchPage.tsx",
