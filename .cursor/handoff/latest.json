@@ -3,7 +3,7 @@
   "summary": "Search page muscle chips wait for admin muscle-group image catalog; brand chips wait for brands (guest) or My Brands favorites (logged-in). Chip-shaped skeletons replace empty/partial rows.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "d1905663"
   },
   "changedFiles": [
     "frontend/src/components/machines/FilterChips/FilterChips.tsx",
