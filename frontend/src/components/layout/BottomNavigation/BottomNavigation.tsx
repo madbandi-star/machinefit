@@ -9,7 +9,7 @@ import { useUIStore } from '@/store/ui.store';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
 import { queryClient } from '@/app/providers/QueryProvider';
-import { brandApi, favoriteApi, historyApi, machineApi } from '@/api';
+import { brandApi, favoriteApi, historyApi, machineApi, muscleGroupImageApi } from '@/api';
 import { useGymStore } from '@/store/gym.store';
 import './BottomNavigation.css';
 
@@ -47,6 +47,12 @@ function prefetchForRoute(
         const items = res.data.data?.items;
         return Array.isArray(items) ? items : [];
       },
+      staleTime: 5 * 60_000,
+    });
+    // Search FilterChips use admin-managed muscle covers only (adminOnly).
+    void queryClient.prefetchQuery({
+      queryKey: QUERY_KEYS.muscleGroupImages,
+      queryFn: async () => (await muscleGroupImageApi.list()).data.data.items,
       staleTime: 5 * 60_000,
     });
   }

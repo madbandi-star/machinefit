@@ -35,24 +35,20 @@ export function useMuscleGroupImageMap(): {
 }
 
 /**
- * Prefer admin-uploaded URL; otherwise bundled seed illustration (unless allowSeedFallback is false).
- * When preferSeed is true, bundled cover wins (search filter chips use this — admin anatomy
- * uploads looked wrong as small circular chips).
+ * Prefer admin-uploaded URL from 근육군 대표이미지 관리.
+ * Bundled seed PNGs are optional fallback only when allowSeedFallback is not false.
  */
 export function resolveMuscleGroupDisplayUrl(
   group: string,
   remoteMap?: Partial<Record<MuscleGroupImageKey, MuscleGroupImageAsset>>,
   preferThumb = false,
-  options?: { allowSeedFallback?: boolean; preferSeed?: boolean }
+  options?: { allowSeedFallback?: boolean }
 ): string | undefined {
-  const seed = getMuscleGroupImage(group);
-  if (options?.preferSeed && seed) return seed;
-
   const remote = remoteMap?.[group as MuscleGroupImageKey];
   const remoteUrl = preferThumb
     ? remote?.thumbnailUrl || remote?.imageUrl
     : remote?.imageUrl || remote?.thumbnailUrl;
   if (remoteUrl) return remoteUrl;
   if (options?.allowSeedFallback === false) return undefined;
-  return seed;
+  return getMuscleGroupImage(group);
 }

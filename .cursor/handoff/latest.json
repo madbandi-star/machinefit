@@ -1,38 +1,30 @@
 {
-  "title": "Fix search empty machines, brand chips, muscle seed icons",
-  "summary": "Search no longer filters brands to favorites (was leaving only ??). Machine list query no longer uses placeholderData that stuck on empty. Filter chips use bundled seed muscle covers. PWA cache bust v47.",
+  "title": "Search muscle chips: admin covers only, never seed anatomy",
+  "summary": "Search FilterChips MuscleGroupIcon uses adminOnly ? only ??? ????? ?? URLs. Bundled green anatomy seed art is never shown on search chips.",
   "git": {
     "branch": "main",
-    "commit": "ab76ab4d"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
     "frontend/src/components/machines/FilterChips/FilterChips.tsx",
     "frontend/src/components/muscle/MuscleGroupIcon/MuscleGroupIcon.tsx",
     "frontend/src/hooks/useMuscleGroupImages.ts",
-    "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx",
-    "frontend/src/main.tsx",
-    "frontend/src/styles/machines.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/layout/BottomNavigation/BottomNavigation.tsx"
   ],
   "testFocus": [
-    "Open search logged-in: brand chips show many brands (not only ??)",
-    "Open search: recommended machines list non-empty with brand=??",
-    "Muscle chips show bundled seed illustrations (not admin anatomy photos)",
-    "Hard refresh / PWA bust after deploy"
+    "Search muscle chips show admin ????? management covers",
+    "No green fluorescent bundled anatomy seed images on search chips",
+    "While catalog loads: letter fallback OK, not seed art"
   ],
   "fastChecks": [
     "npm run test:smoke:changed"
   ],
   "productionChecks": [
-    "After Deploy Frontend success: https://machine-fit.com/machinefit/machines"
+    "After Deploy Frontend: /machines muscle chips match admin media URLs"
   ],
   "deploy": {
     "expected": "GitHub Pages Deploy Frontend on push to main"
   },
-  "asIs": "Search: only ?? brand, empty machines, weird admin muscle photos.",
-  "toBe": "Full brand chips, machine list loaded, seed muscle icons on filter chips."
+  "asIs": "Search chips used preferSeed (bundled green anatomy).",
+  "toBe": "Search chips use admin-only muscle group covers."
 }

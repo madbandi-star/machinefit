@@ -9,8 +9,11 @@ import '@/styles/muscle-group-icon.css';
 interface MuscleGroupIconProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   group: MuscleGroup | string;
   size?: number;
-  /** Use bundled representative covers instead of admin anatomy uploads. */
-  preferSeed?: boolean;
+  /**
+   * When true, only 근육군 대표이미지 관리 (admin) URLs are used — never bundled
+   * green anatomy seed art. Missing admin cover → letter fallback.
+   */
+  adminOnly?: boolean;
 }
 
 function MuscleFallback({
@@ -39,22 +42,28 @@ function MuscleFallback({
 export function MuscleGroupIcon({
   group,
   size = 32,
-  preferSeed = false,
+  adminOnly = false,
   className,
   style,
   ...props
 }: MuscleGroupIconProps) {
-  const { map: remoteMap } = useMuscleGroupImageMap();
+  const { map: remoteMap, ready } = useMuscleGroupImageMap();
   const preferThumb = size <= 64;
+  // Search chips: wait for admin catalog; never paint bundled seed anatomy.
   const src = resolveMuscleGroupDisplayUrl(group, remoteMap, preferThumb, {
-    allowSeedFallback: true,
-    preferSeed,
+    allowSeedFallback: adminOnly ? false : true,
   });
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     setFailed(false);
   }, [src]);
+
+  if (adminOnly && !ready) {
+    return (
+      <MuscleFallback group={String(group)} size={size} className={className} style={style} />
+    );
+  }
 
   if (!src || failed) {
     return (

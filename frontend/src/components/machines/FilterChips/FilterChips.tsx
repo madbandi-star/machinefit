@@ -57,7 +57,7 @@ export function FilterChips({ value, onChange }: FilterChipsProps) {
                 <MuscleGroupIcon
                   group={group}
                   size={MUSCLE_ICON_SIZE}
-                  preferSeed
+                  adminOnly
                   className="filter-chip__icon"
                 />
               </span>
