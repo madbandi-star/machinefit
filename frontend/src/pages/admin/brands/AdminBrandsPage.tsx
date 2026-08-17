@@ -306,6 +306,8 @@ export function AdminBrandsPage() {
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminBrands });
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.machines });
+    await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.brands });
   };
 
   const syncBrandCaches = useCallback(
