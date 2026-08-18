@@ -2274,6 +2274,7 @@
     "totalDuration": "总运动时间",
     "statSessions": "场次",
     "statLaps": "圈",
+    "statMachines": "器械",
     "lapCountLabel": "{{count}} 圈",
     "sessionCardAria": "{{start}} 至 {{end}} 的计时会话",
     "sessionTitle": "计时会话",

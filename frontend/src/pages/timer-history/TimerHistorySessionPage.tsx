@@ -125,18 +125,22 @@ export function TimerHistorySessionPage() {
 
         <section className="timer-session-hero" aria-label={t('timerHistory.sessionTitle')}>
           <p className="timer-session-hero__date">{formatHistoryDateHeader(dateKey, i18n.language)}</p>
+          <p className="timer-session-hero__clock">{formatTimerClock(session.durationSeconds)}</p>
+          <p className="timer-session-hero__label">{t('timerHistory.totalDuration')}</p>
           <p className="timer-session-hero__range">
             {formatClock(session.startedAt, i18n.language)}
             {' – '}
             {formatClock(session.endedAt, i18n.language)}
           </p>
-          <p className="timer-session-hero__clock">{formatTimerClock(session.durationSeconds)}</p>
-          <p className="timer-session-hero__label">{t('timerHistory.totalDuration')}</p>
-          <div className="timer-session-hero__chips">
-            <span>{t('timerHistory.lapCountLabel', { count: session.lapCount })}</span>
-            {machineTotal > 0 ? (
-              <span>{t('timerHistory.machineCount', { count: machineTotal })}</span>
-            ) : null}
+          <div className="timer-session-hero__stats">
+            <div className="timer-session-hero__stat">
+              <strong>{session.lapCount}</strong>
+              <span>{t('timerHistory.statLaps')}</span>
+            </div>
+            <div className="timer-session-hero__stat">
+              <strong>{machineTotal}</strong>
+              <span>{t('timerHistory.statMachines')}</span>
+            </div>
           </div>
         </section>
 
@@ -148,12 +152,12 @@ export function TimerHistorySessionPage() {
             <ol className="timer-lap-list">
               {session.laps.map((lap) => (
                 <li key={lap.id} className="timer-lap">
-                  <span className="timer-lap__badge" aria-hidden>
-                    {lap.lapNumber}
-                  </span>
+                  <div className="timer-lap__rail" aria-hidden>
+                    <span className="timer-lap__badge">{lap.lapNumber}</span>
+                  </div>
                   <div className="timer-lap__body">
                     <div className="timer-lap__head">
-                      <div>
+                      <div className="timer-lap__titles">
                         <span className="timer-lap__name">
                           {t('timerHistory.lapItem', { n: lap.lapNumber })}
                         </span>

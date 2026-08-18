@@ -2274,6 +2274,7 @@
     "totalDuration": "合計時間",
     "statSessions": "セッション",
     "statLaps": "ラップ",
+    "statMachines": "マシン",
     "lapCountLabel": "ラップ {{count}}",
     "sessionCardAria": "{{start}}から{{end}}までのタイマーセッション",
     "sessionTitle": "タイマーセッション",

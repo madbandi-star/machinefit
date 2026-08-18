@@ -107,50 +107,52 @@ export function TimerHistoryPage() {
             </div>
           ) : !hasSessions ? (
             <div className="card timer-history-empty-card">
-              <p>{t('timerHistory.emptyDay')}</p>
+              <strong>{t('timerHistory.emptyDay')}</strong>
               <p>{t('timerHistory.emptyHint')}</p>
-              <Link to={ROUTES.HOME} className="btn btn--secondary">
+              <Link to={ROUTES.HOME} className="btn btn--primary">
                 {t('timerHistory.openTimer')}
               </Link>
             </div>
           ) : (
             <>
-              <div className="timer-history-stats">
-                <span>
+              <div className="timer-history-stats" role="list">
+                <div className="timer-history-stats__item" role="listitem">
                   <strong>{formatDurationCompact(day?.totalDurationSeconds ?? 0, t)}</strong>
-                  {t('timerHistory.totalDuration')}
-                </span>
-                <span>
+                  <span>{t('timerHistory.totalDuration')}</span>
+                </div>
+                <div className="timer-history-stats__item" role="listitem">
                   <strong>{day?.sessionCount ?? 0}</strong>
-                  {t('timerHistory.statSessions')}
-                </span>
-                <span>
+                  <span>{t('timerHistory.statSessions')}</span>
+                </div>
+                <div className="timer-history-stats__item" role="listitem">
                   <strong>{day?.lapCount ?? 0}</strong>
-                  {t('timerHistory.statLaps')}
-                </span>
+                  <span>{t('timerHistory.statLaps')}</span>
+                </div>
               </div>
               <div className="timer-history-sessions">
                 {(day?.sessions ?? []).map((session) => (
                   <Link
                     key={session.id}
-                    className="card card--interactive timer-session-card"
+                    className="timer-session-card"
                     to={ROUTES.TIMER_HISTORY_SESSION.replace(':sessionId', session.id)}
                     aria-label={t('timerHistory.sessionCardAria', {
                       start: formatClock(session.startedAt, i18n.language),
                       end: formatClock(session.endedAt, i18n.language),
                     })}
                   >
-                    <div className="timer-session-card__when">
+                    <div className="timer-session-card__dur">
+                      {formatDurationCompact(session.durationSeconds, t)}
+                    </div>
+                    <div className="timer-session-card__body">
                       <span className="timer-session-card__time">
                         {formatClock(session.startedAt, i18n.language)}
                         {' – '}
                         {formatClock(session.endedAt, i18n.language)}
                       </span>
-                      <span>{t('timerHistory.lapCountLabel', { count: session.lapCount })}</span>
+                      <span className="timer-session-card__laps">
+                        {t('timerHistory.lapCountLabel', { count: session.lapCount })}
+                      </span>
                     </div>
-                    <strong className="timer-session-card__dur">
-                      {formatDurationCompact(session.durationSeconds, t)}
-                    </strong>
                     <Icon name="chevronRight" size={18} className="timer-session-card__chevron" aria-hidden />
                   </Link>
                 ))}

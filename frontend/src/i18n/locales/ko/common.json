@@ -2263,6 +2263,7 @@
     "totalDuration": "총 운동시간",
     "statSessions": "세션",
     "statLaps": "랩",
+    "statMachines": "기구",
     "lapCountLabel": "랩 {{count}}",
     "sessionCardAria": "{{start}}부터 {{end}}까지 타이머 세션",
     "sessionTitle": "타이머 세션",

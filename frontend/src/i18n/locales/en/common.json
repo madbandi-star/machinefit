@@ -2313,6 +2313,7 @@
     "totalDuration": "Total time",
     "statSessions": "Sessions",
     "statLaps": "Laps",
+    "statMachines": "Machines",
     "lapCountLabel": "{{count}} laps",
     "sessionCardAria": "Timer session from {{start}} to {{end}}",
     "sessionTitle": "Timer session",

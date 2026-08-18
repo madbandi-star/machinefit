@@ -1,29 +1,33 @@
 {
-  "title": "Align My Brands tile grid",
-  "summary": "내 브랜드 목록을 균일 타일 그리드로 바꾸고, 즐겨찾기 우선 정렬과 툴바 정렬을 정리했다.",
+  "title": "Polish timer history UI/UX",
+  "summary": "타이머 기록 목록·세션 상세를 시인성 중심으로 재구성했다(큰 운동시간, 통계 격자, 랩 타임라인).",
   "git": {
     "branch": "main",
-    "commit": "269fcebd"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
-    "frontend/src/styles/brand-favorites.css"
+    "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
+    "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
+    "frontend/src/styles/timer-history.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "내 브랜드: 2열(넓은 화면 3~4열) 타일 높이·별·이름 정렬",
-    "즐겨찾기 브랜드가 목록 상단에 모이는지",
-    "검색창과 카운트 칩 정렬"
+    "타이머 기록: 날짜 선택 → 세션 카드에 운동시간이 크게 보이는지",
+    "세션 상세: 중앙 시계 + 랩/기구 통계 + 랩 타임라인"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/styles/brand-favorites.css -Pattern grid-template-columns|min-height: 3rem",
-    "Select-String -Path frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx -Pattern favoriteIds.has"
+    "Select-String -Path frontend/src/styles/timer-history.css -Pattern timer-session-card__dur|timer-session-hero__stats|timer-lap__rail",
+    "Select-String -Path frontend/src/pages/timer-history -Pattern timer-history-stats__item|statMachines"
   ],
   "productionChecks": [
-    "Open My Brands and confirm equal tile grid alignment"
+    "Open timer history list and one session detail on Pages"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "가변 폭 알약 칩이 들쭉날쭉",
-  "toBe": "고정 높이 타일 그리드 + 즐겨찾기 우선"
+  "asIs": "정보가 납작하고 세션/랩이 한눈에 안 들어옴",
+  "toBe": "운동시간 강조 + 통계 격자 + 랩 타임라인"
 }
