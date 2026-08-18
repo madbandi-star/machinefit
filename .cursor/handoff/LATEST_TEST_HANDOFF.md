@@ -1,19 +1,17 @@
-# Test handoff — 자랑하기 작성 glance UI
+# Test handoff — MY MACHINE DEX glance UI
 
 ## Summary
-우리 헬스장 기구 자랑 **자랑하기(작성)** 화면을 한눈에 보이는 작곡기로 바꿨습니다. 사진 먼저, 헬스장 선택, 기구 칩, 한마디/태그, 상단 등록.
+MY MACHINE DEX를 한눈에 보이게 바꿨습니다. 진행 바, 등급 필터 칩, 3열 사진 격자.
 
 ## Test focus
-1. 목록 → 자랑하기: 첫 화면에서 사진 추가·헬스장·기구가 보이는지
-2. 머신 상세 자랑하기: 기구가 미리 선택된 칩인지
-3. 사진 추가/탭 삭제, 6장 제한
-4. 짐+기구+사진일 때만 등록 활성화
-
-## Fast checks
-- `showcase-write__drop` 가 Write 페이지에 있는지
+1. 마이페이지 → MY MACHINE DEX
+2. 등급 칩 필터
+3. 카드 → 기구 상세
+4. 빈 도감이면 자랑하기 CTA
 
 ## As-is → To-be
-- as-is: 5개 단계 카드 스택
-- to-be: 한 화면 작곡기
+- as-is: 등급 리스트 + 큰 보유 카드 + 2열
+- to-be: 진행 바 + 칩 + 3열 사진
 
 **Branch:** `main`
+**Commit:** `3a4b21cd`
