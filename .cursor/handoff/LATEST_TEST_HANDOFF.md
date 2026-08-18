@@ -11,4 +11,5 @@
 - as-is: 인사이트 섹션
 - to-be: 개인설정, 내 브랜드 아래
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `a601ad42`

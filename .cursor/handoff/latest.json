@@ -3,7 +3,7 @@
   "summary": "마이페이지 머신도감 메뉴를 머신핏 인사이트에서 개인설정의 내 브랜드 아래로 옮겼다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "a601ad42"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx"
