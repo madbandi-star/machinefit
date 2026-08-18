@@ -3,7 +3,7 @@
   "summary": "머신도감 등급 칩을 화면 안 4열 격자로 넣고, 카드 2열 높이를 맞춰 행·열이 어긋나지 않게 했다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "5c346d08"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineDexPage.tsx",

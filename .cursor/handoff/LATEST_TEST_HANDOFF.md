@@ -11,4 +11,5 @@
 - as-is: 칩이 화면 밖, 카드 높이 들쭉날쭉
 - to-be: 4열 칩, 2열 카드 정렬
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `5c346d08`
