@@ -79,9 +79,26 @@ export function MachineShowcaseDetailPage() {
   });
 
   const commentMutation = useMutation({
-    mutationFn: () => machineShowcaseApi.createComment(postId, { content: comment }),
-    onSuccess: () => {
+    mutationFn: (content: string) =>
+      machineShowcaseApi.createComment(postId, { content }),
+    onSuccess: (res) => {
+      const created = res.data.data;
       setComment('');
+      queryClient.setQueryData<MachineShowcasePostDetail>(
+        QUERY_KEYS.machineShowcasePost(postId),
+        (prev) => {
+          if (!prev || !created) return prev;
+          if (prev.comments.some((c) => c.id === created.id)) return prev;
+          return {
+            ...prev,
+            comments: [...prev.comments, created],
+            post: {
+              ...prev.post,
+              commentCount: (prev.post.commentCount ?? prev.comments.length) + 1,
+            },
+          };
+        }
+      );
       void invalidate();
     },
     onError: (error) => showToast(getApiErrorMessage(error, t('errorGeneric')), 'error'),
@@ -380,8 +397,9 @@ export function MachineShowcaseDetailPage() {
               className="showcase-comments__form"
               onSubmit={(e) => {
                 e.preventDefault();
-                if (!comment.trim() || commentMutation.isPending) return;
-                commentMutation.mutate();
+                const text = comment.trim();
+                if (!text || commentMutation.isPending) return;
+                commentMutation.mutate(text);
               }}
             >
               <input

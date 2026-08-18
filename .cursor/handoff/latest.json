@@ -1,25 +1,26 @@
 {
-  "title": "Move 내 브랜드 under 내 머신도감",
-  "summary": "마이페이지 개인설정에서 내 브랜드를 내 머신도감 아래로 옮겼다.",
+  "title": "Fix showcase comment appear after submit",
+  "summary": "머신도감 게시글 댓글 등록 후 목록에 즉시 반영되도록 캐시를 갱신한다. (다른 사용자 댓글 실시간 푸시는 원래 없음)",
   "git": {
     "branch": "main",
-    "commit": "97375c34"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx"
+    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx"
   ],
   "testFocus": [
-    "개인설정 순서: 내 머신도감 → 내 브랜드"
+    "게시글 상세에서 댓글 등록 → 새로고침 없이 목록에 바로 표시",
+    "입력창 비워짐"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/my-page/MyPage.tsx -Pattern MACHINE_DEX|BRAND_FAVORITES -Context 0,3"
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern setQueryData|createComment"
   ],
   "productionChecks": [
-    "Open My Page personal settings and confirm order"
+    "Post a comment on showcase detail and confirm it appears immediately"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "내 브랜드 → 내 머신도감",
-  "toBe": "내 머신도감 → 내 브랜드"
+  "asIs": "댓글 등록 후 목록이 바로 안 바뀌거나 늦게 갱신될 수 있음",
+  "toBe": "등록 응답으로 캐시에 즉시 추가 + invalidateetch"
 }
