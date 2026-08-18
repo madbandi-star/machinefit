@@ -3,7 +3,7 @@
   "summary": "머신도감 게시글 댓글 등록 후 목록에 즉시 반영되도록 캐시를 갱신한다. (다른 사용자 댓글 실시간 푸시는 원래 없음)",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "7cf7b64b"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx"

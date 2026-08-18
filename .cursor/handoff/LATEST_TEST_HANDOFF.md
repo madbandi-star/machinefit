@@ -13,4 +13,4 @@
 - to-be: 등록 직후 캐시에 반영
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `7cf7b64b`
