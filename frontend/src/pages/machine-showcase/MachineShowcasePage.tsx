@@ -1,15 +1,17 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { MachineShowcaseTab } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
+import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { ShowcaseCard } from '@/components/machine-showcase/ShowcaseCard';
 import { machineShowcaseApi } from '@/api/machine-showcase.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import '@/styles/components.css';
 import '@/styles/machine-showcase.css';
 
@@ -21,14 +23,32 @@ export function MachineShowcasePage() {
   const page = Math.max(1, parseInt(params.get('page') || '1', 10) || 1);
   const tab = (params.get('tab') as MachineShowcaseTab) || 'latest';
   const machineCode = params.get('machineCode')?.trim() || undefined;
+  const [searchInput, setSearchInput] = useState(() => params.get('q') ?? '');
+  const q = useDebouncedValue(searchInput, 250).trim();
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locTried, setLocTried] = useState(false);
+
+  useEffect(() => {
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        const current = next.get('q')?.trim() ?? '';
+        if (q === current) return prev;
+        if (q) next.set('q', q);
+        else next.delete('q');
+        next.set('page', '1');
+        return next;
+      },
+      { replace: true }
+    );
+  }, [q, setParams]);
 
   const query = useQuery({
     queryKey: QUERY_KEYS.machineShowcase({
       page,
       tab,
       machineCode,
+      q: q || undefined,
       lat: coords?.lat,
       lng: coords?.lng,
     }),
@@ -39,6 +59,7 @@ export function MachineShowcasePage() {
           limit: 18,
           tab,
           machineCode,
+          q: q || undefined,
           lat: coords?.lat,
           lng: coords?.lng,
         })
@@ -95,6 +116,14 @@ export function MachineShowcasePage() {
           </Link>
         </header>
 
+        <div className="showcase-search">
+          <SearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder={t('showcase.searchPlaceholder')}
+          />
+        </div>
+
         {machineCode ? (
           <div className="showcase-filter">
             <span className="showcase-filter__label">{t('showcase.thisMachineOnly')}</span>
@@ -144,10 +173,16 @@ export function MachineShowcasePage() {
             <span className="showcase-empty-state__icon" aria-hidden>
               🏋️
             </span>
-            <strong>{t('showcase.empty')}</strong>
-            <Link to={writeTo} className="btn btn--primary">
-              {t('showcase.writeCtaShort')}
-            </Link>
+            <strong>{q ? t('showcase.emptySearch') : t('showcase.empty')}</strong>
+            {q ? (
+              <button type="button" className="btn btn--secondary" onClick={() => setSearchInput('')}>
+                {t('showcase.searchClear')}
+              </button>
+            ) : (
+              <Link to={writeTo} className="btn btn--primary">
+                {t('showcase.writeCtaShort')}
+              </Link>
+            )}
           </div>
         ) : null}
 

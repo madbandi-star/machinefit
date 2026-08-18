@@ -495,6 +495,9 @@
     "gymsStat": "{{count}} gyms",
     "glanceEmpty": "No photos of this machine yet. Be the first to post.",
     "thisMachineOnly": "This machine",
-    "clearFilter": "Clear"
+    "clearFilter": "Clear",
+    "searchPlaceholder": "Search machine, brand, gym, or author",
+    "emptySearch": "No matching posts.",
+    "searchClear": "Clear search"
   }
 }

@@ -495,6 +495,9 @@
     "gymsStat": "健身房 {{count}}",
     "glanceEmpty": "还没有这台器械的照片。来晒第一张吧。",
     "thisMachineOnly": "仅此器械",
-    "clearFilter": "清除"
+    "clearFilter": "清除",
+    "searchPlaceholder": "搜索器械、品牌、健身房或作者",
+    "emptySearch": "没有匹配的帖子。",
+    "searchClear": "清除搜索"
   }
 }

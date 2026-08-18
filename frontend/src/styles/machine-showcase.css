@@ -58,6 +58,10 @@
   filter: brightness(1.05);
 }
 
+.showcase-search .search-bar {
+  margin-bottom: 0;
+}
+
 /* ── Tabs ── */
 .showcase-tabs {
   display: flex;

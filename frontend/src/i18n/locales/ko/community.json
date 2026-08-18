@@ -495,6 +495,9 @@
     "gymsStat": "헬스장 {{count}}",
     "glanceEmpty": "아직 이 기구 사진이 없어요. 첫 자랑을 올려 보세요.",
     "thisMachineOnly": "이 기구만",
-    "clearFilter": "해제"
+    "clearFilter": "해제",
+    "searchPlaceholder": "기구·브랜드·헬스장·작성자 검색",
+    "emptySearch": "검색 결과가 없습니다.",
+    "searchClear": "검색 해제"
   }
 }

@@ -254,7 +254,7 @@ export const machineShowcaseRepository = {
     }
     if (query.q) {
       conditions.push(
-        `(p.caption ILIKE $${idx} OR m.code ILIKE $${idx} OR m.name::text ILIKE $${idx} OR u.display_name ILIKE $${idx} OR COALESCE(g.name,'') ILIKE $${idx} OR COALESCE(ug.name,'') ILIKE $${idx})`
+        `(p.caption ILIKE $${idx} OR m.code ILIKE $${idx} OR m.name::text ILIKE $${idx} OR COALESCE(b.name::text,'') ILIKE $${idx} OR u.display_name ILIKE $${idx} OR COALESCE(g.name,'') ILIKE $${idx} OR COALESCE(ug.name,'') ILIKE $${idx} OR COALESCE(array_to_string(p.tags, ' '), '') ILIKE $${idx})`
       );
       params.push(`%${query.q}%`);
       idx += 1;
