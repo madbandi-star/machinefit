@@ -1,34 +1,25 @@
 {
-  "title": "Add search to Machine Dex Share",
-  "summary": "???? ???? ??????????? ??? ????. ? ??? ?? ????.",
+  "title": "Space Machine Dex title from My Page back",
+  "summary": "???? ????? ????? ??? ?? ?? ??? ???.",
   "git": {
     "branch": "main",
-    "commit": "b9faf823"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineShowcasePage.tsx",
-    "frontend/src/styles/machine-showcase.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json",
-    "backend/server/repositories/machine-showcase.repository.ts"
+    "frontend/src/styles/machine-showcase.css"
   ],
   "testFocus": [
-    "??? ?? ????? ???/???/??? ??",
-    "?? ?? ? ?? ??",
-    "? ?? ??? ??? ??"
+    "????: ????? ??? '????' ??? ?? ??? ???"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcasePage.tsx -Pattern SearchBar|q:",
-    "Select-String -Path backend/server/repositories/machine-showcase.repository.ts -Pattern 'b.name::text'"
+    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern showcase-dex__nav|showcase-dex__head -Context 0,6"
   ],
   "productionChecks": [
-    "Open Machine Dex Share and search after Pages deploy; brand search needs Render if API not yet updated"
+    "Open Machine Dex and check header spacing"
   ],
   "deploy": {
-    "expected": "GitHub Pages after push to main; Render for backend brand/tag search"
+    "expected": "GitHub Pages after push to main"
   },
-  "asIs": "???? ??? ??",
-  "toBe": "?? ???? ? ???"
+  "asIs": "????? ??? ??? ?? ??",
+  "toBe": "??? ?? ?? ?? ??"
 }
