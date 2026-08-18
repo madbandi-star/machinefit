@@ -3,7 +3,7 @@
   "summary": "마이페이지 개인설정 메뉴명을 머신도감에서 내 머신도감으로 바꿨다. 도감 페이지 제목은 그대로다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "8fcae400"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/common.json",

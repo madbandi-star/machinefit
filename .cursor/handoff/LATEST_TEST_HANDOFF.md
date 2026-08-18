@@ -10,4 +10,5 @@
 - as-is: 머신도감
 - to-be: 내 머신도감
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `8fcae400`
