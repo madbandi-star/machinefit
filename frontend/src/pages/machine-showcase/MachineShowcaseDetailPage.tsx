@@ -143,7 +143,6 @@ export function MachineShowcaseDetailPage() {
   const muscleKey = post.muscleGroup ? `muscleGroups.${post.muscleGroup}` : '';
   const muscleLabel =
     muscleKey && tm(muscleKey) !== muscleKey ? tm(muscleKey) : post.muscleGroup || '';
-  const brandLine = [post.brandName, muscleLabel].filter(Boolean).join(' · ');
 
   return (
     <div className="showcase-page showcase-page--detail">
@@ -241,31 +240,56 @@ export function MachineShowcaseDetailPage() {
           ) : null}
 
           <header className="showcase-detail__head">
-            {gymLabel ? <p className="showcase-detail__place">{gymLabel}</p> : null}
             <h1 className="showcase-detail__machine">{post.machineName}</h1>
-            {brandLine ? <p className="showcase-detail__brand">{brandLine}</p> : null}
+            {(gymLabel || post.brandName || muscleLabel) && (
+              <div className="showcase-detail__meta-chips">
+                {gymLabel ? <span className="showcase-detail__chip">{gymLabel}</span> : null}
+                {post.brandName ? (
+                  <span className="showcase-detail__chip">{post.brandName}</span>
+                ) : null}
+                {muscleLabel ? (
+                  <span className="showcase-detail__chip showcase-detail__chip--soft">
+                    {muscleLabel}
+                  </span>
+                ) : null}
+              </div>
+            )}
             <p className="showcase-detail__byline">
-              {[
-                post.authorName,
-                formatPostedAt(post.createdAt, i18n.language),
-                t('showcase.views', { count: post.viewCount }),
-              ]
-                .filter(Boolean)
-                .join(' · ')}
+              <span>{post.authorName || '—'}</span>
+              <span aria-hidden>·</span>
+              <time dateTime={post.createdAt}>
+                {formatPostedAt(post.createdAt, i18n.language)}
+              </time>
+              <span aria-hidden>·</span>
+              <span>{t('showcase.views', { count: post.viewCount })}</span>
             </p>
           </header>
 
-          <div className="showcase-detail__stats">
+          <div className="showcase-detail__stats" role="list">
             {post.discoveryRank === 1 ? (
-              <span className="is-gold">{t('showcase.dexFirst')}</span>
+              <div className="showcase-detail__stat is-gold" role="listitem">
+                <strong>1</strong>
+                <span>{t('showcase.dexFirst')}</span>
+              </div>
             ) : post.discoveryRank ? (
-              <span>{t('showcase.finderRank', { rank: post.discoveryRank })}</span>
+              <div className="showcase-detail__stat" role="listitem">
+                <strong>#{post.discoveryRank}</strong>
+                <span>{t('showcase.statFinder')}</span>
+              </div>
             ) : null}
-            <span>{t('showcase.gymsStat', { count: post.rarity.gymHoldingCount })}</span>
-            <span>{t('showcase.score', { score: post.rarity.score })}</span>
+            <div className="showcase-detail__stat" role="listitem">
+              <strong>{post.rarity.gymHoldingCount}</strong>
+              <span>{t('showcase.statGyms')}</span>
+            </div>
+            <div className="showcase-detail__stat" role="listitem">
+              <strong>{post.rarity.score}</strong>
+              <span>{t('showcase.statScore')}</span>
+            </div>
           </div>
 
-          {post.caption ? <p className="showcase-detail__caption">{post.caption}</p> : null}
+          {post.caption ? (
+            <blockquote className="showcase-detail__caption">{post.caption}</blockquote>
+          ) : null}
 
           {post.tags.length ? (
             <ul className="showcase-detail__tags">
@@ -276,18 +300,24 @@ export function MachineShowcaseDetailPage() {
           ) : null}
 
           <div className="showcase-detail__cta">
-            <button type="button" className="btn btn--primary" onClick={() => setClaimOpen(true)}>
+            <button
+              type="button"
+              className="btn btn--primary showcase-detail__cta-primary"
+              onClick={() => setClaimOpen(true)}
+            >
               {t('showcase.claimCtaShort')}
             </button>
-            <Link
-              className="btn btn--secondary"
-              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', post.machineCode)}
-            >
-              {t('showcase.viewMachine')}
-            </Link>
-            <Link className="btn btn--secondary" to={ROUTES.MACHINE_DEX}>
-              {t('showcase.viewDex')}
-            </Link>
+            <div className="showcase-detail__cta-links">
+              <Link
+                className="btn btn--secondary"
+                to={ROUTES.MACHINE_DETAIL.replace(':machineCode', post.machineCode)}
+              >
+                {t('showcase.viewMachine')}
+              </Link>
+              <Link className="btn btn--secondary" to={ROUTES.MACHINE_DEX}>
+                {t('showcase.viewDex')}
+              </Link>
+            </div>
           </div>
 
           <div className="showcase-detail__more">

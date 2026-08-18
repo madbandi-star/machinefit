@@ -1,30 +1,33 @@
 {
-  "title": "Rename Machine Dex Share board copy",
-  "summary": "머신도감 공유관 페이지 제목·부제·공유 버튼 문구를 ‘머신도감 공유관’ 톤으로 통일했다.",
+  "title": "Improve showcase detail readability",
+  "summary": "머신도감 공유관 게시글 상세를 사진·수치 중심으로 재배치하고, 버튼 문구를 요청 문구로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "95aa5d94"
+    "commit": "pending"
   },
   "changedFiles": [
+    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
+    "frontend/src/styles/machine-showcase.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
     "frontend/src/i18n/locales/ja/community.json",
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "머신도감 공유관 목록: 제목 ‘머신도감 공유관’",
-    "부제: ‘발견한 기구를 머신도감 공유관에 등록하세요!’",
-    "CTA 버튼: ‘공유하기’"
+    "게시글 상세: 큰 사진 + 머신명 + 칩 메타 + 숫자 스탯",
+    "캡션이 인용 블록으로 구분되는지",
+    "버튼: 우리 헬스장에도 있음 / 내 도감에서 보기 / 기구카드 상세보기"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/i18n/locales/ko/community.json -Pattern '머신도감 공유관|공유하기|발견한 기구'"
+    "Select-String -Path frontend/src/i18n/locales/ko/community.json -Pattern '우리 헬스장에도 있음|내 도감에서 보기|기구카드 상세보기'",
+    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern 'showcase-detail__meta-chips|showcase-detail__cta-primary'"
   ],
   "productionChecks": [
-    "Open /machine-showcase and confirm title, subtitle, Share button"
+    "Open a showcase post detail on Pages and check hierarchy + button labels"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "우리 헬스장 기구 자랑 / 우리 헬스장엔 이런 기구도 있다! / 자랑하기",
-  "toBe": "머신도감 공유관 / 발견한 기구를 머신도감 공유관에 등록하세요! / 공유하기"
+  "asIs": "텍스트 나열형 상세 + 우리 짐에도 있음 / 내 도감에 보기 / 기구 카드 보기",
+  "toBe": "사진·칩·수치 중심 상세 + 우리 헬스장에도 있음 / 내 도감에서 보기 / 기구카드 상세보기"
 }
