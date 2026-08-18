@@ -428,6 +428,8 @@
     "dexTitle": "MY MACHINE DEX",
     "dexSubtitle": "收集你发现的器械",
     "dexProgress": "发现 {{found}} / {{total}}",
+    "dexAll": "全部",
+    "dexEmpty": "还没有发现器械。晒图后会收入图鉴。",
     "holdingCount": "持有 {{count}} 台",
     "recentMachines": "最近添加",
     "needGym": "请先登记健身房。",

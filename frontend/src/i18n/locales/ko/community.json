@@ -428,6 +428,8 @@
     "dexTitle": "MY MACHINE DEX",
     "dexSubtitle": "내가 발견한 머신을 모아보세요",
     "dexProgress": "발견 {{found}} / {{total}}",
+    "dexAll": "전체",
+    "dexEmpty": "아직 발견한 머신이 없어요. 기구를 자랑하면 도감에 쌓입니다.",
     "holdingCount": "보유 머신 {{count}}대",
     "recentMachines": "최근 추가된 머신",
     "needGym": "내 헬스장을 먼저 등록해 주세요.",

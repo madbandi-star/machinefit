@@ -428,6 +428,8 @@
     "dexTitle": "MY MACHINE DEX",
     "dexSubtitle": "見つけたマシンを集めよう",
     "dexProgress": "発見 {{found}} / {{total}}",
+    "dexAll": "すべて",
+    "dexEmpty": "まだ発見したマシンがありません。自慢すると図鑑に貯まります。",
     "holdingCount": "保有 {{count}} 台",
     "recentMachines": "最近追加",
     "needGym": "先にジムを登録してください。",

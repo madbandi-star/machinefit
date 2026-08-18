@@ -428,6 +428,8 @@
     "dexTitle": "MY MACHINE DEX",
     "dexSubtitle": "Collect the machines you discover",
     "dexProgress": "Found {{found}} / {{total}}",
+    "dexAll": "All",
+    "dexEmpty": "No machines discovered yet. Showcase a gym machine to fill your dex.",
     "holdingCount": "{{count}} machines",
     "recentMachines": "Recently added",
     "needGym": "Register your gym first.",
