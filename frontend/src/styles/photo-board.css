@@ -1091,22 +1091,57 @@
   min-height: 2.85rem;
 }
 
-.photo-write__tag-chips {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.photo-write__tagbox {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 3.15rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--glass-border, var(--color-border));
+  border-radius: 12px;
+  background: var(--color-surface-alt, var(--color-surface));
 }
 
-.photo-write__tag-chip {
-  padding: 0.2rem 0.55rem;
+.photo-write__tagbox:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.photo-write__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-height: 2.15rem;
+  padding: 0.2rem 0.4rem 0.2rem 0.65rem;
+  border: 0;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-  color: var(--color-primary);
-  font-size: 0.72rem;
-  font-weight: 700;
+  background: color-mix(in srgb, var(--color-primary, #c9a227) 16%, transparent);
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.photo-write__tag-input {
+  flex: 1 1 8rem;
+  min-width: 7rem;
+  min-height: 2.25rem;
+  margin: 0;
+  padding: 0.25rem 0.35rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  box-shadow: none;
+}
+
+.photo-write__tag-input:focus {
+  outline: none;
+}
+
+.photo-write__tagbox.is-full {
+  padding-right: 0.65rem;
 }
 
 .photo-write__file-input {

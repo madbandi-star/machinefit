@@ -22,12 +22,15 @@ interface LocalImage {
   existingId?: string;
 }
 
-function parseTags(raw: string): string[] {
-  return raw
-    .split(/[,\s#]+/)
-    .map((t) => t.trim())
-    .filter(Boolean)
-    .slice(0, 10);
+const MAX_TAGS = 10;
+
+function normalizeTag(raw: string): string | null {
+  const cleaned = raw
+    .replace(/^#+/, '')
+    .trim()
+    .replace(/[^\p{L}\p{N}_-]/gu, '')
+    .slice(0, 40);
+  return cleaned || null;
 }
 
 export function PhotoPostWritePage() {
@@ -44,7 +47,8 @@ export function PhotoPostWritePage() {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tagsRaw, setTagsRaw] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState('');
   const [images, setImages] = useState<LocalImage[]>([]);
   const [dragOver, setDragOver] = useState(false);
 
@@ -71,7 +75,8 @@ export function PhotoPostWritePage() {
     }
     setTitle(post.title);
     setContent(post.content);
-    setTagsRaw(post.tags.join(' '));
+    setTags(post.tags ?? []);
+    setTagDraft('');
     setImages(
       (post.images ?? []).map((img) => ({
         id: img.id,
@@ -89,12 +94,24 @@ export function PhotoPostWritePage() {
     };
   }, [images]);
 
+  const resolveTags = () => {
+    const extra = normalizeTag(tagDraft);
+    if (
+      !extra ||
+      tags.length >= MAX_TAGS ||
+      tags.some((tag) => tag.toLowerCase() === extra.toLowerCase())
+    ) {
+      return tags;
+    }
+    return [...tags, extra];
+  };
+
   const createMutation = useMutation({
     mutationFn: () =>
       photoBoardApi.create({
         title: title.trim(),
         content: content.trim(),
-        tags: parseTags(tagsRaw),
+        tags: resolveTags(),
         files: images.map((img) => img.file).filter(Boolean) as File[],
       }),
     onSuccess: (res) => {
@@ -110,7 +127,7 @@ export function PhotoPostWritePage() {
       const post = await photoBoardApi.update(editId, {
         title: title.trim(),
         content: content.trim(),
-        tags: parseTags(tagsRaw),
+        tags: resolveTags(),
         imageOrder: images.map((img) => img.existingId).filter(Boolean) as string[],
       });
       return post;
@@ -166,7 +183,23 @@ export function PhotoPostWritePage() {
   const photoReady = images.length > 0;
   const titleReady = Boolean(title.trim());
   const contentReady = Boolean(content.trim());
-  const tagsReady = parseTags(tagsRaw).length > 0;
+  const tagsReady = tags.length > 0 || Boolean(normalizeTag(tagDraft));
+
+  const addTag = (raw: string) => {
+    const next = normalizeTag(raw);
+    if (!next) return;
+    setTags((prev) => {
+      if (prev.length >= MAX_TAGS || prev.some((tag) => tag.toLowerCase() === next.toLowerCase())) {
+        return prev;
+      }
+      return [...prev, next];
+    });
+    setTagDraft('');
+  };
+
+  const commitTagDraft = () => {
+    if (tagDraft.trim()) addTag(tagDraft);
+  };
   const checklist = [
     { id: 'photo', label: t('photoStepPhotos'), done: photoReady },
     { id: 'title', label: t('photoStepTitle'), done: titleReady },
@@ -217,6 +250,7 @@ export function PhotoPostWritePage() {
           className="photo-write"
           onSubmit={(e) => {
             e.preventDefault();
+            commitTagDraft();
             if (!canSubmit || busy) return;
             if (editId) updateMutation.mutate();
             else createMutation.mutate();
@@ -421,23 +455,71 @@ export function PhotoPostWritePage() {
                 </h3>
                 <p className="photo-write__section-hint">{t('photoStepTagsHint')}</p>
               </div>
+              <span className="photo-write__section-status">
+                {t('showcase.tagsCount', { count: tags.length, max: MAX_TAGS })}
+              </span>
             </header>
-            <input
-              id="photo-tags"
-              className="input"
-              value={tagsRaw}
-              onChange={(e) => setTagsRaw(e.target.value)}
-              placeholder={t('photoTagsPlaceholder')}
-            />
-            {tagsReady ? (
-              <ul className="photo-write__tag-chips" aria-label={t('photoTags')}>
-                {parseTags(tagsRaw).map((tag) => (
-                  <li key={tag} className="photo-write__tag-chip">
-                    #{tag}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+            <div className={`photo-write__tagbox${tags.length >= MAX_TAGS ? ' is-full' : ''}`}>
+              {tags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className="photo-write__tag"
+                  aria-label={t('showcase.tagRemoveAria', { tag })}
+                  onClick={() => setTags((prev) => prev.filter((item) => item !== tag))}
+                >
+                  #{tag}
+                  <X size={14} strokeWidth={2.4} aria-hidden />
+                </button>
+              ))}
+              {tags.length < MAX_TAGS ? (
+                <input
+                  id="photo-tags"
+                  className="photo-write__tag-input"
+                  value={tagDraft}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.includes(',') || value.includes('#')) {
+                      const parts = value.split(/[,#]+/);
+                      const tail = parts.pop() ?? '';
+                      setTags((prev) => {
+                        const next = [...prev];
+                        for (const part of parts) {
+                          const tag = normalizeTag(part);
+                          if (
+                            !tag ||
+                            next.length >= MAX_TAGS ||
+                            next.some((item) => item.toLowerCase() === tag.toLowerCase())
+                          ) {
+                            continue;
+                          }
+                          next.push(tag);
+                        }
+                        return next;
+                      });
+                      setTagDraft(tail);
+                      return;
+                    }
+                    setTagDraft(value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      commitTagDraft();
+                    } else if (e.key === 'Backspace' && !tagDraft && tags.length) {
+                      setTags((prev) => prev.slice(0, -1));
+                    }
+                  }}
+                  onBlur={commitTagDraft}
+                  placeholder={
+                    tags.length ? t('showcase.tagsMorePlaceholder') : t('photoTagsPlaceholder')
+                  }
+                  aria-label={t('showcase.tagsAddAria')}
+                  autoComplete="off"
+                  enterKeyHint="done"
+                />
+              ) : null}
+            </div>
           </section>
 
           <div className="photo-write__actions">
