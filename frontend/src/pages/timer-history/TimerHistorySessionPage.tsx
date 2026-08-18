@@ -19,31 +19,41 @@ import type { TimerHistoryLapExercise, TimerHistorySessionDetail } from '@machin
 import '@/styles/components.css';
 import '@/styles/timer-history.css';
 
-function uniqueMachineCount(session: TimerHistorySessionDetail): number {
-  const keys = new Set<string>();
+function sessionTotals(session: TimerHistorySessionDetail) {
+  const machineKeys = new Set<string>();
+  let setTotal = 0;
   for (const lap of session.laps) {
     for (const ex of lap.exercises) {
-      keys.add(ex.machineCode || ex.machineId || ex.machineName || ex.id);
+      machineKeys.add(ex.machineCode || ex.machineId || ex.machineName || ex.id);
+      if (ex.setCount != null && Number.isFinite(ex.setCount)) {
+        setTotal += Math.max(0, Math.floor(ex.setCount));
+      }
     }
   }
-  return keys.size;
+  return { machines: machineKeys.size, sets: setTotal };
 }
 
-function ExerciseRow({ ex }: { ex: TimerHistoryLapExercise }) {
+function ExerciseRow({ ex, index }: { ex: TimerHistoryLapExercise; index: number }) {
   const { t } = useTranslation('common');
   const name = ex.machineName || t('timerHistory.unknownMachine');
+  const setLabel = ex.setCount != null ? t('timerHistory.setCount', { count: ex.setCount }) : null;
   const weights = formatSetWeightsKg(ex.setWeightsKg, t);
-  const meta = [ex.setCount != null ? t('timerHistory.setCount', { count: ex.setCount }) : null, weights]
-    .filter(Boolean)
-    .join(' · ');
   const inner = (
     <>
-      <span className="timer-ex-row__text">
-        <span className="timer-ex-row__name">{name}</span>
-        {meta ? <span className="timer-ex-row__meta">{meta}</span> : null}
+      <span className="timer-ex__ord" aria-hidden>
+        {index}
+      </span>
+      <span className="timer-ex__body">
+        <span className="timer-ex__name">{name}</span>
+        {setLabel || weights ? (
+          <span className="timer-ex__chips">
+            {setLabel ? <span className="timer-ex__chip">{setLabel}</span> : null}
+            {weights ? <span className="timer-ex__chip">{weights}</span> : null}
+          </span>
+        ) : null}
       </span>
       {ex.machineCode ? (
-        <Icon name="chevronRight" size={18} className="timer-ex-row__chevron" aria-hidden />
+        <Icon name="chevronRight" size={18} className="timer-ex__chevron" aria-hidden />
       ) : null}
     </>
   );
@@ -51,7 +61,7 @@ function ExerciseRow({ ex }: { ex: TimerHistoryLapExercise }) {
   if (ex.machineCode) {
     return (
       <Link
-        className="timer-ex-row"
+        className="timer-ex"
         to={ROUTES.MACHINE_DETAIL.replace(':machineCode', ex.machineCode)}
         aria-label={name}
       >
@@ -60,7 +70,7 @@ function ExerciseRow({ ex }: { ex: TimerHistoryLapExercise }) {
     );
   }
 
-  return <div className="timer-ex-row is-static">{inner}</div>;
+  return <div className="timer-ex is-static">{inner}</div>;
 }
 
 export function TimerHistorySessionPage() {
@@ -78,14 +88,14 @@ export function TimerHistorySessionPage() {
   const calendarTo = dateKey
     ? `${ROUTES.TIMER_HISTORY}?date=${encodeURIComponent(dateKey)}`
     : ROUTES.TIMER_HISTORY;
-  const machineTotal = useMemo(() => (session ? uniqueMachineCount(session) : 0), [session]);
+  const totals = useMemo(() => (session ? sessionTotals(session) : { machines: 0, sets: 0 }), [session]);
 
   if (query.isLoading) {
     return (
       <div className="timer-history-page timer-history-page--session">
         <PageShell>
-          <Skeleton height={168} />
-          <Skeleton count={3} height={88} />
+          <Skeleton height={200} />
+          <Skeleton count={3} height={110} />
         </PageShell>
       </div>
     );
@@ -123,66 +133,73 @@ export function TimerHistorySessionPage() {
         </nav>
         <h1 className="visually-hidden">{t('timerHistory.sessionTitle')}</h1>
 
-        <section className="timer-session-hero" aria-label={t('timerHistory.sessionTitle')}>
-          <p className="timer-session-hero__date">{formatHistoryDateHeader(dateKey, i18n.language)}</p>
-          <p className="timer-session-hero__clock">{formatTimerClock(session.durationSeconds)}</p>
-          <p className="timer-session-hero__label">{t('timerHistory.totalDuration')}</p>
-          <p className="timer-session-hero__range">
-            {formatClock(session.startedAt, i18n.language)}
-            {' – '}
-            {formatClock(session.endedAt, i18n.language)}
+        <header className="timer-session-detail" aria-label={t('timerHistory.sessionTitle')}>
+          <p className="timer-session-detail__date">{formatHistoryDateHeader(dateKey, i18n.language)}</p>
+          <p className="timer-session-detail__clock">{formatTimerClock(session.durationSeconds)}</p>
+          <p className="timer-session-detail__label">{t('timerHistory.totalDuration')}</p>
+          <p className="timer-session-detail__range">
+            <span className="timer-session-detail__chip">
+              {formatClock(session.startedAt, i18n.language)}
+              {' – '}
+              {formatClock(session.endedAt, i18n.language)}
+            </span>
           </p>
-          <div className="timer-session-hero__stats">
-            <div className="timer-session-hero__stat">
+          <div className="timer-session-detail__stats">
+            <div className="timer-session-detail__stat">
               <strong>{session.lapCount}</strong>
               <span>{t('timerHistory.statLaps')}</span>
             </div>
-            <div className="timer-session-hero__stat">
-              <strong>{machineTotal}</strong>
+            <div className="timer-session-detail__stat">
+              <strong>{totals.machines}</strong>
               <span>{t('timerHistory.statMachines')}</span>
             </div>
+            <div className="timer-session-detail__stat">
+              <strong>{totals.sets}</strong>
+              <span>{t('timerHistory.statSets')}</span>
+            </div>
           </div>
-        </section>
+        </header>
 
         <section className="timer-session-laps" aria-label={t('timerHistory.lapsHeading')}>
-          <h2>{t('timerHistory.lapsHeading')}</h2>
+          <div className="timer-session-laps__head">
+            <h2>{t('timerHistory.lapsHeading')}</h2>
+            <span className="timer-session-laps__count">{session.lapCount}</span>
+          </div>
           {session.laps.length === 0 ? (
-            <p className="timer-lap-card__empty">{t('timerHistory.noLaps')}</p>
+            <p className="timer-lap-block__empty">{t('timerHistory.noLaps')}</p>
           ) : (
             <ol className="timer-lap-list">
               {session.laps.map((lap) => (
-                <li key={lap.id} className="timer-lap">
-                  <div className="timer-lap__rail" aria-hidden>
-                    <span className="timer-lap__badge">{lap.lapNumber}</span>
-                  </div>
-                  <div className="timer-lap__body">
-                    <div className="timer-lap__head">
-                      <div className="timer-lap__titles">
-                        <span className="timer-lap__name">
-                          {t('timerHistory.lapItem', { n: lap.lapNumber })}
-                        </span>
-                        <span className="timer-lap__range">
-                          {formatClock(lap.startedAt, i18n.language)}
-                          {' – '}
-                          {formatClock(lap.endedAt, i18n.language)}
-                        </span>
-                      </div>
-                      <strong className="timer-lap__dur">
+                <li key={lap.id} className="timer-lap-block">
+                  <div className="timer-lap-block__head">
+                    <span className="timer-lap-block__num" aria-hidden>
+                      {lap.lapNumber}
+                    </span>
+                    <div className="timer-lap-block__meta">
+                      <strong className="timer-lap-block__dur">
                         {formatDurationCompact(lap.durationSeconds, t)}
                       </strong>
+                      <span className="timer-lap-block__range">
+                        {formatClock(lap.startedAt, i18n.language)}
+                        {' – '}
+                        {formatClock(lap.endedAt, i18n.language)}
+                      </span>
                     </div>
-                    {lap.exercises.length === 0 ? (
-                      <p className="timer-lap-card__empty">{t('timerHistory.noMachines')}</p>
-                    ) : (
-                      <ul className="timer-lap__exercises">
-                        {lap.exercises.map((ex) => (
-                          <li key={ex.id}>
-                            <ExerciseRow ex={ex} />
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <span className="visually-hidden">
+                      {t('timerHistory.lapItem', { n: lap.lapNumber })}
+                    </span>
                   </div>
+                  {lap.exercises.length === 0 ? (
+                    <p className="timer-lap-block__empty">{t('timerHistory.noMachines')}</p>
+                  ) : (
+                    <ul className="timer-lap-block__exercises">
+                      {lap.exercises.map((ex, i) => (
+                        <li key={ex.id}>
+                          <ExerciseRow ex={ex} index={i + 1} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ol>

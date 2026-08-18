@@ -1,12 +1,11 @@
 {
-  "title": "Polish timer history UI/UX",
-  "summary": "타이머 기록 목록·세션 상세를 시인성 중심으로 재구성했다(큰 운동시간, 통계 격자, 랩 타임라인).",
+  "title": "Polish timer session detail UI",
+  "summary": "타이머 세션 상세를 재구성했다: 큰 시계 히어로, 랩/기구/세트 3열 통계, 랩 블록+기구 칩 행.",
   "git": {
     "branch": "main",
-    "commit": "2b2371d7"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
     "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
     "frontend/src/styles/timer-history.css",
     "frontend/src/i18n/locales/ko/common.json",
@@ -15,19 +14,19 @@
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "타이머 기록: 날짜 선택 → 세션 카드에 운동시간이 크게 보이는지",
-    "세션 상세: 중앙 시계 + 랩/기구 통계 + 랩 타임라인"
+    "타이머 세션 상세: 시계·시간대 칩·3열 통계",
+    "랩 블록: 번호+기간 강조, 기구 행에 세트/중량 칩"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/styles/timer-history.css -Pattern timer-session-card__dur|timer-session-hero__stats|timer-lap__rail",
-    "Select-String -Path frontend/src/pages/timer-history -Pattern timer-history-stats__item|statMachines"
+    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-session-detail|timer-lap-block|statSets",
+    "Select-String -Path frontend/src/styles/timer-history.css -Pattern timer-session-detail__clock|timer-ex__chip"
   ],
   "productionChecks": [
-    "Open timer history list and one session detail on Pages"
+    "Open one timer session detail on Pages after deploy"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "정보가 납작하고 세션/랩이 한눈에 안 들어옴",
-  "toBe": "운동시간 강조 + 통계 격자 + 랩 타임라인"
+  "asIs": "타임라인+중첩 카드로 세션 상세가 읽기 어려움",
+  "toBe": "시계 히어로 + 3열 통계 + 랩 블록/기구 칩"
 }

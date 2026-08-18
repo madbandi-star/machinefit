@@ -2314,6 +2314,7 @@
     "statSessions": "Sessions",
     "statLaps": "Laps",
     "statMachines": "Machines",
+    "statSets": "Sets",
     "lapCountLabel": "{{count}} laps",
     "sessionCardAria": "Timer session from {{start}} to {{end}}",
     "sessionTitle": "Timer session",

@@ -2275,6 +2275,7 @@
     "statSessions": "セッション",
     "statLaps": "ラップ",
     "statMachines": "マシン",
+    "statSets": "セット",
     "lapCountLabel": "ラップ {{count}}",
     "sessionCardAria": "{{start}}から{{end}}までのタイマーセッション",
     "sessionTitle": "タイマーセッション",
