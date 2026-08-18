@@ -41,12 +41,14 @@ export function getFreePlanLimits(): FreePlanLimits {
     maxEquipmentCards: intEnv('FREE_MAX_EQUIPMENT_CARDS', 30),
     dailyEquipmentCardCreates: intEnv('FREE_DAILY_EQUIPMENT_CARD_CREATES', 10),
     dailyRecommendationCalls: intEnv('FREE_DAILY_RECOMMENDATION_CALLS', 30),
-    recommendationCallsPerMinute: intEnv('FREE_RECOMMENDATION_PER_MINUTE', 10),
+    // Generous for normal gym browsing (many machines in a session); abuse still capped.
+    recommendationCallsPerMinute: intEnv('FREE_RECOMMENDATION_PER_MINUTE', 60),
     dailyWorkoutRecords: intEnv('FREE_DAILY_WORKOUT_RECORDS', 100),
     maxTemplates: intEnv('FREE_MAX_TEMPLATES', 20),
     dailyImageUploads: intEnv('FREE_DAILY_IMAGE_UPLOADS', 10),
-    apiRequestsPerMinute: intEnv('API_RATE_LIMIT_PER_MINUTE', 60),
-    apiRequestsPer10Seconds: intEnv('API_BURST_LIMIT', 20),
+    // Recommend + gym/member/bootstrap fan-out must not trip identity limits.
+    apiRequestsPerMinute: intEnv('API_RATE_LIMIT_PER_MINUTE', 180),
+    apiRequestsPer10Seconds: intEnv('API_BURST_LIMIT', 60),
     premiumMaxEquipmentCards: nullableIntEnv('PREMIUM_MAX_EQUIPMENT_CARDS', null),
     premiumMaxTemplates: nullableIntEnv('PREMIUM_MAX_TEMPLATES', null),
   };

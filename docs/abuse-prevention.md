@@ -13,12 +13,12 @@ Source: `shared/src/constants/free-plan-limits.ts` (`getFreePlanLimits()`).
 | Max equipment cards (stock) | 30 | `FREE_MAX_EQUIPMENT_CARDS` |
 | Daily card creates | 10 | `FREE_DAILY_EQUIPMENT_CARD_CREATES` |
 | Daily recommendations | 30 | `FREE_DAILY_RECOMMENDATION_CALLS` |
-| Recommendations / minute | 10 | `FREE_RECOMMENDATION_PER_MINUTE` |
+| Recommendations / minute | 60 | `FREE_RECOMMENDATION_PER_MINUTE` |
 | Daily workout record saves | 100 | `FREE_DAILY_WORKOUT_RECORDS` |
 | Max templates (stock) | 20 | `FREE_MAX_TEMPLATES` |
 | Daily image uploads | 10 | `FREE_DAILY_IMAGE_UPLOADS` |
-| API requests / minute (auth) | 60 | `API_RATE_LIMIT_PER_MINUTE` |
-| API burst / 10s (auth) | 20 | `API_BURST_LIMIT` |
+| API requests / minute (auth) | 180 | `API_RATE_LIMIT_PER_MINUTE` |
+| API burst / 10s (auth) | 60 | `API_BURST_LIMIT` |
 
 Premium stock/daily defaults are **unlimited (null)** unless set in `usage_policies` or env.
 

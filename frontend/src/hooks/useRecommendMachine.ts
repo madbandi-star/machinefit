@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 import type {
   ExperienceLevel,
   Gender,
@@ -228,6 +229,7 @@ export function useRecommendMachine(machineCode: string | undefined) {
   const queryClient = useQueryClient();
   const { t } = useTranslation(['common', 'machines']);
   const showToast = useUIStore((s) => s.showToast);
+  const inFlightRef = useRef(false);
 
   const mutation = useMutation({
     mutationFn: async (options: RecommendMachineOptions = {}) => {
@@ -429,12 +431,29 @@ export function useRecommendMachine(machineCode: string | undefined) {
       // Surface quota / rate-limit / network / not-found instead of a generic submitFailed.
       showToast(resolveApiErrorMessage(error, t, 'errors.submitFailed'), 'error');
     },
+    onSettled: () => {
+      inFlightRef.current = false;
+    },
   });
 
   return {
-    requestRecommendation: (options?: RecommendMachineOptions) => mutation.mutate(options ?? {}),
-    createRecommendationAsync: (options?: RecommendMachineOptions) =>
-      mutation.mutateAsync(options ?? {}),
+    requestRecommendation: (options?: RecommendMachineOptions) => {
+      // Same-tick double taps must not fire two POSTs (button disabled lags one frame).
+      if (inFlightRef.current || mutation.isPending) return;
+      inFlightRef.current = true;
+      mutation.mutate(options ?? {});
+    },
+    createRecommendationAsync: async (options?: RecommendMachineOptions) => {
+      if (inFlightRef.current || mutation.isPending) {
+        throw new Error('recommend_in_flight');
+      }
+      inFlightRef.current = true;
+      try {
+        return await mutation.mutateAsync(options ?? {});
+      } finally {
+        inFlightRef.current = false;
+      }
+    },
     isPending: mutation.isPending,
     isError: mutation.isError,
     reset: mutation.reset,
