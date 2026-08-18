@@ -13,4 +13,5 @@
 - as-is: 작은 통계 칩, LAP 카드, 기구 알약
 - to-be: 큰 시계, 번호 타임라인, 큰 기구 행
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `c8b82b9d`

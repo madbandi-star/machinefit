@@ -3,7 +3,7 @@
   "summary": "타이머 세션 상세를 스톱워치 결과처럼 바꿨다. 큰 시간, 랩 타임라인, 기구는 한 줄 카드(세트·무게, 탭하면 상세).",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "c8b82b9d"
   },
   "changedFiles": [
     "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
