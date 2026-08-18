@@ -3,7 +3,7 @@
   "summary": "기구 추천(머신 상세) 페이지의 '우리 헬스장 기구 자랑'을 한눈에 보이는 3줄 카드로 바꿨다. 희귀도·자랑 수·헬스장 수·지역 칩과 사진 스트립, 자랑하기 CTA. 목록은 해당 기구만 필터된다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "9d518d3f"
   },
   "changedFiles": [
     "frontend/src/components/machine-showcase/MachineShowcaseLinks.tsx",

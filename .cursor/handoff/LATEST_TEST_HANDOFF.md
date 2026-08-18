@@ -16,3 +16,4 @@
 - to-be: 카드 한 장에서 통계·사진·CTA를 바로 확인
 
 **Branch:** `main`
+**Commit:** `9d518d3f`
