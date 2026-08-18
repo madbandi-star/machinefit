@@ -14,4 +14,5 @@
 - as-is: 작은 오버레이, 잘린 본문, 작은 링크
 - to-be: 큰 사진, 읽히는 본문, 큰 버튼
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `cd01f62b`

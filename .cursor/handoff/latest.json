@@ -3,7 +3,7 @@
   "summary": "기구 자랑 게시글 상세를 큰 사진, 사진 아래 제목/본문, 태그 칩, 큰 CTA, 댓글 카드로 다시 짰다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "cd01f62b"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
