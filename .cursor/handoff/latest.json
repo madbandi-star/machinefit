@@ -1,12 +1,12 @@
 {
-  "title": "Comfortable showcase caption and tags",
-  "summary": "기구 자랑하기 등록의 한마디·태그 입력을 큰 작성칸, 글자 수, 태그 칩(엔터/쉼표 추가·탭 삭제)으로 바꿨다.",
+  "title": "Richer showcase post detail",
+  "summary": "기구 자랑 게시글 상세를 큰 사진, 사진 아래 제목/본문, 태그 칩, 큰 CTA, 댓글 카드로 다시 짰다.",
   "git": {
     "branch": "main",
-    "commit": "1a5dd1ba"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx",
+    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
     "frontend/src/styles/machine-showcase.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
@@ -14,20 +14,22 @@
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "한마디 큰 입력칸, 글자 수 n/500",
-    "태그: 엔터/쉼표로 칩 추가, 칩 탭하면 삭제, 최대 8개",
-    "검색 입력(헬스장·기구)도 커진 입력칸"
+    "목록 → 게시글: 큰 사진, 좌우 넘김/썸네일",
+    "헬스장·기구명·작성자·조회가 사진 아래에 보이는지",
+    "한마디 전체, 태그 칩",
+    "우리 짐에도 있음 / 기구카드 / 도감 큰 버튼",
+    "좋아요·북마크, 댓글 작성, 삭제 확인"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx -Pattern showcase-write__compose",
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx -Pattern showcase-write__tagbox"
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern showcase-detail__head",
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern showcase-detail__cta"
   ],
   "productionChecks": [
-    "Open showcase write and type caption + tags on phone-width"
+    "Open a showcase post on phone-width and scan photo, caption, CTAs, comments"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "작은 textarea + 한 줄 태그 입력, 안내 없음",
-  "toBe": "큰 작성칸, 글자 수, 태그 칩"
+  "asIs": "작은 사진 오버레이, 잘린 본문, 작은 칩/링크",
+  "toBe": "큰 사진, 읽히는 본문, 태그 칩, 큰 버튼, 댓글 카드"
 }
