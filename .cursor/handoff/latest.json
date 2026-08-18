@@ -1,35 +1,26 @@
 {
-  "title": "Richer showcase post detail",
-  "summary": "기구 자랑 게시글 상세를 큰 사진, 사진 아래 제목/본문, 태그 칩, 큰 CTA, 댓글 카드로 다시 짰다.",
+  "title": "Move 머신도감 under 내 브랜드",
+  "summary": "마이페이지 머신도감 메뉴를 머신핏 인사이트에서 개인설정의 내 브랜드 아래로 옮겼다.",
   "git": {
     "branch": "main",
-    "commit": "cd01f62b"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
-    "frontend/src/styles/machine-showcase.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "목록 → 게시글: 큰 사진, 좌우 넘김/썸네일",
-    "헬스장·기구명·작성자·조회가 사진 아래에 보이는지",
-    "한마디 전체, 태그 칩",
-    "우리 짐에도 있음 / 기구카드 / 도감 큰 버튼",
-    "좋아요·북마크, 댓글 작성, 삭제 확인"
+    "마이페이지 개인설정: 내 브랜드 다음에 머신도감",
+    "머신핏 인사이트에는 머신도감이 없는지"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern showcase-detail__head",
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern showcase-detail__cta"
+    "Select-String -Path frontend/src/pages/my-page/MyPage.tsx -Pattern MACHINE_DEX"
   ],
   "productionChecks": [
-    "Open a showcase post on phone-width and scan photo, caption, CTAs, comments"
+    "Open My Page and confirm 머신도감 is under 내 브랜드"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "작은 사진 오버레이, 잘린 본문, 작은 칩/링크",
-  "toBe": "큰 사진, 읽히는 본문, 태그 칩, 큰 버튼, 댓글 카드"
+  "asIs": "머신도감이 머신핏 인사이트에 있음",
+  "toBe": "개인설정 > 내 브랜드 아래 머신도감"
 }
