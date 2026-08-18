@@ -1,29 +1,29 @@
 {
-  "title": "Align template share hub as card grid",
-  "summary": "템플릿 공유관 목록을 균일한 카드 그리드로 바꿔 행·열 정렬과 통계·정렬 탭 레이아웃을 정리했다.",
+  "title": "Align My Templates as card grid",
+  "summary": "내 템플릿 목록을 균일 카드 그리드로 바꿔 행·열 정렬과 액션 버튼 레이아웃을 정리했다.",
   "git": {
     "branch": "main",
-    "commit": "1166a5eb"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
+    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
     "frontend/src/styles/template-share.css"
   ],
   "testFocus": [
-    "템플릿 공유관: 2열(넓은 화면 3열) 카드가 같은 높이로 정렬",
-    "정렬 탭 5개가 한 줄로 균등 분할",
-    "카드 하단 통계 2x2 숫자 정렬"
+    "내 템플릿: 2열(넓은 화면 3열) 카드 정렬",
+    "내가 만든/받아온 탭 전환 시 카드 높이·버튼 열 정렬",
+    "상단 요약 3칸·탭 2등분"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/styles/template-share.css -Pattern tpl-share-grid|tpl-share-card__stats",
-    "Select-String -Path frontend/src/pages/template-share/TemplateShareHubPage.tsx -Pattern tpl-share-grid"
+    "Select-String -Path frontend/src/styles/template-share.css -Pattern tpl-mine-grid|tpl-mine-card__",
+    "Select-String -Path frontend/src/pages/template-share/MyTemplatesPage.tsx -Pattern tpl-mine-grid"
   ],
   "productionChecks": [
-    "Open template share hub and confirm card grid alignment"
+    "Open My Templates and confirm card grid alignment for mine/received"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "가변 높이 리스트 행 + 통계/소셜이 들쭉날쭉",
-  "toBe": "균일 카드 그리드 + 고정 타이틀/소셜 슬롯 + 통계 격자"
+  "asIs": "가변 높이 리스트 행 + 액션이 들쭉날쭉",
+  "toBe": "균일 카드 그리드 + 고정 액션 슬롯"
 }
