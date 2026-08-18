@@ -1,28 +1,33 @@
 {
-  "title": "Apex / redirects into /machinefit SPA",
-  "summary": "https://machine-fit.com/ 는 Cloudflare 200 rewrite로 SPA HTML을 주지만 React Router basename이 /machinefit 이라 라우트가 안 맞아 검은 화면이 된다. index.html에서 / → /machinefit/ 클라이언트 리다이렉트를 넣었다.",
+  "title": "Glanceable machine showcase post detail",
+  "summary": "자랑글 상세를 한 화면에 보이게 재배치. 사진 위에 헬스장·기구명, 칩으로 희귀도 통계, 짧은 CTA 한 줄. 큰 버튼 스택과 중복 페이지 제목을 제거.",
   "git": {
     "branch": "main",
-    "commit": "06467d88"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/index.html"
+    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
+    "frontend/src/styles/machine-showcase.css",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json",
+    "frontend/src/i18n/locales/ja/community.json",
+    "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "https://machine-fit.com/ 가 /machinefit/ 로 넘어가 홈이 보이는지",
-    "https://machine-fit.com/machinefit/ 직접 접속이 보이는지",
-    "www.machine-fit.com 은 Cloudflare 526 — apex만 확인"
+    "자랑 목록에서 글 클릭 → 첫 화면에서 사진·헬스장·기구명·희귀도·좋아요가 보이는지",
+    "사진 여러 장이면 썸네일로 전환",
+    "우리 짐에도 있음 / 기구카드 / 도감이 한 줄 CTA인지",
+    "목록으로 돌아가기"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/index.html -Pattern location.replace"
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern showcase-detail__overlay"
   ],
   "productionChecks": [
-    "Open https://machine-fit.com/ — should land on app home",
-    "Open https://machine-fit.com/machinefit/"
+    "Open a showcase post on https://machine-fit.com/machinefit/community/machine-showcase (after Pages deploy)"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "apex / 는 200 HTML이지만 SPA가 안 떠서 검은 화면",
-  "toBe": "apex / 에서 /machinefit/ 로 바로 이동해 앱이 보임"
+  "asIs": "1:1 큰 사진 후 제목 중복, 풀폭 버튼 3개로 정보가 한 화면에 안 보임",
+  "toBe": "사진 오버레이 + 칩 + 짧은 CTA로 핵심이 한눈에 보임"
 }

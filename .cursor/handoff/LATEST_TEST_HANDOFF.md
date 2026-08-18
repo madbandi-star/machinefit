@@ -1,19 +1,19 @@
-# Test handoff — apex `/` → `/machinefit/` redirect
+# Test handoff — 자랑글 상세 glance UI
 
 ## Summary
-`https://machine-fit.com/` 가 앱 basename(`/machinefit`)과 안 맞아 검은 화면이던 문제. `index.html`에서 `/`를 `/machinefit/`로 보냅니다.
+우리 헬스장 기구 자랑 **게시글 상세**를 한눈에 보이게 바꿨습니다. 사진 위에 헬스장·기구명, 아래에 희귀도 칩과 짧은 CTA.
 
 ## Test focus
-1. `https://machine-fit.com/` → 홈 앱이 보이는지
-2. `https://machine-fit.com/machinefit/` 직접 접속
-3. `www.machine-fit.com` 은 526일 수 있음 (apex만)
+1. 목록에서 글 클릭 → 첫 화면에서 사진·헬스장·기구·희귀도·좋아요
+2. 사진 여러 장 → 썸네일 전환
+3. 우리 짐에도 있음 / 기구카드 / 도감이 한 줄
+4. 목록 복귀
 
 ## Fast checks
-- `frontend/index.html` 에 `location.replace('/machinefit/'` 있는지
+- `showcase-detail__overlay` 가 Detail 페이지에 있는지
 
 ## As-is → To-be
-- as-is: apex는 HTML 200이지만 React 라우트 불일치로 빈 화면
-- to-be: apex에서 앱 루트로 이동
+- as-is: 정사각 히어로 + 중복 제목 + 풀폭 버튼 스택
+- to-be: 오버레이 카드 + 칩 + 짧은 CTA
 
 **Branch:** `main`
-**Commit:** `06467d88`

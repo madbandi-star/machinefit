@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +29,7 @@ export function MachineShowcaseDetailPage() {
   const [comment, setComment] = useState('');
   const [claimOpen, setClaimOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [imageIdx, setImageIdx] = useState(0);
 
   const detailQuery = useQuery({
     queryKey: QUERY_KEYS.machineShowcasePost(postId),
@@ -79,6 +80,13 @@ export function MachineShowcaseDetailPage() {
   });
 
   const post = detailQuery.data?.post;
+  const images = useMemo(() => {
+    if (!post) return [];
+    if (post.images?.length) return post.images;
+    return post.coverImage ? [post.coverImage] : [];
+  }, [post]);
+  const hero = images[Math.min(imageIdx, Math.max(0, images.length - 1))] ?? images[0];
+
   if (detailQuery.isLoading) {
     return (
       <div className="showcase-page">
@@ -99,46 +107,16 @@ export function MachineShowcaseDetailPage() {
   const gymId = activeGymId || gyms[0]?.id;
   const gymLabel = post.gymName || post.userGymName;
   const comments = detailQuery.data?.comments ?? [];
-  const hero = post.images?.[0] ?? post.coverImage;
+  const brandLine = [post.brandName, post.machineName].filter(Boolean).join(' · ');
 
   return (
-    <div className="showcase-page">
-      <PageShell
-        title={post.machineName}
-        subtitle={post.brandName}
-        action={
+    <div className="showcase-page showcase-page--detail">
+      <PageShell>
+        <nav className="showcase-detail__nav">
           <Link to={ROUTES.MACHINE_SHOWCASE} className="showcase-detail__back">
             {t('showcase.backList')}
           </Link>
-        }
-      >
-        <article className={`showcase-detail showcase-card--${post.rarity.grade.toLowerCase()}`}>
-          <div className="showcase-detail__hero">
-            {hero ? (
-              <img src={resolveShowcaseMediaUrl(hero.mainUrl)} alt="" />
-            ) : (
-              <div className="showcase-card__placeholder" aria-hidden />
-            )}
-            <RarityBadge grade={post.rarity.grade} />
-          </div>
-
-          <header className="showcase-detail__id">
-            <p className="showcase-detail__place">{gymLabel || '—'}</p>
-            {post.discoveryRank === 1 ? (
-              <p className="showcase-detail__finder">{t('showcase.firstFinder')}</p>
-            ) : null}
-            <div className="showcase-detail__chips">
-              <span>{t('showcase.gymsRegistered', { count: post.rarity.gymHoldingCount })}</span>
-              <span>{t('showcase.score', { score: post.rarity.score })}</span>
-            </div>
-          </header>
-
-          {post.caption ? <p className="showcase-detail__caption">{post.caption}</p> : null}
-          {post.tags.length ? (
-            <p className="showcase-detail__tags">{post.tags.map((tag) => `#${tag}`).join(' ')}</p>
-          ) : null}
-
-          <div className="showcase-detail__toolbar">
+          <div className="showcase-detail__nav-tools">
             <button
               type="button"
               className={`showcase-detail__tool${post.likedByMe ? ' is-on' : ''}`}
@@ -155,9 +133,84 @@ export function MachineShowcaseDetailPage() {
             >
               🔖 {post.bookmarkCount}
             </button>
+          </div>
+        </nav>
+
+        <article className={`showcase-detail showcase-card--${post.rarity.grade.toLowerCase()}`}>
+          <div className="showcase-detail__hero">
+            {hero ? (
+              <img src={resolveShowcaseMediaUrl(hero.mainUrl)} alt="" />
+            ) : (
+              <div className="showcase-card__placeholder" aria-hidden />
+            )}
+            <RarityBadge grade={post.rarity.grade} compact />
+            {images.length > 1 ? (
+              <span className="showcase-detail__count">
+                {Math.min(imageIdx, images.length - 1) + 1}/{images.length}
+              </span>
+            ) : null}
+            <div className="showcase-detail__overlay">
+              <p className="showcase-detail__place">{gymLabel || '—'}</p>
+              <h1 className="showcase-detail__machine">{brandLine || post.machineName}</h1>
+            </div>
+          </div>
+
+          {images.length > 1 ? (
+            <div className="showcase-detail__thumbs" role="list">
+              {images.map((img, idx) => (
+                <button
+                  key={img.id}
+                  type="button"
+                  role="listitem"
+                  className={`showcase-detail__thumb${idx === imageIdx ? ' is-on' : ''}`}
+                  onClick={() => setImageIdx(idx)}
+                  aria-label={`${idx + 1}`}
+                >
+                  <img src={resolveShowcaseMediaUrl(img.thumbUrl)} alt="" />
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="showcase-detail__meta">
+            {post.discoveryRank === 1 ? (
+              <span className="showcase-detail__chip showcase-detail__chip--gold">
+                {t('showcase.firstFinder')}
+              </span>
+            ) : post.discoveryRank ? (
+              <span className="showcase-detail__chip">
+                {t('showcase.finderRank', { rank: post.discoveryRank })}
+              </span>
+            ) : null}
+            <span className="showcase-detail__chip">
+              {t('showcase.gymsStat', { count: post.rarity.gymHoldingCount })}
+            </span>
+            <span className="showcase-detail__chip">
+              {t('showcase.score', { score: post.rarity.score })}
+            </span>
+          </div>
+
+          {post.caption ? <p className="showcase-detail__caption">{post.caption}</p> : null}
+          {post.tags.length ? (
+            <p className="showcase-detail__tags">{post.tags.map((tag) => `#${tag}`).join(' ')}</p>
+          ) : null}
+
+          <div className="showcase-detail__cta">
+            <button type="button" className="showcase-detail__claim" onClick={() => setClaimOpen(true)}>
+              {t('showcase.claimCtaShort')}
+            </button>
+            <Link
+              className="showcase-detail__link"
+              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', post.machineCode)}
+            >
+              {t('showcase.viewMachineShort')}
+            </Link>
+            <Link className="showcase-detail__link" to={ROUTES.MACHINE_DEX}>
+              {t('showcase.viewDexShort')}
+            </Link>
             <button
               type="button"
-              className="showcase-detail__tool showcase-detail__tool--muted"
+              className="showcase-detail__link showcase-detail__link--btn"
               disabled={busy}
               onClick={async () => {
                 if (busy) return;
@@ -180,29 +233,13 @@ export function MachineShowcaseDetailPage() {
             {userId === post.userId ? (
               <button
                 type="button"
-                className="showcase-detail__tool showcase-detail__tool--danger"
+                className="showcase-detail__link showcase-detail__link--btn showcase-detail__link--danger"
                 disabled={deleteMutation.isPending}
                 onClick={() => deleteMutation.mutate()}
               >
                 {deleteMutation.isPending ? t('showcase.submitting') : t('showcase.delete')}
               </button>
             ) : null}
-          </div>
-
-          <button type="button" className="btn btn--primary btn--block" onClick={() => setClaimOpen(true)}>
-            {t('showcase.claimCta')}
-          </button>
-
-          <div className="showcase-machine-links">
-            <Link
-              className="btn btn--secondary"
-              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', post.machineCode)}
-            >
-              {t('showcase.viewMachine')}
-            </Link>
-            <Link className="btn btn--secondary" to={ROUTES.MACHINE_DEX}>
-              {t('showcase.viewDex')}
-            </Link>
           </div>
 
           <section className="showcase-comments">
@@ -245,7 +282,7 @@ export function MachineShowcaseDetailPage() {
           open={claimOpen}
           title={t('showcase.claimTitle')}
           message={t('showcase.claimConfirm')}
-          confirmLabel={t('showcase.claimCta')}
+          confirmLabel={t('showcase.claimCtaShort')}
           onClose={() => setClaimOpen(false)}
           onConfirm={async () => {
             if (!gymId || busy) return;
