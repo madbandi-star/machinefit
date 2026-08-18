@@ -19,4 +19,4 @@
 - to-be: 제출한 표의 시트·백패드·발·핸들이 기록에 표시
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** fc16e888
