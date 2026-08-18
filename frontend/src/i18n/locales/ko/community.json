@@ -376,12 +376,12 @@
     "deleteMessage": "이 템플릿을 삭제할까요? 이미 공유된 글은 별도로 관리됩니다."
   },
   "showcase": {
-    "title": "우리 헬스장 기구 자랑",
-    "subtitle": "우리 헬스장엔 이런 기구도 있다!",
-    "writeCta": "+ 우리 헬스장 기구 자랑하기",
-    "writeCtaShort": "자랑하기",
+    "title": "머신도감 공유관",
+    "subtitle": "발견한 기구를 머신도감 공유관에 등록하세요!",
+    "writeCta": "+ 머신도감 공유관에 공유하기",
+    "writeCtaShort": "공유하기",
     "backList": "목록",
-    "writeTitle": "기구 자랑하기",
+    "writeTitle": "기구 공유하기",
     "writeHint": "헬스장 → 기구 → 사진 → 한마디 순서로 올리면 됩니다",
     "tabs": {
       "popular": "인기",

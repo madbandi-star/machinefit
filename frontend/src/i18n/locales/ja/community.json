@@ -376,12 +376,12 @@
     "deleteMessage": "このテンプレートを削除しますか？既に共有された投稿は別途管理されます。"
   },
   "showcase": {
-    "title": "ジムマシン自慢",
-    "subtitle": "うちのジムにはこんなマシンもある！",
-    "writeCta": "+ ジムマシンを自慢する",
-    "writeCtaShort": "投稿",
+    "title": "マシン図鑑 共有館",
+    "subtitle": "見つけたマシンをマシン図鑑 共有館に登録しましょう！",
+    "writeCta": "+ マシン図鑑に共有する",
+    "writeCtaShort": "共有する",
     "backList": "一覧",
-    "writeTitle": "マシンを自慢する",
+    "writeTitle": "マシンを共有する",
     "writeHint": "ジム → マシン → 写真 → ひとこと",
     "tabs": {
       "popular": "人気",

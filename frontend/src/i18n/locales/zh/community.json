@@ -376,12 +376,12 @@
     "deleteMessage": "要删除此模板吗？已分享的帖子会另行管理。"
   },
   "showcase": {
-    "title": "健身房器械晒一晒",
-    "subtitle": "我们健身房还有这种器械！",
-    "writeCta": "+ 晒出健身房器械",
-    "writeCtaShort": "晒图",
+    "title": "机器图鉴共享馆",
+    "subtitle": "把发现的器械登记到机器图鉴共享馆吧！",
+    "writeCta": "+ 分享到机器图鉴",
+    "writeCtaShort": "分享",
     "backList": "列表",
-    "writeTitle": "晒器械",
+    "writeTitle": "分享器械",
     "writeHint": "健身房 → 器械 → 照片 → 一句话",
     "tabs": {
       "popular": "热门",

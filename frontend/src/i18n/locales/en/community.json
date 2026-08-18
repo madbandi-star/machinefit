@@ -376,12 +376,12 @@
     "deleteMessage": "Delete this template? Existing share posts are managed separately."
   },
   "showcase": {
-    "title": "Gym Machine Showcase",
-    "subtitle": "Look what our gym has!",
-    "writeCta": "+ Showcase a gym machine",
-    "writeCtaShort": "Post",
+    "title": "Machine Dex Share",
+    "subtitle": "Register machines you’ve found in the Machine Dex Share!",
+    "writeCta": "+ Share to Machine Dex",
+    "writeCtaShort": "Share",
     "backList": "List",
-    "writeTitle": "Showcase a machine",
+    "writeTitle": "Share a machine",
     "writeHint": "Gym → machine → photo → caption",
     "tabs": {
       "popular": "Popular",
