@@ -1,33 +1,25 @@
 {
-  "title": "Improve showcase detail readability",
-  "summary": "머신도감 공유관 게시글 상세를 사진·수치 중심으로 재배치하고, 버튼 문구를 요청 문구로 바꿨다.",
+  "title": "Move 내 브랜드 under 내 머신도감",
+  "summary": "마이페이지 개인설정에서 내 브랜드를 내 머신도감 아래로 옮겼다.",
   "git": {
     "branch": "main",
-    "commit": "fdb55a4c"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
-    "frontend/src/styles/machine-showcase.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "게시글 상세: 큰 사진 + 머신명 + 칩 메타 + 숫자 스탯",
-    "캡션이 인용 블록으로 구분되는지",
-    "버튼: 우리 헬스장에도 있음 / 내 도감에서 보기 / 기구카드 상세보기"
+    "개인설정 순서: 내 머신도감 → 내 브랜드"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/i18n/locales/ko/community.json -Pattern '우리 헬스장에도 있음|내 도감에서 보기|기구카드 상세보기'",
-    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern 'showcase-detail__meta-chips|showcase-detail__cta-primary'"
+    "Select-String -Path frontend/src/pages/my-page/MyPage.tsx -Pattern MACHINE_DEX|BRAND_FAVORITES -Context 0,3"
   ],
   "productionChecks": [
-    "Open a showcase post detail on Pages and check hierarchy + button labels"
+    "Open My Page personal settings and confirm order"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "텍스트 나열형 상세 + 우리 짐에도 있음 / 내 도감에 보기 / 기구 카드 보기",
-  "toBe": "사진·칩·수치 중심 상세 + 우리 헬스장에도 있음 / 내 도감에서 보기 / 기구카드 상세보기"
+  "asIs": "내 브랜드 → 내 머신도감",
+  "toBe": "내 머신도감 → 내 브랜드"
 }

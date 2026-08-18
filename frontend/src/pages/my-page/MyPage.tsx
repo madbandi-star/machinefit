@@ -268,14 +268,14 @@ export function MyPage() {
             icon="history"
           />
           <ListNavLink
-            to={ROUTES.BRAND_FAVORITES}
-            label={t('myPage.brandFavorites')}
-            icon="bookmark"
-          />
-          <ListNavLink
             to={ROUTES.MACHINE_DEX}
             label={t('myPage.machineDex')}
             icon="machines"
+          />
+          <ListNavLink
+            to={ROUTES.BRAND_FAVORITES}
+            label={t('myPage.brandFavorites')}
+            icon="bookmark"
           />
           <ListNavLink to={ROUTES.SETTINGS} label={t('nav.settings')} icon="sliders" />
           {showAboveMember ? (
