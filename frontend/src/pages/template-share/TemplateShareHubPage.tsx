@@ -161,7 +161,7 @@ export function TemplateShareHubPage() {
                 </div>
               </div>
             ) : (
-              <div className="tpl-share-list">
+              <div className="tpl-share-grid">
                 {items.map((item) => {
                   const badge = item.badges?.[0];
                   const hasSocial =
@@ -172,65 +172,71 @@ export function TemplateShareHubPage() {
                     <Link
                       key={item.id}
                       to={ROUTES.TEMPLATE_SHARE_DETAIL.replace(':postId', item.id)}
-                      className="tpl-share-row"
+                      className="tpl-share-card"
                     >
-                      <div className="tpl-share-row__thumb" aria-hidden>
+                      <div className="tpl-share-card__media" aria-hidden>
                         {item.thumbnailUrl ? (
                           <img src={item.thumbnailUrl} alt="" loading="lazy" />
                         ) : (
-                          <span className="tpl-share-row__thumb-fallback">
-                            <Icon name="dumbbell" size={18} />
+                          <span className="tpl-share-card__media-fallback">
+                            <Icon name="dumbbell" size={22} />
                           </span>
                         )}
+                        {badge ? (
+                          <span className="tpl-share-card__badge">{badge.label}</span>
+                        ) : null}
                       </div>
-                      <div className="tpl-share-row__body">
-                        <div className="tpl-share-row__title-row">
-                          {badge ? (
-                            <span className="tpl-share-row__badge">{badge.label}</span>
-                          ) : null}
-                          <h3 className="tpl-share-row__title">{item.title}</h3>
-                        </div>
-                        <p className="tpl-share-row__meta">
-                          {item.authorName}
-                          {' · '}
-                          {t(`templateShare.difficulty.${item.difficulty}`)}
-                          {' · '}
-                          {t('templateShare.exerciseCount', { count: item.itemCount })}
+                      <div className="tpl-share-card__body">
+                        <h3 className="tpl-share-card__title">{item.title}</h3>
+                        <p className="tpl-share-card__meta">
+                          <span>{item.authorName || '—'}</span>
+                          <span aria-hidden>·</span>
+                          <span>{t(`templateShare.difficulty.${item.difficulty}`)}</span>
+                          <span aria-hidden>·</span>
+                          <span>
+                            {t('templateShare.exerciseCount', { count: item.itemCount })}
+                          </span>
                         </p>
                         {hasSocial ? (
                           <div
-                            className="tpl-share-row__social"
+                            className="tpl-share-card__social"
                             aria-label={t('templateShare.creatorLinks')}
                           >
                             {item.youtubeChannelName || item.youtubeUrl ? (
-                              <span className="tpl-share-row__social-chip">
-                                <Video size={13} strokeWidth={2.2} aria-hidden />
+                              <span className="tpl-share-card__social-chip">
+                                <Video size={12} strokeWidth={2.2} aria-hidden />
                                 <span>
                                   {item.youtubeChannelName || t('templateShare.fieldYoutubeUrl')}
                                 </span>
                               </span>
                             ) : null}
                             {item.instagramId ? (
-                              <span className="tpl-share-row__social-chip">
-                                <AtSign size={13} strokeWidth={2.2} aria-hidden />
+                              <span className="tpl-share-card__social-chip">
+                                <AtSign size={12} strokeWidth={2.2} aria-hidden />
                                 <span>@{item.instagramId}</span>
                               </span>
                             ) : null}
                           </div>
-                        ) : null}
-                        <div className="tpl-share-row__stats">
-                          <span>
-                            {t('templateShare.statLikes')} {item.likeCount}
-                          </span>
-                          <span>
-                            {t('templateShare.statDownloads')} {item.downloadCount}
-                          </span>
-                          <span>
-                            {t('templateShare.statUses')} {item.useCount}
-                          </span>
-                          <span>
-                            {t('templateShare.statComments')} {item.commentCount}
-                          </span>
+                        ) : (
+                          <div className="tpl-share-card__social tpl-share-card__social--empty" aria-hidden />
+                        )}
+                        <div className="tpl-share-card__stats">
+                          <div className="tpl-share-card__stat">
+                            <strong>{item.likeCount}</strong>
+                            <span>{t('templateShare.statLikes')}</span>
+                          </div>
+                          <div className="tpl-share-card__stat">
+                            <strong>{item.downloadCount}</strong>
+                            <span>{t('templateShare.statDownloads')}</span>
+                          </div>
+                          <div className="tpl-share-card__stat">
+                            <strong>{item.useCount}</strong>
+                            <span>{t('templateShare.statUses')}</span>
+                          </div>
+                          <div className="tpl-share-card__stat">
+                            <strong>{item.commentCount}</strong>
+                            <span>{t('templateShare.statComments')}</span>
+                          </div>
                         </div>
                       </div>
                     </Link>

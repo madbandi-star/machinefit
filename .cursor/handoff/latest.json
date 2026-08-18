@@ -1,26 +1,29 @@
 {
-  "title": "Fix showcase comment appear after submit",
-  "summary": "머신도감 게시글 댓글 등록 후 목록에 즉시 반영되도록 캐시를 갱신한다. (다른 사용자 댓글 실시간 푸시는 원래 없음)",
+  "title": "Align template share hub as card grid",
+  "summary": "템플릿 공유관 목록을 균일한 카드 그리드로 바꿔 행·열 정렬과 통계·정렬 탭 레이아웃을 정리했다.",
   "git": {
     "branch": "main",
-    "commit": "7cf7b64b"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx"
+    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
+    "frontend/src/styles/template-share.css"
   ],
   "testFocus": [
-    "게시글 상세에서 댓글 등록 → 새로고침 없이 목록에 바로 표시",
-    "입력창 비워짐"
+    "템플릿 공유관: 2열(넓은 화면 3열) 카드가 같은 높이로 정렬",
+    "정렬 탭 5개가 한 줄로 균등 분할",
+    "카드 하단 통계 2x2 숫자 정렬"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern setQueryData|createComment"
+    "Select-String -Path frontend/src/styles/template-share.css -Pattern tpl-share-grid|tpl-share-card__stats",
+    "Select-String -Path frontend/src/pages/template-share/TemplateShareHubPage.tsx -Pattern tpl-share-grid"
   ],
   "productionChecks": [
-    "Post a comment on showcase detail and confirm it appears immediately"
+    "Open template share hub and confirm card grid alignment"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "댓글 등록 후 목록이 바로 안 바뀌거나 늦게 갱신될 수 있음",
-  "toBe": "등록 응답으로 캐시에 즉시 추가 + invalidateetch"
+  "asIs": "가변 높이 리스트 행 + 통계/소셜이 들쭉날쭉",
+  "toBe": "균일 카드 그리드 + 고정 타이틀/소셜 슬롯 + 통계 격자"
 }
