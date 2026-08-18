@@ -16,6 +16,7 @@ import { complianceApi } from '@/api/compliance.api';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { Icon } from '@/components/icons/Icon';
 import '@/styles/privacy-rights.css';
 import '@/styles/components.css';
 
@@ -189,7 +190,17 @@ export function PrivacyRightsPage() {
       : t('location.pathUnset');
 
   return (
-    <PageShell title={t('compliance.rights.title')} subtitle={t('compliance.rights.subtitle')}>
+    <PageShell
+      title={
+        <span className="page-hero-title">
+          <span className="page-hero-title__icon" aria-hidden>
+            <Icon name="shield" size={18} />
+          </span>
+          {t('compliance.rights.title')}
+        </span>
+      }
+      subtitle={t('compliance.rights.subtitle')}
+    >
       <div className="pr-page">
         <nav className="pr-nav" aria-label={t('compliance.rights.title')}>
           <a href="#pr-view">{t('compliance.rights.navView')}</a>
@@ -208,12 +219,17 @@ export function PrivacyRightsPage() {
 
         <section id="pr-view" className="pr-section">
           <header className="pr-section__head">
-            <h2 className="pr-section__title">{t('compliance.rights.viewTitle')}</h2>
-            <GuideProse
-              className="pr-section__desc"
-              text={t('compliance.rights.viewDesc')}
-              variant="muted"
-            />
+            <span className="pr-section__icon" aria-hidden>
+              <Icon name="user" size={18} />
+            </span>
+            <div>
+              <h2 className="pr-section__title">{t('compliance.rights.viewTitle')}</h2>
+              <GuideProse
+                className="pr-section__desc"
+                text={t('compliance.rights.viewDesc')}
+                variant="muted"
+              />
+            </div>
           </header>
 
           {p ? (
@@ -267,12 +283,17 @@ export function PrivacyRightsPage() {
 
         <section id="pr-purpose" className="pr-section">
           <header className="pr-section__head">
-            <h2 className="pr-section__title">{t('compliance.rights.purposesTitle')}</h2>
-            <GuideProse
-              className="pr-section__desc"
-              text={t('compliance.rights.purposesDesc')}
-              variant="muted"
-            />
+            <span className="pr-section__icon" aria-hidden>
+              <Icon name="flag" size={18} />
+            </span>
+            <div>
+              <h2 className="pr-section__title">{t('compliance.rights.purposesTitle')}</h2>
+              <GuideProse
+                className="pr-section__desc"
+                text={t('compliance.rights.purposesDesc')}
+                variant="muted"
+              />
+            </div>
           </header>
           <ul className="pr-purpose-list">
             {(purposes?.purposes ?? []).map((item) => (
@@ -293,12 +314,17 @@ export function PrivacyRightsPage() {
 
         <section id="pr-consent" className="pr-section">
           <header className="pr-section__head">
-            <h2 className="pr-section__title">{t('compliance.rights.consentsTitle')}</h2>
-            <GuideProse
-              className="pr-section__desc"
-              text={t('compliance.rights.consentsDesc')}
-              variant="muted"
-            />
+            <span className="pr-section__icon" aria-hidden>
+              <Icon name="circleCheck" size={18} />
+            </span>
+            <div>
+              <h2 className="pr-section__title">{t('compliance.rights.consentsTitle')}</h2>
+              <GuideProse
+                className="pr-section__desc"
+                text={t('compliance.rights.consentsDesc')}
+                variant="muted"
+              />
+            </div>
           </header>
 
           <div className="pr-toggles">
@@ -353,12 +379,17 @@ export function PrivacyRightsPage() {
 
         <section id="pr-exercise" className="pr-section">
           <header className="pr-section__head">
-            <h2 className="pr-section__title">{t('compliance.rights.exerciseTitle')}</h2>
-            <GuideProse
-              className="pr-section__desc"
-              text={t('compliance.rights.exerciseDesc')}
-              variant="muted"
-            />
+            <span className="pr-section__icon" aria-hidden>
+              <Icon name="shield" size={18} />
+            </span>
+            <div>
+              <h2 className="pr-section__title">{t('compliance.rights.exerciseTitle')}</h2>
+              <GuideProse
+                className="pr-section__desc"
+                text={t('compliance.rights.exerciseDesc')}
+                variant="muted"
+              />
+            </div>
           </header>
 
           <div className="pr-exercise">
@@ -631,12 +662,17 @@ export function PrivacyRightsPage() {
 
         <section id="pr-requests" className="pr-section">
           <header className="pr-section__head">
-            <h2 className="pr-section__title">{t('compliance.rights.requestsTitle')}</h2>
-            <GuideProse
-              className="pr-section__desc"
-              text={t('compliance.rights.requestsDesc')}
-              variant="muted"
-            />
+            <span className="pr-section__icon" aria-hidden>
+              <Icon name="mail" size={18} />
+            </span>
+            <div>
+              <h2 className="pr-section__title">{t('compliance.rights.requestsTitle')}</h2>
+              <GuideProse
+                className="pr-section__desc"
+                text={t('compliance.rights.requestsDesc')}
+                variant="muted"
+              />
+            </div>
           </header>
           {requests.length === 0 ? (
             <p className="pr-empty">{t('compliance.rights.requestsEmpty')}</p>
@@ -690,8 +726,13 @@ export function PrivacyRightsPage() {
 
         <section id="pr-account" className="pr-section">
           <header className="pr-section__head">
-            <h2 className="pr-section__title">{t('compliance.rights.moreTitle')}</h2>
-            <p className="pr-section__desc">{t('compliance.rights.withdrawSeparate')}</p>
+            <span className="pr-section__icon" aria-hidden>
+              <Icon name="settings" size={18} />
+            </span>
+            <div>
+              <h2 className="pr-section__title">{t('compliance.rights.moreTitle')}</h2>
+              <p className="pr-section__desc">{t('compliance.rights.withdrawSeparate')}</p>
+            </div>
           </header>
           <div className="pr-exit">
             <Link to={ROUTES.SUPPORT}>

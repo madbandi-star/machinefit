@@ -8,6 +8,7 @@ import { PostCard } from '@/components/cards/PostCard/PostCard';
 import { BoardIndexPanel } from '@/components/community/BoardIndexPanel';
 import { BoardIndexSkeleton } from '@/components/community/BoardIndexSkeleton';
 import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
+import { Icon } from '@/components/icons/Icon';
 import { communityApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -231,7 +232,14 @@ export function FreeBoardPage() {
   return (
     <div className="community-board-page">
       <PageShell
-        title={t('freeBoard')}
+        title={
+          <span className="page-hero-title">
+            <span className="page-hero-title__icon" aria-hidden>
+              <Icon name="message" size={18} />
+            </span>
+            {t('freeBoard')}
+          </span>
+        }
         subtitle={t('freeBoardSubtitle')}
         action={
           <div className="page-shell__header-action">
@@ -242,29 +250,9 @@ export function FreeBoardPage() {
         }
       >
         {isLoading ? (
-          <BoardIndexSkeleton rows={8} />
+          <BoardIndexSkeleton rows={6} />
         ) : data?.items.length ? (
-          <BoardIndexPanel
-            countLabel={t('postCount', { count: data.meta?.total ?? data.items.length })}
-            columnHeader={
-              <div className="board-index-row board-index-row--cols board-index-row--post" aria-hidden>
-                <span className="board-index-row__seq">{t('colSeq')}</span>
-                <span className="board-index-row__title">{t('colTitle')}</span>
-                <span className="board-index-row__meta board-index-row__meta--post">
-                  <span className="board-index-row__author">{t('colAuthor')}</span>
-                  <span className="board-index-row__counts board-index-row__counts--header">
-                    <span className="board-index-row__stat board-index-row__stat--like board-index-row__stat--header">
-                      {t('colLikes')}
-                    </span>
-                    <span className="board-index-row__stat board-index-row__stat--comment board-index-row__stat--header">
-                      {t('colComments')}
-                    </span>
-                  </span>
-                  <span className="board-index-row__date">{t('colDate')}</span>
-                </span>
-              </div>
-            }
-          >
+          <BoardIndexPanel countLabel={t('postCount', { count: data.meta?.total ?? data.items.length })}>
             {data.items.map((post, index) => {
               const total = data.meta?.total ?? data.items.length;
               const page = data.meta?.page ?? 1;
@@ -283,7 +271,15 @@ export function FreeBoardPage() {
             })}
           </BoardIndexPanel>
         ) : (
-          <p className="community-board-page__empty">{t('noPosts')}</p>
+          <div className="community-empty">
+            <span className="community-empty__icon" aria-hidden>
+              <Icon name="message" size={28} />
+            </span>
+            <strong>{t('noPosts')}</strong>
+            <button type="button" className="btn btn--primary" onClick={handleNewPost}>
+              {t('newPost')}
+            </button>
+          </div>
         )}
 
         <CommunityBottomBanner />

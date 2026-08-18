@@ -108,7 +108,12 @@ export function MachineDexPage() {
         </nav>
 
         <header className="showcase-dex__head">
-          <h1 className="showcase-dex__title">{t('showcase.dexTitle')}</h1>
+          <h1 className="showcase-dex__title page-hero-title">
+            <span className="page-hero-title__icon" aria-hidden>
+              <Icon name="machines" size={18} />
+            </span>
+            {t('showcase.dexTitle')}
+          </h1>
           <p className="showcase-dex__sub">{t('showcase.dexSubtitle')}</p>
         </header>
 

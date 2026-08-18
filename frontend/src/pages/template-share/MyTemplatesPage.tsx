@@ -394,7 +394,14 @@ export function MyTemplatesPage() {
 
   return (
     <PageShell
-      title={t('templateShare.myTemplates')}
+      title={
+        <span className="page-hero-title">
+          <span className="page-hero-title__icon" aria-hidden>
+            <LayoutTemplate size={18} />
+          </span>
+          {t('templateShare.myTemplates')}
+        </span>
+      }
       subtitle={t('templateShare.myTemplatesSubtitle')}
     >
       <div className="tpl-share-page tpl-share-mine-page">

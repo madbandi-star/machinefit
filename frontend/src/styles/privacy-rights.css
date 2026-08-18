@@ -88,9 +88,20 @@
 }
 
 .pr-section__head {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.7rem;
+}
+
+.pr-section__icon {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--pr-accent) 16%, transparent);
+  color: var(--pr-accent);
 }
 
 .pr-section__title {

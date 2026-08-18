@@ -57,6 +57,7 @@
   "postSeq": "순번 {{seq}}",
   "likeCount": "좋아요 {{count}}개",
   "commentCount": "댓글 {{count}}개",
+  "viewsCount": "조회 {{count}}",
   "pinnedPost": "고정글",
   "requestStatus_pending": "요청",
   "requestStatus_reviewing": "검토중",

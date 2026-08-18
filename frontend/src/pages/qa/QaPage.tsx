@@ -8,9 +8,11 @@ import { QA_CATEGORIES } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { Icon } from '@/components/icons/Icon';
 import { qaApi } from '@/api/qa.api';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/qa.css';
+import '@/styles/components.css';
 
 function categoryLabel(t: (k: string) => string, code: string): string {
   return t(`qa.categories.${code}`);
@@ -56,7 +58,12 @@ export function QaPage() {
     <PageShell>
       <div className="qa-page">
         <header className="qa-page__header">
-          <h1>{t('qa.title')}</h1>
+          <h1 className="page-hero-title">
+            <span className="page-hero-title__icon" aria-hidden>
+              <Icon name="message" size={18} />
+            </span>
+            {t('qa.title')}
+          </h1>
           <p className="qa-page__lead">{t('qa.lead')}</p>
         </header>
 
@@ -94,7 +101,12 @@ export function QaPage() {
         {listQuery.isError ? <QueryErrorMessage /> : null}
 
         {!listQuery.isLoading && !listQuery.isError && items.length === 0 ? (
-          <p className="qa-empty">{t('qa.emptySearch')}</p>
+          <div className="qa-empty community-empty">
+            <span className="community-empty__icon" aria-hidden>
+              <Icon name="search" size={24} />
+            </span>
+            <strong>{t('qa.emptySearch')}</strong>
+          </div>
         ) : null}
 
         {!searching && !category && popular.length > 0 ? (

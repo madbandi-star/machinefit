@@ -76,7 +76,14 @@ export function TemplateShareHubPage() {
 
   return (
     <PageShell
-      title={t('templateShare.title')}
+      title={
+        <span className="page-hero-title">
+          <span className="page-hero-title__icon" aria-hidden>
+            <Icon name="records" size={18} />
+          </span>
+          {t('templateShare.title')}
+        </span>
+      }
       subtitle={t('templateShare.subtitle')}
       action={
         <Link to={ROUTES.MY_TEMPLATES} className="tpl-share-header-action">

@@ -445,10 +445,20 @@ export function SettingsPage() {
   const restParts = restDurationParts(restDurationSeconds);
 
   return (
-    <PageShell title={t('nav.settings')}>
+    <PageShell
+      title={
+        <span className="page-hero-title">
+          <span className="page-hero-title__icon" aria-hidden>
+            <Icon name="settings" size={18} />
+          </span>
+          {t('nav.settings')}
+        </span>
+      }
+    >
       <div className="settings-stack">
         <SettingsCollapsibleSection
           id="language-settings"
+          icon="flag"
           title={t('settings.language')}
           description={t('settings.languageDesc', {
             defaultValue: 'Change the app language instantly. No refresh needed.',
@@ -459,6 +469,7 @@ export function SettingsPage() {
 
         <SettingsCollapsibleSection
           id="body-metrics"
+          icon="bodyweight"
           title={t('auth.bodyMetrics')}
           description={t('auth.bodyMetricsDesc')}
         >
@@ -549,6 +560,7 @@ export function SettingsPage() {
 
         <SettingsCollapsibleSection
           id="birth-profile"
+          icon="calendar"
           title={t('settings.birthProfile')}
           description={t('settings.birthProfileDesc')}
         >
@@ -612,7 +624,7 @@ export function SettingsPage() {
           </button>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection id="location-settings" title={t('location.locationGymTitle')}>
+        <SettingsCollapsibleSection id="location-settings" icon="mapPin" title={t('location.locationGymTitle')}>
           <p className="form-section__desc">{t('location.locationGymDesc')}</p>
           {!locationDraft.countryCode && (
             <p className="form-section__desc">{t('location.nudge')}</p>
@@ -697,7 +709,7 @@ export function SettingsPage() {
           </div>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection id="voice-coach" title={t('settings.voiceCoach')}>
+        <SettingsCollapsibleSection id="voice-coach" icon="bell" title={t('settings.voiceCoach')}>
           <div className="settings-voice-coach">
             <label className="settings-voice-coach__row">
               <input
@@ -925,7 +937,7 @@ export function SettingsPage() {
           </div>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection title={t('settings.restDuration')}>
+        <SettingsCollapsibleSection icon="clock" title={t('settings.restDuration')}>
           <div
             className="body-metrics-inline"
             role="group"
@@ -985,13 +997,14 @@ export function SettingsPage() {
         </SettingsCollapsibleSection>
 
         <SettingsCollapsibleSection
+          icon="sliders"
           title={t('settings.weightDifficulty')}
           description={t('settings.weightDifficultyDesc')}
         >
           <WeightDifficultySlider />
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection title={t('auth.unitSettings')}>
+        <SettingsCollapsibleSection icon="weightPlate" title={t('auth.unitSettings')}>
           <UnitSelector
             unitHeight={draftUnitHeight}
             unitWeight={draftUnitWeight}
@@ -1026,6 +1039,7 @@ export function SettingsPage() {
         </section>
 
         <SettingsCollapsibleSection
+          icon="shield"
           title={t('settings.privacyLegal')}
           description={t('settings.privacyLegalDesc')}
           defaultExpanded
@@ -1079,7 +1093,7 @@ export function SettingsPage() {
           </p>
         </SettingsCollapsibleSection>
 
-        <SettingsCollapsibleSection title={t('settings.reset')} description={t('settings.resetDesc')}>
+        <SettingsCollapsibleSection icon="refresh" title={t('settings.reset')} description={t('settings.resetDesc')}>
           <button
             type="button"
             className="btn btn--danger btn--block"
@@ -1091,6 +1105,7 @@ export function SettingsPage() {
 
         {showDataManagement ? (
           <SettingsCollapsibleSection
+            icon="monitor"
             title={t('myPage.dataManagement')}
             description={t('dataManagement.subtitle')}
           >
@@ -1101,6 +1116,7 @@ export function SettingsPage() {
         ) : null}
 
         <SettingsCollapsibleSection
+          icon="user"
           title={t('settings.deleteAccount')}
           description={t('settings.deleteAccountDesc')}
         >

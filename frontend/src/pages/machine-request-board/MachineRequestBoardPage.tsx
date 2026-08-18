@@ -10,6 +10,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
+import { Icon } from '@/components/icons/Icon';
 import { machineRequestApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -29,15 +30,11 @@ function displayField(value: string | undefined, unknownLabel: string) {
   return trimmed;
 }
 
-function requestTitle(request: MachineRequest, unknownLabel: string) {
-  const brand = displayField(request.brandName, unknownLabel);
-  const machine = displayField(request.machineName, unknownLabel);
-  return `${brand} · ${machine}`;
-}
-
 function RequestCard({ request }: { request: MachineRequest }) {
   const { t } = useTranslation('community');
   const unknownLabel = t('requestFieldUnknownLabel');
+  const brand = displayField(request.brandName, unknownLabel);
+  const machine = displayField(request.machineName, unknownLabel);
   const statusKey =
     request.status === 'approved' ? 'reviewing' : request.status || 'pending';
   const statusLabel = t(`requestStatus_${statusKey}`, { defaultValue: statusKey });
@@ -48,6 +45,7 @@ function RequestCard({ request }: { request: MachineRequest }) {
     <Link
       to={ROUTES.MACHINE_REQUESTS_DETAIL.replace(':requestId', request.id)}
       className="photo-card"
+      aria-label={`${brand} ${machine}`}
     >
       <div className="photo-card__media">
         {thumb ? (
@@ -68,16 +66,21 @@ function RequestCard({ request }: { request: MachineRequest }) {
             ♥
           </span>
         ) : null}
+        <div className="photo-card__overlay">
+          <span>
+            <Icon name="heart" size={12} aria-hidden /> {request.likeCount ?? 0}
+          </span>
+          <span>
+            <Icon name="message" size={12} aria-hidden /> {request.commentCount ?? 0}
+          </span>
+          <span>★ {request.voteCount ?? 0}</span>
+        </div>
       </div>
       <div className="photo-card__body">
-        <h3 className="photo-card__title">{requestTitle(request, unknownLabel)}</h3>
+        <span className="photo-card__brand">{brand}</span>
+        <h3 className="photo-card__title">{machine}</h3>
         <div className="photo-card__meta">
           <span className="photo-card__author">{request.authorName ?? '—'}</span>
-          <span className="photo-card__stats">
-            <span>♥ {request.likeCount ?? 0}</span>
-            <span>💬 {request.commentCount ?? 0}</span>
-            <span>★ {request.voteCount ?? 0}</span>
-          </span>
         </div>
       </div>
     </Link>
@@ -154,7 +157,12 @@ export function MachineRequestBoardPage() {
       <PageShell>
         <header className="photo-top">
           <div className="photo-top__text">
-            <h1>{t('machineRequests')}</h1>
+            <h1 className="page-hero-title">
+              <span className="page-hero-title__icon" aria-hidden>
+                <Icon name="dumbbell" size={18} />
+              </span>
+              {t('machineRequests')}
+            </h1>
             <p>{t('machineRequestsSubtitle')}</p>
           </div>
           <button
@@ -168,13 +176,16 @@ export function MachineRequestBoardPage() {
 
         <div className="photo-controls">
           <div className="photo-controls__search-row">
-            <input
-              className="photo-search"
-              value={q}
-              onChange={(e) => updateParam('q', e.target.value || undefined)}
-              placeholder={t('requestSearchPlaceholder')}
-              aria-label={t('requestSearchPlaceholder')}
-            />
+            <label className="photo-search-wrap">
+              <Icon name="search" size={16} className="photo-search-wrap__icon" aria-hidden />
+              <input
+                className="photo-search"
+                value={q}
+                onChange={(e) => updateParam('q', e.target.value || undefined)}
+                placeholder={t('requestSearchPlaceholder')}
+                aria-label={t('requestSearchPlaceholder')}
+              />
+            </label>
             {data ? (
               <span className="photo-count">{t('requestCount', { count: data.meta.total })}</span>
             ) : null}
@@ -228,7 +239,7 @@ export function MachineRequestBoardPage() {
         ) : !data?.items.length ? (
           <div className="photo-empty">
             <span className="photo-empty__icon" aria-hidden>
-              📷
+              <Icon name="dumbbell" size={28} />
             </span>
             <strong>{t('noRequests')}</strong>
           </div>

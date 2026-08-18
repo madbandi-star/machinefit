@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { ShowcaseCard } from '@/components/machine-showcase/ShowcaseCard';
+import { Icon } from '@/components/icons/Icon';
 import { machineShowcaseApi } from '@/api/machine-showcase.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -108,7 +109,12 @@ export function MachineShowcasePage() {
       <PageShell>
         <header className="showcase-top">
           <div className="showcase-top__text">
-            <h1>{t('showcase.title')}</h1>
+            <h1 className="page-hero-title">
+              <span className="page-hero-title__icon" aria-hidden>
+                <Icon name="machines" size={18} />
+              </span>
+              {t('showcase.title')}
+            </h1>
             <p>{t('showcase.subtitle')}</p>
           </div>
           <Link to={writeTo} className="showcase-top__write">

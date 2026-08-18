@@ -57,6 +57,7 @@
   "postSeq": "No. {{seq}}",
   "likeCount": "{{count}} likes",
   "commentCount": "{{count}} comments",
+  "viewsCount": "浏览 {{count}}",
   "pinnedPost": "Pinned",
   "requestStatus_pending": "Requested",
   "requestStatus_reviewing": "Reviewing",

@@ -38,11 +38,11 @@
   border-radius: var(--radius-md, 10px);
   background: var(--color-primary);
   color: #0a0a0a;
-  padding: 0.4rem 0.75rem;
-  font-size: 0.75rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
-  min-height: 2rem;
+  min-height: 2.75rem;
   transition: filter 0.15s ease;
 }
 
@@ -64,6 +64,26 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
+}
+
+.photo-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.photo-search-wrap__icon {
+  position: absolute;
+  left: 0.7rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.photo-search-wrap .photo-search {
+  width: 100%;
+  padding-left: 2.2rem;
 }
 
 .photo-search {
@@ -264,7 +284,8 @@
 .photo-card__liked {
   position: absolute;
   top: 0.35rem;
-  left: 0.35rem;
+  left: auto;
+  right: 2rem;
   font-size: 0.6875rem;
   line-height: 1;
   padding: 0.2rem 0.3rem;
@@ -272,10 +293,47 @@
   background: rgba(0, 0, 0, 0.45);
 }
 
+.photo-card__overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.4rem 0.45rem 0.4rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.photo-card__overlay span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+}
+
+.photo-card__brand {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+  font-size: 0.62rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .photo-card__status {
   position: absolute;
   left: 0.35rem;
-  bottom: 0.35rem;
+  top: 0.35rem;
+  bottom: auto;
   max-width: calc(100% - 0.7rem);
   padding: 0.12rem 0.35rem;
   border-radius: 999px;
@@ -384,6 +442,13 @@
 }
 
 .photo-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
   font-size: 1.5rem;
   line-height: 1;
 }

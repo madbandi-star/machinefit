@@ -11,6 +11,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useBrandFavorites, useBrandFavoriteToggle } from '@/hooks/useBrandFavorites';
 import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/brand-favorites.css';
+import '@/styles/components.css';
 
 function brandMatchesQuery(brand: Brand, q: string, language: string): boolean {
   if (!q) return true;
@@ -62,7 +63,17 @@ export function BrandFavoritesPage() {
   const favoriteCount = favoriteIds.size;
 
   return (
-    <PageShell title={t('brandFavorites.title')} subtitle={t('brandFavorites.subtitle')}>
+    <PageShell
+      title={
+        <span className="page-hero-title">
+          <span className="page-hero-title__icon" aria-hidden>
+            <Star size={16} />
+          </span>
+          {t('brandFavorites.title')}
+        </span>
+      }
+      subtitle={t('brandFavorites.subtitle')}
+    >
       <div className="brand-favorites">
         <div className="brand-favorites__toolbar">
           <label className="brand-favorites__search">

@@ -1,28 +1,49 @@
 {
-  "title": "Update Machine Dex subtitle copy",
-  "summary": "???? ???? '??? ??? ??? ??????.'? ???.",
+  "title": "Community and personal menus UI/UX pass",
+  "summary": "????·?? ??? ???? ??/???/??/????? ????. API·???·CRUD? ???? ???.",
   "git": {
     "branch": "main",
-    "commit": "b2b68dd0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/pages/community/CommunityPage.tsx",
+    "frontend/src/pages/community/PostDetailPage.tsx",
+    "frontend/src/pages/free-board/FreeBoardPage.tsx",
+    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
+    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
+    "frontend/src/pages/machine-showcase/MachineShowcasePage.tsx",
+    "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
+    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
+    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
+    "frontend/src/pages/settings/SettingsPage.tsx",
+    "frontend/src/pages/settings/PrivacyRightsPage.tsx",
+    "frontend/src/pages/qa/QaPage.tsx",
+    "frontend/src/components/cards/PostCard/PostCard.tsx",
+    "frontend/src/components/community/BoardIndexSkeleton.tsx",
+    "frontend/src/components/settings/SettingsCollapsibleSection/SettingsCollapsibleSection.tsx",
+    "frontend/src/styles/community.css",
+    "frontend/src/styles/photo-board.css",
+    "frontend/src/styles/components.css",
+    "frontend/src/styles/privacy-rights.css"
   ],
   "testFocus": [
-    "???? ??? ???? '??? ??? ??? ??????.'??"
+    "????? ?? ?? ??·???·??",
+    "??/???? ?? ??·??·??·??? ?",
+    "???? ?? ??",
+    "?? ?? ??/??",
+    "Q&A ????·??",
+    "???? ???? ?? ??"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/i18n/locales/ko/community.json -Pattern dexSubtitle"
+    "cd frontend; npm run typecheck"
   ],
   "productionChecks": [
-    "Open Machine Dex after Pages deploy"
+    "Open community hub, free board, photo board, requests, showcase, my templates, settings, QA, privacy rights after Pages deploy"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "???? ??? ??? ?? ???",
-  "toBe": "??? ??? ??? ??????."
+  "asIs": "??? ?? ???/?? UI",
+  "toBe": "??·???·??? ??? ?? ??? ????/????? UI (?? ??)"
 }

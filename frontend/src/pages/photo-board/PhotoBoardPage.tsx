@@ -6,6 +6,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
+import { Icon } from '@/components/icons/Icon';
 import { photoBoardApi } from '@/api/photo-board.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -48,6 +49,14 @@ function PhotoCard({ post }: { post: PhotoPost }) {
             ♥
           </span>
         ) : null}
+        <div className="photo-card__overlay">
+          <span>
+            <Icon name="heart" size={12} aria-hidden /> {post.likeCount}
+          </span>
+          <span>
+            <Icon name="message" size={12} aria-hidden /> {post.commentCount}
+          </span>
+        </div>
       </div>
       <div className="photo-card__body">
         <h3 className="photo-card__title">{post.title}</h3>
@@ -135,7 +144,12 @@ export function PhotoBoardPage() {
       <PageShell>
         <header className="photo-top">
           <div className="photo-top__text">
-            <h1>{t('photoBoard')}</h1>
+            <h1 className="page-hero-title">
+              <span className="page-hero-title__icon" aria-hidden>
+                <Icon name="camera" size={18} />
+              </span>
+              {t('photoBoard')}
+            </h1>
             <p>{t('photoBoardSubtitle')}</p>
           </div>
           <button
@@ -149,13 +163,16 @@ export function PhotoBoardPage() {
 
         <div className="photo-controls">
           <div className="photo-controls__search-row">
-            <input
-              className="photo-search"
-              value={q}
-              onChange={(e) => updateParam('q', e.target.value || undefined)}
-              placeholder={t('photoSearchPlaceholder')}
-              aria-label={t('photoSearchPlaceholder')}
-            />
+            <label className="photo-search-wrap">
+              <Icon name="search" size={16} className="photo-search-wrap__icon" aria-hidden />
+              <input
+                className="photo-search"
+                value={q}
+                onChange={(e) => updateParam('q', e.target.value || undefined)}
+                placeholder={t('photoSearchPlaceholder')}
+                aria-label={t('photoSearchPlaceholder')}
+              />
+            </label>
             {data ? (
               <span className="photo-count">{t('photoPostCount', { count: data.meta.total })}</span>
             ) : null}
@@ -218,7 +235,7 @@ export function PhotoBoardPage() {
         ) : !data?.items.length ? (
           <div className="photo-empty">
             <span className="photo-empty__icon" aria-hidden>
-              📷
+              <Icon name="camera" size={28} />
             </span>
             <strong>{t('photoEmpty')}</strong>
           </div>

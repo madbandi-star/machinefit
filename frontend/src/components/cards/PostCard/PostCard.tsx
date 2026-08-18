@@ -35,44 +35,57 @@ export function PostCard({ post, seq, showDelete, onDelete, isDeleting }: PostCa
   const href = ROUTES.POST_DETAIL.replace(':postId', post.id);
   const likes = post.likeCount ?? 0;
   const comments = post.commentCount ?? 0;
+  const views = post.viewCount ?? 0;
 
   return (
-    <div className={`board-index-row-wrap${showDelete && onDelete ? ' board-index-row-wrap--admin' : ''}`}>
-      <Link to={href} className="board-index-row board-index-row--post">
-        {seq != null ? (
-          <span className="board-index-row__seq" aria-label={t('postSeq', { seq })}>
-            {seq}
-          </span>
-        ) : null}
-        {post.isPinned ? (
-          <span className="board-index-row__pin" aria-label={t('pinnedPost')}>
-            📌
-          </span>
-        ) : null}
-        <span className="board-index-row__title">{post.title}</span>
-        <span className="board-index-row__meta board-index-row__meta--post">
-          <span className="board-index-row__author" title={authorLabel(post)}>
+    <div className={`board-post-card-wrap${showDelete && onDelete ? ' board-post-card-wrap--admin' : ''}`}>
+      <Link
+        to={href}
+        className={`board-post-card${post.isPinned ? ' is-pinned' : ''}`}
+      >
+        <div className="board-post-card__head">
+          {seq != null ? (
+            <span className="board-post-card__seq" aria-label={t('postSeq', { seq })}>
+              {seq}
+            </span>
+          ) : null}
+          {post.isPinned ? (
+            <span className="board-post-card__pin" aria-label={t('pinnedPost')}>
+              {t('pinnedPost')}
+            </span>
+          ) : null}
+          <h3 className="board-post-card__title">{post.title}</h3>
+        </div>
+        <div className="board-post-card__meta">
+          <span className="board-post-card__author" title={authorLabel(post)}>
             {authorLabel(post)}
           </span>
-          <span className="board-index-row__counts" aria-label={`${t('likeCount', { count: likes })}, ${t('commentCount', { count: comments })}`}>
-            <span className="board-index-row__stat board-index-row__stat--like" title={t('colLikes')}>
-              <Icon name="heart" size={12} className="board-index-row__stat-icon" aria-hidden />
-              <span className="board-index-row__stat-num">{likes}</span>
-            </span>
-            <span className="board-index-row__stat board-index-row__stat--comment" title={t('colComments')}>
-              <Icon name="message" size={12} className="board-index-row__stat-icon" aria-hidden />
-              <span className="board-index-row__stat-num">{comments}</span>
-            </span>
-          </span>
-          <time className="board-index-row__date" dateTime={post.createdAt}>
+          <time className="board-post-card__date" dateTime={post.createdAt}>
             {formatDate(post.createdAt)}
           </time>
-        </span>
+          <span
+            className="board-post-card__stats"
+            aria-label={`${t('likeCount', { count: likes })}, ${t('commentCount', { count: comments })}, ${t('viewsCount', { count: views })}`}
+          >
+            <span className="board-post-card__stat" title={t('colLikes')}>
+              <Icon name="heart" size={13} aria-hidden />
+              {likes}
+            </span>
+            <span className="board-post-card__stat" title={t('colComments')}>
+              <Icon name="message" size={13} aria-hidden />
+              {comments}
+            </span>
+            <span className="board-post-card__stat" title={t('viewsCount', { count: views })}>
+              <Icon name="monitor" size={13} aria-hidden />
+              {views}
+            </span>
+          </span>
+        </div>
       </Link>
       {showDelete && onDelete ? (
         <button
           type="button"
-          className="board-index-row__delete"
+          className="board-post-card__delete"
           disabled={isDeleting}
           aria-label={t('deletePost')}
           onClick={(event) => {

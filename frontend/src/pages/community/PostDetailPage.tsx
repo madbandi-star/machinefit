@@ -11,6 +11,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { buildCommentThreads, resolveReplyRootId } from '@/utils/commentThreads';
+import { Icon } from '@/components/icons/Icon';
 import '@/styles/components.css';
 import '@/styles/community.css';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
@@ -307,6 +308,9 @@ export function PostDetailPage() {
     >
       <article className="post-detail">
         <header className="post-detail__header">
+          {post.isPinned ? (
+            <span className="board-post-card__pin">{t('pinnedPost')}</span>
+          ) : null}
           <h2 className="post-detail__title">{post.title}</h2>
           <p className="post-detail__meta">
             <span className="post-detail__author">{post.authorName}</span>
@@ -314,11 +318,21 @@ export function PostDetailPage() {
               ·
             </span>
             <time dateTime={post.createdAt}>{formatDateTime(post.createdAt)}</time>
-            <span className="post-detail__sep" aria-hidden>
-              ·
-            </span>
-            <span className="post-detail__views">👁 {post.viewCount}</span>
           </p>
+          <div className="post-detail__chips">
+            <span className="post-detail__chip">
+              <Icon name="monitor" size={14} aria-hidden />
+              {t('viewsCount', { count: post.viewCount })}
+            </span>
+            <span className="post-detail__chip">
+              <Icon name="heart" size={14} aria-hidden />
+              {t('likeCount', { count: post.likeCount ?? 0 })}
+            </span>
+            <span className="post-detail__chip">
+              <Icon name="message" size={14} aria-hidden />
+              {t('commentCount', { count: comments.length })}
+            </span>
+          </div>
         </header>
 
         <div className="post-detail__content">{post.content}</div>
@@ -330,7 +344,7 @@ export function PostDetailPage() {
             onClick={handleLike}
             disabled={likeMutation.isPending}
           >
-            ♥ {t('like')}
+            <Icon name="heart" size={14} aria-hidden /> {t('like')}
             {post.likeCount != null ? ` ${post.likeCount}` : ''}
           </button>
           {isAuthenticated && !isAuthor && (
