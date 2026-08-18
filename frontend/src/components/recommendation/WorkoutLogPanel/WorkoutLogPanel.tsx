@@ -65,7 +65,7 @@ import { WORKOUT_DIARY_TAGS, formatDiaryTag } from '@/constants/workout-diary-ta
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
 import { WeightStepper } from '@/components/form/WeightStepper/WeightStepper';
 import { getWeightStepKg } from '@/utils/weightStep';
-import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, upsertWorkoutLogInCache } from '@/utils/workoutLogCache';
+import { getWorkoutLogQueryTargetMuscle, removeWorkoutLogFromCache, removeWorkoutLogInListQueryData, upsertWorkoutLogInCache, upsertWorkoutLogInListQueryData } from '@/utils/workoutLogCache';
 import { buildWorkoutLogSavedQueryKey } from '@/hooks/useWorkoutLogSaved';
 import {
   buildCardVoicePrefsKey,
@@ -1116,14 +1116,7 @@ export function WorkoutLogPanel({
     queryClient.setQueryData(workoutLogQueryKey, [patchedLog]);
     queryClient.setQueriesData<WorkoutLog[]>(
       { queryKey: QUERY_KEYS.workoutLogs },
-      (old) => {
-        if (!Array.isArray(old) || old.length === 0) return old;
-        const sample = old[0];
-        if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
-          return old;
-        }
-        return upsertWorkoutLogInCache(old, patchedLog, removeLogParams);
-      }
+      (old) => upsertWorkoutLogInListQueryData(old, patchedLog, removeLogParams)
     );
   }, [
     isAuthenticated,
@@ -1151,14 +1144,7 @@ export function WorkoutLogPanel({
       );
       queryClient.setQueriesData<WorkoutLog[]>(
         { queryKey: QUERY_KEYS.workoutLogs },
-        (old) => {
-          if (!Array.isArray(old) || old.length === 0) return old;
-          const sample = old[0];
-          if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
-            return old;
-          }
-          return upsertWorkoutLogInCache(old, log, removeLogParams);
-        }
+        (old) => upsertWorkoutLogInListQueryData(old, log, removeLogParams)
       );
     },
     [onSavedChange, queryClient, removeLogParams, workoutLogQueryKey, workoutLogsAllKey]
@@ -1449,6 +1435,10 @@ export function WorkoutLogPanel({
         workoutLogsAllKey,
         removeWorkoutLogFromCache(previousAllLogs, removeLogParams)
       );
+      queryClient.setQueriesData<WorkoutLog[]>(
+        { queryKey: QUERY_KEYS.workoutLogs },
+        (old) => removeWorkoutLogInListQueryData(old, removeLogParams)
+      );
 
       return { previousLogs, previousAllLogs };
     },
@@ -1461,6 +1451,10 @@ export function WorkoutLogPanel({
           queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
           removeLogParams
         )
+      );
+      queryClient.setQueriesData<WorkoutLog[]>(
+        { queryKey: QUERY_KEYS.workoutLogs },
+        (old) => removeWorkoutLogInListQueryData(old, removeLogParams)
       );
       invalidateLogSideEffects();
       showToast(

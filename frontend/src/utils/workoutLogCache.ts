@@ -51,3 +51,47 @@ export function upsertWorkoutLogInCache(
   const normalizedLog = { ...log, logDate: normalizeDateKey(log.logDate) };
   return [...removeWorkoutLogFromCache(logs, params), normalizedLog];
 }
+
+/**
+ * React Query updater for any `workout-logs` list cache.
+ * Empty arrays must still accept the first saved log (Records summary depends on this).
+ */
+export function upsertWorkoutLogInListQueryData(
+  old: WorkoutLog[] | undefined,
+  log: WorkoutLog,
+  params: {
+    machineCode: string;
+    logDate: string;
+    targetMuscleGroup?: string;
+  }
+): WorkoutLog[] | undefined {
+  if (old === undefined) return old;
+  if (!Array.isArray(old)) return old;
+  if (old.length > 0) {
+    const sample = old[0];
+    if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
+      return old;
+    }
+  }
+  return upsertWorkoutLogInCache(old, log, params);
+}
+
+/** React Query updater that drops a log from any `workout-logs` list cache. */
+export function removeWorkoutLogInListQueryData(
+  old: WorkoutLog[] | undefined,
+  params: {
+    machineCode: string;
+    logDate: string;
+    targetMuscleGroup?: string;
+  }
+): WorkoutLog[] | undefined {
+  if (old === undefined) return old;
+  if (!Array.isArray(old)) return old;
+  if (old.length > 0) {
+    const sample = old[0];
+    if (!sample || typeof sample !== 'object' || !('setWeightsKg' in sample)) {
+      return old;
+    }
+  }
+  return removeWorkoutLogFromCache(old, params);
+}
