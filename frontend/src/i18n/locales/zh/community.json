@@ -433,7 +433,7 @@
     "viewMachineShort": "器械卡",
     "viewDex": "打开图鉴",
     "viewDexShort": "图鉴",
-    "dexTitle": "MY MACHINE DEX",
+    "dexTitle": "器械图鉴",
     "dexSubtitle": "收集你发现的器械",
     "dexProgress": "发现 {{found}} / {{total}}",
     "dexAll": "全部",

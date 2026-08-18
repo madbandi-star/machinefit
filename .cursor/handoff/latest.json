@@ -1,35 +1,34 @@
 {
-  "title": "Comfortable timer session recap",
-  "summary": "타이머 세션 상세를 스톱워치 결과처럼 바꿨다. 큰 시간, 랩 타임라인, 기구는 한 줄 카드(세트·무게, 탭하면 상세).",
+  "title": "Rename MY MACHINE DEX to 머신도감",
+  "summary": "마이페이지 메뉴와 도감 페이지 제목을 MY MACHINE DEX에서 머신도감(언어별 대응 표기)으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "c8b82b9d"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
-    "frontend/src/styles/timer-history.css",
-    "frontend/src/utils/timerHistoryFormat.ts",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/i18n/locales/zh/common.json",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json",
+    "frontend/src/i18n/locales/ja/community.json",
+    "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "세션 상세: 큰 시계(분:초), 날짜·시간대, 랩/기구 칩",
-    "뒤로(기록으로) → 해당 날짜 달력 목록",
-    "랩 번호·시간·운동시간, 기구 행 탭 시 기구 상세",
-    "세트/무게가 있으면 기구 행 하단에 표시"
+    "마이페이지 인사이트 목록에 '머신도감'이 보이는지",
+    "탭하면 도감 페이지 제목도 '머신도감'인지"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-session-hero",
-    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-ex-row"
+    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDex\": \"머신도감\"'",
+    "Select-String -Path frontend/src/i18n/locales/ko/community.json -Pattern '\"dexTitle\": \"머신도감\"'"
   ],
   "productionChecks": [
-    "Open a timer session on phone-width viewport and scan laps + tap a machine"
+    "Open My Page and confirm the menu label"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "작은 통계 칩 + LAP 카드 + 기구 알약 칩",
-  "toBe": "큰 시계 히어로, 번호 타임라인, 큰 기구 행"
+  "asIs": "MY MACHINE DEX",
+  "toBe": "머신도감"
 }

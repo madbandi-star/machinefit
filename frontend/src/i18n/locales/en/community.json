@@ -433,7 +433,7 @@
     "viewMachineShort": "Machine",
     "viewDex": "Open my dex",
     "viewDexShort": "Dex",
-    "dexTitle": "MY MACHINE DEX",
+    "dexTitle": "Machine Dex",
     "dexSubtitle": "Collect the machines you discover",
     "dexProgress": "Found {{found}} / {{total}}",
     "dexAll": "All",

@@ -433,7 +433,7 @@
     "viewMachineShort": "カード",
     "viewDex": "図鑑を開く",
     "viewDexShort": "図鑑",
-    "dexTitle": "MY MACHINE DEX",
+    "dexTitle": "マシン図鑑",
     "dexSubtitle": "見つけたマシンを集めよう",
     "dexProgress": "発見 {{found}} / {{total}}",
     "dexAll": "すべて",

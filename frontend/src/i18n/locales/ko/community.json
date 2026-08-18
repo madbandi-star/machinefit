@@ -433,7 +433,7 @@
     "viewMachineShort": "기구카드",
     "viewDex": "내 도감에 보기",
     "viewDexShort": "도감",
-    "dexTitle": "MY MACHINE DEX",
+    "dexTitle": "머신도감",
     "dexSubtitle": "내가 발견한 머신을 모아보세요",
     "dexProgress": "발견 {{found}} / {{total}}",
     "dexAll": "전체",
