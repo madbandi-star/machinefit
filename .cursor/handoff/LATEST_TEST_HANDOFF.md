@@ -10,4 +10,5 @@
 - as-is: 머신도감 게시판
 - to-be: 머신도감 공유관
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `2f75cda0`

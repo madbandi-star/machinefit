@@ -3,7 +3,7 @@
   "summary": "마이페이지 커뮤니티 메뉴명을 머신도감 게시판에서 머신도감 공유관으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "2f75cda0"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/common.json",
