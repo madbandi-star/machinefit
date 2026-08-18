@@ -82,7 +82,7 @@ export const recommendationService = {
     const machine = await machineService.getByCode(input.machineCode);
     const machineId = machine.id;
 
-    const [rules, savedPreferences] = await Promise.all([
+    const [rules, savedPreferences, standardFit] = await Promise.all([
       recommendationRepository.findSettingsForMachine(machineId, input.machineCode),
       userId != null
         ? preferenceRepository
@@ -100,6 +100,7 @@ export const recommendationService = {
               return null;
             })
         : Promise.resolve(null),
+      recommendationRepository.findStandardFitPositions(machineId, input.machineCode),
     ]);
 
     const match = rules.length > 0 ? findBestMatch(rules, input) : undefined;
@@ -152,10 +153,10 @@ export const recommendationService = {
     );
 
     const aiSettings = {
-      seatPosition: match?.seatPosition,
-      backPadPosition: match?.backPadPosition,
-      footPosition: match?.footPosition,
-      handlePosition: match?.handlePosition,
+      seatPosition: match?.seatPosition ?? standardFit?.seatPosition,
+      backPadPosition: match?.backPadPosition ?? standardFit?.backPadPosition,
+      footPosition: match?.footPosition ?? standardFit?.footPosition,
+      handlePosition: match?.handlePosition ?? standardFit?.handlePosition,
       romSetting: match?.romSetting ?? DEFAULT_ROM_SETTING,
       recommendedWeightKg: personalizedWeight,
       recommendedRepsMin: recommendedReps.min,

@@ -3,7 +3,9 @@ import type {
   RecommendationSettings,
   WeightRecommendationBasis,
   YoutubeVideo,
+  StandardMachineFitPositions,
 } from '@machinefit/shared';
+import { STANDARD_MACHINE_FIT_POSITIONS } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_SETTINGS, type MockSettingRule } from '../data/mock.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
@@ -84,6 +86,42 @@ export const recommendationRepository = {
       [machineId]
     );
     return result.rows.map(mapSettingRow);
+  },
+
+  async findStandardFitPositions(
+    machineId: string,
+    machineCode: string
+  ): Promise<StandardMachineFitPositions | null> {
+    const pool = getPool();
+    if (!pool) {
+      if (STANDARD_MACHINE_FIT_POSITIONS[machineCode]) {
+        return STANDARD_MACHINE_FIT_POSITIONS[machineCode];
+      }
+      const inferred = `STD_${machineCode.replace(/^[A-Z0-9]+_/, '')}`;
+      return STANDARD_MACHINE_FIT_POSITIONS[inferred] ?? null;
+    }
+
+    const result = await pool.query<{
+      seat_position: number | null;
+      back_pad_position: number | null;
+      foot_position: number | null;
+      handle_position: number | null;
+    }>(
+      `SELECT t.seat_position, t.back_pad_position, t.foot_position, t.handle_position
+       FROM machines m
+       JOIN standard_machine_types t ON t.id = m.standard_type_id
+       WHERE m.id = $1
+       LIMIT 1`,
+      [machineId]
+    );
+    const row = result.rows[0];
+    if (!row) return null;
+    return {
+      ...(row.seat_position != null ? { seatPosition: row.seat_position } : {}),
+      ...(row.back_pad_position != null ? { backPadPosition: row.back_pad_position } : {}),
+      ...(row.foot_position != null ? { footPosition: row.foot_position } : {}),
+      ...(row.handle_position != null ? { handlePosition: row.handle_position } : {}),
+    };
   },
 
   async findYoutubeVideos(machineId: string): Promise<YoutubeVideo[]> {
