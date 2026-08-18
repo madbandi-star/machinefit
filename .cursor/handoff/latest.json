@@ -1,9 +1,9 @@
 {
   "title": "Polish timer session detail UI",
-  "summary": "타이머 세션 상세를 재구성했다: 큰 시계 히어로, 랩/기구/세트 3열 통계, 랩 블록+기구 칩 행.",
+  "summary": "?�?�머 ?�션 ?�세�??�구?�했?? ???�계 ?�어�? ??기구/?�트 3???�계, ??블록+기구 �???",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "ec344c8f"
   },
   "changedFiles": [
     "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
@@ -14,8 +14,8 @@
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "타이머 세션 상세: 시계·시간대 칩·3열 통계",
-    "랩 블록: 번호+기간 강조, 기구 행에 세트/중량 칩"
+    "?�?�머 ?�션 ?�세: ?�계·?�간?� 칩�????�계",
+    "??블록: 번호+기간 강조, 기구 ?�에 ?�트/중량 �?
   ],
   "fastChecks": [
     "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-session-detail|timer-lap-block|statSets",
@@ -27,6 +27,6 @@
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "타임라인+중첩 카드로 세션 상세가 읽기 어려움",
-  "toBe": "시계 히어로 + 3열 통계 + 랩 블록/기구 칩"
+  "asIs": "?�?�라??중첩 카드�??�션 ?�세가 ?�기 ?�려?�",
+  "toBe": "?�계 ?�어�?+ 3???�계 + ??블록/기구 �?
 }
