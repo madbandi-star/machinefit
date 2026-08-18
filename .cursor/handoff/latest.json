@@ -3,7 +3,7 @@
   "summary": "내 머신도감의 등급 필터·보유 칩·컬렉션 카드를 균일 행·열 그리드로 재정렬했다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "e482aa71"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineDexPage.tsx",

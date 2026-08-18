@@ -13,4 +13,4 @@
 - to-be: 고정 슬롯·격자 정렬
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `e482aa71`
