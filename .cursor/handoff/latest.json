@@ -1,33 +1,37 @@
 {
-  "title": "Glanceable MY MACHINE DEX page",
-  "summary": "도감 페이지를 진행 바 + 등급 필터 칩 + 3열 사진 격자로 재배치해 발견 수와 머신이 한눈에 보이게 했다.",
+  "title": "Comfortable timer history UI",
+  "summary": "타이머 기록 달력·날짜 목록·세션 상세를 한눈에 보게 바꿨다. 날짜별 세션 수, 시간/세션/랩 칩, 큰 세션 카드, 랩별 기구 칩.",
   "git": {
     "branch": "main",
-    "commit": "3a4b21cd"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
-    "frontend/src/styles/machine-showcase.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
+    "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
+    "frontend/src/components/timer-history/TimerHistoryCalendar.tsx",
+    "frontend/src/styles/timer-history.css",
+    "frontend/src/utils/timerHistoryFormat.ts",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "마이페이지 → MY MACHINE DEX: 진행률·등급 칩·사진 격자가 한 화면에 보이는지",
-    "등급 칩 탭하면 해당 등급만 필터",
-    "카드 클릭 → 기구 상세",
-    "비어 있으면 자랑하기 CTA"
+    "타이머 기록: 달력에서 오늘/월 이동, 기록 있는 날에 세션 수가 보이는지",
+    "날짜 선택 시 총 시간·세션·랩 칩과 세션 카드(시간대 + 큰 운동시간) 표시",
+    "빈 날짜: 안내 + 타이머 열기",
+    "세션 상세: 달력으로 돌아가기, 랩 시간/기구 칩, 기구 탭 시 상세로 이동"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineDexPage.tsx -Pattern showcase-dex__grades"
+    "Select-String -Path frontend/src/pages/timer-history/TimerHistoryPage.tsx -Pattern timer-history-stats",
+    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-lap-chip"
   ],
   "productionChecks": [
-    "Open /my-page/machine-dex as member"
+    "Open /timer-history on phone-width viewport, pick a day with sessions, open a session"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "등급 2열 리스트 + 큰 보유 카드 + 2열 카드로 한눈에 안 보임",
-  "toBe": "진행 바·등급 칩·3열 사진 격자로 한눈에 보임"
+  "asIs": "긴 설명 문장, 점만 있는 달력, 빈약한 세션 카드, 랩은 번호 목록",
+  "toBe": "세션 수 달력, 통계 칩, 큰 시간 카드, 랩별 기구 칩"
 }

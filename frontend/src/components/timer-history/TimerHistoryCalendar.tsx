@@ -10,7 +10,7 @@ import {
 import '@/styles/timer-history.css';
 
 interface TimerHistoryCalendarProps {
-  datesWithData: Set<string>;
+  dayCounts: Record<string, number>;
   selectedDate: string;
   onSelect: (dateKey: string) => void;
   locale: string;
@@ -21,7 +21,7 @@ interface TimerHistoryCalendarProps {
 }
 
 export function TimerHistoryCalendar({
-  datesWithData,
+  dayCounts,
   selectedDate,
   onSelect,
   locale,
@@ -72,25 +72,23 @@ export function TimerHistoryCalendar({
       aria-label={t('timerHistory.calendarLabel')}
     >
       <div className="timer-cal__toolbar">
-        <div className="timer-cal__header">
-          <button
-            type="button"
-            className="timer-cal__nav"
-            onClick={() => shiftMonth(-1)}
-            aria-label={t('timerHistory.prevMonth')}
-          >
-            <Icon name="chevronLeft" size={18} />
-          </button>
-          <p className="timer-cal__month">{monthLabel}</p>
-          <button
-            type="button"
-            className="timer-cal__nav"
-            onClick={() => shiftMonth(1)}
-            aria-label={t('timerHistory.nextMonth')}
-          >
-            <Icon name="chevronRight" size={18} />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="timer-cal__nav"
+          onClick={() => shiftMonth(-1)}
+          aria-label={t('timerHistory.prevMonth')}
+        >
+          <Icon name="chevronLeft" size={18} aria-hidden />
+        </button>
+        <p className="timer-cal__month">{monthLabel}</p>
+        <button
+          type="button"
+          className="timer-cal__nav"
+          onClick={() => shiftMonth(1)}
+          aria-label={t('timerHistory.nextMonth')}
+        >
+          <Icon name="chevronRight" size={18} aria-hidden />
+        </button>
         <button type="button" className="timer-cal__today" onClick={goToday}>
           {t('timerHistory.goToday')}
         </button>
@@ -117,7 +115,8 @@ export function TimerHistoryCalendar({
           .join(' ')}
       >
         {cells.map((cell) => {
-          const hasData = datesWithData.has(cell.dateKey);
+          const count = dayCounts[cell.dateKey] ?? 0;
+          const hasData = count > 0;
           const selected = selectedDate === cell.dateKey;
           const isToday = cell.dateKey === todayKey;
           return (
@@ -144,7 +143,7 @@ export function TimerHistoryCalendar({
             >
               <span className="timer-cal__num">{cell.day}</span>
               {hasData ? (
-                <span className="timer-cal__dot" aria-hidden="true" />
+                <span className="timer-cal__mark">{count}</span>
               ) : (
                 <span className="timer-cal__dot-slot" aria-hidden="true" />
               )}
