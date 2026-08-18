@@ -49,11 +49,14 @@ export function BrandFavoritesPage() {
     return [...brands]
       .filter((b) => brandMatchesQuery(b, normalizedQuery, i18n.language))
       .sort((a, b) => {
+        const aFav = favoriteIds.has(a.id) ? 0 : 1;
+        const bFav = favoriteIds.has(b.id) ? 0 : 1;
+        if (aFav !== bFav) return aFav - bFav;
         const byOrder = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
         if (byOrder !== 0) return byOrder;
         return a.code.localeCompare(b.code);
       });
-  }, [brands, normalizedQuery, i18n.language]);
+  }, [brands, normalizedQuery, i18n.language, favoriteIds]);
 
   const loading = brandsLoading || favoritesLoading;
   const favoriteCount = favoriteIds.size;
@@ -76,7 +79,7 @@ export function BrandFavoritesPage() {
             />
           </label>
           <p className="brand-favorites__count" aria-live="polite">
-            <Star size={13} strokeWidth={2.25} fill="currentColor" aria-hidden />
+            <Star size={14} strokeWidth={2.25} fill="currentColor" aria-hidden />
             <span>{t('brandFavorites.summaryCount', { count: favoriteCount })}</span>
           </p>
         </div>
@@ -84,8 +87,8 @@ export function BrandFavoritesPage() {
         <section className="brand-favorites__list-wrap" aria-label={t('brandFavorites.listLabel')}>
           {loading ? (
             <div className="brand-favorites__chip-grid brand-favorites__chip-grid--skeleton" aria-hidden>
-              {Array.from({ length: 18 }).map((_, i) => (
-                <Skeleton key={i} height={34} />
+              {Array.from({ length: 12 }).map((_, i) => (
+                <Skeleton key={i} height={48} />
               ))}
             </div>
           ) : catalogBrands.length === 0 ? (

@@ -1,29 +1,29 @@
 {
-  "title": "Align Machine Dex page grid",
-  "summary": "내 머신도감의 등급 필터·보유 칩·컬렉션 카드를 균일 행·열 그리드로 재정렬했다.",
+  "title": "Align My Brands tile grid",
+  "summary": "내 브랜드 목록을 균일 타일 그리드로 바꾸고, 즐겨찾기 우선 정렬과 툴바 정렬을 정리했다.",
   "git": {
     "branch": "main",
-    "commit": "e482aa71"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
-    "frontend/src/styles/machine-showcase.css"
+    "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
+    "frontend/src/styles/brand-favorites.css"
   ],
   "testFocus": [
-    "등급: 전체 풀폭 + 등급 4열 정렬",
-    "컬렉션 카드 2열(넓은 화면 3열), 발견/헬스장 수치 칸 정렬",
-    "헬스장 보유 근육칩 격자"
+    "내 브랜드: 2열(넓은 화면 3~4열) 타일 높이·별·이름 정렬",
+    "즐겨찾기 브랜드가 목록 상단에 모이는지",
+    "검색창과 카운트 칩 정렬"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern showcase-dex-card__stats|showcase-dex__grade-all|showcase-dex-gym__muscles",
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineDexPage.tsx -Pattern showcase-dex-card__stats|grade-all"
+    "Select-String -Path frontend/src/styles/brand-favorites.css -Pattern grid-template-columns|min-height: 3rem",
+    "Select-String -Path frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx -Pattern favoriteIds.has"
   ],
   "productionChecks": [
-    "Open My Machine Dex and confirm filter/card grid alignment"
+    "Open My Brands and confirm equal tile grid alignment"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "텍스트 나열형 카드 메타 + 등급/칩 들쭉날쭉",
-  "toBe": "고정 슬롯 카드 + 전체/등급·근육 격자 정렬"
+  "asIs": "가변 폭 알약 칩이 들쭉날쭉",
+  "toBe": "고정 높이 타일 그리드 + 즐겨찾기 우선"
 }
