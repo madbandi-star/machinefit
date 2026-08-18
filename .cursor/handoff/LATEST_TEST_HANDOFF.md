@@ -1,4 +1,4 @@
-# Test handoff — BYTEA → Storage/CDN dual-path
+﻿# Test handoff ??BYTEA ??Storage/CDN dual-path
 
 ## Summary
 Media serving prefers Supabase Storage (public or signed) with 302 redirect. BYTEA kept as fallback. Migration 152 is additive only. Bulk copy via `npm run media:migrate-storage`.
@@ -14,9 +14,10 @@ Media serving prefers Supabase Storage (public or signed) with 302 redirect. BYT
 - `media-cdn.ts` contains `redirectToObjectUrl`
 - `scripts/migrate-bytea-to-storage.mjs` exists
 
-## As-is → To-be
+## As-is ??To-be
 - as-is: Render streams BYTEA for covers/brands/UGC
-- to-be: Browser → CDN/Storage when migrated; BYTEA fallback otherwise
+- to-be: Browser ??CDN/Storage when migrated; BYTEA fallback otherwise
 
 **Branch:** `main`  
-**Commit:** PENDING
+**Commit:** 61472848
+

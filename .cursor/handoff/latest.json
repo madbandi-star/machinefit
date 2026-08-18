@@ -1,9 +1,9 @@
-{
-  "title": "BYTEA → Storage/CDN dual-path media",
+﻿{
+  "title": "BYTEA ??Storage/CDN dual-path media",
   "summary": "Prefer Supabase Storage public/signed URLs with 302 redirect; keep BYTEA fallback. Added migration 152, migrate-bytea-to-storage script, brand-assets + ugc-images buckets.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "61472848"
   },
   "changedFiles": [
     "database/migrations/152_media_storage_cdn.sql",
@@ -41,7 +41,7 @@
       "id": "migrator-script",
       "type": "file_contains",
       "path": "scripts/migrate-bytea-to-storage.mjs",
-      "pattern": "BYTEA→Storage"
+      "pattern": "BYTEA?뭆torage"
     }
   ],
   "productionChecks": [
@@ -55,3 +55,4 @@
   "asIs": "Catalog/UGC media streamed as BYTEA through Render even when Storage dual-write existed.",
   "toBe": "Prefer Storage/CDN URLs with BYTEA fallback; BYTEA not deleted yet."
 }
+
