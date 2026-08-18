@@ -84,9 +84,9 @@ export function MachineShowcaseDetailPage() {
     onSuccess: (res) => {
       const created = res.data.data;
       setComment('');
-      queryClient.setQueryData<MachineShowcasePostDetail>(
+      queryClient.setQueryData(
         QUERY_KEYS.machineShowcasePost(postId),
-        (prev) => {
+        (prev: typeof detailQuery.data) => {
           if (!prev || !created) return prev;
           if (prev.comments.some((c) => c.id === created.id)) return prev;
           return {
