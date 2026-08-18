@@ -1,43 +1,52 @@
 {
-  "title": "80? ?? ?? ???????? ??",
-  "summary": "80? ?? ??? ???? 3????? 6?(?/?)? ?? ?? ?? ??? ?? ????? ?????.",
+  "title": "Performance bottleneck diagnosis + opt-in timing",
+  "summary": "Added PAGE_PERFORMANCE / API_PERFORMANCE instrumentation (dev and opt-in). Published diagnosis report: warm APIs ~150ms; landing cost is FE bundle + home API fan-out; Render plan upgrade is MEDIUM for solo latency.",
   "git": {
     "branch": "main",
-    "commit": "ec544d57"
+    "commit": "14ed9ccd"
   },
   "changedFiles": [
-    "shared/src/constants/standard-machine-coaching.ts",
-    "shared/src/constants/standard-machine-coaching.test.ts",
-    "shared/src/constants/index.ts",
-    "backend/server/services/recommendation.service.ts",
-    "backend/server/repositories/recommendation.repository.ts",
-    "database/migrations/151_replace_standard_machine_coaching.sql"
+    "frontend/src/utils/pagePerformance.ts",
+    "frontend/src/components/ops/OpsTelemetryBridge.tsx",
+    "frontend/src/services/http/axios-client.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/vite-env.d.ts",
+    "backend/server/middlewares/api-perf.middleware.ts",
+    "backend/server/config/database.ts",
+    "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md"
   ],
   "testFocus": [
-    "??? ??? ?? ??? ? ?? 3??? 6?? ????",
-    "?? ? ???? ??? ? ?? ? ????",
-    "???/???/????? ? ??? ???",
-    "Render migrate 151 + backend ??? ??"
+    "Dev: navigate pages and confirm PAGE_PERFORMANCE console.warn appears",
+    "With API_PERF_LOG=1, confirm API_PERFORMANCE includes db= from pool queries",
+    "No change to API JSON shapes or UI"
   ],
   "fastChecks": [
     {
-      "id": "coaching-80",
-      "type": "npm",
-      "command": "npx tsx shared/src/constants/standard-machine-coaching.test.ts"
+      "id": "page-perf-file",
+      "type": "file_contains",
+      "path": "frontend/src/utils/pagePerformance.ts",
+      "pattern": "PAGE_PERFORMANCE"
     },
     {
-      "id": "migration-151",
+      "id": "api-perf-format",
       "type": "file_contains",
-      "path": "database/migrations/151_replace_standard_machine_coaching.sql",
-      "pattern": "STD_CHEST_PRESS"
+      "path": "backend/server/middlewares/api-perf.middleware.ts",
+      "pattern": "API_PERFORMANCE"
+    },
+    {
+      "id": "diagnosis-doc",
+      "type": "file_contains",
+      "path": "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
+      "pattern": "Render plan upgrade"
     }
   ],
   "productionChecks": [
-    "Render ?????? 151 ? ?? ?? ???? ? ???????? ??"
+    "Optional: set API_PERF_LOG=1 briefly on Render and sample logs",
+    "Optional: localStorage mf_page_perf=1 as admin and read PAGE_PERFORMANCE"
   ],
   "deploy": {
-    "expected": "GitHub Pages frontend + Render backend+DB migrate 151 required."
+    "expected": "GitHub Pages + Render backend redeploy (shared not required)."
   },
-  "asIs": "?? ??? ?? ??? ???? ????? ????? ?? ???.",
-  "toBe": "80? ?? ??? ???? ??/?? ?? 3??? 6?? ????."
+  "asIs": "No structured page landing timings; API_PERF log format inconsistent; pool queries not auto-timed.",
+  "toBe": "Opt-in PAGE_PERFORMANCE and API_PERFORMANCE with automatic DB attribution; diagnosis doc published."
 }
