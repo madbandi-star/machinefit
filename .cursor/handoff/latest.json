@@ -3,7 +3,7 @@
   "summary": "마이페이지 개인설정에서 내 브랜드를 내 머신도감 아래로 옮겼다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "97375c34"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx"

@@ -11,4 +11,4 @@
 - to-be: 내 머신도감 → 내 브랜드
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `97375c34`
