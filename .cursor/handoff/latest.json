@@ -3,7 +3,7 @@
   "summary": "템플릿 공유관 목록을 균일한 카드 그리드로 바꿔 행·열 정렬과 통계·정렬 탭 레이아웃을 정리했다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "1166a5eb"
   },
   "changedFiles": [
     "frontend/src/pages/template-share/TemplateShareHubPage.tsx",

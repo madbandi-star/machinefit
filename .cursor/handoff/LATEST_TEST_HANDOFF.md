@@ -12,4 +12,4 @@
 - to-be: 카드 그리드 + 고정 슬롯
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `1166a5eb`
