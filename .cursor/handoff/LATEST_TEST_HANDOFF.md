@@ -19,4 +19,4 @@
 - to-be: 통일된 메달 엠블럼, 가로 Collection Bar, 등급이 올라갈수록 카드 존재감 증가
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** 9ffe80fa
