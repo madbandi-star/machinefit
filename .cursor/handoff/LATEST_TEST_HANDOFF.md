@@ -1,4 +1,4 @@
-# Test handoff — Performance diagnosis + opt-in timing
+# Test handoff ??Performance diagnosis + opt-in timing
 
 ## Summary
 Diagnosed MachineFit bottlenecks and added opt-in `PAGE_PERFORMANCE` / `API_PERFORMANCE` instrumentation. No product/UI/schema changes.
@@ -13,7 +13,7 @@ Diagnosed MachineFit bottlenecks and added opt-in `PAGE_PERFORMANCE` / `API_PERF
 - `backend/server/middlewares/api-perf.middleware.ts` contains `API_PERFORMANCE`
 - `docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md` exists
 
-## As-is → To-be
+## As-is ??To-be
 - as-is: no page landing timing; limited DB attribution
 - to-be: opt-in page + API timing with pool.query DB ms; diagnosis report for paid vs code ROI
 
@@ -22,4 +22,4 @@ Diagnosed MachineFit bottlenecks and added opt-in `PAGE_PERFORMANCE` / `API_PERF
 - BE: `API_PERF_LOG=1` (always on in development)
 
 **Branch:** `main`  
-**Commit:** PENDING
+**Commit:** 14ed9ccd
