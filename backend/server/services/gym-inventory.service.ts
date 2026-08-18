@@ -11,6 +11,7 @@ import {
 import { gymInventoryRepository } from '../repositories/gym-inventory.repository.js';
 import { machineRepository } from '../repositories/machine.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
+import { machineRarityService } from './machine-rarity.service.js';
 
 function registrantRole(roleCode: RoleCode): GymMachineRegistrantRole {
   if (hasMinRole(roleCode, Role.ADMIN)) return 'admin';
@@ -77,7 +78,7 @@ export const gymInventoryService = {
     const isVerified = isOperator;
 
     try {
-      return await gymInventoryRepository.add({
+      const created = await gymInventoryRepository.add({
         gymId,
         machineId,
         input,
@@ -88,6 +89,8 @@ export const gymInventoryService = {
             : registrantRole(roleCode),
         isVerified,
       });
+      void machineRarityService.recalculateSafe(machineId);
+      return created;
     } catch (error) {
       const message = error instanceof Error ? error.message : '';
       if (message.includes('uq_gym_machines_active') || message.includes('duplicate key')) {
@@ -129,6 +132,7 @@ export const gymInventoryService = {
 
     const ok = await gymInventoryRepository.softDelete(itemId, userId);
     if (!ok) throw new AppError(404, 'NOT_FOUND', 'Gym machine not found');
+    if (item.machineId) void machineRarityService.recalculateSafe(item.machineId);
   },
 
   async adminList(gymId: string, includeDeleted = true): Promise<GymMachine[]> {

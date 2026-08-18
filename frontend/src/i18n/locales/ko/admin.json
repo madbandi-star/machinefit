@@ -51,6 +51,7 @@
     "bannerSlotsDesc": "배너가 표시될 슬롯(위치)을 관리합니다.",
     "bannerStatsDesc": "배너 노출·클릭·CTR 통계를 확인합니다.",
     "photoBoardDesc": "사진게시판 신고·차단을 관리합니다.",
+    "machineShowcaseDesc": "기구 자랑 신고·희귀도를 관리합니다.",
     "tradesDesc": "거래글·신고·통계를 관리합니다.",
     "onlinePtDesc": "온라인 PT 트레이너·질문·정산을 관리합니다.",
     "pushDesc": "푸시 알림을 작성·발송합니다.",
@@ -792,6 +793,17 @@
     "blockUserId": "사용자 ID",
     "blockReason": "차단 사유",
     "block": "차단"
+  },
+  "machineShowcase": {
+    "nav": "기구 자랑",
+    "reports": "신고",
+    "rarity": "희귀도",
+    "noReports": "대기 중인 신고가 없습니다.",
+    "hidePost": "게시글 숨김",
+    "searchMachine": "머신 코드·이름 검색",
+    "uniqueCode": "UNIQUE 지정할 머신 코드",
+    "markUnique": "UNIQUE 지정",
+    "uniqueSet": "UNIQUE 등급을 지정했습니다."
   },
   "ads": {
     "nav": "광고 정책",

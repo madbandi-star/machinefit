@@ -37,6 +37,10 @@ export function photoBoardImageUrl(imageId: string, variant: 'main' | 'thumb' = 
   return `${publicApiBase()}/photo-board/images/${encodeURIComponent(imageId)}?variant=${variant}&${mediaAccessQuery('photo', imageId)}`;
 }
 
+export function showcaseImageUrl(imageId: string, variant: 'main' | 'thumb' = 'thumb'): string {
+  return `${publicApiBase()}/community/machine-showcase/images/${encodeURIComponent(imageId)}?variant=${variant}&${mediaAccessQuery('showcase', imageId)}`;
+}
+
 export function machineTradeImageUrl(imageId: string, variant: 'full' | 'thumb' = 'thumb'): string {
   return `${publicApiBase()}/machine-trades/images/${encodeURIComponent(imageId)}?variant=${variant}&${mediaAccessQuery('trade', imageId)}`;
 }

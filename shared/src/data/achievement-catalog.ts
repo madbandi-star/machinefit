@@ -325,6 +325,109 @@ function buildMachineAchievements(): AchievementDef[] {
   return [...counts, ...brands, ...masters];
 }
 
+function buildMachineDexAchievements(): AchievementDef[] {
+  const collected = milestoneSeries({
+    category: 'machine',
+    idPrefix: 'dex-machine',
+    metric: 'dex_machines',
+    targets: [1, 10, 50, 100, 500],
+    emoji: '📖',
+    name: (n) =>
+      n === 1
+        ? text('첫 머신 발견', 'First Dex Find')
+        : text(`머신 ${n}종 수집`, `${n} Machines Collected`),
+    description: (n) =>
+      text(
+        `Machine Dex에 ${n}종의 머신을 등록했습니다.`,
+        `Registered ${n} machines in Machine Dex.`
+      ),
+    title: (n) => (n >= 100 ? text('머신 헌터', 'Machine Hunter') : undefined),
+    soft: 10,
+    mid: 100,
+    hard: 500,
+  });
+
+  const brands = milestoneSeries({
+    category: 'machine',
+    idPrefix: 'dex-brand',
+    metric: 'dex_brands',
+    targets: [10],
+    emoji: '🏷️',
+    name: () => text('브랜드 10종 수집', '10 Brands Collected'),
+    description: () =>
+      text(
+        'Machine Dex에서 10개 브랜드의 머신을 발견했습니다.',
+        'Discovered machines from 10 brands in Machine Dex.'
+      ),
+    title: () => text('브랜드 컬렉터', 'Brand Collector'),
+    soft: 10,
+    mid: 10,
+    hard: 10,
+  });
+
+  const rarityFinds: AchievementDef[] = [
+    def({
+      id: 'dex-rare-1',
+      category: 'machine',
+      rarity: 'rare',
+      emoji: '🔵',
+      name: text('첫 번째 RARE 발견', 'First RARE Find'),
+      description: text('RARE 이상 등급 머신을 처음 발견했습니다.', 'Discovered your first RARE-or-higher machine.'),
+      condition: { metric: 'dex_rare', op: 'gte', target: 1 },
+      xp: 250,
+      sortOrder: 200,
+    }),
+    def({
+      id: 'dex-legendary-1',
+      category: 'machine',
+      rarity: 'legendary',
+      emoji: '🟠',
+      name: text('LEGENDARY 발견자', 'LEGENDARY Finder'),
+      description: text('LEGENDARY 이상 머신을 발견했습니다.', 'Discovered a LEGENDARY-or-higher machine.'),
+      condition: { metric: 'dex_legendary', op: 'gte', target: 1 },
+      xp: 1000,
+      sortOrder: 201,
+    }),
+    def({
+      id: 'dex-mythic-1',
+      category: 'machine',
+      rarity: 'mythic',
+      emoji: '🔴',
+      name: text('MYTHIC 발견자', 'MYTHIC Finder'),
+      description: text('MYTHIC 머신을 발견했습니다.', 'Discovered a MYTHIC machine.'),
+      condition: { metric: 'dex_mythic', op: 'gte', target: 1 },
+      xp: 2500,
+      sortOrder: 202,
+    }),
+    def({
+      id: 'dex-seoul-hunter',
+      category: 'region',
+      rarity: 'epic',
+      emoji: '🏙️',
+      name: text('서울 머신 헌터', 'Seoul Machine Hunter'),
+      description: text('서울에서 머신을 10종 이상 발견했습니다.', 'Discovered 10+ machines in Seoul.'),
+      condition: { metric: 'dex_seoul', op: 'gte', target: 10 },
+      xp: 500,
+      title: text('서울 머신 헌터', 'Seoul Machine Hunter'),
+      sortOrder: 203,
+    }),
+    def({
+      id: 'dex-korea-hunter',
+      category: 'region',
+      rarity: 'legendary',
+      emoji: '🇰🇷',
+      name: text('대한민국 머신 헌터', 'Korea Machine Hunter'),
+      description: text('Machine Dex에 머신을 100종 수집했습니다.', 'Collected 100 machines in Machine Dex.'),
+      condition: { metric: 'dex_machines', op: 'gte', target: 100 },
+      xp: 1000,
+      title: text('대한민국 머신 헌터', 'Korea Machine Hunter'),
+      sortOrder: 204,
+    }),
+  ];
+
+  return [...collected, ...brands, ...rarityFinds];
+}
+
 function buildMuscleAchievements(): AchievementDef[] {
   const specs: Array<{
     id: string;
@@ -824,6 +927,7 @@ function buildCatalog(): AchievementDef[] {
     ...buildConsistencyAchievements(),
     ...buildPrAchievements(),
     ...buildMachineAchievements(),
+    ...buildMachineDexAchievements(),
     ...buildMuscleAchievements(),
     ...buildTimeOfDayAchievements(),
     ...buildGymAchievements(),

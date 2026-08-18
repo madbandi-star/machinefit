@@ -38,6 +38,7 @@ import {
 } from '@/utils/machineDetailCache';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import { Seo } from '@/seo/Seo';
+import { MachineShowcaseLinks } from '@/components/machine-showcase/MachineShowcaseLinks';
 import { breadcrumbJsonLd, webPageJsonLd } from '@/seo/jsonLd';
 import { resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
 import '@/styles/components.css';
@@ -343,6 +344,9 @@ export function MachineDetailPage() {
       {/* After hero content so it is not buried under sticky UI; above Recommend CTA. */}
       {!isPlanAddMode ? (
         <BannerSlot slot="MACHINE_BOTTOM" className="machine-detail-page__banner" />
+      ) : null}
+      {!isPlanAddMode && machineCode && isAuthenticated ? (
+        <MachineShowcaseLinks machineCode={machineCode} />
       ) : null}
       {!isPlanAddMode && machineCode ? (
         <RecommendCTA

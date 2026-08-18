@@ -59,7 +59,13 @@ export type AchievementMetric =
   | 'squat_workouts'
   | 'upper_ratio_pct'
   | 'lower_ratio_pct'
-  | 'balance_score';
+  | 'balance_score'
+  | 'dex_machines'
+  | 'dex_brands'
+  | 'dex_rare'
+  | 'dex_legendary'
+  | 'dex_mythic'
+  | 'dex_seoul';
 
 export type AchievementOperator = 'gte' | 'lte' | 'eq';
 
@@ -123,6 +129,12 @@ export interface AchievementUserStats {
   upperRatioPct: number;
   lowerRatioPct: number;
   balanceScore: number;
+  dexMachines: number;
+  dexBrands: number;
+  dexRare: number;
+  dexLegendary: number;
+  dexMythic: number;
+  dexSeoul: number;
 }
 
 export interface AchievementProgressItem {

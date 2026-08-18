@@ -171,6 +171,15 @@ export const QUERY_KEYS = {
   photoBoard: (params?: Record<string, unknown>) => ['photo-board', params ?? {}] as const,
   photoBoardPost: (postId: string) => ['photo-board', 'post', postId] as const,
   adminPhotoBoard: ['admin', 'photo-board'] as const,
+  machineShowcase: (params?: Record<string, unknown>) =>
+    ['machine-showcase', params ?? {}] as const,
+  machineShowcasePost: (postId: string) => ['machine-showcase', 'post', postId] as const,
+  machineShowcaseGyms: (machineCode: string) =>
+    ['machine-showcase', 'gyms', machineCode] as const,
+  machineDex: ['machine-showcase', 'dex'] as const,
+  machineShowcaseHoldings: (userGymId?: string | null) =>
+    ['machine-showcase', 'holdings', userGymId ?? ''] as const,
+  adminMachineShowcase: ['admin', 'machine-showcase'] as const,
   machineTrades: (params?: Record<string, unknown>) => ['machine-trades', params ?? {}] as const,
   machineTrade: (tradeId: string) => ['machine-trades', 'detail', tradeId] as const,
   machineTradeMyReports: ['machine-trades', 'my-reports'] as const,

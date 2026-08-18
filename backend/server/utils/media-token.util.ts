@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { env } from '../config/env.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
-export type MediaTokenKind = 'photo' | 'trade' | 'request' | 'audio';
+export type MediaTokenKind = 'photo' | 'trade' | 'request' | 'audio' | 'showcase';
 
 const TTL_SEC = 6 * 60 * 60;
 

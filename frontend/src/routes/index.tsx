@@ -129,6 +129,22 @@ const photoBoardDetail = () =>
   import('@/pages/photo-board/PhotoPostDetailPage').then((m) => ({
     default: m.PhotoPostDetailPage,
   }));
+const machineShowcase = () =>
+  import('@/pages/machine-showcase/MachineShowcasePage').then((m) => ({
+    default: m.MachineShowcasePage,
+  }));
+const machineShowcaseWrite = () =>
+  import('@/pages/machine-showcase/MachineShowcaseWritePage').then((m) => ({
+    default: m.MachineShowcaseWritePage,
+  }));
+const machineShowcaseDetail = () =>
+  import('@/pages/machine-showcase/MachineShowcaseDetailPage').then((m) => ({
+    default: m.MachineShowcaseDetailPage,
+  }));
+const machineDex = () =>
+  import('@/pages/machine-showcase/MachineDexPage').then((m) => ({
+    default: m.MachineDexPage,
+  }));
 const tradeList = () =>
   import('@/pages/machine-trade/TradeListPage').then((m) => ({ default: m.TradeListPage }));
 const tradeDetail = () =>
@@ -334,6 +350,10 @@ const adminModeration = () =>
 const adminPhotoBoard = () =>
   import('@/pages/admin/photo-board/AdminPhotoBoardPage').then((m) => ({
     default: m.AdminPhotoBoardPage,
+  }));
+const adminMachineShowcase = () =>
+  import('@/pages/admin/machine-showcase/AdminMachineShowcasePage').then((m) => ({
+    default: m.AdminMachineShowcasePage,
   }));
 const noticesPage = () =>
   import('@/pages/notices/NoticesPage').then((m) => ({ default: m.NoticesPage }));
@@ -573,6 +593,9 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.PHOTO_BOARD, element: lazyRoute(photoBoard) },
             { path: ROUTES.PHOTO_BOARD_WRITE, element: lazyRoute(photoBoardWrite) },
             { path: ROUTES.PHOTO_BOARD_DETAIL, element: lazyRoute(photoBoardDetail) },
+            { path: ROUTES.MACHINE_SHOWCASE, element: lazyRoute(machineShowcase) },
+            { path: ROUTES.MACHINE_SHOWCASE_WRITE, element: lazyRoute(machineShowcaseWrite) },
+            { path: ROUTES.MACHINE_SHOWCASE_DETAIL, element: lazyRoute(machineShowcaseDetail) },
             { path: ROUTES.DATA_MANAGEMENT, element: lazyRoute(dataManagementPage) },
           ],
         },
@@ -596,6 +619,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
             { path: ROUTES.LIFTER_DNA, element: lazyRoute(lifterDna) },
             { path: ROUTES.LIVE_DASHBOARD, element: lazyRoute(liveDashboard) },
             { path: ROUTES.ACHIEVEMENTS, element: lazyRoute(achievements) },
+            { path: ROUTES.MACHINE_DEX, element: lazyRoute(machineDex) },
             { path: ROUTES.POINTS, element: lazyRoute(pointsPage) },
             { path: ROUTES.QA, element: lazyRoute(qaPage) },
             { path: ROUTES.QA_DETAIL, element: lazyRoute(qaDetailPage) },
@@ -758,6 +782,7 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
         { path: ROUTES.ADMIN_MACHINE_COVERS, element: lazyRoute(adminMachineCovers) },
         { path: ROUTES.ADMIN_MODERATION, element: lazyRoute(adminModeration) },
         { path: ROUTES.ADMIN_PHOTO_BOARD, element: lazyRoute(adminPhotoBoard) },
+        { path: ROUTES.ADMIN_MACHINE_SHOWCASE, element: lazyRoute(adminMachineShowcase) },
         { path: ROUTES.ADMIN_TEMPLATE_SHARE, element: lazyRoute(adminTemplateShare) },
         { path: ROUTES.ADMIN_NOTICES, element: lazyRoute(adminNoticesPage) },
         { path: ROUTES.ADMIN_NOTICE_NEW, element: lazyRoute(adminNoticeEditPage) },

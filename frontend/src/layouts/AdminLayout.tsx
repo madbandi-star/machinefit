@@ -79,6 +79,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         icon: 'shield',
       },
       { to: ROUTES.ADMIN_PHOTO_BOARD, labelKey: 'photoBoard.nav', icon: 'camera' },
+      { to: ROUTES.ADMIN_MACHINE_SHOWCASE, labelKey: 'machineShowcase.nav', icon: 'dumbbell' },
       { to: ROUTES.ADMIN_TEMPLATE_SHARE, labelKey: 'templateShare.nav', icon: 'dumbbell' },
       { to: ROUTES.ADMIN_NOTICES, labelKey: 'notices.nav', icon: 'bell' },
       { to: ROUTES.ADMIN_QA, labelKey: 'qa.nav', icon: 'message' },

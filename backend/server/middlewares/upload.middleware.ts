@@ -96,6 +96,11 @@ export const photoBoardImagesUpload: RequestHandler = makeMultiUpload(
   photoBoardImageLimits().maxCount
 );
 
+export const machineShowcaseImagesUpload: RequestHandler = makeMultiUpload(
+  photoBoardImageLimits().maxBytes,
+  6
+);
+
 export const machineTradeImagesUpload: RequestHandler = makeMultiUpload(
   machineTradeImageLimits().maxBytes,
   machineTradeImageLimits().maxCount
