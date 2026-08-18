@@ -6,9 +6,10 @@ import type {
   TimerHistoryMonthResponse,
   TimerHistorySessionDetail,
 } from '@machinefit/shared';
-import { assignMarksToLaps } from '@machinefit/shared';
+import { assignMarksToLaps, TIMER_SESSION_POINTS_MIN_SECONDS } from '@machinefit/shared';
 import { AppError } from '../middlewares/error.middleware.js';
 import { machineRepository } from '../repositories/machine.repository.js';
+import { awardPointsSafe } from './points.service.js';
 import {
   timerHistoryRepository,
   type TimerHistoryInsertLap,
@@ -140,6 +141,17 @@ export const timerHistoryService = {
       durationSeconds: input.durationSeconds,
       laps,
     });
+
+    if (input.durationSeconds >= TIMER_SESSION_POINTS_MIN_SECONDS) {
+      awardPointsSafe({
+        userId,
+        actionCode: 'timer_session_complete',
+        referenceType: 'timer_session',
+        referenceId: id,
+        idempotencyKey: `timer_session_complete:timer_session:${id}`,
+      });
+    }
+
     return { id, duplicate: false };
   },
 

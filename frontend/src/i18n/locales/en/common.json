@@ -2237,7 +2237,7 @@
     "powerTitle": "TODAY'S POWER",
     "powerLabel": "POWER",
     "powerEarned": "+{{points}} POWER earned",
-    "powerHint": "POWER is earned when you complete sets.",
+    "powerHint": "POWER is earned when you complete sets, use the timer, or use Machine Dex.",
     "powerDone": "Today's workout is complete.",
     "lapsTitle": "LAPS",
     "lapItem": "LAP {{n}}",

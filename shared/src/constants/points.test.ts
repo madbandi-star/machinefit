@@ -4,10 +4,16 @@ import {
   isPointClientTrackableAction,
   POINT_ACTION_CODES,
   POINT_CLIENT_TRACKABLE_ACTIONS,
+  TIMER_SESSION_POINTS_MIN_SECONDS,
 } from './points.js';
 import { pointClientTrackSchema, adminPointAdjustSchema } from '../validators/points.schema.js';
 
 assert.ok(POINT_ACTION_CODES.includes('workout_log_save'));
+assert.ok(POINT_ACTION_CODES.includes('timer_session_complete'));
+assert.ok(POINT_ACTION_CODES.includes('showcase_post'));
+assert.ok(POINT_ACTION_CODES.includes('showcase_claim'));
+assert.ok(POINT_ACTION_CODES.includes('machine_dex_discover'));
+assert.equal(TIMER_SESSION_POINTS_MIN_SECONDS, 60);
 assert.ok(isPointActionCode('signup_complete'));
 assert.equal(isPointActionCode('not_a_real_action'), false);
 

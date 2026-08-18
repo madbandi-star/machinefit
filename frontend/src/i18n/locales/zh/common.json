@@ -2189,7 +2189,7 @@
     "powerTitle": "TODAY'S POWER",
     "powerLabel": "POWER",
     "powerEarned": "+{{points}} POWER 已获得",
-    "powerHint": "完成组数后会获得 POWER。",
+    "powerHint": "完成组数、使用计时器或使用机器图鉴时会获得 POWER。",
     "powerDone": "今日训练已完成。",
     "lapsTitle": "LAPS",
     "lapItem": "LAP {{n}}",

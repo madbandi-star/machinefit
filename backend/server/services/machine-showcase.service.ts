@@ -22,6 +22,7 @@ import { machineRarityService } from './machine-rarity.service.js';
 import { achievementService } from './achievement.service.js';
 import { assertSafeUgc } from '../utils/content-safety.util.js';
 import { assertUsageAllowed, trackUsageSafe } from './usage.service.js';
+import { awardPointsSafe } from './points.service.js';
 
 const MAX_SHOWCASE_IMAGES = 6;
 
@@ -139,6 +140,22 @@ export const machineShowcaseService = {
     const dex = await machineShowcaseRepository.upsertDiscovery(userId, machineId, postId, 'post');
     const newlyUnlockedAchievementIds = await afterMachineChange(userId, machineId);
     trackUsageSafe(userId, 'image_upload');
+    awardPointsSafe({
+      userId,
+      actionCode: 'showcase_post',
+      referenceType: 'showcase_post',
+      referenceId: postId,
+      idempotencyKey: `showcase_post:showcase_post:${postId}`,
+    });
+    if (dex.isNew) {
+      awardPointsSafe({
+        userId,
+        actionCode: 'machine_dex_discover',
+        referenceType: 'machine',
+        referenceId: machineId,
+        idempotencyKey: `machine_dex_discover:machine:${machineId}`,
+      });
+    }
 
     const detail = await machineShowcaseRepository.getById(postId, userId, { locale });
     const rank = await machineShowcaseRepository.getDiscoveryRank(userId, machineId);
@@ -235,8 +252,31 @@ export const machineShowcaseService = {
   async claimGymMachine(userId: string, input: ClaimGymMachineInput) {
     const machineId = await resolveMachineId(input.machineCode);
     const result = await machineShowcaseRepository.claimGymMachine(userId, input, machineId);
-    await machineShowcaseRepository.upsertDiscovery(userId, machineId, input.sourcePostId ?? null, 'claim');
+    const dex = await machineShowcaseRepository.upsertDiscovery(
+      userId,
+      machineId,
+      input.sourcePostId ?? null,
+      'claim'
+    );
     await afterMachineChange(userId, machineId);
+    if (result.inserted) {
+      awardPointsSafe({
+        userId,
+        actionCode: 'showcase_claim',
+        referenceType: 'gym_machine',
+        referenceId: `${input.userGymId}:${machineId}`,
+        idempotencyKey: `showcase_claim:gym_machine:${input.userGymId}:${machineId}`,
+      });
+    }
+    if (dex.isNew) {
+      awardPointsSafe({
+        userId,
+        actionCode: 'machine_dex_discover',
+        referenceType: 'machine',
+        referenceId: machineId,
+        idempotencyKey: `machine_dex_discover:machine:${machineId}`,
+      });
+    }
     const rarity = await machineShowcaseRepository.getRarityPublic(machineId, input.machineCode);
     return { ...result, rarity };
   },

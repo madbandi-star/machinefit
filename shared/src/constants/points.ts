@@ -19,6 +19,10 @@ export const POINT_ACTION_CODES = [
   'community_comment',
   'community_like',
   'power_box_claim',
+  'timer_session_complete',
+  'showcase_post',
+  'showcase_claim',
+  'machine_dex_discover',
 ] as const;
 
 export type PointActionCode = (typeof POINT_ACTION_CODES)[number];
@@ -54,3 +58,6 @@ export function isPointClientTrackableAction(
 ): value is PointClientTrackableAction {
   return (POINT_CLIENT_TRACKABLE_ACTIONS as readonly string[]).includes(value);
 }
+
+/** Minimum saved timer duration before 헬창력 (POWER) is awarded. */
+export const TIMER_SESSION_POINTS_MIN_SECONDS = 60;

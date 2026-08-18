@@ -2189,7 +2189,7 @@
     "powerTitle": "TODAY'S POWER",
     "powerLabel": "POWER",
     "powerEarned": "+{{points}} POWER 獲得",
-    "powerHint": "セット完了でPOWERが付与されます。",
+    "powerHint": "セット完了・タイマー利用・マシン図鑑の活動でPOWERが付与されます。",
     "powerDone": "今日の運動を完了しました。",
     "lapsTitle": "LAPS",
     "lapItem": "LAP {{n}}",

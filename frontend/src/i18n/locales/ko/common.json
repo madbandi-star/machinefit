@@ -2187,7 +2187,7 @@
     "powerTitle": "TODAY'S POWER",
     "powerLabel": "POWER",
     "powerEarned": "+{{points}} POWER 적립",
-    "powerHint": "오늘 세트 완료 시 POWER가 적립됩니다.",
+    "powerHint": "세트 완료, 타이머 사용, 머신도감 활동 시 POWER가 적립됩니다.",
     "powerDone": "오늘 운동을 완료했습니다.",
     "lapsTitle": "LAPS",
     "lapItem": "LAP {{n}}",

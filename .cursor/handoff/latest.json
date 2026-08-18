@@ -1,25 +1,38 @@
 {
-  "title": "Move 머신도감 공유관 under template share",
-  "summary": "마이페이지 커뮤니티에서 머신도감 공유관을 템플릿 공유관 아래로 옮겼다.",
+  "title": "Award POWER for timer and machine dex",
+  "summary": "타이머 세션(1분 이상 저장)과 머신도감 자랑 작성·보유 등록·신규 발견에도 헬창력 POWER를 적립한다.",
   "git": {
     "branch": "main",
-    "commit": "d567d172"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx"
+    "shared/src/constants/points.ts",
+    "shared/src/constants/points.test.ts",
+    "database/migrations/148_points_timer_and_machine_dex.sql",
+    "backend/server/services/timer-history.service.ts",
+    "backend/server/services/machine-showcase.service.ts",
+    "backend/server/data/qa-seed-articles.json",
+    "frontend/src/services/workoutCompleteReport.service.ts",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "마이페이지 커뮤니티: 템플릿 공유관 다음이 머신도감 공유관"
+    "타이머 1분 이상 종료 후 포인트 내역에 타이머 세션 완료",
+    "1분 미만 타이머는 적립 없음",
+    "머신도감 자랑 작성 / 우리 짐에도 있음 / 첫 발견 적립"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/my-page/MyPage.tsx -Pattern MACHINE_SHOWCASE -Context 4,0"
+    "npx tsx shared/src/constants/points.test.ts",
+    "Select-String -Path shared/src/constants/points.ts,backend/server/services/timer-history.service.ts,backend/server/services/machine-showcase.service.ts -Pattern timer_session_complete|showcase_post|showcase_claim|machine_dex_discover"
   ],
   "productionChecks": [
-    "Open My Page community section and confirm order"
+    "After Render redeploy and migration 148: earn via timer and machine dex, confirm My Page points ledger"
   ],
   "deploy": {
-    "expected": "GitHub Pages after push to main"
+    "expected": "GitHub Pages after push to main; Render + db:migrate required for awards"
   },
-  "asIs": "사진게시판 아래, 템플릿 공유관 위",
-  "toBe": "템플릿 공유관 아래"
+  "asIs": "POWER only from workout logs/community-style actions",
+  "toBe": "Timer session save (60s+) and machine-dex post/claim/first discovery also award POWER"
 }

@@ -18,6 +18,7 @@ const WORKOUT_POWER_ACTIONS = new Set([
   'workout_complete',
   'daily_workout_done',
   'workout_streak',
+  'timer_session_complete',
 ]);
 
 function seoulDateKey(iso = new Date()): string {
