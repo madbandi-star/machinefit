@@ -94,7 +94,80 @@ function mapStats(row: StatsRow | undefined): AchievementUserStats & {
       row.active_title_ko || row.active_title_en
         ? { ko: row.active_title_ko ?? '', en: row.active_title_en ?? '' }
         : null,
+    dexMachines: 0,
+    dexBrands: 0,
+    dexRare: 0,
+    dexLegendary: 0,
+    dexMythic: 0,
+    dexSeoul: 0,
   };
+}
+
+async function loadDexStats(userId: string): Promise<{
+  dexMachines: number;
+  dexBrands: number;
+  dexRare: number;
+  dexLegendary: number;
+  dexMythic: number;
+  dexSeoul: number;
+}> {
+  const empty = {
+    dexMachines: 0,
+    dexBrands: 0,
+    dexRare: 0,
+    dexLegendary: 0,
+    dexMythic: 0,
+    dexSeoul: 0,
+  };
+  const pool = getPool();
+  if (!pool) return empty;
+  try {
+    const result = await pool.query<{
+      dex_machines: number;
+      dex_brands: number;
+      dex_rare: number;
+      dex_legendary: number;
+      dex_mythic: number;
+      dex_seoul: number;
+    }>(
+      `SELECT
+         COUNT(*)::int AS dex_machines,
+         COUNT(DISTINCT b.id)::int AS dex_brands,
+         COUNT(*) FILTER (
+           WHERE COALESCE(mr.grade, 'COMMON') IN ('RARE','EPIC','LEGENDARY','MYTHIC','UNIQUE')
+         )::int AS dex_rare,
+         COUNT(*) FILTER (
+           WHERE COALESCE(mr.grade, 'COMMON') IN ('LEGENDARY','MYTHIC','UNIQUE')
+         )::int AS dex_legendary,
+         COUNT(*) FILTER (
+           WHERE COALESCE(mr.grade, 'COMMON') IN ('MYTHIC','UNIQUE')
+         )::int AS dex_mythic,
+         COUNT(*) FILTER (
+           WHERE COALESCE(g.city, ug.address, ug.name, '') ILIKE '%서울%'
+              OR COALESCE(g.city, ug.address, ug.name, '') ILIKE '%Seoul%'
+         )::int AS dex_seoul
+       FROM machine_discoveries d
+       JOIN machines m ON m.id = d.machine_id
+       LEFT JOIN brands b ON b.id = m.brand_id
+       LEFT JOIN machine_rarity mr ON mr.machine_id = d.machine_id
+       LEFT JOIN machine_showcase_posts p ON p.id = d.first_post_id
+       LEFT JOIN gyms g ON g.id = p.gym_id
+       LEFT JOIN user_gyms ug ON ug.id = p.user_gym_id
+       WHERE d.user_id = $1`,
+      [userId]
+    );
+    const row = result.rows[0];
+    return {
+      dexMachines: row?.dex_machines ?? 0,
+      dexBrands: row?.dex_brands ?? 0,
+      dexRare: row?.dex_rare ?? 0,
+      dexLegendary: row?.dex_legendary ?? 0,
+      dexMythic: row?.dex_mythic ?? 0,
+      dexSeoul: row?.dex_seoul ?? 0,
+    };
+  } catch {
+    return empty;
+  }
 }
 
 export const achievementRepository = {
@@ -117,7 +190,18 @@ export const achievementRepository = {
        WHERE user_id = $1${filters}`,
       params
     );
-    return `${result.rows[0]?.c ?? '0'}:${result.rows[0]?.m ?? ''}`;
+    let dex = '0:';
+    try {
+      const d = await pool.query<{ c: string; m: string | null }>(
+        `SELECT COUNT(*)::text AS c, MAX(discovered_at)::text AS m
+         FROM machine_discoveries WHERE user_id = $1`,
+        [userId]
+      );
+      dex = `${d.rows[0]?.c ?? '0'}:${d.rows[0]?.m ?? ''}`;
+    } catch {
+      dex = '0:';
+    }
+    return `${result.rows[0]?.c ?? '0'}:${result.rows[0]?.m ?? ''}|dex:${dex}`;
   },
 
   async getStats(userId: string) {
@@ -127,7 +211,9 @@ export const achievementRepository = {
       `SELECT * FROM user_achievement_stats WHERE user_id = $1`,
       [userId]
     );
-    return mapStats(result.rows[0]);
+    const stats = mapStats(result.rows[0]);
+    const dex = await loadDexStats(userId);
+    return { ...stats, ...dex };
   },
 
   async upsertStats(
@@ -574,7 +660,7 @@ export const achievementRepository = {
         ? Math.max(0, Math.round((1 - Math.abs(upper / ul - 0.5) * 2) * 1000) / 10)
         : 0;
 
-    return {
+    const base = {
       totalVolumeKg,
       workoutCount: n(row?.workout_count),
       sessionDays: n(row?.session_days),
@@ -608,6 +694,8 @@ export const achievementRepository = {
       lowerRatioPct,
       balanceScore: balance || balanceScore,
     };
+    const dex = await loadDexStats(userId);
+    return { ...base, ...dex };
   },
 };
 

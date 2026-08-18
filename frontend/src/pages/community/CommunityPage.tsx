@@ -40,6 +40,12 @@ export function CommunityPage() {
               <p className="community-link-card__desc">{tc('photoBoardSubtitle')}</p>
             </Link>
           ) : null}
+          {showPhotoBoard ? (
+            <Link to={ROUTES.MACHINE_SHOWCASE} className="card card--interactive community-link-card">
+              <strong>{tc('showcase.title')}</strong>
+              <p className="community-link-card__desc">{tc('showcase.subtitle')}</p>
+            </Link>
+          ) : null}
         </div>
         <CommunityBottomBanner />
       </div>

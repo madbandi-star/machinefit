@@ -128,6 +128,11 @@ export function AdminDashboardPage() {
       { to: ROUTES.ADMIN_COMPLIANCE, title: t('compliance.nav'), desc: t('menu.complianceDesc') },
       { to: ROUTES.ADMIN_PHOTO_BOARD, title: t('photoBoard.nav'), desc: t('menu.photoBoardDesc') },
       {
+        to: ROUTES.ADMIN_MACHINE_SHOWCASE,
+        title: t('machineShowcase.nav'),
+        desc: t('menu.machineShowcaseDesc'),
+      },
+      {
         to: ROUTES.ADMIN_TEMPLATE_SHARE,
         title: t('templateShare.nav'),
         desc: t('menu.templateShareDesc'),

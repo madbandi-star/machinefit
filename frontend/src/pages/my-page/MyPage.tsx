@@ -226,6 +226,11 @@ export function MyPage() {
                 label={t('myPage.achievements')}
                 icon="trophy"
               />
+              <ListNavLink
+                to={ROUTES.MACHINE_DEX}
+                label={t('myPage.machineDex')}
+                icon="machines"
+              />
             </>
           ) : null}
         </nav>
@@ -246,7 +251,10 @@ export function MyPage() {
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} icon="message" />
           {showPhotoBoardAndBackup ? (
-            <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+            <>
+              <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
+              <ListNavLink to={ROUTES.MACHINE_SHOWCASE} label={tc('showcase.title')} icon="dumbbell" />
+            </>
           ) : null}
           <ListNavLink
             to={ROUTES.TEMPLATE_SHARE}

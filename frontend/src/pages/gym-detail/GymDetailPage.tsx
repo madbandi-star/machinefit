@@ -6,15 +6,21 @@ import { BusinessHoursDisplay } from '@/components/display/BusinessHours/Busines
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { GymInventoryPanel } from '@/components/gyms/GymInventoryPanel/GymInventoryPanel';
+import { ShowcaseCard } from '@/components/machine-showcase/ShowcaseCard';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { gymApi } from '@/api';
+import { machineShowcaseApi } from '@/api/machine-showcase.api';
+import { useAuthStore } from '@/store/auth.store';
 import { safeHttpUrl } from '@/utils/safeHttpUrl';
 import '@/styles/components.css';
 import '@/styles/gym.css';
+import '@/styles/machine-showcase.css';
 
 export function GymDetailPage() {
   const { gymId } = useParams<{ gymId: string }>();
   const { t } = useTranslation('gyms');
+  const { t: tc } = useTranslation('community');
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   const { data: gym, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.gym(gymId!),
@@ -23,6 +29,13 @@ export function GymDetailPage() {
       return res.data.data;
     },
     enabled: !!gymId,
+  });
+
+  const showcaseQuery = useQuery({
+    queryKey: QUERY_KEYS.machineShowcase({ gymId, tab: 'latest' }),
+    queryFn: async () =>
+      (await machineShowcaseApi.list({ gymId, tab: 'latest', limit: 6 })).data.data,
+    enabled: Boolean(gymId) && isAuthenticated,
   });
 
   if (isLoading) return <Skeleton count={4} height={80} />;
@@ -90,6 +103,17 @@ export function GymDetailPage() {
       )}
 
       <GymInventoryPanel gymId={gym.id} />
+
+      {showcaseQuery.data?.items.length ? (
+        <section className="gym-detail__section">
+          <h3>{tc('showcase.gymShowcase')}</h3>
+          <div className="showcase-feed">
+            {showcaseQuery.data.items.map((post) => (
+              <ShowcaseCard key={post.id} post={post} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </PageShell>
   );
 }

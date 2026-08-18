@@ -16,6 +16,7 @@ export * from './effective-load.js';
 export * from './lifted-weight-showcase.js';
 export * from './lifter-dna-analysis.js';
 export * from './achievement-engine.js';
+export * from './machine-rarity.js';
 export {
   ACHIEVEMENT_CATALOG,
   ACHIEVEMENT_BY_ID,

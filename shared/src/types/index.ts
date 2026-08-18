@@ -49,3 +49,4 @@ export * from './abuse.types.js';
 export * from './points.types.js';
 export * from './workout-complete.types.js';
 export * from './qa.types.js';
+export * from './machine-showcase.types.js';

@@ -47,6 +47,7 @@
     "subscriptionsDesc": "Manage memberships and trials.",
     "noticesDesc": "Create and publish notices.",
     "photoBoardDesc": "Moderate photo board reports and blocks.",
+    "machineShowcaseDesc": "Moderate gym machine showcase reports and rarity.",
     "tradesDesc": "Manage listings, reports, and trade stats.",
     "onlinePtDesc": "Manage online PT trainers, Q&A, and payouts.",
     "pushDesc": "Compose and send push notifications.",
@@ -686,6 +687,17 @@
     "blockUserId": "User ID",
     "blockReason": "Block reason",
     "block": "Block"
+  },
+  "machineShowcase": {
+    "nav": "Machine showcase",
+    "reports": "Reports",
+    "rarity": "Rarity",
+    "noReports": "No reports yet.",
+    "hidePost": "Hide post",
+    "searchMachine": "Search machine code or name",
+    "uniqueCode": "Machine code to mark UNIQUE",
+    "markUnique": "Mark UNIQUE",
+    "uniqueSet": "UNIQUE grade assigned."
   },
   "ads": {
     "nav": "Ad policy",

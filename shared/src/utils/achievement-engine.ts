@@ -44,6 +44,12 @@ const METRIC_GETTERS: Record<AchievementMetric, (s: AchievementUserStats) => num
   upper_ratio_pct: (s) => s.upperRatioPct,
   lower_ratio_pct: (s) => s.lowerRatioPct,
   balance_score: (s) => s.balanceScore,
+  dex_machines: (s) => s.dexMachines,
+  dex_brands: (s) => s.dexBrands,
+  dex_rare: (s) => s.dexRare,
+  dex_legendary: (s) => s.dexLegendary,
+  dex_mythic: (s) => s.dexMythic,
+  dex_seoul: (s) => s.dexSeoul,
 };
 
 export function emptyAchievementStats(): AchievementUserStats {
@@ -80,6 +86,12 @@ export function emptyAchievementStats(): AchievementUserStats {
     upperRatioPct: 0,
     lowerRatioPct: 0,
     balanceScore: 0,
+    dexMachines: 0,
+    dexBrands: 0,
+    dexRare: 0,
+    dexLegendary: 0,
+    dexMythic: 0,
+    dexSeoul: 0,
   };
 }
 
