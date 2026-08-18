@@ -3,25 +3,53 @@
  *
  * Does NOT delete BYTEA. Writes storage_path + public URLs, logs to media_storage_migration_log.
  *
- * Usage (from repo root, with DATABASE_URL + SUPABASE_* set):
- *   node --import tsx scripts/migrate-bytea-to-storage.mjs
- *   DRY_RUN=1 node --import tsx scripts/migrate-bytea-to-storage.mjs
- *   KINDS=covers,muscle,brands node --import tsx scripts/migrate-bytea-to-storage.mjs
+ * Usage (from repo root; loads backend/.env automatically):
+ *   npm run media:migrate-storage
+ *   npm run media:migrate-storage:dry
+ *   node --import tsx scripts/migrate-bytea-to-storage.mjs --dry-run
+ *   node --import tsx scripts/migrate-bytea-to-storage.mjs --kinds=covers,muscle,brands
+ *
+ * PowerShell env alternative:
+ *   $env:DRY_RUN="1"; npm run media:migrate-storage
  */
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
 import pg from 'pg';
 import { createClient } from '@supabase/supabase-js';
 
-const DRY_RUN = process.env.DRY_RUN === '1' || process.env.DRY_RUN === 'true';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '..');
+dotenv.config({ path: path.join(root, 'backend', '.env') });
+dotenv.config({ path: path.join(root, '.env') });
+
+function argFlag(name) {
+  return process.argv.includes(name);
+}
+function argValue(prefix) {
+  const hit = process.argv.find((a) => a.startsWith(prefix));
+  return hit ? hit.slice(prefix.length) : null;
+}
+
+const DRY_RUN =
+  argFlag('--dry-run') ||
+  process.env.DRY_RUN === '1' ||
+  process.env.DRY_RUN === 'true';
+const kindsArg = argValue('--kinds=') || process.env.KINDS;
 const KINDS = new Set(
-  (process.env.KINDS || 'covers,muscle,brands,standard,gallery,photo,trade,showcase,request')
+  (kindsArg || 'covers,muscle,brands,standard,gallery,photo,trade,showcase,request')
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
 );
 
-const DATABASE_URL = process.env.DATABASE_URL?.trim();
-const SUPABASE_URL = process.env.SUPABASE_URL?.trim();
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+function readEnv(name) {
+  return process.env[name]?.trim() || undefined;
+}
+
+const DATABASE_URL = readEnv('DATABASE_URL');
+const SUPABASE_URL = readEnv('SUPABASE_URL');
+const SUPABASE_KEY = readEnv('SUPABASE_SERVICE_ROLE_KEY');
 
 const BUCKETS = {
   covers: process.env.MACHINE_COVER_IMAGE_BUCKET || 'machine-cover-images',
@@ -33,11 +61,13 @@ const BUCKETS = {
 };
 
 if (!DATABASE_URL) {
-  console.error('DATABASE_URL is required');
+  console.error('DATABASE_URL is required (set env or put it in backend/.env)');
   process.exit(1);
 }
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required');
+  console.error(
+    'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required (env or backend/.env)'
+  );
   process.exit(1);
 }
 
