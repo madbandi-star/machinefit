@@ -3,7 +3,7 @@
   "summary": "내 브랜드 목록을 균일 타일 그리드로 바꾸고, 즐겨찾기 우선 정렬과 툴바 정렬을 정리했다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "269fcebd"
   },
   "changedFiles": [
     "frontend/src/pages/brand-favorites/BrandFavoritesPage.tsx",
