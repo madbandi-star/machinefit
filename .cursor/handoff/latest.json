@@ -1,12 +1,12 @@
 {
-  "title": "Glanceable machine showcase post detail",
-  "summary": "자랑글 상세를 한 화면에 보이게 재배치. 사진 위에 헬스장·기구명, 칩으로 희귀도 통계, 짧은 CTA 한 줄. 큰 버튼 스택과 중복 페이지 제목을 제거.",
+  "title": "Glanceable gym showcase write composer",
+  "summary": "자랑하기 작성 화면을 5단 카드에서 한 화면 작곡기로 바꿈. 사진 먼저, 헬스장 선택, 기구 칩, 한마디/태그를 한눈에 배치하고 등록은 상단 CTA.",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
+    "frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx",
     "frontend/src/styles/machine-showcase.css",
     "frontend/src/i18n/locales/ko/community.json",
     "frontend/src/i18n/locales/en/community.json",
@@ -14,20 +14,20 @@
     "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "자랑 목록에서 글 클릭 → 첫 화면에서 사진·헬스장·기구명·희귀도·좋아요가 보이는지",
-    "사진 여러 장이면 썸네일로 전환",
-    "우리 짐에도 있음 / 기구카드 / 도감이 한 줄 CTA인지",
-    "목록으로 돌아가기"
+    "자랑하기 진입 시 사진 추가 영역 + 헬스장 셀렉트 + 기구 검색이 한 화면에 보이는지",
+    "머신 상세에서 자랑하기 → 기구가 칩으로 미리 선택되는지",
+    "사진 여러 장 추가/탭해서 삭제",
+    "헬스장+기구+사진 있으면 상단 등록 활성화"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx -Pattern showcase-detail__overlay"
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx -Pattern showcase-write__drop"
   ],
   "productionChecks": [
-    "Open a showcase post on https://machine-fit.com/machinefit/community/machine-showcase (after Pages deploy)"
+    "Open write from showcase list and from machine detail CTA"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "1:1 큰 사진 후 제목 중복, 풀폭 버튼 3개로 정보가 한 화면에 안 보임",
-  "toBe": "사진 오버레이 + 칩 + 짧은 CTA로 핵심이 한눈에 보임"
+  "asIs": "1~5단계 카드가 세로로 길게 쌓여 한눈에 안 보임",
+  "toBe": "사진·짐·기구·한마디가 한 화면 작곡기로 보임"
 }
