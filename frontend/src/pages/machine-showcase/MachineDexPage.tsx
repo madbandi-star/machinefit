@@ -139,7 +139,8 @@ export function MachineDexPage() {
               <ul className="showcase-dex-gym__muscles">
                 {holdings.byMuscle.slice(0, 6).map((m) => (
                   <li key={m.muscleGroup}>
-                    {muscleLabel(m.muscleGroup)} {m.count}
+                    <span>{muscleLabel(m.muscleGroup)}</span>
+                    <em>{m.count}</em>
                   </li>
                 ))}
               </ul>
@@ -170,7 +171,7 @@ export function MachineDexPage() {
               type="button"
               role="tab"
               aria-selected={gradeFilter === 'ALL'}
-              className={gradeFilter === 'ALL' ? 'is-on' : ''}
+              className={`showcase-dex__grade-all${gradeFilter === 'ALL' ? ' is-on' : ''}`}
               onClick={() => setGradeFilter('ALL')}
             >
               <span>{t('showcase.dexAll')}</span>
@@ -224,8 +225,11 @@ export function MachineDexPage() {
                   item.discoveryRank === 1
                     ? t('showcase.dexFirst')
                     : item.discoveryRank
-                      ? t('showcase.finderRank', { rank: item.discoveryRank })
-                      : null;
+                      ? `#${item.discoveryRank}`
+                      : '—';
+                const dateLabel = item.discoveredAt
+                  ? formatDiscoveredAt(item.discoveredAt, i18n.language)
+                  : '—';
                 return (
                   <Link
                     key={item.machineId}
@@ -251,19 +255,21 @@ export function MachineDexPage() {
                       ) : null}
                     </div>
                     <div className="showcase-dex-card__body">
-                      <strong>{item.machineName}</strong>
+                      <strong className="showcase-dex-card__name">{item.machineName}</strong>
                       <span className="showcase-dex-card__brand">{item.brandName || '\u00a0'}</span>
-                      <p className="showcase-dex-card__meta">
-                        {[
-                          rankLabel,
-                          item.gymHoldingCount > 0
-                            ? t('showcase.dexGyms', { count: item.gymHoldingCount })
-                            : null,
-                          item.discoveredAt ? formatDiscoveredAt(item.discoveredAt, i18n.language) : null,
-                        ]
-                          .filter(Boolean)
-                          .join(' · ') || '\u00a0'}
-                      </p>
+                      <div className="showcase-dex-card__stats">
+                        <div className="showcase-dex-card__stat">
+                          <strong>{rankLabel}</strong>
+                          <span>{t('showcase.statFinder')}</span>
+                        </div>
+                        <div className="showcase-dex-card__stat">
+                          <strong>{item.gymHoldingCount}</strong>
+                          <span>{t('showcase.statGyms')}</span>
+                        </div>
+                      </div>
+                      <time className="showcase-dex-card__date" dateTime={item.discoveredAt || undefined}>
+                        {dateLabel}
+                      </time>
                     </div>
                   </Link>
                 );

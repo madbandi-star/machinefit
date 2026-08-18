@@ -1,29 +1,29 @@
 {
-  "title": "Align My Templates as card grid",
-  "summary": "내 템플릿 목록을 균일 카드 그리드로 바꿔 행·열 정렬과 액션 버튼 레이아웃을 정리했다.",
+  "title": "Align Machine Dex page grid",
+  "summary": "내 머신도감의 등급 필터·보유 칩·컬렉션 카드를 균일 행·열 그리드로 재정렬했다.",
   "git": {
     "branch": "main",
-    "commit": "7aae4c92"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/template-share/MyTemplatesPage.tsx",
-    "frontend/src/styles/template-share.css"
+    "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
+    "frontend/src/styles/machine-showcase.css"
   ],
   "testFocus": [
-    "내 템플릿: 2열(넓은 화면 3열) 카드 정렬",
-    "내가 만든/받아온 탭 전환 시 카드 높이·버튼 열 정렬",
-    "상단 요약 3칸·탭 2등분"
+    "등급: 전체 풀폭 + 등급 4열 정렬",
+    "컬렉션 카드 2열(넓은 화면 3열), 발견/헬스장 수치 칸 정렬",
+    "헬스장 보유 근육칩 격자"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/styles/template-share.css -Pattern tpl-mine-grid|tpl-mine-card__",
-    "Select-String -Path frontend/src/pages/template-share/MyTemplatesPage.tsx -Pattern tpl-mine-grid"
+    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern showcase-dex-card__stats|showcase-dex__grade-all|showcase-dex-gym__muscles",
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineDexPage.tsx -Pattern showcase-dex-card__stats|grade-all"
   ],
   "productionChecks": [
-    "Open My Templates and confirm card grid alignment for mine/received"
+    "Open My Machine Dex and confirm filter/card grid alignment"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "가변 높이 리스트 행 + 액션이 들쭉날쭉",
-  "toBe": "균일 카드 그리드 + 고정 액션 슬롯"
+  "asIs": "텍스트 나열형 카드 메타 + 등급/칩 들쭉날쭉",
+  "toBe": "고정 슬롯 카드 + 전체/등급·근육 격자 정렬"
 }
