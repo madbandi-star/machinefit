@@ -15,6 +15,13 @@ export type WorkoutSessionLap = {
   recordedAtMs: number;
 };
 
+export type WorkoutSessionMachineMark = {
+  machineCode: string;
+  machineName?: string;
+  workoutLogId?: string;
+  recordedAtMs: number;
+};
+
 type WorkoutSessionTimerState = {
   status: WorkoutSessionTimerStatus;
   /** Wall-clock start of the current running segment (null when idle/paused). */
@@ -33,12 +40,30 @@ type WorkoutSessionTimerState = {
    * Shown in the idle right panel until the next start.
    */
   lastEndedElapsedMs: number | null;
+  /** Wall-clock when the current/last session started (for history persist). */
+  sessionStartedAtMs: number | null;
+  /** Idempotency key for saving history; generated on start. */
+  clientSessionId: string | null;
+  /** Machines recorded while this session was running or paused. */
+  machineMarks: WorkoutSessionMachineMark[];
   start: () => void;
   pause: () => void;
   resume: () => void;
   lap: () => void;
   end: () => void;
+  noteMachineUsed: (mark: WorkoutSessionMachineMark) => void;
 };
+
+function newClientSessionId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (ch) => {
+    const n = (Math.random() * 16) | 0;
+    const v = ch === 'x' ? n : (n & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 function flushRunningSegment(
   status: WorkoutSessionTimerStatus,
@@ -92,17 +117,24 @@ export const useWorkoutSessionTimerStore = create<WorkoutSessionTimerState>()(
       laps: [],
       lastLapTotalMs: 0,
       lastEndedElapsedMs: null,
+      sessionStartedAtMs: null,
+      clientSessionId: null,
+      machineMarks: [],
 
       start: () => {
         const { status } = get();
         if (status !== 'idle') return;
+        const now = Date.now();
         set({
           status: 'running',
-          segmentStartedAtMs: Date.now(),
+          segmentStartedAtMs: now,
           accumulatedMs: 0,
           laps: [],
           lastLapTotalMs: 0,
           lastEndedElapsedMs: null,
+          sessionStartedAtMs: now,
+          clientSessionId: newClientSessionId(),
+          machineMarks: [],
         });
       },
 
@@ -155,10 +187,51 @@ export const useWorkoutSessionTimerStore = create<WorkoutSessionTimerState>()(
           segmentStartedAtMs: null,
           accumulatedMs: 0,
           lastEndedElapsedMs: endedElapsedMs,
-          // Keep laps until the next start so the session can be reviewed.
+          // Keep laps / session metadata until the next start so history can persist.
         });
       },
+
+      noteMachineUsed: (mark) => {
+        const { status, machineMarks } = get();
+        if (status !== 'running' && status !== 'paused') return;
+        const code = mark.machineCode?.trim();
+        if (!code) return;
+        const recordedAtMs = mark.recordedAtMs || Date.now();
+        const next: WorkoutSessionMachineMark = {
+          machineCode: code,
+          machineName: mark.machineName,
+          workoutLogId: mark.workoutLogId,
+          recordedAtMs,
+        };
+        const marks = Array.isArray(machineMarks) ? machineMarks : [];
+        const last = marks[marks.length - 1];
+        if (
+          last &&
+          last.machineCode === next.machineCode &&
+          recordedAtMs - last.recordedAtMs < 2000
+        ) {
+          set({ machineMarks: [...marks.slice(0, -1), { ...last, ...next }] });
+          return;
+        }
+        set({ machineMarks: [...marks, next].slice(-80) });
+      },
     }),
-    { name: 'machinefit-workout-session-timer' }
+    {
+      name: 'machinefit-workout-session-timer',
+      merge: (persisted, current) => {
+        const saved =
+          persisted && typeof persisted === 'object'
+            ? (persisted as Partial<WorkoutSessionTimerState>)
+            : {};
+        return {
+          ...current,
+          ...saved,
+          laps: Array.isArray(saved.laps) ? saved.laps : current.laps,
+          machineMarks: Array.isArray(saved.machineMarks) ? saved.machineMarks : [],
+          sessionStartedAtMs: saved.sessionStartedAtMs ?? current.sessionStartedAtMs ?? null,
+          clientSessionId: saved.clientSessionId ?? current.clientSessionId ?? null,
+        };
+      },
+    }
   )
 );

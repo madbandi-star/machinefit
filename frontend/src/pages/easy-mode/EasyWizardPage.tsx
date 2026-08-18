@@ -438,6 +438,11 @@ export function EasyWizardPage() {
       return res.data.data;
     },
     onSuccess: async (savedLog) => {
+      if (savedLog) {
+        void import('@/utils/timerHistoryPersist').then(({ noteActiveTimerMachine }) => {
+          noteActiveTimerMachine(savedLog);
+        });
+      }
       setSavedMachineName(selected?.name ?? '');
       setCompleted(Array.from({ length: setCount }, () => true));
 

@@ -37,6 +37,10 @@ export const QUERY_KEYS = {
     memberId: string,
     params?: { from?: string; to?: string; limit?: number }
   ) => ['workout-logs', gymId, memberId, 'list', params ?? {}] as const,
+  timerHistoryMonth: (year: number, month: number) =>
+    ['timer-history', 'month', year, month] as const,
+  timerHistoryDate: (date: string) => ['timer-history', 'date', date] as const,
+  timerHistorySession: (sessionId: string) => ['timer-history', 'session', sessionId] as const,
   workoutInsights: (
     gymId: string,
     memberId: string,

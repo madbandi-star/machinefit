@@ -75,6 +75,9 @@ async function flushOne(item: SyncQueueItem): Promise<boolean> {
       { idempotencyKey: item.idempotencyKey }
     );
     patchCachesFromSaved(res.data.data);
+    void import('@/utils/timerHistoryPersist').then(({ noteActiveTimerMachine }) => {
+      noteActiveTimerMachine(res.data.data);
+    });
     await removeSyncItem(item.id);
     await setMeta('lastSyncedAt', Date.now());
     void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
