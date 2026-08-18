@@ -825,6 +825,8 @@
     "liveDashboard": "MachineFit LIVE",
     "achievements": "Achievements",
     "machineDex": "Machine Dex",
+    "machineDexBoard": "Machine Dex Board",
+    "freeBoard": "Free Board",
     "growthTimeline": "Timelapse",
     "lifterDna": "Workout style",
     "liftedWeight": "Total weight lifted",

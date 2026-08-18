@@ -822,6 +822,8 @@
     "liveDashboard": "MachineFit LIVE",
     "achievements": "Achievements",
     "machineDex": "マシン図鑑",
+    "machineDexBoard": "マシン図鑑掲示板",
+    "freeBoard": "フリーボード",
     "growthTimeline": "Timelapse",
     "lifterDna": "Workout style",
     "liftedWeight": "Total weight lifted",

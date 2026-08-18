@@ -822,6 +822,8 @@
     "liveDashboard": "MachineFit LIVE",
     "achievements": "Achievements",
     "machineDex": "器械图鉴",
+    "machineDexBoard": "器械图鉴看板",
+    "freeBoard": "自由看板",
     "growthTimeline": "Timelapse",
     "lifterDna": "Workout style",
     "liftedWeight": "Total weight lifted",

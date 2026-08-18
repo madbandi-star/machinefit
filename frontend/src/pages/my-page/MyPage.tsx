@@ -249,11 +249,11 @@ export function MyPage() {
               icon="dumbbell"
             />
           )}
-          <ListNavLink to={ROUTES.FREE_BOARD} label={tc('freeBoard')} icon="message" />
+          <ListNavLink to={ROUTES.FREE_BOARD} label={t('myPage.freeBoard')} icon="message" />
           {showPhotoBoardAndBackup ? (
             <>
               <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
-              <ListNavLink to={ROUTES.MACHINE_SHOWCASE} label={tc('showcase.title')} icon="dumbbell" />
+              <ListNavLink to={ROUTES.MACHINE_SHOWCASE} label={t('myPage.machineDexBoard')} icon="dumbbell" />
             </>
           ) : null}
           <ListNavLink

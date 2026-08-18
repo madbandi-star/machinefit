@@ -1,34 +1,33 @@
 {
-  "title": "Rename MY MACHINE DEX to 머신도감",
-  "summary": "마이페이지 메뉴와 도감 페이지 제목을 MY MACHINE DEX에서 머신도감(언어별 대응 표기)으로 바꿨다.",
+  "title": "Rename My Page community menu labels",
+  "summary": "마이페이지 커뮤니티 메뉴에서 우리 헬스장 기구 자랑을 머신도감 게시판으로, 자유 게시판을 자유게시판으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "1db041e3"
+    "commit": "pending"
   },
   "changedFiles": [
+    "frontend/src/pages/my-page/MyPage.tsx",
     "frontend/src/i18n/locales/ko/common.json",
     "frontend/src/i18n/locales/en/common.json",
     "frontend/src/i18n/locales/ja/common.json",
     "frontend/src/i18n/locales/zh/common.json",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/i18n/locales/ko/community.json"
   ],
   "testFocus": [
-    "마이페이지 인사이트 목록에 '머신도감'이 보이는지",
-    "탭하면 도감 페이지 제목도 '머신도감'인지"
+    "마이페이지 커뮤니티: 머신도감 게시판",
+    "마이페이지 커뮤니티: 자유게시판 (공백 없음)",
+    "머신도감 게시판 탭 → 기구 자랑 목록"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDex\": \"머신도감\"'",
-    "Select-String -Path frontend/src/i18n/locales/ko/community.json -Pattern '\"dexTitle\": \"머신도감\"'"
+    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDexBoard\": \"머신도감 게시판\"'",
+    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"freeBoard\": \"자유게시판\"'"
   ],
   "productionChecks": [
-    "Open My Page and confirm the menu label"
+    "Open My Page community section and confirm both labels"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "MY MACHINE DEX",
-  "toBe": "머신도감"
+  "asIs": "우리 헬스장 기구 자랑 / 자유 게시판",
+  "toBe": "머신도감 게시판 / 자유게시판"
 }
