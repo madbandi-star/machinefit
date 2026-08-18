@@ -44,7 +44,9 @@ const KINDS = new Set(
 );
 
 function readEnv(name) {
-  return process.env[name]?.trim() || undefined;
+  const raw = process.env[name]?.trim();
+  if (!raw) return undefined;
+  return raw.replace(/^["']|["']$/g, '').trim();
 }
 
 const DATABASE_URL = readEnv('DATABASE_URL');
@@ -60,24 +62,53 @@ const BUCKETS = {
   ugc: process.env.UGC_IMAGE_BUCKET || 'ugc-images',
 };
 
+function looksLikeJwt(key) {
+  // Real Supabase keys are JWTs: header.payload.sig
+  return Boolean(key && key.split('.').length === 3 && key.length > 80);
+}
+
+function isPlaceholder(value) {
+  return !value || /^(your-|changeme|xxx|placeholder)/i.test(value);
+}
+
 if (!DATABASE_URL) {
   console.error('DATABASE_URL is required (set env or put it in backend/.env)');
   process.exit(1);
 }
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error(
-    'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required (env or backend/.env)'
-  );
-  process.exit(1);
+
+if (!DRY_RUN) {
+  if (!SUPABASE_URL || isPlaceholder(SUPABASE_URL)) {
+    console.error(
+      'SUPABASE_URL is missing or still a placeholder in backend/.env\n' +
+        '  → Supabase Dashboard → Project Settings → API → Project URL'
+    );
+    process.exit(1);
+  }
+  if (!SUPABASE_KEY || isPlaceholder(SUPABASE_KEY) || !looksLikeJwt(SUPABASE_KEY)) {
+    console.error(
+      'SUPABASE_SERVICE_ROLE_KEY is missing, placeholder, or not a JWT.\n' +
+        '  Current key length: ' +
+        (SUPABASE_KEY?.length ?? 0) +
+        ' (real service_role keys are long JWTs with 2 dots).\n' +
+        '  → Supabase Dashboard → Project Settings → API → service_role (secret)\n' +
+        '  Paste into backend/.env as SUPABASE_SERVICE_ROLE_KEY=eyJ...\n' +
+        '  Do NOT use anon key or the placeholder your-service-role-key.'
+    );
+    process.exit(1);
+  }
 }
 
 const pool = new pg.Pool({
   connectionString: DATABASE_URL,
   ssl: /supabase\.(co|com)/i.test(DATABASE_URL) ? { rejectUnauthorized: false } : undefined,
 });
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession: false, autoRefreshToken: false },
-});
+
+const supabase =
+  !DRY_RUN && SUPABASE_URL && SUPABASE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
+    : null;
 
 const stats = { ok: 0, skip: 0, fail: 0 };
 
@@ -93,8 +124,18 @@ function isDirectUrl(url) {
 }
 
 async function ensureBucket(name, isPublic) {
+  if (DRY_RUN || !supabase) return;
   const { data, error } = await supabase.storage.listBuckets();
-  if (error) throw error;
+  if (error) {
+    const msg = error.message || String(error);
+    if (/Invalid Compact JWS|Invalid JWT|JWT/i.test(msg)) {
+      throw new Error(
+        `Storage auth failed (${msg}). Fix SUPABASE_SERVICE_ROLE_KEY in backend/.env ` +
+          '(use the service_role secret JWT from Supabase → Settings → API).'
+      );
+    }
+    throw error;
+  }
   if (data?.some((b) => b.name === name)) return;
   const created = await supabase.storage.createBucket(name, {
     public: isPublic,
@@ -139,6 +180,7 @@ async function uploadPublic(bucket, storagePath, buffer, mime) {
   if (DRY_RUN) {
     return `https://example.invalid/${bucket}/${storagePath}`;
   }
+  if (!supabase) throw new Error('Supabase client not configured');
   const { error } = await supabase.storage.from(bucket).upload(storagePath, buffer, {
     contentType: mime || 'image/webp',
     upsert: true,
@@ -153,6 +195,7 @@ async function uploadPrivate(bucket, storagePath, buffer, mime) {
   if (DRY_RUN) {
     return `https://example.invalid/signed/${bucket}/${storagePath}`;
   }
+  if (!supabase) throw new Error('Supabase client not configured');
   const { error } = await supabase.storage.from(bucket).upload(storagePath, buffer, {
     contentType: mime || 'image/webp',
     upsert: true,
@@ -472,6 +515,13 @@ async function migrateUgcTable(table, kind) {
 }
 
 async function main() {
+  if (process.env.DRY_RUN && !argFlag('--dry-run')) {
+    console.warn(
+      'Note: DRY_RUN is set in the shell environment. Clear it in PowerShell with:\n' +
+        '  Remove-Item Env:DRY_RUN\n' +
+        'Or use: npm run media:migrate-storage:dry'
+    );
+  }
   console.log(`BYTEA→Storage migrator DRY_RUN=${DRY_RUN} kinds=${[...KINDS].join(',')}`);
   if (KINDS.has('covers')) await migrateCovers();
   if (KINDS.has('muscle')) await migrateMuscle();
