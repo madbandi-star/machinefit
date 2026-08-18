@@ -1,14 +1,14 @@
-# Test handoff — 머신 상세 광고 배너 위치
+# Test handoff ??머신 ?�세 광고 배너 ?�치
 
 ## Summary
-머신 상세(추천받기)에서 `MACHINE_BOTTOM` 광고 배너를 추천받기 버튼 아래로 이동했습니다.
+머신 ?�세(추천받기)?�서 `MACHINE_BOTTOM` 광고 배너�?추천받기 버튼 ?�래�??�동?�습?�다.
 
 ## Test focus
-1. 머신 상세 하단: **추천받기** 다음에 광고 배너
+1. 머신 ?�세 ?�단: **추천받기** ?�음??광고 배너
 
-## As-is → To-be
-- as-is: 배너가 추천받기 위
-- to-be: 배너가 추천받기 아래
+## As-is ??To-be
+- as-is: 배너가 추천받기 ??
+- to-be: 배너가 추천받기 ?�래
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** 874c6bae
