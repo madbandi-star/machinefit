@@ -8,6 +8,7 @@ import { RarityBadge } from './RarityBadge';
 export function ShowcaseCard({ post }: { post: MachineShowcasePost }) {
   const { t } = useTranslation('community');
   const gymLabel = post.gymName || post.userGymName;
+  const imageCount = post.images?.length ?? (post.coverImage ? 1 : 0);
 
   return (
     <Link
@@ -27,21 +28,18 @@ export function ShowcaseCard({ post }: { post: MachineShowcasePost }) {
           <div className="showcase-card__placeholder" aria-hidden />
         )}
         <RarityBadge grade={post.rarity.grade} compact />
+        {imageCount > 1 ? (
+          <span className="showcase-card__count">{imageCount}</span>
+        ) : null}
       </div>
       <div className="showcase-card__body">
         <h3 className="showcase-card__title">{post.machineName}</h3>
-        {post.brandName ? <p className="showcase-card__brand">🏋️ {post.brandName}</p> : null}
-        {gymLabel ? <p className="showcase-card__gym">📍 {gymLabel}</p> : null}
-        <p className="showcase-card__meta">
-          {t('showcase.gymsRegistered', { count: post.rarity.gymHoldingCount })}
-          {' · '}
-          {t('showcase.score', { score: post.rarity.score })}
-        </p>
-        {post.caption ? <p className="showcase-card__caption">{post.caption}</p> : null}
-        <div className="showcase-card__stats">
-          <span>❤️ {post.likeCount}</span>
-          <span>💬 {post.commentCount}</span>
-          <span>🔖 {post.bookmarkCount}</span>
+        <div className="showcase-card__row">
+          <span className="showcase-card__place">{gymLabel || post.brandName || '—'}</span>
+          <span className="showcase-card__stats" aria-label={t('showcase.comments', { count: post.commentCount })}>
+            <span>♥ {post.likeCount}</span>
+            <span>💬 {post.commentCount}</span>
+          </span>
         </div>
       </div>
     </Link>

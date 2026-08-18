@@ -379,13 +379,15 @@
     "title": "健身房器械晒一晒",
     "subtitle": "我们健身房还有这种器械！",
     "writeCta": "+ 晒出健身房器械",
+    "writeCtaShort": "晒图",
+    "backList": "列表",
     "writeTitle": "晒器械",
     "writeHint": "健身房 → 器械 → 照片 → 一句话",
     "tabs": {
-      "popular": "🔥 热门",
-      "latest": "🆕 最新",
-      "myGym": "🏠 我的健身房",
-      "nearby": "📍 附近"
+      "popular": "热门",
+      "latest": "最新",
+      "myGym": "我的馆",
+      "nearby": "附近"
     },
     "empty": "还没有晒图。",
     "nearbyHint": "位置权限可选。允许后可查看附近晒图。",
@@ -422,6 +424,8 @@
     "holdingCount": "持有 {{count}} 台",
     "recentMachines": "最近添加",
     "needGym": "请先登记健身房。",
+    "comments": "评论 {{count}}",
+    "commentsEmpty": "来写第一条评论吧。",
     "commentPlaceholder": "写评论",
     "commentSubmit": "发布",
     "report": "举报",

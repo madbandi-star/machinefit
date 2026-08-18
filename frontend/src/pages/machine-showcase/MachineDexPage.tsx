@@ -30,72 +30,72 @@ export function MachineDexPage() {
   const dex = dexQuery.data;
 
   return (
-    <PageShell title={t('showcase.dexTitle')} subtitle={t('showcase.dexSubtitle')}>
-      <p>
-        {t('showcase.dexProgress', {
-          found: dex?.discovered ?? 0,
-          total: dex?.catalogTotal ?? 0,
-        })}
-      </p>
-      <ul className="showcase-dex-grades">
-        {MACHINE_RARITY_GRADES.map((grade) => (
-          <li key={grade}>
-            <RarityBadge grade={grade} compact /> {dex?.byGrade[grade] ?? 0}
-          </li>
-        ))}
-      </ul>
+    <div className="showcase-page">
+      <PageShell title={t('showcase.dexTitle')} subtitle={t('showcase.dexSubtitle')}>
+        <p className="showcase-dex-progress">
+          {t('showcase.dexProgress', {
+            found: dex?.discovered ?? 0,
+            total: dex?.catalogTotal ?? 0,
+          })}
+        </p>
+        <ul className="showcase-dex-grades">
+          {MACHINE_RARITY_GRADES.map((grade) => (
+            <li key={grade}>
+              <RarityBadge grade={grade} compact />
+              <strong>{dex?.byGrade[grade] ?? 0}</strong>
+            </li>
+          ))}
+        </ul>
 
-      {holdingsQuery.data ? (
-        <section className="showcase-step">
-          <h2>
-            🏠 {holdingsQuery.data.userGymName} · {t('showcase.holdingCount', { count: holdingsQuery.data.total })}
-          </h2>
-          <p>
-            {holdingsQuery.data.byMuscle
-              .map((m) => `${m.muscleGroup} ${m.count}`)
-              .join(' · ')}
-          </p>
-          <p>{t('showcase.recentMachines')}</p>
-          <ul>
-            {holdingsQuery.data.recent.map((m) => (
-              <li key={m.machineCode}>{m.machineName}</li>
-            ))}
-          </ul>
-        </section>
-      ) : gyms.length === 0 ? (
-        <p className="showcase-empty">{t('showcase.needGym')}</p>
-      ) : null}
+        {holdingsQuery.data ? (
+          <section className="showcase-step">
+            <h2>
+              {holdingsQuery.data.userGymName} · {t('showcase.holdingCount', { count: holdingsQuery.data.total })}
+            </h2>
+            <p>
+              {holdingsQuery.data.byMuscle
+                .map((m) => `${m.muscleGroup} ${m.count}`)
+                .join(' · ')}
+            </p>
+          </section>
+        ) : gyms.length === 0 ? (
+          <p className="showcase-empty">{t('showcase.needGym')}</p>
+        ) : null}
 
-      <div className="showcase-feed">
-        {(dex?.items ?? []).map((item) => (
-          <Link
-            key={item.machineId}
-            className={`showcase-card showcase-card--${item.grade.toLowerCase()}`}
-            to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
-          >
-            {item.coverThumbUrl ? (
+        <div className="showcase-feed">
+          {(dex?.items ?? []).map((item) => (
+            <Link
+              key={item.machineId}
+              className={`showcase-card showcase-card--${item.grade.toLowerCase()}`}
+              to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
+            >
               <div className="showcase-card__media">
-                <img
-                  className="showcase-card__img"
-                  src={resolveShowcaseMediaUrl(item.coverThumbUrl)}
-                  alt=""
-                  loading="lazy"
-                />
+                {item.coverThumbUrl ? (
+                  <img
+                    className="showcase-card__img"
+                    src={resolveShowcaseMediaUrl(item.coverThumbUrl)}
+                    alt=""
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="showcase-card__placeholder" aria-hidden />
+                )}
+                <RarityBadge grade={item.grade} compact />
               </div>
-            ) : null}
-            <div className="showcase-card__body">
-              <RarityBadge grade={item.grade} compact />
-              <h3 className="showcase-card__title">{item.machineName}</h3>
-              <p className="showcase-card__meta">
-                {item.discoveryRank === 1 ? t('showcase.firstFinder') : null}
-                {item.discoveryRank && item.discoveryRank > 1
-                  ? t('showcase.finderRank', { rank: item.discoveryRank })
-                  : null}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </PageShell>
+              <div className="showcase-card__body">
+                <h3 className="showcase-card__title">{item.machineName}</h3>
+                <p className="showcase-card__place">
+                  {item.discoveryRank === 1
+                    ? t('showcase.firstFinder')
+                    : item.discoveryRank && item.discoveryRank > 1
+                      ? t('showcase.finderRank', { rank: item.discoveryRank })
+                      : '—'}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </PageShell>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { MachineShowcaseTab } from '@machinefit/shared';
@@ -29,7 +29,7 @@ export function MachineShowcasePage() {
       (
         await machineShowcaseApi.list({
           page,
-          limit: 12,
+          limit: 18,
           tab,
           lat: coords?.lat,
           lng: coords?.lng,
@@ -60,24 +60,29 @@ export function MachineShowcasePage() {
     if (next === 'nearby' && !coords && !locTried) requestLocation();
   };
 
+  const showNearbyGate = tab === 'nearby' && !coords;
+  const items = query.data?.items ?? [];
+
   return (
-    <PageShell title={t('showcase.title')} subtitle={t('showcase.subtitle')}>
-      <div className="showcase-page">
-        <div className="showcase-top photo-top">
-          <div>
+    <div className="showcase-page">
+      <PageShell>
+        <header className="showcase-top">
+          <div className="showcase-top__text">
             <h1>{t('showcase.title')}</h1>
             <p>{t('showcase.subtitle')}</p>
           </div>
-          <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="btn btn--primary">
-            {t('showcase.writeCta')}
+          <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="showcase-top__write">
+            {t('showcase.writeCtaShort')}
           </Link>
-        </div>
+        </header>
 
-        <div className="showcase-tabs" role="tablist">
+        <div className="showcase-tabs" role="tablist" aria-label={t('showcase.title')}>
           {TABS.map((item) => (
             <button
               key={item}
               type="button"
+              role="tab"
+              aria-selected={tab === item}
               className={tab === item ? 'is-active' : ''}
               onClick={() => setTab(item)}
             >
@@ -86,25 +91,44 @@ export function MachineShowcasePage() {
           ))}
         </div>
 
-        {tab === 'nearby' && !coords ? (
-          <p className="showcase-empty">
-            {t('showcase.nearbyHint')}
-            <button type="button" className="btn btn--secondary" onClick={requestLocation}>
+        {showNearbyGate ? (
+          <div className="showcase-nearby">
+            <p>{t('showcase.nearbyHint')}</p>
+            <button type="button" className="showcase-nearby__btn" onClick={requestLocation}>
               {t('showcase.useLocation')}
             </button>
-          </p>
+          </div>
         ) : null}
 
-        {query.isLoading ? <Skeleton count={3} height={220} /> : null}
-        {query.data?.items.length === 0 ? (
-          <p className="showcase-empty">{t('showcase.empty')}</p>
-        ) : (
-          <div className="showcase-feed">
-            {query.data?.items.map((post) => (
+        {query.isLoading ? (
+          <div className="showcase-feed" aria-busy="true">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="showcase-card showcase-card--skeleton">
+                <Skeleton height={140} />
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {!query.isLoading && !showNearbyGate && items.length === 0 ? (
+          <div className="showcase-empty-state">
+            <span className="showcase-empty-state__icon" aria-hidden>
+              🏋️
+            </span>
+            <strong>{t('showcase.empty')}</strong>
+            <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="btn btn--primary">
+              {t('showcase.writeCtaShort')}
+            </Link>
+          </div>
+        ) : null}
+
+        {!showNearbyGate && items.length > 0 ? (
+          <div className={`showcase-feed${query.isFetching ? ' is-fetching' : ''}`}>
+            {items.map((post) => (
               <ShowcaseCard key={post.id} post={post} />
             ))}
           </div>
-        )}
+        ) : null}
 
         {query.data?.meta && query.data.meta.totalPages > 1 ? (
           <Pagination
@@ -117,7 +141,7 @@ export function MachineShowcasePage() {
             }}
           />
         ) : null}
-      </div>
-    </PageShell>
+      </PageShell>
+    </div>
   );
 }

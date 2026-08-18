@@ -379,13 +379,15 @@
     "title": "ジムマシン自慢",
     "subtitle": "うちのジムにはこんなマシンもある！",
     "writeCta": "+ ジムマシンを自慢する",
+    "writeCtaShort": "投稿",
+    "backList": "一覧",
     "writeTitle": "マシンを自慢する",
     "writeHint": "ジム → マシン → 写真 → ひとこと",
     "tabs": {
-      "popular": "🔥 人気",
-      "latest": "🆕 最新",
-      "myGym": "🏠 マイジム",
-      "nearby": "📍 周辺"
+      "popular": "人気",
+      "latest": "最新",
+      "myGym": "マイジム",
+      "nearby": "周辺"
     },
     "empty": "まだ投稿がありません。",
     "nearbyHint": "位置情報は任意です。許可すると周辺の投稿を表示します。",
@@ -422,6 +424,8 @@
     "holdingCount": "保有 {{count}} 台",
     "recentMachines": "最近追加",
     "needGym": "先にジムを登録してください。",
+    "comments": "コメント {{count}}",
+    "commentsEmpty": "最初のコメントを書いてみましょう。",
     "commentPlaceholder": "コメントを書く",
     "commentSubmit": "投稿",
     "report": "通報",
