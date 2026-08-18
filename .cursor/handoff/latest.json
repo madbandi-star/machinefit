@@ -1,28 +1,25 @@
 {
-  "title": "Rename My Page showcase menu to 머신도감 공유관",
-  "summary": "마이페이지 커뮤니티 메뉴명을 머신도감 게시판에서 머신도감 공유관으로 바꿨다.",
+  "title": "Move 머신도감 공유관 under template share",
+  "summary": "마이페이지 커뮤니티에서 머신도감 공유관을 템플릿 공유관 아래로 옮겼다.",
   "git": {
     "branch": "main",
-    "commit": "2f75cda0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "마이페이지 커뮤니티에 '머신도감 공유관'이 보이는지"
+    "마이페이지 커뮤니티: 템플릿 공유관 다음이 머신도감 공유관"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDexBoard\": \"머신도감 공유관\"'"
+    "Select-String -Path frontend/src/pages/my-page/MyPage.tsx -Pattern MACHINE_SHOWCASE -Context 4,0"
   ],
   "productionChecks": [
-    "Open My Page and confirm the community menu label"
+    "Open My Page community section and confirm order"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "머신도감 게시판",
-  "toBe": "머신도감 공유관"
+  "asIs": "사진게시판 아래, 템플릿 공유관 위",
+  "toBe": "템플릿 공유관 아래"
 }

@@ -246,16 +246,16 @@ export function MyPage() {
           )}
           <ListNavLink to={ROUTES.FREE_BOARD} label={t('myPage.freeBoard')} icon="message" />
           {showPhotoBoardAndBackup ? (
-            <>
-              <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
-              <ListNavLink to={ROUTES.MACHINE_SHOWCASE} label={t('myPage.machineDexBoard')} icon="dumbbell" />
-            </>
+            <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
           ) : null}
           <ListNavLink
             to={ROUTES.TEMPLATE_SHARE}
             label={tc('templateShare.title')}
             icon="share"
           />
+          {showPhotoBoardAndBackup ? (
+            <ListNavLink to={ROUTES.MACHINE_SHOWCASE} label={t('myPage.machineDexBoard')} icon="dumbbell" />
+          ) : null}
         </nav>
       </section>
 
