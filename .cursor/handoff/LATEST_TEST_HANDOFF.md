@@ -10,4 +10,5 @@
 - as-is: 사진게시판 아래, 템플릿 공유관 위
 - to-be: 템플릿 공유관 아래
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `d567d172`
