@@ -98,6 +98,16 @@
     </style>
     <script>
       (function () {
+        /* SPA lives under /machinefit (GitHub Pages + React Router basename).
+           Cloudflare may serve this HTML at / with 200 (SEO rewrite). Without a
+           client redirect, RouterProvider matches nothing and the page stays black. */
+        try {
+          var path = location.pathname || '/';
+          if (path === '/' || path === '') {
+            location.replace('/machinefit/' + location.search + location.hash);
+            return;
+          }
+        } catch (e) {}
         /* Mobile: lock layout viewport to iPhone 15 Pro Max CSS width so media queries + flex match */
         try {
           var ua = navigator.userAgent || '';
