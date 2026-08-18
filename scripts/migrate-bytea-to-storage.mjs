@@ -147,6 +147,8 @@ async function ensureBucket(name, isPublic) {
 }
 
 async function logRow(row) {
+  // Never mark dry-run as ok — that would cause real runs to skip without uploading.
+  if (DRY_RUN) return;
   await pool.query(
     `INSERT INTO media_storage_migration_log
        (media_kind, source_table, source_id, variant, storage_bucket, storage_path, public_url, status, error_message, bytes, mime_type, updated_at)
@@ -206,14 +208,34 @@ async function uploadPrivate(bucket, storagePath, buffer, mime) {
   return signed.data?.signedUrl || storagePath;
 }
 
+async function clearBogusDryRunLogs() {
+  const result = await pool.query(
+    `DELETE FROM media_storage_migration_log
+     WHERE status = 'ok'
+       AND (
+         public_url ILIKE '%example.invalid%'
+         OR public_url IS NULL
+         OR public_url NOT ILIKE '%/storage/%'
+       )`
+  );
+  return result.rowCount ?? 0;
+}
+
 async function alreadyDone(sourceTable, sourceId, variant) {
   const r = await pool.query(
-    `SELECT status FROM media_storage_migration_log
+    `SELECT status, public_url FROM media_storage_migration_log
      WHERE source_table = $1 AND source_id = $2 AND variant = $3 AND status = 'ok'
      LIMIT 1`,
     [sourceTable, sourceId, variant]
   );
-  return Boolean(r.rows[0]);
+  const row = r.rows[0];
+  if (!row) return false;
+  // Ignore dry-run / fake URLs that never hit Storage.
+  if (!row.public_url || /example\.invalid/i.test(row.public_url)) return false;
+  if (!/supabase\.(co|in)\/storage\//i.test(row.public_url) && !/\/storage\/v1\/object\//i.test(row.public_url)) {
+    return false;
+  }
+  return true;
 }
 
 async function migrateCovers() {
@@ -523,6 +545,12 @@ async function main() {
     );
   }
   console.log(`BYTEA→Storage migrator DRY_RUN=${DRY_RUN} kinds=${[...KINDS].join(',')}`);
+  if (!DRY_RUN) {
+    const cleared = await clearBogusDryRunLogs();
+    if (cleared > 0) {
+      console.log(`Cleared ${cleared} bogus dry-run log row(s) before real upload.`);
+    }
+  }
   if (KINDS.has('covers')) await migrateCovers();
   if (KINDS.has('muscle')) await migrateMuscle();
   if (KINDS.has('brands')) await migrateBrands();
