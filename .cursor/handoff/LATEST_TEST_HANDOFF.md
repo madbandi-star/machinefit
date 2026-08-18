@@ -12,4 +12,5 @@
 - as-is: 작은 textarea + 한 줄 태그
 - to-be: 큰 작성칸, 글자 수, 태그 칩
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `1a5dd1ba`

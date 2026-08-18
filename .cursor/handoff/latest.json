@@ -3,7 +3,7 @@
   "summary": "기구 자랑하기 등록의 한마디·태그 입력을 큰 작성칸, 글자 수, 태그 칩(엔터/쉼표 추가·탭 삭제)으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "1a5dd1ba"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx",
