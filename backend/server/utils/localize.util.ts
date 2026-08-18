@@ -25,19 +25,41 @@ export function pickLocalized(
   return undefined;
 }
 
+function asNonEmptyLines(value: unknown): string[] | undefined {
+  if (Array.isArray(value)) {
+    const lines = value.map((item) => String(item).trim()).filter(Boolean);
+    return lines.length > 0 ? lines : undefined;
+  }
+  if (typeof value === 'string' && value.trim()) return [value.trim()];
+  return undefined;
+}
+
 export function pickLocalizedArray(
   value: LocalizedString | Record<string, string[]> | null | undefined,
   locale = 'ko'
 ): string[] {
   if (!value) return [];
-  if (Array.isArray(value)) return value;
-  const record = value as Record<string, string[] | string>;
+  if (Array.isArray(value)) return asNonEmptyLines(value) ?? [];
+  const record = value as Record<string, unknown>;
   const short = String(locale).split('-')[0];
-  const arr = record[short] ?? record.en ?? record.ko;
-  if (Array.isArray(arr)) return arr;
-  if (typeof arr === 'string') return [arr];
-  const first = Object.values(record)[0];
-  if (Array.isArray(first)) return first;
-  if (typeof first === 'string') return [first];
+  const keys = [short, 'en', 'ko', 'ja', 'zh', ...Object.keys(record)];
+  const seen = new Set<string>();
+  for (const key of keys) {
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    const lines = asNonEmptyLines(record[key]);
+    if (lines) return lines;
+  }
   return [];
+}
+
+export function firstLocalizedRecord(
+  ...candidates: Array<Record<string, string[]> | LocalizedString | null | undefined>
+): Record<string, string[]> | null {
+  for (const candidate of candidates) {
+    if (candidate && pickLocalizedArray(candidate).length > 0) {
+      return candidate as Record<string, string[]>;
+    }
+  }
+  return null;
 }

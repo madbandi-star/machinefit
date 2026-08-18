@@ -9,13 +9,13 @@ interface RecommendationWarningsProps {
 export function RecommendationWarnings({ warnings }: RecommendationWarningsProps) {
   const { t } = useTranslation('machines');
 
-  if (warnings.length === 0) return null;
+  if (!warnings?.length) return null;
 
   const preview = warnings[0];
   const extraCount = warnings.length - 1;
 
   return (
-    <details className="recommendation-collapsible recommendation-warnings">
+    <details className="recommendation-collapsible recommendation-warnings" open>
       <summary className="recommendation-collapsible__summary">
         <span className="recommendation-collapsible__label recommendation-warnings__summary-text">
           <span className="recommendation-warnings__badge">{t('recommendation.warningsTitle')}</span>

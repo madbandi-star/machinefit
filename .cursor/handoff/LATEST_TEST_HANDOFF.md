@@ -1,27 +1,24 @@
-# Test handoff — 공통 머신 시트/백패드/발/핸들
+# Test handoff — 세부기구 추천 주의사항 복구
 
 ## Summary
-공통 머신 81개 유형에 시트·백패드·발·핸들 기본값을 넣었습니다. 이미 있는 브랜드 숫자는 덮어쓰지 않고, 비어 있던 기록만 채웁니다.
+공통 머신에 시트/핸들만 넣고 주의사항이 빈 `{}`로 남으면서, 예전에 나오던 주의 문구가 가려졌습니다. 같은 유형의 카탈로그 주의사항을 다시 쓰고, 빈 값은 저장하지 않습니다.
 
 ## Test focus
-1. 공통 머신 기록 편찬: 표에 숫자가 있는 항목만 타일로 보이는지
-2. 스미스 / 파워 랙 / 하프 랙: 네 항목 없음 (중량·횟수·가동범위만)
-3. 랫풀다운: 시트 4, 발 3. 핸들/백패드 없음
-4. 체스트 프레스: 시트 4, 핸들 2
-5. 브랜드 전용 세팅이 있던 머신은 기존 숫자 유지
-6. **Render DB migrate 149 필요** — 프론트만으로는 안 보임
+1. 세부기구 추천 결과 페이지 상단에 **주의** 목록이 다시 보이는지
+2. 체스트 프레스 공통/브랜드 복사본: 어깨 불편 시 중단 등 기존 주의 문구
+3. 스미스 / 파워랙: 카탈로그에 주의가 없으면 숨김 유지
+4. 브랜드 전용 주의사항이 있던 머신은 기존 문구 유지
+5. **Render migrate 150 + backend 재배포 필요**
 
 ## Fast checks
-`npm run test:smoke:changed`
-
-Also:
-- `database/migrations/149_standard_machine_fit_positions.sql` contains `STD_CHEST_PRESS`
-- `shared/src/constants/standard-machine-fit.ts` contains `STD_ASSISTED_PULLUP_DIP`
-- `backend/server/services/recommendation.service.ts` uses `match?.seatPosition ?? standardFit?.seatPosition`
+- `npx tsx backend/server/utils/localize.util.test.ts`
+- `database/migrations/150_restore_standard_machine_coaching.sql` contains `standard_type_id`
+- `backend/server/services/recommendation.service.ts` contains `firstLocalizedRecord`
+- `backend/server/repositories/recommendation.repository.ts` contains `findTypeCoaching`
 
 ## As-is → To-be
-- as-is: 공통 머신은 추천 중량 / 횟수 / 가동 범위만
-- to-be: 제출한 표의 시트·백패드·발·핸들이 기록에 표시
+- as-is: 추천 결과에 주의사항 없음 (중량/횟수/가동범위만)
+- to-be: 예전에 나오던 기구별 주의사항이 결과 페이지에 다시 표시
 
 **Branch:** `main`  
-**Commit:** fc16e888
+**Commit:** pending

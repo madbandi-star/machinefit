@@ -12,7 +12,7 @@ import {
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
 import { historyRepository } from '../repositories/history.repository.js';
-import { pickLocalizedArray } from '../utils/localize.util.js';
+import { firstLocalizedRecord, pickLocalizedArray } from '../utils/localize.util.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { machineService } from './machine.service.js';
 import { computeRecommendationWeight } from './recommendation-weight.service.js';
@@ -173,12 +173,29 @@ export const recommendationService = {
 
     const settingsTips = match ? pickLocalizedArray(match.tips, locale) : [];
     const catalogTips = pickLocalizedArray(machine.tips ?? null, locale);
+    const settingsWarnings = match ? pickLocalizedArray(match.warnings, locale) : [];
+    const catalogWarnings = pickLocalizedArray(machine.warnings ?? null, locale);
+
+    let typeCoaching:
+      | { tips: Record<string, string[]> | null; warnings: Record<string, string[]> | null }
+      | undefined;
+    if (
+      (settingsTips.length === 0 && catalogTips.length === 0) ||
+      (settingsWarnings.length === 0 && catalogWarnings.length === 0)
+    ) {
+      typeCoaching = await recommendationRepository.findTypeCoaching(machineId);
+    }
+    const typeTips = pickLocalizedArray(typeCoaching?.tips ?? null, locale);
+    const typeWarnings = pickLocalizedArray(typeCoaching?.warnings ?? null, locale);
+
     const baseTips =
       settingsTips.length > 0
         ? settingsTips
         : catalogTips.length > 0
           ? catalogTips
-          : pickLocalizedArray(DEFAULT_TIPS, locale);
+          : typeTips.length > 0
+            ? typeTips
+            : pickLocalizedArray(DEFAULT_TIPS, locale);
 
     const hasCustomSettings = Boolean(
       savedPreferences?.customSettings &&
@@ -195,20 +212,26 @@ export const recommendationService = {
       hasCustomPreferences: usingAdjusted || hasCustomSettings,
     });
 
-    const settingsWarnings = match ? pickLocalizedArray(match.warnings, locale) : [];
-    const catalogWarnings = pickLocalizedArray(machine.warnings ?? null, locale);
-    const warnings = settingsWarnings.length > 0 ? settingsWarnings : catalogWarnings;
+    const warnings =
+      settingsWarnings.length > 0
+        ? settingsWarnings
+        : catalogWarnings.length > 0
+          ? catalogWarnings
+          : typeWarnings;
     const tipsByLocale = {
       [locale]: tips,
       ...(match?.tips ?? {}),
       ...(machine.tips ?? {}),
+      ...(typeCoaching?.tips ?? {}),
     };
     // Prefer the response locale's personalized tips; keep other catalog locales as fallback.
     tipsByLocale[locale] = tips;
     const warningsByLocale =
-      match?.warnings ??
-      machine.warnings ??
-      (warnings.length ? { [locale]: warnings } : null);
+      firstLocalizedRecord(
+        match?.warnings,
+        machine.warnings ?? undefined,
+        typeCoaching?.warnings ?? undefined
+      ) ?? (warnings.length ? { [locale]: warnings } : null);
 
     const [id, youtubeVideos] = await Promise.all([
       recommendationRepository.save(

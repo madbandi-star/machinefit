@@ -397,7 +397,7 @@ export function RecommendationResultPage() {
       </header>
 
       <div className="recommendation-result-page__content history-page-premium">
-        <RecommendationWarnings warnings={result.warnings} />
+        <RecommendationWarnings warnings={result.warnings ?? []} />
         <article
           className={`history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card${
             bodyExpanded ? '' : ' history-record-card--collapsed'

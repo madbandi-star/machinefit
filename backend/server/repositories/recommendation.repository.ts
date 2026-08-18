@@ -124,6 +124,65 @@ export const recommendationRepository = {
     };
   },
 
+  /**
+   * Catalog coaching for this machine, or a sibling of the same 공통 유형.
+   * Position-only machine_settings rows (empty tips/warnings) do not count.
+   */
+  async findTypeCoaching(
+    machineId: string
+  ): Promise<{ tips: Record<string, string[]> | null; warnings: Record<string, string[]> | null }> {
+    const pool = getPool();
+    if (!pool) return { tips: null, warnings: null };
+
+    const hasLines = (column: string) => `(
+      ${column} IS NOT NULL
+      AND ${column} <> '{}'::jsonb
+      AND (
+        (jsonb_typeof(${column}->'ko') = 'array' AND jsonb_array_length(${column}->'ko') > 0)
+        OR (jsonb_typeof(${column}->'en') = 'array' AND jsonb_array_length(${column}->'en') > 0)
+      )
+    )`;
+
+    const result = await pool.query<{
+      tips: Record<string, string[]> | null;
+      warnings: Record<string, string[]> | null;
+    }>(
+      `SELECT
+         COALESCE(m.tips, ms.tips) AS tips,
+         COALESCE(m.warnings, ms.warnings) AS warnings
+       FROM machines target
+       JOIN machines m
+         ON m.id = target.id
+         OR (
+           target.standard_type_id IS NOT NULL
+           AND m.standard_type_id = target.standard_type_id
+         )
+       LEFT JOIN LATERAL (
+         SELECT s.tips, s.warnings
+         FROM machine_settings s
+         WHERE s.machine_id = m.id
+           AND (${hasLines('s.tips')} OR ${hasLines('s.warnings')})
+         ORDER BY s.created_at ASC
+         LIMIT 1
+       ) ms ON TRUE
+       WHERE target.id = $1
+         AND (${hasLines('m.tips')} OR ${hasLines('m.warnings')}
+              OR ${hasLines('ms.tips')} OR ${hasLines('ms.warnings')})
+       ORDER BY
+         CASE WHEN m.id = target.id THEN 0 ELSE 1 END,
+         CASE WHEN ${hasLines('m.warnings')} OR ${hasLines('ms.warnings')} THEN 0 ELSE 1 END,
+         m.created_at ASC
+       LIMIT 1`,
+      [machineId]
+    );
+
+    const row = result.rows[0];
+    return {
+      tips: row?.tips ?? null,
+      warnings: row?.warnings ?? null,
+    };
+  },
+
   async findYoutubeVideos(machineId: string): Promise<YoutubeVideo[]> {
     const pool = getPool();
     if (!pool) return [];
@@ -242,6 +301,15 @@ export const recommendationRepository = {
       // Anonymous rows must not leak biometrics to arbitrary authenticated clients.
       throw new AppError(403, 'FORBIDDEN', 'Not allowed to view this recommendation');
     }
+
+    let tips = pickLocalizedArray(row.tips, locale);
+    let warnings = pickLocalizedArray(row.warnings, locale);
+    if (tips.length === 0 || warnings.length === 0) {
+      const coaching = await this.findTypeCoaching(row.machine_id);
+      if (tips.length === 0) tips = pickLocalizedArray(coaching.tips, locale);
+      if (warnings.length === 0) warnings = pickLocalizedArray(coaching.warnings, locale);
+    }
+
     return {
       id: row.id,
       machineCode: row.machine_code,
@@ -261,8 +329,8 @@ export const recommendationRepository = {
         recommendedRepsMin: row.recommended_reps_min ?? undefined,
         recommendedRepsMax: row.recommended_reps_max ?? undefined,
       },
-      tips: pickLocalizedArray(row.tips, locale),
-      warnings: pickLocalizedArray(row.warnings, locale),
+      tips,
+      warnings,
       youtubeVideos: await this.findYoutubeVideos(row.machine_id),
       createdAt: row.created_at,
       weightBasis: row.weight_basis ?? undefined,
