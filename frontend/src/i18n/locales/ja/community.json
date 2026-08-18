@@ -452,6 +452,8 @@
     "views": "閲覧 {{count}}",
     "deleteConfirm": "この投稿を削除しますか？",
     "dexTitle": "マシン図鑑",
+    "dexKicker": "マイマシンコレクション",
+    "dexNextGrade": "次",
     "dexSubtitle": "新しいマシンを見つけて集めましょう。",
     "dexBack": "マイページ",
     "dexProgress": "発見 {{found}} / {{total}}",

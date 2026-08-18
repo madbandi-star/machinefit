@@ -158,26 +158,36 @@
   transform: scale(0.985);
 }
 
-.showcase-card--uncommon { border-color: color-mix(in srgb, #5cbf8a 45%, #2a2f36); }
+.showcase-card--common { --rarity-swatch: #9aa3ad; }
+.showcase-card--uncommon {
+  --rarity-swatch: #5cbf8a;
+  border-color: color-mix(in srgb, #5cbf8a 45%, #2a2f36);
+}
 .showcase-card--rare {
+  --rarity-swatch: #4a90e8;
   border-color: color-mix(in srgb, #4a90e8 55%, #2a2f36);
 }
 .showcase-card--epic {
+  --rarity-swatch: #9b6bdb;
   border-color: color-mix(in srgb, #9b6bdb 60%, #2a2f36);
 }
 .showcase-card--legendary {
+  --rarity-swatch: #e89a3a;
   border-color: color-mix(in srgb, #e89a3a 70%, #2a2f36);
 }
 .showcase-card--mythic {
+  --rarity-swatch: #e24b4b;
   border-color: color-mix(in srgb, #e24b4b 75%, #2a2f36);
 }
 .showcase-card--unique {
+  --rarity-swatch: #d46ad8;
   border-color: color-mix(in srgb, #d46ad8 80%, #2a2f36);
 }
 
 .showcase-card__media {
   position: relative;
   aspect-ratio: 1;
+  overflow: hidden;
   background: #0f1318;
 }
 
@@ -198,6 +208,7 @@
   position: absolute;
   left: 0.4rem;
   top: 0.4rem;
+  z-index: 1;
 }
 
 .showcase-card__count {
@@ -275,15 +286,21 @@
   border-radius: 0;
 }
 
+.rarity-emblem {
+  display: block;
+  flex-shrink: 0;
+  color: var(--rarity-swatch, #9aa3ad);
+}
+
 .rarity-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.14rem 0.42rem;
+  gap: 0.28rem;
+  padding: 0.14rem 0.42rem 0.14rem 0.22rem;
   border-radius: 999px;
   font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--rarity-swatch, #9aa3ad);
   background: color-mix(in srgb, var(--rarity-swatch, #9aa3ad) 18%, #0f1318);
   border: 1px solid color-mix(in srgb, var(--rarity-swatch, #9aa3ad) 42%, transparent);
@@ -291,16 +308,39 @@
   overflow: hidden;
 }
 
-.rarity-badge--compact {
-  font-size: 0.58rem;
-  padding: 0.1rem 0.35rem;
-  letter-spacing: 0.02em;
+.rarity-badge__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+.rarity-badge--compact {
+  font-size: 0.58rem;
+  padding: 0.08rem 0.35rem 0.08rem 0.18rem;
+  letter-spacing: 0.01em;
+}
+
+.rarity-badge--rare {
+  border-color: color-mix(in srgb, var(--rarity-swatch) 55%, transparent);
+}
+
+.rarity-badge--epic,
 .rarity-badge--legendary,
 .rarity-badge--mythic,
 .rarity-badge--unique {
-  box-shadow: 0 0 12px color-mix(in srgb, var(--rarity-swatch) 25%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--rarity-swatch) 28%, transparent);
+}
+
+.rarity-badge--unique {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, #d46ad8 24%, #0f1318),
+      color-mix(in srgb, #4a90e8 16%, #0f1318) 52%,
+      color-mix(in srgb, #e89a3a 14%, #0f1318)
+    );
+  border-color: color-mix(in srgb, #d46ad8 50%, #4a90e8);
 }
 
 /* ── Write ── */
@@ -1329,7 +1369,16 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  margin-top: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.showcase-dex__kicker {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 .showcase-dex__title {
@@ -1540,66 +1589,139 @@
   font-variant-numeric: tabular-nums;
 }
 
+.showcase-dex-gradehead {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 0.7rem;
+  min-width: 0;
+}
+
+.showcase-dex-gradehead h2 {
+  margin: 0;
+}
+
+.showcase-dex-gradehead p {
+  margin: 0.1rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
 .showcase-dex__grades {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.4rem;
+  display: flex;
+  gap: 0.45rem;
   width: 100%;
+  padding: 0.15rem 0.1rem 0.45rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-.showcase-dex__grades .showcase-dex__grade-all {
-  grid-column: 1 / -1;
+.showcase-dex__grades::-webkit-scrollbar {
+  display: none;
 }
 
-.showcase-dex__grades button {
+.showcase-dex__grade {
   appearance: none;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.1rem;
-  min-width: 0;
-  width: 100%;
-  min-height: 2.85rem;
-  padding: 0.35rem 0.2rem;
-  border-radius: 12px;
+  gap: 0.18rem;
+  flex: 0 0 auto;
+  width: 4.65rem;
+  min-height: 5.4rem;
+  padding: 0.45rem 0.28rem 0.4rem;
+  border-radius: 14px;
   border: 1px solid var(--color-border, #2a2f36);
-  background: transparent;
+  background: color-mix(in srgb, var(--color-surface, #14181e) 88%, transparent);
   color: var(--color-text);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   cursor: pointer;
+  scroll-snap-align: start;
 }
 
-.showcase-dex__grades button span {
+.showcase-dex__grade-mark {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-text-muted);
+}
+
+.showcase-dex__grade span {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.showcase-dex__grades button em {
+.showcase-dex__grade em {
   font-style: normal;
   color: var(--color-text-muted);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.showcase-dex__grades button.is-on {
+.showcase-dex__grade.is-empty {
+  opacity: 0.58;
+}
+
+.showcase-dex__grade.is-on {
+  opacity: 1;
   color: var(--rarity-swatch, var(--color-text));
-  border-color: color-mix(in srgb, var(--rarity-swatch, var(--color-primary, #c9a227)) 55%, #2a2f36);
-  background: color-mix(in srgb, var(--rarity-swatch, var(--color-primary, #c9a227)) 16%, transparent);
+  border-color: color-mix(in srgb, var(--rarity-swatch, var(--color-primary)) 62%, #2a2f36);
+  background: color-mix(in srgb, var(--rarity-swatch, var(--color-primary)) 18%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rarity-swatch, var(--color-primary)) 22%, transparent);
 }
 
-.showcase-dex__grades .showcase-dex__grade-all.is-on {
+.showcase-dex__grade-all.is-on {
   color: var(--color-text);
-  border-color: color-mix(in srgb, var(--color-primary, #c9a227) 45%, var(--color-border, #2a2f36));
-  background: color-mix(in srgb, var(--color-primary, #c9a227) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border, #2a2f36));
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  box-shadow: none;
 }
 
-.showcase-dex__grades button.is-on em {
+.showcase-dex__grade.is-on em {
   color: inherit;
+}
+
+.showcase-dex__grade.is-next {
+  opacity: 1;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--rarity-swatch) 55%, #2a2f36);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--rarity-swatch) 18%, transparent);
+}
+
+.showcase-dex__grade.is-on.is-next {
+  border-style: solid;
+}
+
+.showcase-dex__next {
+  position: absolute;
+  top: 0.28rem;
+  right: 0.28rem;
+  padding: 0.05rem 0.28rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rarity-swatch) 22%, #0f1318);
+  color: var(--rarity-swatch);
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.showcase-dex__grade--legendary.is-on,
+.showcase-dex__grade--mythic.is-on,
+.showcase-dex__grade--unique.is-on {
+  box-shadow: 0 0 16px color-mix(in srgb, var(--rarity-swatch) 28%, transparent);
 }
 
 .showcase-dex-feed {
@@ -1609,17 +1731,13 @@
   align-items: stretch;
 }
 
-@media (min-width: 720px) {
-  .showcase-dex-feed {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 .showcase-dex-card {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-width: 0;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
 .showcase-dex-feed > .showcase-card {
@@ -1633,25 +1751,85 @@
 }
 
 .showcase-dex-feed .showcase-card__media .rarity-badge {
-  left: 0.4rem;
+  left: auto;
+  right: 0.4rem;
   top: 0.4rem;
 }
 
 .showcase-dex__first {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  font-size: 0.95rem;
-  line-height: 1;
+  left: 0.4rem;
+  bottom: 0.4rem;
+  z-index: 1;
+  max-width: calc(100% - 0.8rem);
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(11, 15, 20, 0.72);
+  color: #f0f4f8;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.showcase-dex-card.showcase-card--uncommon {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #5cbf8a 8%, transparent), transparent 42%),
+    var(--color-surface, #14181e);
+}
+
+.showcase-dex-card.showcase-card--rare {
+  box-shadow: 0 0 0 1px color-mix(in srgb, #4a90e8 20%, transparent);
+}
+
+.showcase-dex-card.showcase-card--epic {
+  box-shadow: 0 0 18px color-mix(in srgb, #9b6bdb 16%, transparent);
+}
+
+.showcase-dex-card.showcase-card--legendary {
+  box-shadow: 0 0 20px color-mix(in srgb, #e89a3a 22%, transparent);
+}
+
+.showcase-dex-card.showcase-card--mythic {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, #e24b4b 14%, transparent), transparent 46%),
+    var(--color-surface, #14181e);
+  box-shadow: 0 0 22px color-mix(in srgb, #e24b4b 24%, transparent);
+}
+
+.showcase-dex-card.showcase-card--unique {
+  border-color: color-mix(in srgb, #d46ad8 55%, #4a90e8);
+  background:
+    linear-gradient(140deg, color-mix(in srgb, #d46ad8 14%, transparent), color-mix(in srgb, #4a90e8 8%, transparent) 48%, transparent 70%),
+    var(--color-surface, #14181e);
+  box-shadow: 0 0 22px color-mix(in srgb, #d46ad8 26%, transparent);
+}
+
+.showcase-dex-card.showcase-card--unique .showcase-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 38%,
+    color-mix(in srgb, #fff 16%, transparent) 50%,
+    transparent 62%
+  );
+  background-size: 220% 100%;
+  background-position: 120% 0;
 }
 
 .showcase-dex-card__body {
   display: grid;
-  grid-template-rows: auto auto auto auto;
-  gap: 0.3rem;
+  grid-template-rows: auto auto auto;
+  gap: 0.22rem;
   flex: 1 1 auto;
   min-width: 0;
-  padding: 0.6rem 0.6rem 0.7rem;
+  padding: 0.55rem 0.55rem 0.62rem;
 }
 
 .showcase-dex-card__name {
@@ -1678,53 +1856,119 @@
   white-space: nowrap;
 }
 
-.showcase-dex-card__stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.3rem;
-}
-
-.showcase-dex-card__stat {
+.showcase-dex-card__meta {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.08rem;
-  min-height: 2.45rem;
-  padding: 0.3rem 0.2rem;
-  border-radius: 10px;
-  border: 1px solid var(--color-border, #2a2f36);
-  background: color-mix(in srgb, var(--color-bg, #0b0c0f) 35%, transparent);
-  text-align: center;
-}
-
-.showcase-dex-card__stat strong {
-  font-size: 0.78rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-}
-
-.showcase-dex-card__stat span {
-  font-size: 0.58rem;
+  gap: 0.35rem;
+  min-width: 0;
+  margin: 0.1rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.62rem;
   font-weight: 700;
-  color: var(--color-text-muted);
-  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
 
-.showcase-dex-card__date {
-  display: block;
-  min-height: 1em;
-  color: var(--color-text-muted);
-  font-size: 0.68rem;
-  font-variant-numeric: tabular-nums;
+.showcase-dex-card__meta span,
+.showcase-dex-card__meta time {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.showcase-dex-card__meta span + span::before,
+.showcase-dex-card__meta span + time::before {
+  content: '·';
+  margin-right: 0.35rem;
+  opacity: 0.65;
+}
+
+.showcase-dex-skel {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.showcase-empty-state--dex,
+.showcase-empty-state--grade {
+  gap: 0.5rem;
+  padding: 1.6rem 1rem;
+}
+
+.showcase-empty-state__emblem {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-surface, #14181e) 80%, transparent);
+}
+
+.showcase-empty-state--grade {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--rarity-swatch, var(--color-border)) 38%, var(--color-border, #2a2f36));
+  background: color-mix(in srgb, var(--rarity-swatch, transparent) 8%, transparent);
+}
+
+.showcase-empty-state--legendary,
+.showcase-empty-state--mythic,
+.showcase-empty-state--unique {
+  box-shadow: inset 0 0 24px color-mix(in srgb, var(--rarity-swatch) 12%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .showcase-dex-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--rarity-swatch, var(--color-primary)) 55%, var(--color-border, #2a2f36));
+  }
+
+  .showcase-dex-card.showcase-card--legendary:hover,
+  .showcase-dex-card.showcase-card--mythic:hover,
+  .showcase-dex-card.showcase-card--unique:hover {
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--rarity-swatch, #d46ad8) 28%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .showcase-dex-card.showcase-card--unique .showcase-card__media::after {
+    animation: rarity-sheen 7.5s ease-in-out infinite;
+  }
+
+  .showcase-dex__grade--unique .rarity-emblem,
+  .showcase-dex-gradehead--unique .rarity-emblem,
+  .showcase-empty-state--unique .rarity-emblem {
+    animation: rarity-emblem-glow 5.5s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-dex-card {
+    transition: none;
+  }
+
+  .showcase-dex-card.showcase-card--unique .showcase-card__media::after {
+    display: none;
+  }
+}
+
+@keyframes rarity-sheen {
+  0%,
+  58% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+@keyframes rarity-emblem-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--rarity-swatch, #d46ad8) 20%, transparent));
+  }
+  50% {
+    filter: drop-shadow(0 0 7px color-mix(in srgb, var(--rarity-swatch, #d46ad8) 45%, transparent));
+  }
 }
 
 .showcase-dex-grades {

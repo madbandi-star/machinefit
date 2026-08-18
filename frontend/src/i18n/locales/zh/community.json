@@ -452,6 +452,8 @@
     "views": "浏览 {{count}}",
     "deleteConfirm": "要删除这篇晒图吗？",
     "dexTitle": "器械图鉴",
+    "dexKicker": "我的器械收藏",
+    "dexNextGrade": "下一个",
     "dexSubtitle": "去发现新器械并收集吧。",
     "dexBack": "我的页面",
     "dexProgress": "发现 {{found}} / {{total}}",

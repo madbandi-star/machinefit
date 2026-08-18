@@ -452,6 +452,8 @@
     "views": "{{count}} views",
     "deleteConfirm": "Delete this showcase post?",
     "dexTitle": "Machine Dex",
+    "dexKicker": "My Machine Collection",
+    "dexNextGrade": "Next",
     "dexSubtitle": "Find new machines and collect them.",
     "dexBack": "My page",
     "dexProgress": "Found {{found}} / {{total}}",

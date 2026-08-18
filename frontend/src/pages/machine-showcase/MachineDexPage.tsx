@@ -12,6 +12,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Icon } from '@/components/icons/Icon';
 import { RarityBadge } from '@/components/machine-showcase/RarityBadge';
+import { RarityEmblem } from '@/components/machine-showcase/RarityEmblem';
 import { machineShowcaseApi } from '@/api/machine-showcase.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -24,6 +25,15 @@ function formatDiscoveredAt(iso: string, locale: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return '';
   return date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function nextGradeAfterHighest(byGrade: Record<MachineRarityGrade, number> | undefined, discovered: number) {
+  if (!byGrade || discovered <= 0) return null;
+  let highest = -1;
+  for (const grade of MACHINE_RARITY_GRADES) {
+    if ((byGrade[grade] ?? 0) > 0) highest = MACHINE_RARITY_META[grade].rank;
+  }
+  return MACHINE_RARITY_GRADES[highest + 1] ?? null;
 }
 
 export function MachineDexPage() {
@@ -53,6 +63,7 @@ export function MachineDexPage() {
   const total = dex?.catalogTotal ?? 0;
   const remain = Math.max(0, total - found);
   const pct = total > 0 ? Math.min(100, Math.round((found / total) * 100)) : 0;
+  const nextGrade = nextGradeAfterHighest(dex?.byGrade, found);
   const holdings = holdingsQuery.data;
   const muscleLabel = (group: string) => {
     const key = `muscleGroups.${group}`;
@@ -64,10 +75,19 @@ export function MachineDexPage() {
     return (
       <div className="showcase-page showcase-page--dex">
         <PageShell>
-          <Skeleton height={56} />
-          <Skeleton height={140} />
-          <Skeleton height={72} />
-          <Skeleton count={4} height={168} />
+          <div className="showcase-dex-skel">
+            <Skeleton height={44} />
+            <Skeleton height={28} />
+            <Skeleton height={118} />
+            <Skeleton height={88} />
+            <div className="showcase-dex-feed">
+              {Array.from({ length: 4 }, (_, i) => (
+                <div key={i} className="showcase-card showcase-dex-card showcase-card--skeleton">
+                  <Skeleton height={168} />
+                </div>
+              ))}
+            </div>
+          </div>
         </PageShell>
       </div>
     );
@@ -108,6 +128,7 @@ export function MachineDexPage() {
         </nav>
 
         <header className="showcase-dex__head">
+          <p className="showcase-dex__kicker">{t('showcase.dexKicker')}</p>
           <h1 className="showcase-dex__title page-hero-title">
             <span className="page-hero-title__icon" aria-hidden>
               <Icon name="machines" size={18} />
@@ -123,15 +144,155 @@ export function MachineDexPage() {
               <strong>{found}</strong>
               <span> / {total}</span>
             </p>
-            <span className="showcase-dex-hero__pct">{pct}%</span>
+            {total > 0 ? <span className="showcase-dex-hero__pct">{pct}%</span> : null}
           </div>
-          <div className="showcase-dex__bar" aria-hidden>
-            <span style={{ width: `${pct}%` }} />
-          </div>
+          {total > 0 ? (
+            <div className="showcase-dex__bar" aria-hidden>
+              <span style={{ width: `${pct}%` }} />
+            </div>
+          ) : null}
           <div className="showcase-dex-hero__meta">
             <span>{t('showcase.dexFoundChip', { count: found })}</span>
             <span>{t('showcase.dexRemainChip', { count: remain })}</span>
           </div>
+        </section>
+
+        <section className="showcase-dex-filter" aria-label={t('showcase.dexGradeFilter')}>
+          <h2 className="visually-hidden">{t('showcase.dexGradeFilter')}</h2>
+          <div className="showcase-dex__grades" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={gradeFilter === 'ALL'}
+              className={`showcase-dex__grade showcase-dex__grade-all${gradeFilter === 'ALL' ? ' is-on' : ''}`}
+              onClick={() => setGradeFilter('ALL')}
+            >
+              <span className="showcase-dex__grade-mark" aria-hidden>
+                <Icon name="machines" size={18} />
+              </span>
+              <span>{t('showcase.dexAll')}</span>
+              <em>{found}</em>
+            </button>
+            {MACHINE_RARITY_GRADES.map((grade) => {
+              const count = dex?.byGrade[grade] ?? 0;
+              const isNext = nextGrade === grade;
+              return (
+                <button
+                  key={grade}
+                  type="button"
+                  role="tab"
+                  aria-selected={gradeFilter === grade}
+                  className={[
+                    'showcase-dex__grade',
+                    `showcase-dex__grade--${grade.toLowerCase()}`,
+                    gradeFilter === grade ? 'is-on' : '',
+                    count === 0 ? 'is-empty' : '',
+                    isNext ? 'is-next' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  style={{ ['--rarity-swatch' as string]: MACHINE_RARITY_META[grade].swatch }}
+                  onClick={() => setGradeFilter(gradeFilter === grade ? 'ALL' : grade)}
+                >
+                  <RarityEmblem grade={grade} size={28} />
+                  <span>{t(`showcase.grades.${grade}`)}</span>
+                  <em>{count}</em>
+                  {isNext && count === 0 ? (
+                    <b className="showcase-dex__next">{t('showcase.dexNextGrade')}</b>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="showcase-dex-collection">
+          {gradeFilter === 'ALL' ? (
+            <h2>
+              {t('showcase.dexCollection')}
+              <span>{items.length}</span>
+            </h2>
+          ) : (
+            <div
+              className={`showcase-dex-gradehead showcase-dex-gradehead--${gradeFilter.toLowerCase()}`}
+              style={{ ['--rarity-swatch' as string]: MACHINE_RARITY_META[gradeFilter].swatch }}
+            >
+              <RarityEmblem grade={gradeFilter} size={40} />
+              <div>
+                <h2>{t(`showcase.grades.${gradeFilter}`)}</h2>
+                <p>{t('showcase.dexFoundChip', { count: items.length })}</p>
+              </div>
+            </div>
+          )}
+
+          {allItems.length === 0 ? (
+            <div className="showcase-empty-state showcase-empty-state--dex">
+              <span className="showcase-empty-state__emblem" aria-hidden>
+                <Icon name="machines" size={28} />
+              </span>
+              <strong>{t('showcase.dexEmpty')}</strong>
+              <p>{t('showcase.dexEmptyHint')}</p>
+              <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="btn btn--primary">
+                {t('showcase.writeCtaShort')}
+              </Link>
+            </div>
+          ) : items.length === 0 && gradeFilter !== 'ALL' ? (
+            <div
+              className={`showcase-empty-state showcase-empty-state--grade showcase-empty-state--${gradeFilter.toLowerCase()}`}
+              style={{ ['--rarity-swatch' as string]: MACHINE_RARITY_META[gradeFilter].swatch }}
+            >
+              <RarityEmblem grade={gradeFilter} size={56} />
+              <strong>{t(`showcase.grades.${gradeFilter}`)}</strong>
+              <p>{t('showcase.dexFilterEmpty')}</p>
+              <button type="button" className="btn btn--secondary" onClick={() => setGradeFilter('ALL')}>
+                {t('showcase.dexAll')}
+              </button>
+            </div>
+          ) : (
+            <div className="showcase-dex-feed">
+              {items.map((item) => {
+                const rankLabel = item.discoveryRank ? `#${item.discoveryRank}` : '—';
+                const dateLabel = item.discoveredAt
+                  ? formatDiscoveredAt(item.discoveredAt, i18n.language)
+                  : '—';
+                return (
+                  <Link
+                    key={item.machineId}
+                    className={`showcase-card showcase-dex-card showcase-card--${item.grade.toLowerCase()}`}
+                    to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
+                  >
+                    <div className="showcase-card__media">
+                      {item.coverThumbUrl ? (
+                        <img
+                          className="showcase-card__img"
+                          src={resolveShowcaseMediaUrl(item.coverThumbUrl)}
+                          alt=""
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="showcase-card__placeholder" aria-hidden />
+                      )}
+                      <RarityBadge grade={item.grade} compact />
+                      {item.discoveryRank === 1 ? (
+                        <span className="showcase-dex__first">{t('showcase.dexFirst')}</span>
+                      ) : null}
+                    </div>
+                    <div className="showcase-dex-card__body">
+                      <strong className="showcase-dex-card__name">{item.machineName}</strong>
+                      <span className="showcase-dex-card__brand">{item.brandName || '\u00a0'}</span>
+                      <p className="showcase-dex-card__meta">
+                        <span>{rankLabel}</span>
+                        <span>
+                          {item.gymHoldingCount} {t('showcase.statGyms')}
+                        </span>
+                        <time dateTime={item.discoveredAt || undefined}>{dateLabel}</time>
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         {holdings ? (
@@ -168,120 +329,6 @@ export function MachineDexPage() {
             </Link>
           </section>
         ) : null}
-
-        <section className="showcase-dex-filter" aria-label={t('showcase.dexGradeFilter')}>
-          <h2>{t('showcase.dexGradeFilter')}</h2>
-          <div className="showcase-dex__grades" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={gradeFilter === 'ALL'}
-              className={`showcase-dex__grade-all${gradeFilter === 'ALL' ? ' is-on' : ''}`}
-              onClick={() => setGradeFilter('ALL')}
-            >
-              <span>{t('showcase.dexAll')}</span>
-              <em>{found}</em>
-            </button>
-            {MACHINE_RARITY_GRADES.map((grade) => {
-              const count = dex?.byGrade[grade] ?? 0;
-              return (
-                <button
-                  key={grade}
-                  type="button"
-                  role="tab"
-                  aria-selected={gradeFilter === grade}
-                  className={gradeFilter === grade ? 'is-on' : ''}
-                  style={{ ['--rarity-swatch' as string]: MACHINE_RARITY_META[grade].swatch }}
-                  onClick={() => setGradeFilter(gradeFilter === grade ? 'ALL' : grade)}
-                >
-                  <span>{t(`showcase.grades.${grade}`)}</span>
-                  <em>{count}</em>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="showcase-dex-collection">
-          <h2>
-            {t('showcase.dexCollection')}
-            <span>{items.length}</span>
-          </h2>
-
-          {allItems.length === 0 ? (
-            <div className="showcase-empty-state">
-              <strong>{t('showcase.dexEmpty')}</strong>
-              <p>{t('showcase.dexEmptyHint')}</p>
-              <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="btn btn--primary">
-                {t('showcase.writeCtaShort')}
-              </Link>
-            </div>
-          ) : items.length === 0 ? (
-            <div className="showcase-empty-state">
-              <strong>{t('showcase.dexFilterEmpty')}</strong>
-              <button type="button" className="btn btn--secondary" onClick={() => setGradeFilter('ALL')}>
-                {t('showcase.dexAll')}
-              </button>
-            </div>
-          ) : (
-            <div className="showcase-dex-feed">
-              {items.map((item) => {
-                const rankLabel =
-                  item.discoveryRank === 1
-                    ? t('showcase.dexFirst')
-                    : item.discoveryRank
-                      ? `#${item.discoveryRank}`
-                      : '—';
-                const dateLabel = item.discoveredAt
-                  ? formatDiscoveredAt(item.discoveredAt, i18n.language)
-                  : '—';
-                return (
-                  <Link
-                    key={item.machineId}
-                    className={`showcase-card showcase-dex-card showcase-card--${item.grade.toLowerCase()}`}
-                    to={ROUTES.MACHINE_DETAIL.replace(':machineCode', item.machineCode)}
-                  >
-                    <div className="showcase-card__media">
-                      {item.coverThumbUrl ? (
-                        <img
-                          className="showcase-card__img"
-                          src={resolveShowcaseMediaUrl(item.coverThumbUrl)}
-                          alt=""
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="showcase-card__placeholder" aria-hidden />
-                      )}
-                      <RarityBadge grade={item.grade} compact />
-                      {item.discoveryRank === 1 ? (
-                        <span className="showcase-dex__first" aria-hidden>
-                          🥇
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="showcase-dex-card__body">
-                      <strong className="showcase-dex-card__name">{item.machineName}</strong>
-                      <span className="showcase-dex-card__brand">{item.brandName || '\u00a0'}</span>
-                      <div className="showcase-dex-card__stats">
-                        <div className="showcase-dex-card__stat">
-                          <strong>{rankLabel}</strong>
-                          <span>{t('showcase.statFinder')}</span>
-                        </div>
-                        <div className="showcase-dex-card__stat">
-                          <strong>{item.gymHoldingCount}</strong>
-                          <span>{t('showcase.statGyms')}</span>
-                        </div>
-                      </div>
-                      <time className="showcase-dex-card__date" dateTime={item.discoveredAt || undefined}>
-                        {dateLabel}
-                      </time>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
       </PageShell>
     </div>
   );
