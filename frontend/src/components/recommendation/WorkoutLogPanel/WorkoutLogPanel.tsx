@@ -1284,6 +1284,11 @@ export function WorkoutLogPanel({
       return { previousLogs, previousAllLogs, silent: true as const };
     },
     onSuccess: async (savedLog, variables) => {
+      if (savedLog) {
+        void import('@/utils/timerHistoryPersist').then(({ noteActiveTimerMachine }) => {
+          noteActiveTimerMachine(savedLog);
+        });
+      }
       void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
         trackFeature(variables?.silent ? 'history_save' : 'workout_save')
       );
