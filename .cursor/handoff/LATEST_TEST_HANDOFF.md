@@ -20,4 +20,4 @@
 - to-be: 칩 + 인라인 입력, 탭해서 삭제, 최대 10개
 
 **Branch:** `main`  
-**Commit:** pending (푸시 후 SHA로 갱신)
+**Commit:** c67ce93b
