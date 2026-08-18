@@ -1,9 +1,9 @@
 {
-  "title": "Rename My Page dex menu to 내 머신도감",
-  "summary": "마이페이지 개인설정 메뉴명을 머신도감에서 내 머신도감으로 바꿨다. 도감 페이지 제목은 그대로다.",
+  "title": "Rename My Page showcase menu to 머신도감 공유관",
+  "summary": "마이페이지 커뮤니티 메뉴명을 머신도감 게시판에서 머신도감 공유관으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "8fcae400"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/common.json",
@@ -12,17 +12,17 @@
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "마이페이지 개인설정에 '내 머신도감'이 보이는지"
+    "마이페이지 커뮤니티에 '머신도감 공유관'이 보이는지"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDex\": \"내 머신도감\"'"
+    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDexBoard\": \"머신도감 공유관\"'"
   ],
   "productionChecks": [
-    "Open My Page and confirm the menu label"
+    "Open My Page and confirm the community menu label"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "머신도감",
-  "toBe": "내 머신도감"
+  "asIs": "머신도감 게시판",
+  "toBe": "머신도감 공유관"
 }
