@@ -1,19 +1,19 @@
-# Test handoff — 기구 자랑 glance UI
+# Test handoff — apex `/` → `/machinefit/` redirect
 
 ## Summary
-기구 추천 흐름의 머신 상세 페이지에 있던 **우리 헬스장 기구 자랑** 영역을, 한눈에 보이는 카드(제목+자랑하기 / 희귀도·건수·지역 칩 / 사진 스트립)로 바꿨습니다. 목록은 `machineCode`로 필터됩니다.
+`https://machine-fit.com/` 가 앱 basename(`/machinefit`)과 안 맞아 검은 화면이던 문제. `index.html`에서 `/`를 `/machinefit/`로 보냅니다.
 
 ## Test focus
-1. 로그인 → 머신 검색 → 머신 상세: 자랑 영역이 큰 버튼 2개가 아니라 컴팩트 카드인지
-2. **자랑하기** → 글쓰기에 해당 기구가 미리 선택되는지
-3. 제목 또는 자랑 수 칩 → 목록이 그 기구만 나오고, **해제**하면 전체인지
+1. `https://machine-fit.com/` → 홈 앱이 보이는지
+2. `https://machine-fit.com/machinefit/` 직접 접속
+3. `www.machine-fit.com` 은 526일 수 있음 (apex만)
 
 ## Fast checks
-- `npm run typecheck --prefix frontend`
+- `frontend/index.html` 에 `location.replace('/machinefit/'` 있는지
 
 ## As-is → To-be
-- as-is: 보조 버튼 2개 + 안내 문구, 한눈에 안 보임
-- to-be: 카드 한 장에서 통계·사진·CTA를 바로 확인
+- as-is: apex는 HTML 200이지만 React 라우트 불일치로 빈 화면
+- to-be: apex에서 앱 루트로 이동
 
 **Branch:** `main`
-**Commit:** `9d518d3f`
+**Commit:** `06467d88`

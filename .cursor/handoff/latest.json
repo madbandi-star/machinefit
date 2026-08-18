@@ -1,36 +1,28 @@
 {
-  "title": "Glanceable gym machine showcase on recommend machine page",
-  "summary": "기구 추천(머신 상세) 페이지의 '우리 헬스장 기구 자랑'을 한눈에 보이는 3줄 카드로 바꿨다. 희귀도·자랑 수·헬스장 수·지역 칩과 사진 스트립, 자랑하기 CTA. 목록은 해당 기구만 필터된다.",
+  "title": "Apex / redirects into /machinefit SPA",
+  "summary": "https://machine-fit.com/ 는 Cloudflare 200 rewrite로 SPA HTML을 주지만 React Router basename이 /machinefit 이라 라우트가 안 맞아 검은 화면이 된다. index.html에서 / → /machinefit/ 클라이언트 리다이렉트를 넣었다.",
   "git": {
     "branch": "main",
-    "commit": "9d518d3f"
+    "commit": "06467d88"
   },
   "changedFiles": [
-    "frontend/src/components/machine-showcase/MachineShowcaseLinks.tsx",
-    "frontend/src/pages/machine-showcase/MachineShowcasePage.tsx",
-    "frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx",
-    "frontend/src/styles/machine-showcase.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/index.html"
   ],
   "testFocus": [
-    "로그인 후 머신 상세(추천받기 전 페이지)에서 자랑 카드가 버튼 2개 스택이 아니라 제목+CTA / 칩 / 사진 한 줄로 보이는지",
-    "자랑하기 → 글쓰기 페이지에 해당 machineCode가 미리 선택되는지",
-    "제목 또는 자랑 N 칩 → 자랑 목록이 그 기구만 필터되고, 해제하면 전체 목록"
+    "https://machine-fit.com/ 가 /machinefit/ 로 넘어가 홈이 보이는지",
+    "https://machine-fit.com/machinefit/ 직접 접속이 보이는지",
+    "www.machine-fit.com 은 Cloudflare 526 — apex만 확인"
   ],
   "fastChecks": [
-    "npm run typecheck --prefix frontend"
+    "Select-String -Path frontend/index.html -Pattern location.replace"
   ],
   "productionChecks": [
-    "Logged-in machine detail: showcase card is compact (title, chips, thumbs)",
-    "Write CTA prefills machine",
-    "List filter by machineCode from the card"
+    "Open https://machine-fit.com/ — should land on app home",
+    "Open https://machine-fit.com/machinefit/"
   ],
   "deploy": {
-    "expected": "GitHub Pages after push to main (frontend only, no Render)"
+    "expected": "GitHub Pages after push to main"
   },
-  "asIs": "머신 상세 자랑 영역이 보조 버튼 2개 + 안내 문구로 세로 공간을 많이 씀",
-  "toBe": "한 카드에서 희귀도·건수·지역·사진을 바로 보고 자랑하기/목록으로 이동"
+  "asIs": "apex / 는 200 HTML이지만 SPA가 안 떠서 검은 화면",
+  "toBe": "apex / 에서 /machinefit/ 로 바로 이동해 앱이 보임"
 }
