@@ -3,7 +3,7 @@
   "summary": "마이페이지 커뮤니티 메뉴에서 우리 헬스장 기구 자랑을 머신도감 게시판으로, 자유 게시판을 자유게시판으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "2f74d3da"
   },
   "changedFiles": [
     "frontend/src/pages/my-page/MyPage.tsx",

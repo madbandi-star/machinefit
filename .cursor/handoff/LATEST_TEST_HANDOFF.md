@@ -12,4 +12,5 @@
 - as-is: 우리 헬스장 기구 자랑 / 자유 게시판
 - to-be: 머신도감 게시판 / 자유게시판
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `2f74d3da`
