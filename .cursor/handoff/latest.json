@@ -3,7 +3,7 @@
   "summary": "내 템플릿 목록을 균일 카드 그리드로 바꿔 행·열 정렬과 액션 버튼 레이아웃을 정리했다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "7aae4c92"
   },
   "changedFiles": [
     "frontend/src/pages/template-share/MyTemplatesPage.tsx",

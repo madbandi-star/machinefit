@@ -13,4 +13,4 @@
 - to-be: 카드 그리드 + 고정 액션 슬롯
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `7aae4c92`
