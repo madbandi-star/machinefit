@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { ImagePlus, X } from 'lucide-react';
 import { isAllGymsId, isRareOrHigher } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { gymApi, machineApi } from '@/api';
@@ -23,6 +24,7 @@ export function MachineShowcaseWritePage() {
   const { gyms, activeGymId } = useActiveGym();
   const [searchParams] = useSearchParams();
   const presetMachineCode = searchParams.get('machineCode')?.trim() ?? '';
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [userGymId, setUserGymId] = useState(activeGymId ?? '');
   const [gymId, setGymId] = useState('');
@@ -37,6 +39,10 @@ export function MachineShowcaseWritePage() {
   const [files, setFiles] = useState<File[]>([]);
 
   const myGyms = gyms.filter((g) => !isAllGymsId(g.id));
+  const photoReady = files.length > 0;
+  const gymReady = Boolean(userGymId || gymId);
+  const machineReady = Boolean(machineCode);
+  const doneCount = Number(photoReady) + Number(gymReady) + Number(machineReady);
 
   useEffect(() => {
     if (userGymId || !activeGymId || isAllGymsId(activeGymId)) return;
@@ -49,7 +55,7 @@ export function MachineShowcaseWritePage() {
       const res = await machineApi.list({ q: machineQ, limit: 30 });
       return res.data.data.items;
     },
-    enabled: machineQ.trim().length >= 1,
+    enabled: machineSearchOpen && machineQ.trim().length >= 1,
   });
 
   const directoryQuery = useQuery({
@@ -80,10 +86,9 @@ export function MachineShowcaseWritePage() {
   }, [files]);
 
   const machineLabel = selectedMachine
-    ? `${getLocalizedName(selectedMachine.name, i18n.language, selectedMachine.code)}${
-        selectedMachine.brandCode ? ` · ${selectedMachine.brandCode}` : ''
-      }`
+    ? getLocalizedName(selectedMachine.name, i18n.language, selectedMachine.code)
     : machineCode;
+  const machineBrand = selectedMachine?.brandCode ?? '';
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -119,8 +124,18 @@ export function MachineShowcaseWritePage() {
     },
   });
 
-  const canSubmit =
-    Boolean((userGymId || gymId) && machineCode && files.length > 0) && !mutation.isPending;
+  const canSubmit = gymReady && machineReady && photoReady && !mutation.isPending;
+
+  const showMissing = () => {
+    if (!photoReady) showToast(t('showcase.writeNeedPhoto'), 'error');
+    else if (!gymReady) showToast(t('showcase.writeNeedGym'), 'error');
+    else if (!machineReady) showToast(t('showcase.writeNeedMachine'), 'error');
+  };
+
+  const addFiles = (list: FileList | File[] | null) => {
+    if (!list) return;
+    setFiles((prev) => [...prev, ...Array.from(list)].slice(0, 6));
+  };
 
   return (
     <div className="showcase-page showcase-page--write">
@@ -130,185 +145,253 @@ export function MachineShowcaseWritePage() {
             {t('showcase.backList')}
           </Link>
           <h1 className="showcase-write__title">{t('showcase.writeTitle')}</h1>
-          <button
-            type="submit"
-            form="showcase-write-form"
-            className="showcase-write__nav-submit"
-            disabled={!canSubmit}
-          >
-            {mutation.isPending ? t('showcase.submitting') : t('showcase.submit')}
-          </button>
         </nav>
 
+        <ul className="showcase-write__checks" aria-label={t('showcase.writeHint')}>
+          {[
+            { done: photoReady, label: t('showcase.stepPhoto') },
+            { done: gymReady, label: t('showcase.stepGym') },
+            { done: machineReady, label: t('showcase.stepMachine') },
+          ].map((item) => (
+            <li key={item.label} className={item.done ? 'is-done' : ''}>
+              <span aria-hidden>{item.done ? '✓' : '·'}</span>
+              {item.label}
+            </li>
+          ))}
+          <li className="showcase-write__checks-count">
+            {t('showcase.writeReady', { done: doneCount })}
+          </li>
+        </ul>
+
         <form
-          id="showcase-write-form"
           className="showcase-write"
           onSubmit={(e) => {
             e.preventDefault();
-            if (!canSubmit) return;
+            if (!canSubmit) {
+              showMissing();
+              return;
+            }
             mutation.mutate();
           }}
         >
-          <section className="showcase-write__photos">
+          <section className={`showcase-write__card${photoReady ? ' is-ready' : ''}`}>
+            <header className="showcase-write__card-head">
+              <span className="showcase-write__step">1</span>
+              <div>
+                <h2>{t('showcase.stepPhoto')}</h2>
+                <p>{t('showcase.photoHint')}</p>
+              </div>
+              <span className="showcase-write__count">
+                {t('showcase.photoCount', { count: files.length })}
+              </span>
+            </header>
             <input
-              id="showcase-photos"
+              ref={fileInputRef}
               className="showcase-write__file"
               type="file"
               accept="image/jpeg,image/png,image/webp"
               multiple
               onChange={(e) => {
-                const next = Array.from(e.target.files ?? []);
-                setFiles((prev) => [...prev, ...next].slice(0, 6));
-                e.target.value = '';
+                addFiles(e.target.files);
+                e.currentTarget.value = '';
               }}
             />
-            {previewUrls.length > 0 ? (
-              <div className="showcase-write__thumbs">
-                {previewUrls.map((url, idx) => (
-                  <button
-                    key={`${url}-${idx}`}
-                    type="button"
-                    className="showcase-write__thumb"
-                    onClick={() => setFiles((prev) => prev.filter((_, i) => i !== idx))}
-                    aria-label={t('showcase.removePhoto')}
-                  >
-                    <img src={url} alt="" />
-                    <span className="showcase-write__thumb-x" aria-hidden>
-                      ×
-                    </span>
-                  </button>
-                ))}
-                {files.length < 6 ? (
-                  <label htmlFor="showcase-photos" className="showcase-write__add">
-                    +
-                    <span>
-                      {files.length}/6
-                    </span>
-                  </label>
-                ) : null}
-              </div>
-            ) : (
-              <label htmlFor="showcase-photos" className="showcase-write__drop">
+            {previewUrls.length === 0 ? (
+              <button
+                type="button"
+                className="showcase-write__drop"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <ImagePlus size={28} strokeWidth={2} aria-hidden />
                 <strong>{t('showcase.photoAdd')}</strong>
                 <span>{t('showcase.photoHint')}</span>
-              </label>
+              </button>
+            ) : (
+              <div className="showcase-write__gallery">
+                <div className="showcase-write__hero">
+                  <img src={previewUrls[0]} alt="" />
+                  <span className="showcase-write__cover">{t('showcase.photoCover')}</span>
+                  <button
+                    type="button"
+                    className="showcase-write__remove"
+                    aria-label={t('showcase.removePhoto')}
+                    onClick={() => setFiles((prev) => prev.slice(1))}
+                  >
+                    <X size={16} strokeWidth={2.4} aria-hidden />
+                  </button>
+                </div>
+                <div className="showcase-write__thumbs">
+                  {previewUrls.slice(1).map((url, idx) => (
+                    <div key={`${url}-${idx}`} className="showcase-write__thumb">
+                      <img src={url} alt="" />
+                      <button
+                        type="button"
+                        className="showcase-write__remove"
+                        aria-label={t('showcase.removePhoto')}
+                        onClick={() =>
+                          setFiles((prev) => prev.filter((_, i) => i !== idx + 1))
+                        }
+                      >
+                        <X size={14} strokeWidth={2.4} aria-hidden />
+                      </button>
+                    </div>
+                  ))}
+                  {files.length < 6 ? (
+                    <button
+                      type="button"
+                      className="showcase-write__add"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <ImagePlus size={18} strokeWidth={2.2} aria-hidden />
+                      {files.length}/6
+                    </button>
+                  ) : null}
+                </div>
+              </div>
             )}
           </section>
 
-          <section className="showcase-write__picks">
-            <div className="showcase-write__pick">
-              <span className="showcase-write__label">{t('showcase.stepGym')}</span>
-              {myGyms.length > 0 ? (
-                <select
-                  value={userGymId}
-                  onChange={(e) => {
-                    setUserGymId(e.target.value);
-                    if (e.target.value) {
+          <section className={`showcase-write__card${gymReady ? ' is-ready' : ''}`}>
+            <header className="showcase-write__card-head">
+              <span className="showcase-write__step">2</span>
+              <div>
+                <h2>{t('showcase.stepGym')}</h2>
+                <p>{t('showcase.selectGym')}</p>
+              </div>
+            </header>
+            {myGyms.length > 0 ? (
+              <div className="showcase-write__choices">
+                {myGyms.map((g) => (
+                  <button
+                    key={g.id}
+                    type="button"
+                    className={userGymId === g.id ? 'is-on' : ''}
+                    onClick={() => {
+                      setUserGymId(g.id);
                       setGymId('');
                       setPickedGymName('');
-                    }
-                  }}
-                >
-                  <option value="">{t('showcase.selectGym')}</option>
-                  {myGyms.map((g) => (
-                    <option key={g.id} value={g.id}>
-                      {g.name}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <Link className="showcase-write__textlink" to={ROUTES.MY_GYMS}>
-                  {t('showcase.registerGym')}
-                </Link>
-              )}
-              <button
-                type="button"
-                className="showcase-write__textlink showcase-write__textlink--btn"
-                onClick={() => setGymSearchOpen((open) => !open)}
-              >
-                {t('showcase.otherGym')}
-              </button>
-              {gymSearchOpen ? (
-                <>
-                  <input
-                    value={gymQ}
-                    onChange={(e) => setGymQ(e.target.value)}
-                    placeholder={t('showcase.searchGym')}
-                  />
-                  {directoryQuery.data?.length ? (
-                    <div className="showcase-picker">
-                      {directoryQuery.data.map((g) => (
-                        <button
-                          key={g.id}
-                          type="button"
-                          className={gymId === g.id ? 'is-selected' : ''}
-                          onClick={() => {
-                            setGymId(g.id);
-                            setUserGymId('');
-                            setPickedGymName(g.name);
-                            setGymSearchOpen(false);
-                          }}
-                        >
-                          {g.name}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </>
-              ) : null}
-              {gymId && pickedGymName && !userGymId ? (
-                <p className="showcase-write__picked">{pickedGymName}</p>
-              ) : null}
-            </div>
-
-            <div className="showcase-write__pick">
-              <span className="showcase-write__label">{t('showcase.stepMachine')}</span>
-              {machineCode && !machineSearchOpen ? (
-                <div className="showcase-write__chiprow">
-                  <span className="showcase-write__chip">{machineLabel}</span>
-                  <button
-                    type="button"
-                    className="showcase-write__textlink showcase-write__textlink--btn"
-                    onClick={() => setMachineSearchOpen(true)}
+                      setGymSearchOpen(false);
+                    }}
                   >
-                    {t('showcase.changeMachine')}
+                    {g.name}
                   </button>
+                ))}
+              </div>
+            ) : (
+              <Link className="btn btn--secondary btn--block" to={ROUTES.MY_GYMS}>
+                {t('showcase.registerGym')}
+              </Link>
+            )}
+            {gymId && pickedGymName && !userGymId ? (
+              <p className="showcase-write__picked">{pickedGymName}</p>
+            ) : null}
+            <button
+              type="button"
+              className="showcase-write__more"
+              onClick={() => setGymSearchOpen((open) => !open)}
+            >
+              {t('showcase.otherGym')}
+            </button>
+            {gymSearchOpen ? (
+              <div className="showcase-write__search">
+                <input
+                  value={gymQ}
+                  onChange={(e) => setGymQ(e.target.value)}
+                  placeholder={t('showcase.searchGym')}
+                />
+                {directoryQuery.data?.length ? (
+                  <div className="showcase-write__results">
+                    {directoryQuery.data.map((g) => (
+                      <button
+                        key={g.id}
+                        type="button"
+                        className={gymId === g.id ? 'is-on' : ''}
+                        onClick={() => {
+                          setGymId(g.id);
+                          setUserGymId('');
+                          setPickedGymName(g.name);
+                          setGymSearchOpen(false);
+                        }}
+                      >
+                        {g.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </section>
+
+          <section className={`showcase-write__card${machineReady ? ' is-ready' : ''}`}>
+            <header className="showcase-write__card-head">
+              <span className="showcase-write__step">3</span>
+              <div>
+                <h2>{t('showcase.stepMachine')}</h2>
+                <p>{t('showcase.searchMachineHint')}</p>
+              </div>
+            </header>
+            {machineCode && !machineSearchOpen ? (
+              <div className="showcase-write__selected">
+                <div>
+                  <strong>{machineLabel}</strong>
+                  {machineBrand ? <span>{machineBrand}</span> : null}
                 </div>
-              ) : (
-                <>
-                  <input
-                    value={machineQ}
-                    onChange={(e) => setMachineQ(e.target.value)}
-                    placeholder={t('showcase.searchMachine')}
-                  />
-                  <div className="showcase-picker">
+                <button
+                  type="button"
+                  className="showcase-write__more"
+                  onClick={() => setMachineSearchOpen(true)}
+                >
+                  {t('showcase.changeMachine')}
+                </button>
+              </div>
+            ) : (
+              <div className="showcase-write__search">
+                <input
+                  value={machineQ}
+                  onChange={(e) => setMachineQ(e.target.value)}
+                  placeholder={t('showcase.searchMachine')}
+                  autoComplete="off"
+                />
+                {machineQ.trim().length >= 1 && machinesQuery.data?.length === 0 && !machinesQuery.isFetching ? (
+                  <p className="showcase-write__empty">{t('showcase.noMachineResults')}</p>
+                ) : null}
+                {(machinesQuery.data ?? []).length > 0 ? (
+                  <div className="showcase-write__results">
                     {(machinesQuery.data ?? []).map((m) => (
                       <button
                         key={m.code}
                         type="button"
-                        className={machineCode === m.code ? 'is-selected' : ''}
+                        className={machineCode === m.code ? 'is-on' : ''}
                         onClick={() => {
                           setMachineCode(m.code);
                           setMachineSearchOpen(false);
+                          setMachineQ('');
                         }}
                       >
-                        {getLocalizedName(m.name, i18n.language, m.code)}
-                        {m.brandCode ? ` · ${m.brandCode}` : ''}
+                        <strong>{getLocalizedName(m.name, i18n.language, m.code)}</strong>
+                        {m.brandCode ? <span>{m.brandCode}</span> : null}
                       </button>
                     ))}
                   </div>
-                  <Link className="showcase-write__textlink" to={ROUTES.MACHINE_REQUESTS_WRITE}>
-                    {t('showcase.suggestMachine')}
-                  </Link>
-                </>
-              )}
-            </div>
+                ) : null}
+                <Link className="showcase-write__more" to={ROUTES.MACHINE_REQUESTS_WRITE}>
+                  {t('showcase.suggestMachine')}
+                </Link>
+              </div>
+            )}
           </section>
 
-          <section className="showcase-write__copy">
+          <section className="showcase-write__card">
+            <header className="showcase-write__card-head">
+              <span className="showcase-write__step">4</span>
+              <div>
+                <h2>{t('showcase.stepCaption')}</h2>
+                <p>{t('showcase.stepTags')}</p>
+              </div>
+            </header>
             <textarea
               maxLength={500}
-              rows={2}
+              rows={3}
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               placeholder={t('showcase.captionPlaceholder')}
@@ -319,6 +402,12 @@ export function MachineShowcaseWritePage() {
               placeholder={t('showcase.tagsPlaceholder')}
             />
           </section>
+
+          <div className="showcase-write__foot">
+            <button type="submit" className="btn btn--primary btn--block" disabled={mutation.isPending}>
+              {mutation.isPending ? t('showcase.submitting') : t('showcase.submit')}
+            </button>
+          </div>
         </form>
       </PageShell>
     </div>
