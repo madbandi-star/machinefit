@@ -3,7 +3,7 @@
   "summary": "머신도감 공유관 게시글 상세를 사진·수치 중심으로 재배치하고, 버튼 문구를 요청 문구로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "fdb55a4c"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
