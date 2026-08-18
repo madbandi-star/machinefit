@@ -20,4 +20,4 @@
 - to-be: 제출하신 80개 공통 문구만 표시
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** ec544d57
