@@ -3,7 +3,7 @@
   "summary": "마이페이지 메뉴와 도감 페이지 제목을 MY MACHINE DEX에서 머신도감(언어별 대응 표기)으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "1db041e3"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/common.json",

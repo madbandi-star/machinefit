@@ -11,4 +11,5 @@
 - as-is: MY MACHINE DEX
 - to-be: 머신도감
 
-**Branch:** `main`
+**Branch:** `main`  
+**Commit:** `1db041e3`
