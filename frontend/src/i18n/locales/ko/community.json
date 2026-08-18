@@ -451,7 +451,7 @@
     "views": "조회 {{count}}",
     "deleteConfirm": "이 자랑글을 삭제할까요?",
     "dexTitle": "머신도감",
-    "dexSubtitle": "자랑글로 발견한 머신을 모아 보세요",
+    "dexSubtitle": "새로운 머신을 찾아서 수집해보세요.",
     "dexBack": "마이페이지",
     "dexProgress": "발견 {{found}} / {{total}}",
     "dexFoundChip": "발견 {{count}}",

@@ -451,7 +451,7 @@
     "views": "閲覧 {{count}}",
     "deleteConfirm": "この投稿を削除しますか？",
     "dexTitle": "マシン図鑑",
-    "dexSubtitle": "自慢投稿で見つけたマシンを集めましょう",
+    "dexSubtitle": "新しいマシンを見つけて集めましょう。",
     "dexBack": "マイページ",
     "dexProgress": "発見 {{found}} / {{total}}",
     "dexFoundChip": "発見 {{count}}",
