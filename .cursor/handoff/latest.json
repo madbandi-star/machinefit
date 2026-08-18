@@ -3,7 +3,7 @@
   "summary": "타이머 기록 목록·세션 상세를 시인성 중심으로 재구성했다(큰 운동시간, 통계 격자, 랩 타임라인).",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "2b2371d7"
   },
   "changedFiles": [
     "frontend/src/pages/timer-history/TimerHistoryPage.tsx",

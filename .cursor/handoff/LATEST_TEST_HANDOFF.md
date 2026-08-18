@@ -12,4 +12,4 @@
 - to-be: 시간 강조·격자·타임라인
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `2b2371d7`
