@@ -3,7 +3,7 @@
   "summary": "머신도감이 너무 미니멀해서, 큰 진행률·헬스장 카드·등급 필터·2열 카드(이름·브랜드·발견 정보)로 다시 짰다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "66f891d5"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
