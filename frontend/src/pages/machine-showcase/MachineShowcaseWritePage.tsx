@@ -16,6 +16,18 @@ import { getLocalizedName } from '@/utils/localizedName';
 import '@/styles/components.css';
 import '@/styles/machine-showcase.css';
 
+const MAX_TAGS = 8;
+const MAX_CAPTION = 500;
+
+function normalizeTag(raw: string): string | null {
+  const cleaned = raw
+    .replace(/^#+/, '')
+    .trim()
+    .replace(/[^\p{L}\p{N}_-]/gu, '')
+    .slice(0, 40);
+  return cleaned || null;
+}
+
 export function MachineShowcaseWritePage() {
   const { t, i18n } = useTranslation('community');
   const navigate = useNavigate();
@@ -35,7 +47,8 @@ export function MachineShowcaseWritePage() {
   const [machineCode, setMachineCode] = useState(presetMachineCode);
   const [machineSearchOpen, setMachineSearchOpen] = useState(!presetMachineCode);
   const [caption, setCaption] = useState('');
-  const [tagsRaw, setTagsRaw] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState('');
   const [files, setFiles] = useState<File[]>([]);
 
   const myGyms = gyms.filter((g) => !isAllGymsId(g.id));
@@ -95,11 +108,7 @@ export function MachineShowcaseWritePage() {
       machineShowcaseApi.create({
         machineCode,
         caption,
-        tags: tagsRaw
-          .split(/[,\s#]+/)
-          .map((x) => x.trim())
-          .filter(Boolean)
-          .slice(0, 8),
+        tags,
         userGymId: userGymId || undefined,
         gymId: gymId || undefined,
         files,
@@ -130,6 +139,22 @@ export function MachineShowcaseWritePage() {
     if (!photoReady) showToast(t('showcase.writeNeedPhoto'), 'error');
     else if (!gymReady) showToast(t('showcase.writeNeedGym'), 'error');
     else if (!machineReady) showToast(t('showcase.writeNeedMachine'), 'error');
+  };
+
+  const addTag = (raw: string) => {
+    const next = normalizeTag(raw);
+    if (!next) return;
+    setTags((prev) => {
+      if (prev.length >= MAX_TAGS || prev.some((tag) => tag.toLowerCase() === next.toLowerCase())) {
+        return prev;
+      }
+      return [...prev, next];
+    });
+    setTagDraft('');
+  };
+
+  const commitTagDraft = () => {
+    if (tagDraft.trim()) addTag(tagDraft);
   };
 
   const addFiles = (list: FileList | File[] | null) => {
@@ -295,6 +320,7 @@ export function MachineShowcaseWritePage() {
             {gymSearchOpen ? (
               <div className="showcase-write__search">
                 <input
+                  className="input"
                   value={gymQ}
                   onChange={(e) => setGymQ(e.target.value)}
                   placeholder={t('showcase.searchGym')}
@@ -347,6 +373,7 @@ export function MachineShowcaseWritePage() {
             ) : (
               <div className="showcase-write__search">
                 <input
+                  className="input"
                   value={machineQ}
                   onChange={(e) => setMachineQ(e.target.value)}
                   placeholder={t('showcase.searchMachine')}
@@ -381,26 +408,95 @@ export function MachineShowcaseWritePage() {
             )}
           </section>
 
-          <section className="showcase-write__card">
+          <section className={`showcase-write__card${caption.trim() || tags.length ? ' is-ready' : ''}`}>
             <header className="showcase-write__card-head">
               <span className="showcase-write__step">4</span>
               <div>
                 <h2>{t('showcase.stepCaption')}</h2>
-                <p>{t('showcase.stepTags')}</p>
+                <p>{t('showcase.captionHint')}</p>
               </div>
+              <span className="showcase-write__count">
+                {t('showcase.captionCount', { count: caption.length, max: MAX_CAPTION })}
+              </span>
             </header>
+            <label className="visually-hidden" htmlFor="showcase-caption">
+              {t('showcase.stepCaption')}
+            </label>
             <textarea
-              maxLength={500}
-              rows={3}
+              id="showcase-caption"
+              className="input showcase-write__compose"
+              maxLength={MAX_CAPTION}
+              rows={5}
               value={caption}
-              onChange={(e) => setCaption(e.target.value)}
+              onChange={(e) => setCaption(e.target.value.slice(0, MAX_CAPTION))}
               placeholder={t('showcase.captionPlaceholder')}
             />
-            <input
-              value={tagsRaw}
-              onChange={(e) => setTagsRaw(e.target.value)}
-              placeholder={t('showcase.tagsPlaceholder')}
-            />
+
+            <div className="showcase-write__field">
+              <div className="showcase-write__field-head">
+                <h3>{t('showcase.stepTags')}</h3>
+                <span>{t('showcase.tagsCount', { count: tags.length, max: MAX_TAGS })}</span>
+              </div>
+              <p className="showcase-write__field-hint">{t('showcase.tagsHint')}</p>
+              <div className={`showcase-write__tagbox${tags.length >= MAX_TAGS ? ' is-full' : ''}`}>
+                {tags.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    className="showcase-write__tag"
+                    aria-label={t('showcase.tagRemoveAria', { tag })}
+                    onClick={() => setTags((prev) => prev.filter((item) => item !== tag))}
+                  >
+                    #{tag}
+                    <X size={14} strokeWidth={2.4} aria-hidden />
+                  </button>
+                ))}
+                {tags.length < MAX_TAGS ? (
+                  <input
+                    className="showcase-write__tag-input"
+                    value={tagDraft}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.includes(',') || value.includes('#')) {
+                        const parts = value.split(/[,#]+/);
+                        const tail = parts.pop() ?? '';
+                        setTags((prev) => {
+                          const next = [...prev];
+                          for (const part of parts) {
+                            const tag = normalizeTag(part);
+                            if (
+                              !tag ||
+                              next.length >= MAX_TAGS ||
+                              next.some((item) => item.toLowerCase() === tag.toLowerCase())
+                            ) {
+                              continue;
+                            }
+                            next.push(tag);
+                          }
+                          return next;
+                        });
+                        setTagDraft(tail);
+                        return;
+                      }
+                      setTagDraft(value);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        commitTagDraft();
+                      } else if (e.key === 'Backspace' && !tagDraft && tags.length) {
+                        setTags((prev) => prev.slice(0, -1));
+                      }
+                    }}
+                    onBlur={commitTagDraft}
+                    placeholder={tags.length ? t('showcase.tagsMorePlaceholder') : t('showcase.tagsPlaceholder')}
+                    aria-label={t('showcase.tagsAddAria')}
+                    autoComplete="off"
+                    enterKeyHint="done"
+                  />
+                ) : null}
+              </div>
+            </div>
           </section>
 
           <div className="showcase-write__foot">

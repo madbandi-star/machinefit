@@ -640,15 +640,105 @@
 
 .showcase-write__search input,
 .showcase-write__card textarea,
-.showcase-write__card input {
+.showcase-write__card input.input {
   width: 100%;
   margin: 0;
-  min-height: 2.6rem;
+  min-height: 2.75rem;
 }
 
-.showcase-write__card textarea {
-  min-height: 4.5rem;
+.showcase-write__compose {
+  min-height: 7.5rem;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
   resize: vertical;
+}
+
+.showcase-write__field {
+  display: grid;
+  gap: 0.35rem;
+  padding-top: 0.25rem;
+}
+
+.showcase-write__field-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.showcase-write__field-head h3 {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.showcase-write__field-head span {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.showcase-write__field-hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.showcase-write__tagbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 3.15rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+
+.showcase-write__tagbox:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.showcase-write__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-height: 2.15rem;
+  padding: 0.2rem 0.4rem 0.2rem 0.65rem;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary, #c9a227) 16%, transparent);
+  color: var(--color-text);
+  font-size: 0.8125rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.showcase-write__tag-input {
+  flex: 1 1 8rem;
+  min-width: 7rem;
+  min-height: 2.25rem;
+  margin: 0;
+  padding: 0.25rem 0.35rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  box-shadow: none;
+}
+
+.showcase-write__tag-input:focus {
+  outline: none;
+}
+
+.showcase-write__tagbox.is-full {
+  padding-right: 0.65rem;
 }
 
 .showcase-write__more {

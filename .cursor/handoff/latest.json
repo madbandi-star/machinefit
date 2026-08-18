@@ -1,27 +1,33 @@
 {
-  "title": "Align machine dex grid and grade chips",
-  "summary": "머신도감 등급 칩을 화면 안 4열 격자로 넣고, 카드 2열 높이를 맞춰 행·열이 어긋나지 않게 했다.",
+  "title": "Comfortable showcase caption and tags",
+  "summary": "기구 자랑하기 등록의 한마디·태그 입력을 큰 작성칸, 글자 수, 태그 칩(엔터/쉼표 추가·탭 삭제)으로 바꿨다.",
   "git": {
     "branch": "main",
-    "commit": "5c346d08"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
-    "frontend/src/styles/machine-showcase.css"
+    "frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx",
+    "frontend/src/styles/machine-showcase.css",
+    "frontend/src/i18n/locales/ko/community.json",
+    "frontend/src/i18n/locales/en/community.json",
+    "frontend/src/i18n/locales/ja/community.json",
+    "frontend/src/i18n/locales/zh/community.json"
   ],
   "testFocus": [
-    "등급 칩이 가로로 화면을 벗어나지 않고 4열×2행으로 보이는지",
-    "카드 2열이 같은 높이로 맞춰지는지"
+    "한마디 큰 입력칸, 글자 수 n/500",
+    "태그: 엔터/쉼표로 칩 추가, 칩 탭하면 삭제, 최대 8개",
+    "검색 입력(헬스장·기구)도 커진 입력칸"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern 'repeat(4, minmax(0, 1fr))'"
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx -Pattern showcase-write__compose",
+    "Select-String -Path frontend/src/pages/machine-showcase/MachineShowcaseWritePage.tsx -Pattern showcase-write__tagbox"
   ],
   "productionChecks": [
-    "Open machine dex on phone-width and confirm chips stay on screen"
+    "Open showcase write and type caption + tags on phone-width"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "등급 칩이 화면 밖으로 밀림, 카드 높이 들쭉날쭉",
-  "toBe": "4열 칩, 2열 카드 높이 정렬"
+  "asIs": "작은 textarea + 한 줄 태그 입력, 안내 없음",
+  "toBe": "큰 작성칸, 글자 수, 태그 칩"
 }
