@@ -23,4 +23,4 @@
 - to-be: 타이머 세션(1분+)·머신도감 자랑/보유/첫 발견도 적립
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `33fec92e`

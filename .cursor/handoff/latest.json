@@ -3,7 +3,7 @@
   "summary": "타이머 세션(1분 이상 저장)과 머신도감 자랑 작성·보유 등록·신규 발견에도 헬창력 POWER를 적립한다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "33fec92e"
   },
   "changedFiles": [
     "shared/src/constants/points.ts",
