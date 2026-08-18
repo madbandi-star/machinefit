@@ -18,6 +18,8 @@ interface ImportMetaEnv {
   readonly VITE_KAKAO_JS_KEY?: string;
   readonly VITE_APPLE_CLIENT_ID?: string;
   readonly VITE_APPLE_REDIRECT_URI?: string;
+  /** When true, emit PAGE_PERFORMANCE console.warn (also: localStorage mf_page_perf=1). */
+  readonly VITE_PAGE_PERF_LOG?: string;
 }
 
 interface ImportMeta {

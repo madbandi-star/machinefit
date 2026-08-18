@@ -14,6 +14,7 @@ import {
   pruneStaleChunkRetryState,
 } from '@/utils/chunkLoadRecovery';
 import { installOpsTelemetry } from '@/utils/opsTelemetry';
+import { markReactMounted } from '@/utils/pagePerformance';
 import { initFrontendSentry } from '@/app/sentry';
 
 /**
@@ -109,6 +110,7 @@ async function boot() {
       </AppProviders>
     </StrictMode>
   );
+  markReactMounted();
 
   // After a recover reload, wait longer before clearing the counter so attempts accumulate.
   window.setTimeout(

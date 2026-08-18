@@ -4,6 +4,7 @@ import { adEventBus } from '@/ads/adEventBus';
 import { bumpNavCount, shouldDedupe } from '@/ads/adSession';
 import { trackPageView } from '@/utils/opsTelemetry';
 import { trackUsageForPath } from '@/utils/usageTelemetry';
+import { startPagePerf } from '@/utils/pagePerformance';
 
 /** Maps location changes to ops page_view events + selective usage tracking. */
 export function OpsTelemetryBridge() {
@@ -12,6 +13,7 @@ export function OpsTelemetryBridge() {
 
   useEffect(() => {
     const pathKey = `${location.pathname}${location.search ? '?…' : ''}`.slice(0, 200);
+    startPagePerf(pathKey);
     trackPageView(pathKey, { entrance: first.current });
     trackUsageForPath(location.pathname);
 

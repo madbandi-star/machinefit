@@ -6,6 +6,7 @@ import { clearGymScope } from '@/utils/syncGymScope';
 import { useSettingsStore } from '@/store/settings.store';
 import { clearKakaoOAuthStaging } from '@/utils/oauthClient';
 import { clearOAuthPending, clearTermsChecks } from '@/utils/oauthPending';
+import { isPagePerfEnabled, trackPageApiEnd, trackPageApiStart } from '@/utils/pagePerformance';
 
 export { API_BASE_URL };
 /** Default for normal JSON APIs. Uploads/heavy routes override per-request. */
@@ -75,6 +76,10 @@ apiClient.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${tokens.accessToken}`;
   }
   config.headers['Accept-Language'] = useSettingsStore.getState().locale;
+  if (isPagePerfEnabled()) {
+    (config as RetryConfig & { __perfStartedAt?: number }).__perfStartedAt = Date.now();
+    trackPageApiStart();
+  }
   // Correlate FE → BE logs (server may overwrite with its own id).
   if (!config.headers['X-Request-ID'] && !config.headers['x-request-id']) {
     const id =
@@ -103,14 +108,22 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+function notePageApiDuration(config: RetryConfig | undefined): void {
+  const started = (config as RetryConfig & { __perfStartedAt?: number } | undefined)?.__perfStartedAt;
+  if (started == null) return;
+  trackPageApiEnd(Date.now() - started);
+}
+
 apiClient.interceptors.response.use(
   (response) => {
+    notePageApiDuration(response.config as RetryConfig);
     void import('@/store/apiHealth.store').then(({ useApiHealthStore }) => {
       useApiHealthStore.getState().recordSuccess();
     });
     return response;
   },
   async (error) => {
+    notePageApiDuration(error.config as RetryConfig | undefined);
     const originalRequest = error.config as RetryConfig | undefined;
     const status = error.response?.status;
 

@@ -1,9 +1,33 @@
 import pg from 'pg';
 import { env } from './env.js';
+import { apiPerfAls } from '../middlewares/api-perf.middleware.js';
 
 const { Pool } = pg;
 
 let pool: pg.Pool | null = null;
+let poolQueryInstrumented = false;
+
+function instrumentPoolQuery(active: pg.Pool): void {
+  if (poolQueryInstrumented) return;
+  poolQueryInstrumented = true;
+  const originalQuery = active.query.bind(active) as pg.Pool['query'];
+  // Attribute every pool.query to the active request ALS store (API_PERF_LOG / dev only stores).
+  active.query = ((...args: Parameters<pg.Pool['query']>) => {
+    const marks = apiPerfAls.getStore();
+    if (!marks) {
+      return (originalQuery as (...a: unknown[]) => unknown)(...args);
+    }
+    const started = Date.now();
+    const result = (originalQuery as (...a: unknown[]) => unknown)(...args);
+    if (result && typeof (result as Promise<unknown>).then === 'function') {
+      return (result as Promise<unknown>).finally(() => {
+        marks.markDb(Date.now() - started);
+      });
+    }
+    marks.markDb(Date.now() - started);
+    return result;
+  }) as pg.Pool['query'];
+}
 
 function useSsl(connectionString: string): boolean {
   return (
@@ -49,6 +73,7 @@ export function getPool(): pg.Pool | null {
         /* ignore */
       }
     });
+    instrumentPoolQuery(pool);
   }
   return pool;
 }
