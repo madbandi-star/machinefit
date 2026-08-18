@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { brandAssetRepository, type BrandAssetKind } from '../repositories/brand-asset.repository.js';
+import { redirectToObjectUrl } from '../utils/media-cdn.js';
 import { sendImmutableMedia, trySendNotModified } from '../utils/media-response.js';
 
 function parseKind(raw: string): BrandAssetKind | null {
@@ -20,7 +21,6 @@ export async function serveBrandAssetImage(req: Request, res: Response, next: Ne
       return;
     }
 
-    // Version-only probe first — skip BYTEA on If-None-Match hit (1k concurrent media).
     const meta = await brandAssetRepository.getBlobMeta(brandCode, kind);
     if (!meta) {
       res.status(404).end();
@@ -28,6 +28,13 @@ export async function serveBrandAssetImage(req: Request, res: Response, next: Ne
     }
     const etag = `"ba-${brandCode}-${kind}-${meta.version}"`;
     if (trySendNotModified(req, res, etag)) return;
+
+    if (redirectToObjectUrl(res, meta.objectUrl)) return;
+
+    if (!meta.hasBlob) {
+      res.status(404).end();
+      return;
+    }
 
     const blob = await brandAssetRepository.getBlob(brandCode, kind);
     if (!blob) {

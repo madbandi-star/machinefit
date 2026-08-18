@@ -1,25 +1,22 @@
-# Test handoff ??Performance diagnosis + opt-in timing
+# Test handoff — BYTEA → Storage/CDN dual-path
 
 ## Summary
-Diagnosed MachineFit bottlenecks and added opt-in `PAGE_PERFORMANCE` / `API_PERFORMANCE` instrumentation. No product/UI/schema changes.
+Media serving prefers Supabase Storage (public or signed) with 302 redirect. BYTEA kept as fallback. Migration 152 is additive only. Bulk copy via `npm run media:migrate-storage`.
 
 ## Test focus
-1. Dev navigate: console shows `PAGE_PERFORMANCE` after route settle
-2. Backend with `API_PERF_LOG=1`: `API_PERFORMANCE` lines include `db=` when hitting catalog endpoints
-3. Confirm API responses and UI unchanged
+1. After migrate 152, catalog cover endpoints redirect to `supabase.co/storage` when `storage_path` set
+2. Unmigrated rows still return BYTEA (images not broken)
+3. No UI/schema breaking changes
+4. Do **not** drop BYTEA yet
 
 ## Fast checks
-- `frontend/src/utils/pagePerformance.ts` contains `PAGE_PERFORMANCE`
-- `backend/server/middlewares/api-perf.middleware.ts` contains `API_PERFORMANCE`
-- `docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md` exists
+- `152_media_storage_cdn.sql` contains `media_storage_migration_log`
+- `media-cdn.ts` contains `redirectToObjectUrl`
+- `scripts/migrate-bytea-to-storage.mjs` exists
 
-## As-is ??To-be
-- as-is: no page landing timing; limited DB attribution
-- to-be: opt-in page + API timing with pool.query DB ms; diagnosis report for paid vs code ROI
-
-## Enable
-- FE: `localStorage.setItem('mf_page_perf','1')` or `VITE_PAGE_PERF_LOG=1`
-- BE: `API_PERF_LOG=1` (always on in development)
+## As-is → To-be
+- as-is: Render streams BYTEA for covers/brands/UGC
+- to-be: Browser → CDN/Storage when migrated; BYTEA fallback otherwise
 
 **Branch:** `main`  
-**Commit:** 14ed9ccd
+**Commit:** PENDING

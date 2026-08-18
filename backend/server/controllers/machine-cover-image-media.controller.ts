@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { TARGET_MUSCLE_GROUPS } from '@machinefit/shared';
 import { machineCoverImageService } from '../services/machine-cover-image.service.js';
+import { redirectToObjectUrl } from '../utils/media-cdn.js';
 import { sendImmutableMedia, trySendNotModified } from '../utils/media-response.js';
 
 const MUSCLE_SET = new Set<string>(TARGET_MUSCLE_GROUPS);
@@ -42,7 +43,6 @@ export async function serveMachineCoverImage(req: Request, res: Response, next: 
     }
 
     const etagMuscle = targetMuscle ? `-${targetMuscle}` : '';
-    // Version-only probe first — skip BYTEA on If-None-Match hit.
     const meta = await machineCoverImageService.getBlobMeta(machineCode, kind, targetMuscle);
     if (!meta) {
       res.status(404).end();
@@ -50,6 +50,14 @@ export async function serveMachineCoverImage(req: Request, res: Response, next: 
     }
     const etag = `"mci-${machineCode}${etagMuscle}-${kind}-${meta.version}"`;
     if (trySendNotModified(req, res, etag)) return;
+
+    // Prefer CDN/Storage — do not pull BYTEA through Render when object URL exists.
+    if (redirectToObjectUrl(res, meta.objectUrl)) return;
+
+    if (!meta.hasBlob) {
+      res.status(404).end();
+      return;
+    }
 
     const blob = await machineCoverImageService.getBlob(machineCode, kind, targetMuscle);
     if (!blob) {

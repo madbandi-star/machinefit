@@ -137,14 +137,14 @@ export const machineCoverImageService = {
 
     const dbKey = targetMuscle ? `${machine.code}/${targetMuscle}` : machine.code;
     try {
-      // Always expose canonical API media URLs so clients (search list gate) accept covers.
-      // Supabase remains the object store when available; BYTEA is the durable fallback.
+      // Prefer direct Storage public URLs so browsers skip Render BYTEA.
+      // Fall back to API media URLs (BYTEA/redirect) when Storage is unavailable.
       const saved = await machineCoverImageRepository.upsert({
         machineId: machine.id,
         machineCode: machine.code,
         targetMuscleGroup: targetMuscle,
-        imageUrl: apiMainUrl,
-        thumbnailUrl: apiThumbUrl,
+        imageUrl: mainStored?.publicUrl ?? apiMainUrl,
+        thumbnailUrl: thumbStored?.publicUrl ?? apiThumbUrl,
         storagePath: mainStored?.storagePath ?? `db:${dbKey}/main`,
         thumbnailStoragePath: thumbStored?.storagePath ?? `db:${dbKey}/thumb`,
         originalFilename: originalName,

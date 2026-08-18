@@ -600,6 +600,8 @@ export const photoBoardRepository = {
       return {
         mimeType: img.mimeType,
         etagToken: `${imageId}-${variant}-${img.imageData.length}`,
+        storagePath: null as string | null,
+        thumbnailStoragePath: null as string | null,
       };
     }
     const result = await pool.query<{
@@ -608,16 +610,21 @@ export const photoBoardRepository = {
       updated_at: Date | string;
       is_hidden: boolean;
       has_blob: boolean;
+      storage_path: string | null;
+      thumbnail_storage_path: string | null;
     }>(
       `SELECT i.mime_type, i.file_size_bytes, i.updated_at, p.is_hidden,
-              (${variant === 'thumb' ? 'i.thumbnail_data' : 'i.image_data'} IS NOT NULL) AS has_blob
+              (${variant === 'thumb' ? 'i.thumbnail_data' : 'i.image_data'} IS NOT NULL) AS has_blob,
+              i.storage_path, i.thumbnail_storage_path
        FROM photo_post_images i
        JOIN photo_posts p ON p.id = i.post_id
        WHERE i.id = $1`,
       [imageId]
     );
     const row = result.rows[0];
-    if (!row || row.is_hidden || !row.has_blob) return null;
+    const hasStorage =
+      Boolean(row?.storage_path) || Boolean(row?.thumbnail_storage_path);
+    if (!row || row.is_hidden || (!row.has_blob && !hasStorage)) return null;
     const stamp =
       row.updated_at instanceof Date
         ? row.updated_at.toISOString()
@@ -625,6 +632,8 @@ export const photoBoardRepository = {
     return {
       mimeType: row.mime_type,
       etagToken: `${imageId}-${variant}-${row.file_size_bytes ?? 0}-${stamp}`,
+      storagePath: row.storage_path,
+      thumbnailStoragePath: row.thumbnail_storage_path,
     };
   },
 

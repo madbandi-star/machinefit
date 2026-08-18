@@ -94,6 +94,20 @@ export async function getImage(req: Request, res: Response): Promise<void> {
   if (!meta) throw new AppError(404, 'NOT_FOUND', 'Image not found');
   const etag = `"pbi-${meta.etagToken}"`;
   if (trySendNotModified(req, res, etag, UGC_MEDIA_CACHE)) return;
+
+  // Prefer Storage signed URL after auth — avoid BYTEA through Render.
+  const storagePath =
+    variant === 'main' ? meta.storagePath : meta.thumbnailStoragePath ?? meta.storagePath;
+  if (storagePath) {
+    const { storageService } = await import('../services/storage.service.js');
+    const signed = await storageService.createUgcSignedUrl(storagePath);
+    if (signed) {
+      res.setHeader('Cache-Control', UGC_MEDIA_CACHE);
+      res.redirect(302, signed);
+      return;
+    }
+  }
+
   const image = await photoBoardService.getImageBinary(imageId, variant);
   sendImmutableMedia(req, res, {
     etag,

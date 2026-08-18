@@ -1,52 +1,57 @@
 {
-  "title": "Performance bottleneck diagnosis + opt-in timing",
-  "summary": "Added PAGE_PERFORMANCE / API_PERFORMANCE instrumentation (dev and opt-in). Published diagnosis report: warm APIs ~150ms; landing cost is FE bundle + home API fan-out; Render plan upgrade is MEDIUM for solo latency.",
+  "title": "BYTEA → Storage/CDN dual-path media",
+  "summary": "Prefer Supabase Storage public/signed URLs with 302 redirect; keep BYTEA fallback. Added migration 152, migrate-bytea-to-storage script, brand-assets + ugc-images buckets.",
   "git": {
     "branch": "main",
-    "commit": "14ed9ccd"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "frontend/src/utils/pagePerformance.ts",
-    "frontend/src/components/ops/OpsTelemetryBridge.tsx",
-    "frontend/src/services/http/axios-client.ts",
-    "frontend/src/main.tsx",
-    "frontend/src/vite-env.d.ts",
-    "backend/server/middlewares/api-perf.middleware.ts",
-    "backend/server/config/database.ts",
-    "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md"
+    "database/migrations/152_media_storage_cdn.sql",
+    "scripts/migrate-bytea-to-storage.mjs",
+    "backend/server/utils/media-cdn.ts",
+    "backend/server/services/storage.service.ts",
+    "backend/server/services/machine-cover-image.service.ts",
+    "backend/server/services/admin-catalog.service.ts",
+    "backend/server/controllers/machine-cover-image-media.controller.ts",
+    "backend/server/controllers/muscle-group-image-media.controller.ts",
+    "backend/server/controllers/brand-asset-media.controller.ts",
+    "backend/server/controllers/photo-board.controller.ts",
+    "docs/MEDIA_STORAGE_CDN_MIGRATION_2026-08-19.md"
   ],
   "testFocus": [
-    "Dev: navigate pages and confirm PAGE_PERFORMANCE console.warn appears",
-    "With API_PERF_LOG=1, confirm API_PERFORMANCE includes db= from pool queries",
-    "No change to API JSON shapes or UI"
+    "Apply migration 152 (additive columns only)",
+    "DRY_RUN media migrator then real run on staging/prod",
+    "Cover/muscle/brand media: 302 to supabase when migrated; BYTEA if not",
+    "UI unchanged: home/search/detail/boards still show images"
   ],
   "fastChecks": [
     {
-      "id": "page-perf-file",
+      "id": "migration-152",
       "type": "file_contains",
-      "path": "frontend/src/utils/pagePerformance.ts",
-      "pattern": "PAGE_PERFORMANCE"
+      "path": "database/migrations/152_media_storage_cdn.sql",
+      "pattern": "media_storage_migration_log"
     },
     {
-      "id": "api-perf-format",
+      "id": "media-cdn-redirect",
       "type": "file_contains",
-      "path": "backend/server/middlewares/api-perf.middleware.ts",
-      "pattern": "API_PERFORMANCE"
+      "path": "backend/server/utils/media-cdn.ts",
+      "pattern": "redirectToObjectUrl"
     },
     {
-      "id": "diagnosis-doc",
+      "id": "migrator-script",
       "type": "file_contains",
-      "path": "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
-      "pattern": "Render plan upgrade"
+      "path": "scripts/migrate-bytea-to-storage.mjs",
+      "pattern": "BYTEA→Storage"
     }
   ],
   "productionChecks": [
-    "Optional: set API_PERF_LOG=1 briefly on Render and sample logs",
-    "Optional: localStorage mf_page_perf=1 as admin and read PAGE_PERFORMANCE"
+    "Render redeploy after push",
+    "Run db:migrate 152 then npm run media:migrate-storage",
+    "Spot-check machine covers load from supabase.co host"
   ],
   "deploy": {
-    "expected": "GitHub Pages + Render backend redeploy (shared not required)."
+    "expected": "Pages + Render; DB migrate 152 required; Storage migrator is ops manual"
   },
-  "asIs": "No structured page landing timings; API_PERF log format inconsistent; pool queries not auto-timed.",
-  "toBe": "Opt-in PAGE_PERFORMANCE and API_PERFORMANCE with automatic DB attribution; diagnosis doc published."
+  "asIs": "Catalog/UGC media streamed as BYTEA through Render even when Storage dual-write existed.",
+  "toBe": "Prefer Storage/CDN URLs with BYTEA fallback; BYTEA not deleted yet."
 }

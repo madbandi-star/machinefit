@@ -36,6 +36,8 @@ let audioBucketReady: Promise<void> | null = null;
 let motivationCoverBucketReady: Promise<void> | null = null;
 let muscleBucketReady: Promise<void> | null = null;
 let machineCoverBucketReady: Promise<void> | null = null;
+let brandAssetBucketReady: Promise<void> | null = null;
+let ugcBucketReady: Promise<void> | null = null;
 
 function getSupabase(): SupabaseClient | null {
   if (supabase !== undefined) return supabase;
@@ -232,6 +234,11 @@ export function stripMotivationAudioMediaToken(url: string): string {
 }
 
 export function motivationCoverPublicUrl(storagePath: string): string {
+  const client = getSupabase();
+  if (client) {
+    const { data } = client.storage.from(env.MOTIVATION_COVER_IMAGE_BUCKET).getPublicUrl(storagePath);
+    if (data?.publicUrl) return data.publicUrl;
+  }
   const encoded = storagePath
     .split('/')
     .filter(Boolean)
@@ -764,6 +771,11 @@ export const storageService = {
   },
 
   noticeAttachmentPublicUrl(storagePath: string): string {
+    const client = getSupabase();
+    if (client) {
+      const { data } = client.storage.from(env.NOTICE_ATTACHMENT_BUCKET).getPublicUrl(storagePath);
+      if (data?.publicUrl) return data.publicUrl;
+    }
     const encoded = storagePath
       .split('/')
       .filter(Boolean)
@@ -889,12 +901,211 @@ export const storageService = {
   },
 
   bannerImagePublicUrl(storagePath: string): string {
+    const client = getSupabase();
+    if (client) {
+      const { data } = client.storage.from(env.BANNER_IMAGE_BUCKET).getPublicUrl(storagePath);
+      if (data?.publicUrl) return data.publicUrl;
+    }
     const encoded = storagePath
       .split('/')
       .filter(Boolean)
       .map(encodeURIComponent)
       .join('/');
     return `${publicApiBase()}/media/banner-images/${encoded}`;
+  },
+
+  machineCoverPublicUrl(storagePath: string): string | null {
+    if (!storagePath || storagePath.startsWith('db:')) return null;
+    const client = getSupabase();
+    if (!client) return null;
+    const { data } = client.storage.from(env.MACHINE_COVER_IMAGE_BUCKET).getPublicUrl(storagePath);
+    return data?.publicUrl ?? null;
+  },
+
+  brandAssetPublicUrl(storagePath: string): string | null {
+    if (!storagePath) return null;
+    const client = getSupabase();
+    if (!client) return null;
+    const { data } = client.storage.from(env.BRAND_ASSET_IMAGE_BUCKET).getPublicUrl(storagePath);
+    return data?.publicUrl ?? null;
+  },
+
+  muscleGroupPublicUrl(storagePath: string): string | null {
+    if (!storagePath || storagePath.startsWith('db:')) return null;
+    const client = getSupabase();
+    if (!client) return null;
+    const { data } = client.storage.from(env.MUSCLE_GROUP_IMAGE_BUCKET).getPublicUrl(storagePath);
+    return data?.publicUrl ?? null;
+  },
+
+  async ensureBrandAssetBucket(): Promise<void> {
+    const client = getSupabase();
+    if (!client) return;
+    if (!brandAssetBucketReady) {
+      brandAssetBucketReady = (async () => {
+        const bucket = env.BRAND_ASSET_IMAGE_BUCKET;
+        const { data, error } = await withRetry(
+          () => client.storage.listBuckets(),
+          { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+        );
+        if (error) {
+          throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+        }
+        if (!data?.some((item) => item.name === bucket)) {
+          const created = await client.storage.createBucket(bucket, {
+            public: true,
+            fileSizeLimit: env.MUSCLE_GROUP_IMAGE_MAX_BYTES,
+            allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'],
+          });
+          if (created.error && !/already exists/i.test(created.error.message)) {
+            throw new AppError(
+              500,
+              'STORAGE_ERROR',
+              `Could not create brand-assets bucket "${bucket}"`,
+              created.error.message
+            );
+          }
+        }
+      })().catch((err) => {
+        brandAssetBucketReady = null;
+        throw err;
+      });
+    }
+    await brandAssetBucketReady;
+  },
+
+  async saveBrandAssetImage(params: {
+    brandCode: string;
+    kind: 'logo' | 'hero';
+    extension: string;
+    mimeType: string;
+    buffer: Buffer;
+    version: number;
+  }): Promise<StoredImageObject> {
+    const storagePath = `${params.brandCode}/${params.kind}-v${params.version}.${params.extension}`;
+    const client = getSupabase();
+    if (client) {
+      await this.ensureBrandAssetBucket();
+      const { error } = await client.storage.from(env.BRAND_ASSET_IMAGE_BUCKET).upload(storagePath, params.buffer, {
+        contentType: params.mimeType || 'image/webp',
+        upsert: true,
+        cacheControl: '31536000',
+      });
+      if (error) {
+        throw new AppError(500, 'UPLOAD_FAILED', 'Could not save brand asset', error.message);
+      }
+      const { data } = client.storage.from(env.BRAND_ASSET_IMAGE_BUCKET).getPublicUrl(storagePath);
+      return { storagePath, publicUrl: data.publicUrl, provider: 'supabase' };
+    }
+    return {
+      storagePath,
+      publicUrl: `${publicApiBase()}/media/brand-assets/${encodeURIComponent(params.brandCode)}/${params.kind === 'logo' ? 'logo' : 'hero'}`,
+      provider: 'local',
+    };
+  },
+
+  async ensureUgcBucket(): Promise<void> {
+    const client = getSupabase();
+    if (!client) return;
+    if (!ugcBucketReady) {
+      ugcBucketReady = (async () => {
+        const bucket = env.UGC_IMAGE_BUCKET;
+        const { data, error } = await withRetry(
+          () => client.storage.listBuckets(),
+          { maxAttempts: 3, baseDelayMs: 200, label: 'listBuckets' }
+        );
+        if (error) {
+          throw new AppError(500, 'STORAGE_ERROR', 'Could not list storage buckets', error.message);
+        }
+        if (!data?.some((item) => item.name === bucket)) {
+          const created = await client.storage.createBucket(bucket, {
+            public: false,
+            fileSizeLimit: env.MUSCLE_GROUP_IMAGE_MAX_BYTES,
+            allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+          });
+          if (created.error && !/already exists/i.test(created.error.message)) {
+            throw new AppError(
+              500,
+              'STORAGE_ERROR',
+              `Could not create ugc-images bucket "${bucket}"`,
+              created.error.message
+            );
+          }
+        }
+      })().catch((err) => {
+        ugcBucketReady = null;
+        throw err;
+      });
+    }
+    await ugcBucketReady;
+  },
+
+  async saveUgcImage(params: {
+    kind: 'photo' | 'trade' | 'showcase' | 'request';
+    entityId: string;
+    imageId: string;
+    variant: 'main' | 'thumb';
+    extension: string;
+    mimeType: string;
+    buffer: Buffer;
+  }): Promise<StoredImageObject> {
+    const storagePath = `${params.kind}/${params.entityId}/${params.imageId}/${params.variant}.${params.extension}`;
+    const client = getSupabase();
+    if (!client) {
+      throw new AppError(503, 'STORAGE_ERROR', 'Supabase Storage is not configured');
+    }
+    await this.ensureUgcBucket();
+    const { error } = await client.storage.from(env.UGC_IMAGE_BUCKET).upload(storagePath, params.buffer, {
+      contentType: params.mimeType || 'image/webp',
+      upsert: true,
+      cacheControl: '86400',
+    });
+    if (error) {
+      throw new AppError(500, 'UPLOAD_FAILED', 'Could not save UGC image', error.message);
+    }
+    const signed = await client.storage
+      .from(env.UGC_IMAGE_BUCKET)
+      .createSignedUrl(storagePath, 60 * 60 * 24 * 7);
+    return {
+      storagePath,
+      publicUrl: signed.data?.signedUrl || storagePath,
+      provider: 'supabase',
+    };
+  },
+
+  async createUgcSignedUrl(storagePath: string, expiresSec = 60 * 60 * 24 * 7): Promise<string | null> {
+    if (!storagePath || storagePath.startsWith('db:')) return null;
+    const client = getSupabase();
+    if (!client) return null;
+    const { data, error } = await client.storage
+      .from(env.UGC_IMAGE_BUCKET)
+      .createSignedUrl(storagePath, expiresSec);
+    if (error || !data?.signedUrl) return null;
+    return data.signedUrl;
+  },
+
+  /** Upload arbitrary catalog BYTEA during migration (idempotent upsert). */
+  async uploadCatalogBytes(params: {
+    bucket: string;
+    storagePath: string;
+    mimeType: string;
+    buffer: Buffer;
+    cacheControl?: string;
+  }): Promise<string> {
+    const client = getSupabase();
+    if (!client) {
+      throw new AppError(503, 'STORAGE_ERROR', 'Supabase Storage is not configured');
+    }
+    const { error } = await client.storage.from(params.bucket).upload(params.storagePath, params.buffer, {
+      contentType: params.mimeType || 'image/webp',
+      upsert: true,
+      cacheControl: params.cacheControl ?? '31536000',
+    });
+    if (error) {
+      throw new AppError(500, 'UPLOAD_FAILED', 'Storage upload failed', error.message);
+    }
+    const { data } = client.storage.from(params.bucket).getPublicUrl(params.storagePath);
+    return data.publicUrl;
   },
 
   async uploadBannerImage(params: {
@@ -915,6 +1126,7 @@ export const storageService = {
         .upload(storagePath, params.buffer, {
           contentType: params.mimeType,
           upsert: false,
+          cacheControl: '31536000',
         });
       if (error) {
         const absolute = path.join(LOCAL_BANNER_ROOT, storagePath);

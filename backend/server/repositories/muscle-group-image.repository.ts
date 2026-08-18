@@ -1,6 +1,8 @@
 import type { MuscleGroupImageAsset, MuscleGroupImageKey } from '@machinefit/shared';
 import { TARGET_MUSCLE_GROUPS } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import { storageService } from '../services/storage.service.js';
+import { isDirectObjectUrl } from '../utils/media-cdn.js';
 
 type MuscleGroupImageRow = {
   muscle_group: string;
@@ -109,27 +111,43 @@ export const muscleGroupImageRepository = {
   async getBlobMeta(
     muscleGroup: MuscleGroupImageKey,
     kind: 'main' | 'thumb'
-  ): Promise<{ mimeType: string; version: number; hasBlob: boolean } | null> {
+  ): Promise<{
+    mimeType: string;
+    version: number;
+    hasBlob: boolean;
+    objectUrl: string | null;
+  } | null> {
     const pool = getPool();
     if (!pool) return null;
     const column = kind === 'thumb' ? 'thumbnail_data' : 'image_data';
+    const pathCol = kind === 'thumb' ? 'thumbnail_storage_path' : 'storage_path';
+    const urlCol = kind === 'thumb' ? 'thumbnail_url' : 'image_url';
     const result = await pool.query<{
       mime_type: string | null;
       version: number;
       has_blob: boolean;
+      storage_path: string | null;
+      object_url: string | null;
     }>(
-      `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob
+      `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob,
+              ${pathCol} AS storage_path, ${urlCol} AS object_url
        FROM muscle_group_images
        WHERE muscle_group = $1
        LIMIT 1`,
       [muscleGroup]
     );
     const row = result.rows[0];
-    if (!row?.has_blob) return null;
+    if (!row) return null;
+    let objectUrl = row.object_url;
+    if (!isDirectObjectUrl(objectUrl) && row.storage_path && !row.storage_path.startsWith('db:')) {
+      objectUrl = storageService.muscleGroupPublicUrl(row.storage_path);
+    }
+    if (!row.has_blob && !isDirectObjectUrl(objectUrl)) return null;
     return {
       mimeType: row.mime_type || 'image/webp',
       version: Number(row.version ?? 1),
-      hasBlob: true,
+      hasBlob: Boolean(row.has_blob),
+      objectUrl: isDirectObjectUrl(objectUrl) ? objectUrl : null,
     };
   },
 

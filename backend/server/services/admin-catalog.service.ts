@@ -21,6 +21,7 @@ import { withCacheBust } from '../utils/cache-bust-url.js';
 import { brandService } from './brand.service.js';
 import { machineCoverImageService } from './machine-cover-image.service.js';
 import { machineService } from './machine.service.js';
+import { storageService } from './storage.service.js';
 
 type UploadFile = {
   originalname: string;
@@ -119,14 +120,29 @@ export const adminCatalogService = {
     const existing = await brandAssetRepository.getByBrandId(brand.id);
     const version = (existing?.logoVersion ?? 0) + 1;
     const apiUrl = brandAssetMediaUrl(brand.code, 'logo');
-    const publicUrl = withCacheBust(apiUrl, version)!;
+    let stored: { storagePath: string; publicUrl: string } | null = null;
+    try {
+      stored = await storageService.saveBrandAssetImage({
+        brandCode: brand.code,
+        kind: 'logo',
+        extension: processed.main.extension,
+        mimeType: processed.main.mimeType,
+        buffer: processed.main.buffer,
+        version,
+      });
+    } catch {
+      stored = null;
+    }
+    const logoUrl = stored?.publicUrl ?? apiUrl;
+    const publicUrl = withCacheBust(logoUrl, version)!;
     await brandAssetRepository.upsertLogo({
       brandId: brand.id,
       brandCode: brand.code,
-      logoUrl: apiUrl,
+      logoUrl,
       mimeType: processed.main.mimeType,
       version,
       data: processed.main.buffer,
+      storagePath: stored?.storagePath ?? null,
     });
     const updated = await adminCatalogRepository.updateBrandImageFields(brand.id, {
       logoUrl: publicUrl,
@@ -143,14 +159,29 @@ export const adminCatalogService = {
     const existing = await brandAssetRepository.getByBrandId(brand.id);
     const version = (existing?.imageVersion ?? 0) + 1;
     const apiUrl = brandAssetMediaUrl(brand.code, 'hero');
-    const publicUrl = withCacheBust(apiUrl, version)!;
+    let stored: { storagePath: string; publicUrl: string } | null = null;
+    try {
+      stored = await storageService.saveBrandAssetImage({
+        brandCode: brand.code,
+        kind: 'hero',
+        extension: processed.main.extension,
+        mimeType: processed.main.mimeType,
+        buffer: processed.main.buffer,
+        version,
+      });
+    } catch {
+      stored = null;
+    }
+    const imageUrl = stored?.publicUrl ?? apiUrl;
+    const publicUrl = withCacheBust(imageUrl, version)!;
     await brandAssetRepository.upsertHero({
       brandId: brand.id,
       brandCode: brand.code,
-      imageUrl: apiUrl,
+      imageUrl,
       mimeType: processed.main.mimeType,
       version,
       data: processed.main.buffer,
+      storagePath: stored?.storagePath ?? null,
     });
     const updated = await adminCatalogRepository.updateBrandImageFields(brand.id, {
       imageUrl: publicUrl,

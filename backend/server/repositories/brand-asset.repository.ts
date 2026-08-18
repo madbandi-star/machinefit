@@ -1,4 +1,6 @@
 import { getPool } from '../config/database.js';
+import { storageService } from '../services/storage.service.js';
+import { isDirectObjectUrl } from '../utils/media-cdn.js';
 
 export type BrandAssetKind = 'logo' | 'hero';
 
@@ -68,31 +70,49 @@ export const brandAssetRepository = {
   async getBlobMeta(
     brandCode: string,
     kind: BrandAssetKind
-  ): Promise<{ mimeType: string; version: number; hasBlob: boolean } | null> {
+  ): Promise<{
+    mimeType: string;
+    version: number;
+    hasBlob: boolean;
+    objectUrl: string | null;
+    storagePath: string | null;
+  } | null> {
     const pool = getPool();
     if (!pool) return null;
     const code = brandCode.trim().toUpperCase();
     const dataCol = kind === 'logo' ? 'logo_data' : 'image_data';
     const mimeCol = kind === 'logo' ? 'logo_mime_type' : 'image_mime_type';
     const versionCol = kind === 'logo' ? 'logo_version' : 'image_version';
+    const urlCol = kind === 'logo' ? 'logo_url' : 'image_url';
+    const pathCol = kind === 'logo' ? 'logo_storage_path' : 'image_storage_path';
     const result = await pool.query<{
       mime_type: string | null;
       version: number | null;
       has_blob: boolean;
+      object_url: string | null;
+      storage_path: string | null;
     }>(
       `SELECT ${mimeCol} AS mime_type, ${versionCol} AS version,
-              (${dataCol} IS NOT NULL) AS has_blob
+              (${dataCol} IS NOT NULL) AS has_blob,
+              ${urlCol} AS object_url, ${pathCol} AS storage_path
        FROM brand_assets
        WHERE brand_code = $1
        LIMIT 1`,
       [code]
     );
     const row = result.rows[0];
-    if (!row?.has_blob) return null;
+    if (!row) return null;
+    let objectUrl = row.object_url;
+    if (!isDirectObjectUrl(objectUrl) && row.storage_path) {
+      objectUrl = storageService.brandAssetPublicUrl(row.storage_path);
+    }
+    if (!row.has_blob && !isDirectObjectUrl(objectUrl)) return null;
     return {
       mimeType: row.mime_type || 'image/webp',
       version: Number(row.version ?? 0),
-      hasBlob: true,
+      hasBlob: Boolean(row.has_blob),
+      objectUrl: isDirectObjectUrl(objectUrl) ? objectUrl : null,
+      storagePath: row.storage_path,
     };
   },
 
@@ -133,20 +153,22 @@ export const brandAssetRepository = {
     mimeType: string;
     version: number;
     data: Buffer;
+    storagePath?: string | null;
   }): Promise<BrandAssetMeta> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
     const result = await pool.query<BrandAssetRow>(
       `INSERT INTO brand_assets (
-         brand_id, brand_code, logo_url, logo_mime_type, logo_version, logo_data,
+         brand_id, brand_code, logo_url, logo_mime_type, logo_version, logo_data, logo_storage_path,
          created_at, updated_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
        ON CONFLICT (brand_id) DO UPDATE SET
          brand_code = EXCLUDED.brand_code,
          logo_url = EXCLUDED.logo_url,
          logo_mime_type = EXCLUDED.logo_mime_type,
          logo_version = EXCLUDED.logo_version,
          logo_data = EXCLUDED.logo_data,
+         logo_storage_path = EXCLUDED.logo_storage_path,
          updated_at = NOW()
        RETURNING ${META_COLUMNS}`,
       [
@@ -156,6 +178,7 @@ export const brandAssetRepository = {
         input.mimeType,
         input.version,
         input.data,
+        input.storagePath ?? null,
       ]
     );
     return mapMeta(result.rows[0]);
@@ -168,20 +191,22 @@ export const brandAssetRepository = {
     mimeType: string;
     version: number;
     data: Buffer;
+    storagePath?: string | null;
   }): Promise<BrandAssetMeta> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
     const result = await pool.query<BrandAssetRow>(
       `INSERT INTO brand_assets (
-         brand_id, brand_code, image_url, image_mime_type, image_version, image_data,
+         brand_id, brand_code, image_url, image_mime_type, image_version, image_data, image_storage_path,
          created_at, updated_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
        ON CONFLICT (brand_id) DO UPDATE SET
          brand_code = EXCLUDED.brand_code,
          image_url = EXCLUDED.image_url,
          image_mime_type = EXCLUDED.image_mime_type,
          image_version = EXCLUDED.image_version,
          image_data = EXCLUDED.image_data,
+         image_storage_path = EXCLUDED.image_storage_path,
          updated_at = NOW()
        RETURNING ${META_COLUMNS}`,
       [
@@ -191,6 +216,7 @@ export const brandAssetRepository = {
         input.mimeType,
         input.version,
         input.data,
+        input.storagePath ?? null,
       ]
     );
     return mapMeta(result.rows[0]);

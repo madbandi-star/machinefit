@@ -7,6 +7,8 @@ import type {
 } from '@machinefit/shared';
 import { isFreeWeightMachineCode, TARGET_MUSCLE_GROUPS } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
+import { storageService } from '../services/storage.service.js';
+import { isDirectObjectUrl } from '../utils/media-cdn.js';
 import { withCacheBust } from '../utils/cache-bust-url.js';
 import { supportsMachineCoverMuscleVariants } from '../utils/machine-cover-schema.util.js';
 
@@ -342,10 +344,18 @@ export const machineCoverImageRepository = {
     machineCode: string,
     kind: 'main' | 'thumb',
     targetMuscleGroup?: string | null
-  ): Promise<{ mimeType: string; version: number; hasBlob: boolean } | null> {
+  ): Promise<{
+    mimeType: string;
+    version: number;
+    hasBlob: boolean;
+    storagePath: string | null;
+    objectUrl: string | null;
+  } | null> {
     const pool = getPool();
     if (!pool) return null;
     const column = kind === 'thumb' ? 'thumbnail_data' : 'image_data';
+    const pathCol = kind === 'thumb' ? 'thumbnail_storage_path' : 'storage_path';
+    const urlCol = kind === 'thumb' ? 'thumbnail_url' : 'image_url';
     const muscle = targetMuscleGroup?.trim() || null;
     const muscleVariantsReady = await supportsMachineCoverMuscleVariants(pool);
     if (muscle && !muscleVariantsReady) return null;
@@ -354,29 +364,42 @@ export const machineCoverImageRepository = {
       mime_type: string | null;
       version: number;
       has_blob: boolean;
+      storage_path: string | null;
+      object_url: string | null;
     }>(
       muscleVariantsReady
         ? muscle
-          ? `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob
+          ? `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob,
+                  ${pathCol} AS storage_path, ${urlCol} AS object_url
              FROM machine_cover_images
              WHERE machine_code = $1 AND target_muscle_group = $2
              LIMIT 1`
-          : `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob
+          : `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob,
+                  ${pathCol} AS storage_path, ${urlCol} AS object_url
              FROM machine_cover_images
              WHERE machine_code = $1 AND target_muscle_group IS NULL
              LIMIT 1`
-        : `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob
+        : `SELECT mime_type, version, (${column} IS NOT NULL) AS has_blob,
+                ${pathCol} AS storage_path, ${urlCol} AS object_url
            FROM machine_cover_images
            WHERE machine_code = $1
            LIMIT 1`,
       muscle && muscleVariantsReady ? [machineCode, muscle] : [machineCode]
     );
     const row = result.rows[0];
-    if (!row?.has_blob) return null;
+    if (!row) return null;
+    const storagePath = row.storage_path;
+    let objectUrl = row.object_url;
+    if (!isDirectObjectUrl(objectUrl) && storagePath && !storagePath.startsWith('db:')) {
+      objectUrl = storageService.machineCoverPublicUrl(storagePath);
+    }
+    if (!row.has_blob && !isDirectObjectUrl(objectUrl)) return null;
     return {
       mimeType: row.mime_type || 'image/webp',
       version: Number(row.version ?? 1),
-      hasBlob: true,
+      hasBlob: Boolean(row.has_blob),
+      storagePath,
+      objectUrl: isDirectObjectUrl(objectUrl) ? objectUrl : null,
     };
   },
 

@@ -42,6 +42,8 @@ const envSchema = z.object({
   MUSCLE_GROUP_IMAGE_MAX_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
   MUSCLE_GROUP_IMAGE_BUCKET: z.string().default('muscle-group-images'),
   MACHINE_COVER_IMAGE_BUCKET: z.string().default('machine-cover-images'),
+  BRAND_ASSET_IMAGE_BUCKET: z.string().default('brand-assets'),
+  UGC_IMAGE_BUCKET: z.string().default('ugc-images'),
   NOTICE_ATTACHMENT_BUCKET: z.string().default('notice-attachments'),
   NOTICE_ATTACHMENT_MAX_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
   BANNER_IMAGE_BUCKET: z.string().default('banner-images'),
