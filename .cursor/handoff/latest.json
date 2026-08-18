@@ -3,7 +3,7 @@
   "summary": "타이머 기록 달력·날짜 목록·세션 상세를 한눈에 보게 바꿨다. 날짜별 세션 수, 시간/세션/랩 칩, 큰 세션 카드, 랩별 기구 칩.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "11f54c83"
   },
   "changedFiles": [
     "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
