@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   buildDaySummaryMetrics,
+  buildWorkoutCompleteLaps,
   volumeKgForLog,
 } from './workout-complete-report.js';
 import type { WorkoutLog } from '../types/workout.types.js';
@@ -79,5 +80,42 @@ describe('buildDaySummaryMetrics', () => {
       }
     );
     assert.equal(volume, 1200);
+  });
+});
+
+describe('buildWorkoutCompleteLaps', () => {
+  it('keeps machines on their own lap and drops empty laps', () => {
+    const laps = buildWorkoutCompleteLaps(
+      [
+        {
+          lapNumber: 1,
+          durationSeconds: 751,
+          exercises: [
+            { machineCode: 'CHEST_PRESS', machineName: '체스트 프레스' },
+            { machineCode: 'INCLINE', machineName: '인클라인 체스트 프레스' },
+          ],
+        },
+        { lapNumber: 2, durationSeconds: 600, exercises: [] },
+        {
+          lapNumber: 3,
+          durationSeconds: 400,
+          exercises: [{ workoutLogId: 'log-1', machineCode: 'LAT' }],
+        },
+      ],
+      { 'log-1': '랫풀다운' }
+    );
+    assert.equal(laps.length, 2);
+    assert.equal(laps[0].lapNumber, 1);
+    assert.deepEqual(
+      laps[0].exercises.map((ex) => ex.machineName),
+      ['체스트 프레스', '인클라인 체스트 프레스']
+    );
+    assert.equal(laps[1].lapNumber, 3);
+    assert.equal(laps[1].exercises[0].machineName, '랫풀다운');
+  });
+
+  it('returns empty when there is no timer / lap data', () => {
+    assert.deepEqual(buildWorkoutCompleteLaps(undefined), []);
+    assert.deepEqual(buildWorkoutCompleteLaps([]), []);
   });
 });

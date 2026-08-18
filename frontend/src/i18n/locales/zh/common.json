@@ -2188,6 +2188,8 @@
     "powerEarned": "+{{points}} POWER 已获得",
     "powerHint": "完成组数后会获得 POWER。",
     "powerDone": "今日训练已完成。",
+    "lapsTitle": "LAPS",
+    "lapItem": "LAP {{n}}",
     "mvpTitle": "TODAY'S MVP",
     "mvpReason": {
       "volume": "今日容量最高。",

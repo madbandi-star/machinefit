@@ -3,6 +3,8 @@ import { normalizeWorkoutLogTargetMuscle } from './free-weight.js';
 import { formatVolumeKg } from './lifted-volume.js';
 import type { WorkoutLog } from '../types/workout.types.js';
 import type {
+  WorkoutCompleteLap,
+  WorkoutCompleteLapExercise,
   WorkoutCompleteReport,
   WorkoutDayExerciseMetric,
   WorkoutDayMvp,
@@ -345,6 +347,54 @@ export function buildWorkoutCompleteReport(input: {
     oneLinerKey,
     shareTextKey: oneLinerKey,
   };
+}
+
+export interface WorkoutCompleteLapSource {
+  lapNumber: number;
+  durationSeconds: number;
+  exercises?: Array<{
+    machineCode?: string;
+    machineName?: string;
+    workoutLogId?: string;
+  }>;
+}
+
+/**
+ * Map timer-history laps onto the complete-report optional field.
+ * Laps with no recorded machines are omitted (no empty UI).
+ * Does not alter MVP / summary.exercises.
+ */
+export function buildWorkoutCompleteLaps(
+  sourceLaps: WorkoutCompleteLapSource[] | null | undefined,
+  nameByLogId?: Record<string, string>
+): WorkoutCompleteLap[] {
+  if (!sourceLaps?.length) return [];
+  const out: WorkoutCompleteLap[] = [];
+  for (const lap of sourceLaps) {
+    const seen = new Set<string>();
+    const exercises: WorkoutCompleteLapExercise[] = [];
+    for (const ex of lap.exercises ?? []) {
+      const code = ex.machineCode?.trim() ?? '';
+      const fromLog = ex.workoutLogId ? nameByLogId?.[ex.workoutLogId] : undefined;
+      const name = (ex.machineName || fromLog || code).trim();
+      if (!name && !code) continue;
+      const key = ex.workoutLogId || code || name;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      exercises.push({
+        machineCode: code,
+        machineName: name || code,
+        ...(ex.workoutLogId ? { workoutLogId: ex.workoutLogId } : {}),
+      });
+    }
+    if (exercises.length === 0) continue;
+    out.push({
+      lapNumber: lap.lapNumber,
+      durationSeconds: Math.max(0, lap.durationSeconds || 0),
+      exercises,
+    });
+  }
+  return out;
 }
 
 // Re-export type for consumers that need the mvp shape after selection

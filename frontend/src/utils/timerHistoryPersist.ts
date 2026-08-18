@@ -1,7 +1,12 @@
-import type { TimerHistoryCreateInput, WorkoutLog } from '@machinefit/shared';
+import type {
+  TimerHistoryCreateInput,
+  WorkoutCompleteLap,
+  WorkoutLog,
+} from '@machinefit/shared';
 import {
   assignMarksToLaps,
   buildTimerHistoryLaps,
+  buildWorkoutCompleteLaps,
   isAllGymsId,
   msToDurationSeconds,
 } from '@machinefit/shared';
@@ -104,6 +109,39 @@ export function buildTimerHistoryBody(input: {
       })),
     })),
   };
+}
+
+/** Same grouping as timer history persist — for the complete report only. */
+export function buildReportLapsFromTimerSession(input: {
+  clientSessionId?: string | null;
+  sessionStartedAtMs?: number | null;
+  endedAtMs: number;
+  durationMs: number;
+  laps: WorkoutSessionLap[];
+  machineMarks: WorkoutSessionMachineMark[];
+  todayLogs?: WorkoutLog[];
+}): WorkoutCompleteLap[] {
+  const clientSessionId = isUuid(input.clientSessionId)
+    ? input.clientSessionId
+    : typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : '00000000-0000-4000-8000-000000000000';
+  const startedAtMs =
+    input.sessionStartedAtMs ?? Math.max(0, input.endedAtMs - Math.max(0, input.durationMs));
+  const body = buildTimerHistoryBody({
+    clientSessionId,
+    sessionStartedAtMs: startedAtMs,
+    endedAtMs: input.endedAtMs,
+    durationMs: input.durationMs,
+    laps: input.laps ?? [],
+    machineMarks: input.machineMarks ?? [],
+  });
+  if (!body) return [];
+  const nameByLogId: Record<string, string> = {};
+  for (const log of input.todayLogs ?? []) {
+    if (log.id && log.machineName) nameByLogId[log.id] = log.machineName;
+  }
+  return buildWorkoutCompleteLaps(body.laps, nameByLogId);
 }
 
 async function postBody(body: TimerHistoryCreateInput): Promise<boolean> {

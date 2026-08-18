@@ -95,6 +95,21 @@ export function WorkoutCompleteHost() {
         built.summary.durationMs = durationMs;
       }
 
+      const reportLaps = (
+        await import('@/utils/timerHistoryPersist')
+      ).buildReportLapsFromTimerSession({
+        clientSessionId: timerState.clientSessionId,
+        sessionStartedAtMs: timerState.sessionStartedAtMs,
+        endedAtMs,
+        durationMs,
+        laps: timerState.laps,
+        machineMarks: timerState.machineMarks,
+        todayLogs,
+      });
+      if (reportLaps.length > 0) {
+        built.laps = reportLaps;
+      }
+
       openReport(built, { todayLogs, repsByMachine });
       emitWorkoutCompleted({ report: built });
       // After result is shown — never before. Server flags usually deny until enabled.

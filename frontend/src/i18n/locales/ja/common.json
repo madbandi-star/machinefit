@@ -2188,6 +2188,8 @@
     "powerEarned": "+{{points}} POWER 獲得",
     "powerHint": "セット完了でPOWERが付与されます。",
     "powerDone": "今日の運動を完了しました。",
+    "lapsTitle": "LAPS",
+    "lapItem": "LAP {{n}}",
     "mvpTitle": "TODAY'S MVP",
     "mvpReason": {
       "volume": "今日いちばんのボリュームです。",

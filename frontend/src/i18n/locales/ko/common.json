@@ -2186,6 +2186,8 @@
     "powerEarned": "+{{points}} POWER 적립",
     "powerHint": "오늘 세트 완료 시 POWER가 적립됩니다.",
     "powerDone": "오늘 운동을 완료했습니다.",
+    "lapsTitle": "LAPS",
+    "lapItem": "LAP {{n}}",
     "mvpTitle": "TODAY'S MVP",
     "mvpReason": {
       "volume": "오늘 가장 많은 볼륨을 기록했습니다.",

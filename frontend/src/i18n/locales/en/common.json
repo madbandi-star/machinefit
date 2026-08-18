@@ -2236,6 +2236,8 @@
     "powerEarned": "+{{points}} POWER earned",
     "powerHint": "POWER is earned when you complete sets.",
     "powerDone": "Today's workout is complete.",
+    "lapsTitle": "LAPS",
+    "lapItem": "LAP {{n}}",
     "mvpTitle": "TODAY'S MVP",
     "mvpReason": {
       "volume": "Highest volume of the day.",

@@ -61,6 +61,19 @@ export interface WorkoutCompletePowerSnapshot {
   earnedToday: number;
 }
 
+/** Optional per-lap machines for the complete report (timer session only). */
+export interface WorkoutCompleteLapExercise {
+  machineCode: string;
+  machineName: string;
+  workoutLogId?: string;
+}
+
+export interface WorkoutCompleteLap {
+  lapNumber: number;
+  durationSeconds: number;
+  exercises: WorkoutCompleteLapExercise[];
+}
+
 export interface WorkoutCompleteReport {
   event: 'WORKOUT_COMPLETED';
   completedAt: string;
@@ -72,4 +85,6 @@ export interface WorkoutCompleteReport {
   progress: WorkoutDayProgress | null;
   oneLinerKey: WorkoutOneLinerKey;
   shareTextKey: WorkoutOneLinerKey;
+  /** Present only when this session has at least one lap with recorded machines. */
+  laps?: WorkoutCompleteLap[] | null;
 }
