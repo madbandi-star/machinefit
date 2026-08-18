@@ -1,26 +1,28 @@
 {
-  "title": "Move 머신도감 under 내 브랜드",
-  "summary": "마이페이지 머신도감 메뉴를 머신핏 인사이트에서 개인설정의 내 브랜드 아래로 옮겼다.",
+  "title": "Rename My Page dex menu to 내 머신도감",
+  "summary": "마이페이지 개인설정 메뉴명을 머신도감에서 내 머신도감으로 바꿨다. 도감 페이지 제목은 그대로다.",
   "git": {
     "branch": "main",
-    "commit": "a601ad42"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/my-page/MyPage.tsx"
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "마이페이지 개인설정: 내 브랜드 다음에 머신도감",
-    "머신핏 인사이트에는 머신도감이 없는지"
+    "마이페이지 개인설정에 '내 머신도감'이 보이는지"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/my-page/MyPage.tsx -Pattern MACHINE_DEX"
+    "Select-String -Path frontend/src/i18n/locales/ko/common.json -Pattern '\"machineDex\": \"내 머신도감\"'"
   ],
   "productionChecks": [
-    "Open My Page and confirm 머신도감 is under 내 브랜드"
+    "Open My Page and confirm the menu label"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "머신도감이 머신핏 인사이트에 있음",
-  "toBe": "개인설정 > 내 브랜드 아래 머신도감"
+  "asIs": "머신도감",
+  "toBe": "내 머신도감"
 }
