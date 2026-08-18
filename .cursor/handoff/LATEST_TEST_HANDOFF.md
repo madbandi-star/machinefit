@@ -13,4 +13,4 @@
 - to-be: 머신도감 공유관 / 발견한 기구를…등록하세요! / 공유하기
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `95aa5d94`

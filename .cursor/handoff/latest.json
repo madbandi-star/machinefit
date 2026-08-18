@@ -3,7 +3,7 @@
   "summary": "머신도감 공유관 페이지 제목·부제·공유 버튼 문구를 ‘머신도감 공유관’ 톤으로 통일했다.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "95aa5d94"
   },
   "changedFiles": [
     "frontend/src/i18n/locales/ko/community.json",
