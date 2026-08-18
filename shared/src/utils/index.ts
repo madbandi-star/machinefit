@@ -34,4 +34,5 @@ export * from './username.js';
 export * from './oauth-csrf.js';
 export * from './retention-schedule.js';
 export * from './workout-complete-report.js';
+export * from './timer-history.js';
 export { FORTUNE_FALLBACK_CATALOG, type FortuneFallbackItem } from '../data/fortune-fallback-catalog.js';

@@ -635,6 +635,7 @@ export type { AdminDashboardStats, AdminUserSummary } from './admin.api';
 export { photoBoardApi } from './photo-board.api';
 export { machineShowcaseApi } from './machine-showcase.api';
 export type { PhotoBoardListParams } from './photo-board.api';
+export { timerHistoryApi } from './timer-history.api';
 export { machineTradeApi } from './machine-trade.api';
 
 export { onlinePtApi } from './online-pt.api';

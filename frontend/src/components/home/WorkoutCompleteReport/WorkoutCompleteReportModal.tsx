@@ -341,6 +341,28 @@ export function WorkoutCompleteReportModal({
               </section>
             ) : null}
 
+            {report.laps && report.laps.length > 0 ? (
+              <section className="wcr-block wcr-laps" aria-label={t('workoutComplete.lapsTitle')}>
+                <p className="wcr-block__eyebrow">{t('workoutComplete.lapsTitle')}</p>
+                <ol className="wcr-laps__list">
+                  {report.laps.map((lap) => (
+                    <li key={lap.lapNumber} className="wcr-laps__item">
+                      <p className="wcr-laps__head">
+                        {t('workoutComplete.lapItem', { n: lap.lapNumber })}
+                      </p>
+                      <ul className="wcr-laps__machines">
+                        {lap.exercises.map((ex) => (
+                          <li key={`${lap.lapNumber}-${ex.workoutLogId ?? ex.machineCode}`}>
+                            {ex.machineName}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ) : null}
+
             <section className="wcr-quote" aria-label={t('workoutComplete.oneLinerTitle')}>
               <span className="wcr-quote__mark" aria-hidden="true">
                 “

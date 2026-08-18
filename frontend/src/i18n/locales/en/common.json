@@ -779,6 +779,8 @@
       "sessionTimerLapAria": "Record lap",
       "sessionTimerLaps": "Lap times",
       "sessionTimerLapItem": "Lap {{n}}",
+      "sessionTimerHistory": "Timer history",
+      "sessionTimerHistoryAria": "View workout timer history",
       "toolsTitle": "Rest & rep tools",
       "toolsRestTitle": "Rest timer",
       "toolsRestDesc": "Set your between-set rest and start the timer.",
@@ -2235,6 +2237,8 @@
     "powerEarned": "+{{points}} POWER earned",
     "powerHint": "POWER is earned when you complete sets.",
     "powerDone": "Today's workout is complete.",
+    "lapsTitle": "LAPS",
+    "lapItem": "LAP {{n}}",
     "mvpTitle": "TODAY'S MVP",
     "mvpReason": {
       "volume": "Highest volume of the day.",
@@ -2290,5 +2294,32 @@
       "upper_body": "Workout done 🔥\n{{exercises}} exercises · {{sets}} sets · {{volume}}kg\nTODAY'S POWER {{power}}",
       "default": "Workout done 🔥\n{{exercises}} exercises · {{sets}} sets · {{volume}}kg\nTODAY'S POWER {{power}}"
     }
+  },
+  "timerHistory": {
+    "title": "Timer history",
+    "subtitle": "See when you trained, how long, and which machines you used each lap. Separate from workout records.",
+    "calendarLabel": "Timer history calendar",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "goToday": "Today",
+    "dayWithDataAria": "Timer history on {{date}}",
+    "dayMeta": "Total {{duration}} · {{sessions}} session(s) · {{laps}} laps",
+    "emptyDay": "No timer history on this date.",
+    "loadFailed": "Couldn't load timer history. Please try again shortly.",
+    "totalDuration": "Total time",
+    "lapCountLabel": "{{count}} laps",
+    "sessionCardAria": "Timer session from {{start}} to {{end}}",
+    "sessionTitle": "Timer session",
+    "lapItem": "LAP {{n}}",
+    "machineCount": "{{count}} machines",
+    "noMachines": "No machines linked to this lap.",
+    "unknownMachine": "Removed or unknown machine",
+    "setCount": "{{count}} sets",
+    "backToCalendar": "Back to calendar",
+    "durationHm": "{{h}}h {{m}}m",
+    "durationH": "{{h}}h",
+    "durationMs": "{{m}}m {{s}}s",
+    "durationM": "{{m}}m",
+    "durationS": "{{s}}s"
   }
 }

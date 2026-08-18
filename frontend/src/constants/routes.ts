@@ -12,6 +12,8 @@ export const ROUTES = {
   FAVORITES_EMPTY: '/favorites/empty',
   HISTORY: '/history',
   RECORDS: '/records',
+  TIMER_HISTORY: '/timer-history',
+  TIMER_HISTORY_SESSION: '/timer-history/:sessionId',
   COMMUNITY: '/community',
   MACHINE_REQUESTS: '/community/requests',
   MACHINE_REQUESTS_WRITE: '/community/requests/write',

@@ -1,6 +1,8 @@
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePersistHydration } from '@/hooks/usePersistHydration';
+import { ROUTES } from '@/constants/routes';
 import {
   formatWorkoutSessionElapsed,
   formatWorkoutSessionLap,
@@ -8,6 +10,7 @@ import {
   useWorkoutSessionTimerStore,
 } from '@/store/workoutSessionTimer.store';
 import { useWorkoutCompleteStore } from '@/store/workoutComplete.store';
+import '@/styles/timer-history.css';
 
 /**
  * Home workout session timer: start/pause/resume/end + iPhone-style LAP splits.
@@ -56,6 +59,7 @@ export function HomeWorkoutSessionTimer() {
             {t('pages.home.sessionTimerEnd')}
           </button>
         </div>
+        <span className="home-session-timer__history">{t('pages.home.sessionTimerHistory')}</span>
       </section>
     );
   }
@@ -160,6 +164,15 @@ export function HomeWorkoutSessionTimer() {
           ))}
         </ol>
       ) : null}
+
+      <Link
+        to={ROUTES.TIMER_HISTORY}
+        className="home-session-timer__history"
+        aria-label={t('pages.home.sessionTimerHistoryAria')}
+      >
+        {t('pages.home.sessionTimerHistory')}
+        <span aria-hidden="true"> →</span>
+      </Link>
     </section>
   );
 }

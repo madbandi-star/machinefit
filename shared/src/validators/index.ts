@@ -40,3 +40,4 @@ export * from './usage.schema.js';
 export * from './points.schema.js';
 export * from './qa.schema.js';
 export * from './machine-showcase.schema.js';
+export * from './timer-history.schema.js';

@@ -779,6 +779,8 @@
       "sessionTimerLapAria": "랩 기록",
       "sessionTimerLaps": "랩 기록",
       "sessionTimerLapItem": "랩 {{n}}",
+      "sessionTimerHistory": "타이머 기록",
+      "sessionTimerHistoryAria": "타이머 사용 기록 보기",
       "toolsTitle": "휴식·횟수 도구",
       "toolsRestTitle": "휴식 타이머",
       "toolsRestDesc": "휴식 시간 설정 후 시작",
@@ -2185,6 +2187,8 @@
     "powerEarned": "+{{points}} POWER 적립",
     "powerHint": "오늘 세트 완료 시 POWER가 적립됩니다.",
     "powerDone": "오늘 운동을 완료했습니다.",
+    "lapsTitle": "LAPS",
+    "lapItem": "LAP {{n}}",
     "mvpTitle": "TODAY'S MVP",
     "mvpReason": {
       "volume": "오늘 가장 많은 볼륨을 기록했습니다.",
@@ -2240,5 +2244,32 @@
       "upper_body": "오늘 운동 완료 🔥\n{{exercises}}종목 · {{sets}}세트 · {{volume}}kg\nTODAY'S POWER {{power}}",
       "default": "오늘 운동 완료 🔥\n{{exercises}}종목 · {{sets}}세트 · {{volume}}kg\nTODAY'S POWER {{power}}"
     }
+  },
+  "timerHistory": {
+    "title": "타이머 기록",
+    "subtitle": "언제, 얼마나, 몇 랩으로 운동했는지 확인하세요. 운동 기록 페이지와는 별개입니다.",
+    "calendarLabel": "타이머 사용 달력",
+    "prevMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "goToday": "오늘",
+    "dayWithDataAria": "{{date}} 타이머 기록 있음",
+    "dayMeta": "총 운동시간 {{duration}} · 타이머 세션 {{sessions}}회 · 랩 {{laps}}개",
+    "emptyDay": "이 날짜에는 타이머 기록이 없습니다.",
+    "loadFailed": "타이머 기록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
+    "totalDuration": "총 운동시간",
+    "lapCountLabel": "랩 {{count}}",
+    "sessionCardAria": "{{start}}부터 {{end}}까지 타이머 세션",
+    "sessionTitle": "타이머 세션",
+    "lapItem": "LAP {{n}}",
+    "machineCount": "운동기구 {{count}}개",
+    "noMachines": "이 랩에 연결된 운동기구가 없습니다.",
+    "unknownMachine": "삭제되었거나 알 수 없는 기구",
+    "setCount": "{{count}}세트",
+    "backToCalendar": "달력으로",
+    "durationHm": "{{h}}시간 {{m}}분",
+    "durationH": "{{h}}시간",
+    "durationMs": "{{m}}분 {{s}}초",
+    "durationM": "{{m}}분",
+    "durationS": "{{s}}초"
   }
 }

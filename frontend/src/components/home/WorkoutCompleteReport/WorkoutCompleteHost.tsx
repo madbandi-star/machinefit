@@ -45,12 +45,25 @@ export function WorkoutCompleteHost() {
     closeConfirm();
 
     const timerState = useWorkoutSessionTimerStore.getState();
+    const endedAtMs = Date.now();
     const durationMs =
       timerState.status === 'idle'
         ? (timerState.lastEndedElapsedMs ?? 0)
-        : getWorkoutSessionElapsedMs(timerState, Date.now());
+        : getWorkoutSessionElapsedMs(timerState, endedAtMs);
 
     endTimer();
+    void import('@/utils/timerHistoryPersist').then(({ persistEndedTimerSession }) => {
+      persistEndedTimerSession({
+        durationMs,
+        endedAtMs,
+        gymId: activeGymId,
+        memberId: activeMemberId,
+        sessionStartedAtMs: timerState.sessionStartedAtMs,
+        clientSessionId: timerState.clientSessionId,
+        laps: timerState.laps,
+        machineMarks: timerState.machineMarks,
+      });
+    });
     void import('@/utils/usageTelemetry').then(({ trackUsage }) => trackUsage('timer_end'));
 
     const dateKey = getTodayDateKey();
@@ -80,6 +93,21 @@ export function WorkoutCompleteHost() {
 
       if (built.summary.durationMs <= 0 && durationMs > 0) {
         built.summary.durationMs = durationMs;
+      }
+
+      const reportLaps = (
+        await import('@/utils/timerHistoryPersist')
+      ).buildReportLapsFromTimerSession({
+        clientSessionId: timerState.clientSessionId,
+        sessionStartedAtMs: timerState.sessionStartedAtMs,
+        endedAtMs,
+        durationMs,
+        laps: timerState.laps,
+        machineMarks: timerState.machineMarks,
+        todayLogs,
+      });
+      if (reportLaps.length > 0) {
+        built.laps = reportLaps;
       }
 
       openReport(built, { todayLogs, repsByMachine });

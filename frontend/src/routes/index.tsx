@@ -71,6 +71,12 @@ const gymDetail = () =>
   import('@/pages/gym-detail/GymDetailPage').then((m) => ({ default: m.GymDetailPage }));
 const records = () =>
   import('@/pages/records/RecordsPage').then((m) => ({ default: m.RecordsPage }));
+const timerHistory = () =>
+  import('@/pages/timer-history/TimerHistoryPage').then((m) => ({ default: m.TimerHistoryPage }));
+const timerHistorySession = () =>
+  import('@/pages/timer-history/TimerHistorySessionPage').then((m) => ({
+    default: m.TimerHistorySessionPage,
+  }));
 const favoritesIndex = () =>
   import('@/pages/favorites/FavoritesIndexPage').then((m) => ({ default: m.FavoritesIndexPage }));
 const favoritesEmpty = () =>
@@ -598,6 +604,8 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
           children: [
             { path: ROUTES.FAVORITES, element: lazyRoute(favoritesIndex) },
             { path: ROUTES.RECORDS, element: lazyRoute(records) },
+            { path: ROUTES.TIMER_HISTORY, element: lazyRoute(timerHistory) },
+            { path: ROUTES.TIMER_HISTORY_SESSION, element: lazyRoute(timerHistorySession) },
             { path: ROUTES.FAVORITES_EMPTY, element: lazyRoute(favoritesEmpty) },
             { path: ROUTES.RECOMMEND, element: lazyRoute(recommendForm) },
             { path: ROUTES.RECOMMEND_RESULT, element: lazyRoute(recommendResult) },
