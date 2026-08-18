@@ -1,14 +1,12 @@
 {
-  "title": "Comfortable timer history UI",
-  "summary": "타이머 기록 달력·날짜 목록·세션 상세를 한눈에 보게 바꿨다. 날짜별 세션 수, 시간/세션/랩 칩, 큰 세션 카드, 랩별 기구 칩.",
+  "title": "Comfortable timer session recap",
+  "summary": "타이머 세션 상세를 스톱워치 결과처럼 바꿨다. 큰 시간, 랩 타임라인, 기구는 한 줄 카드(세트·무게, 탭하면 상세).",
   "git": {
     "branch": "main",
-    "commit": "11f54c83"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
     "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
-    "frontend/src/components/timer-history/TimerHistoryCalendar.tsx",
     "frontend/src/styles/timer-history.css",
     "frontend/src/utils/timerHistoryFormat.ts",
     "frontend/src/i18n/locales/ko/common.json",
@@ -17,21 +15,21 @@
     "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "타이머 기록: 달력에서 오늘/월 이동, 기록 있는 날에 세션 수가 보이는지",
-    "날짜 선택 시 총 시간·세션·랩 칩과 세션 카드(시간대 + 큰 운동시간) 표시",
-    "빈 날짜: 안내 + 타이머 열기",
-    "세션 상세: 달력으로 돌아가기, 랩 시간/기구 칩, 기구 탭 시 상세로 이동"
+    "세션 상세: 큰 시계(분:초), 날짜·시간대, 랩/기구 칩",
+    "뒤로(기록으로) → 해당 날짜 달력 목록",
+    "랩 번호·시간·운동시간, 기구 행 탭 시 기구 상세",
+    "세트/무게가 있으면 기구 행 하단에 표시"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/timer-history/TimerHistoryPage.tsx -Pattern timer-history-stats",
-    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-lap-chip"
+    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-session-hero",
+    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-ex-row"
   ],
   "productionChecks": [
-    "Open /timer-history on phone-width viewport, pick a day with sessions, open a session"
+    "Open a timer session on phone-width viewport and scan laps + tap a machine"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "긴 설명 문장, 점만 있는 달력, 빈약한 세션 카드, 랩은 번호 목록",
-  "toBe": "세션 수 달력, 통계 칩, 큰 시간 카드, 랩별 기구 칩"
+  "asIs": "작은 통계 칩 + LAP 카드 + 기구 알약 칩",
+  "toBe": "큰 시계 히어로, 번호 타임라인, 큰 기구 행"
 }

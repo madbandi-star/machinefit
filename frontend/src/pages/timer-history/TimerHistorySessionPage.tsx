@@ -1,15 +1,67 @@
 import { Link, useParams } from 'react-router-dom';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { Icon } from '@/components/icons/Icon';
 import { timerHistoryApi } from '@/api/timer-history.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { formatHistoryDateHeader } from '@/utils/historyDate';
-import { formatClock, formatDurationCompact } from '@/utils/timerHistoryFormat';
+import {
+  formatClock,
+  formatDurationCompact,
+  formatSetWeightsKg,
+  formatTimerClock,
+} from '@/utils/timerHistoryFormat';
+import type { TimerHistoryLapExercise, TimerHistorySessionDetail } from '@machinefit/shared';
 import '@/styles/components.css';
 import '@/styles/timer-history.css';
+
+function uniqueMachineCount(session: TimerHistorySessionDetail): number {
+  const keys = new Set<string>();
+  for (const lap of session.laps) {
+    for (const ex of lap.exercises) {
+      keys.add(ex.machineCode || ex.machineId || ex.machineName || ex.id);
+    }
+  }
+  return keys.size;
+}
+
+function ExerciseRow({ ex }: { ex: TimerHistoryLapExercise }) {
+  const { t } = useTranslation('common');
+  const name = ex.machineName || t('timerHistory.unknownMachine');
+  const weights = formatSetWeightsKg(ex.setWeightsKg, t);
+  const meta = [ex.setCount != null ? t('timerHistory.setCount', { count: ex.setCount }) : null, weights]
+    .filter(Boolean)
+    .join(' · ');
+  const inner = (
+    <>
+      <span className="timer-ex-row__text">
+        <span className="timer-ex-row__name">{name}</span>
+        {meta ? <span className="timer-ex-row__meta">{meta}</span> : null}
+      </span>
+      {ex.machineCode ? (
+        <Icon name="chevronRight" size={18} className="timer-ex-row__chevron" aria-hidden />
+      ) : null}
+    </>
+  );
+
+  if (ex.machineCode) {
+    return (
+      <Link
+        className="timer-ex-row"
+        to={ROUTES.MACHINE_DETAIL.replace(':machineCode', ex.machineCode)}
+        aria-label={name}
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return <div className="timer-ex-row is-static">{inner}</div>;
+}
 
 export function TimerHistorySessionPage() {
   const { t, i18n } = useTranslation('common');
@@ -21,119 +73,117 @@ export function TimerHistorySessionPage() {
     enabled: Boolean(sessionId),
   });
 
+  const session = query.data;
+  const dateKey = session?.sessionDate ?? '';
+  const calendarTo = dateKey
+    ? `${ROUTES.TIMER_HISTORY}?date=${encodeURIComponent(dateKey)}`
+    : ROUTES.TIMER_HISTORY;
+  const machineTotal = useMemo(() => (session ? uniqueMachineCount(session) : 0), [session]);
+
   if (query.isLoading) {
     return (
       <div className="timer-history-page timer-history-page--session">
-        <PageShell title={t('timerHistory.sessionTitle')}>
-          <Skeleton count={4} height={72} />
+        <PageShell>
+          <Skeleton height={168} />
+          <Skeleton count={3} height={88} />
         </PageShell>
       </div>
     );
   }
 
-  if (query.isError || !query.data) {
+  if (query.isError || !session) {
     return (
       <div className="timer-history-page timer-history-page--session">
-        <PageShell title={t('timerHistory.sessionTitle')}>
+        <PageShell>
+          <nav className="timer-history-nav">
+            <Link to={ROUTES.TIMER_HISTORY} className="timer-history-back">
+              <Icon name="chevronLeft" size={18} aria-hidden />
+              {t('timerHistory.backToHistory')}
+            </Link>
+          </nav>
           <div className="timer-history-error">
             <p>{t('timerHistory.loadFailed')}</p>
             <button type="button" className="btn btn--secondary" onClick={() => void query.refetch()}>
               {t('actions.retry')}
             </button>
-            <Link className="timer-history-back" to={ROUTES.TIMER_HISTORY}>
-              {t('timerHistory.backToCalendar')}
-            </Link>
           </div>
         </PageShell>
       </div>
     );
   }
 
-  const session = query.data;
-  const dateKey = session.sessionDate;
-  const calendarTo = `${ROUTES.TIMER_HISTORY}?date=${encodeURIComponent(dateKey)}`;
-
   return (
     <div className="timer-history-page timer-history-page--session">
       <PageShell>
         <nav className="timer-history-nav">
           <Link to={calendarTo} className="timer-history-back">
-            {t('timerHistory.backToCalendar')}
+            <Icon name="chevronLeft" size={18} aria-hidden />
+            {t('timerHistory.backToHistory')}
           </Link>
-          <h1>{t('timerHistory.sessionTitle')}</h1>
         </nav>
+        <h1 className="visually-hidden">{t('timerHistory.sessionTitle')}</h1>
 
-        <p className="timer-history-session__when">
-          {formatHistoryDateHeader(dateKey, i18n.language)}
-          {' · '}
-          {formatClock(session.startedAt, i18n.language)}
-          {' – '}
-          {formatClock(session.endedAt, i18n.language)}
-        </p>
+        <section className="timer-session-hero" aria-label={t('timerHistory.sessionTitle')}>
+          <p className="timer-session-hero__date">{formatHistoryDateHeader(dateKey, i18n.language)}</p>
+          <p className="timer-session-hero__range">
+            {formatClock(session.startedAt, i18n.language)}
+            {' – '}
+            {formatClock(session.endedAt, i18n.language)}
+          </p>
+          <p className="timer-session-hero__clock">{formatTimerClock(session.durationSeconds)}</p>
+          <p className="timer-session-hero__label">{t('timerHistory.totalDuration')}</p>
+          <div className="timer-session-hero__chips">
+            <span>{t('timerHistory.lapCountLabel', { count: session.lapCount })}</span>
+            {machineTotal > 0 ? (
+              <span>{t('timerHistory.machineCount', { count: machineTotal })}</span>
+            ) : null}
+          </div>
+        </section>
 
-        <div className="timer-history-stats">
-          <span>
-            <strong>{formatDurationCompact(session.durationSeconds, t)}</strong>
-            {t('timerHistory.totalDuration')}
-          </span>
-          <span>
-            <strong>{session.lapCount}</strong>
-            {t('timerHistory.statLaps')}
-          </span>
-        </div>
-
-        <ol className="timer-lap-list">
-          {session.laps.map((lap) => (
-            <li key={lap.id} className="card timer-lap-card">
-              <div className="timer-lap-card__head">
-                <div>
-                  <span className="timer-lap-card__index">
-                    {t('timerHistory.lapItem', { n: lap.lapNumber })}
+        <section className="timer-session-laps" aria-label={t('timerHistory.lapsHeading')}>
+          <h2>{t('timerHistory.lapsHeading')}</h2>
+          {session.laps.length === 0 ? (
+            <p className="timer-lap-card__empty">{t('timerHistory.noLaps')}</p>
+          ) : (
+            <ol className="timer-lap-list">
+              {session.laps.map((lap) => (
+                <li key={lap.id} className="timer-lap">
+                  <span className="timer-lap__badge" aria-hidden>
+                    {lap.lapNumber}
                   </span>
-                  <span className="timer-lap-card__range">
-                    {formatClock(lap.startedAt, i18n.language)}
-                    {' – '}
-                    {formatClock(lap.endedAt, i18n.language)}
-                  </span>
-                </div>
-                <span className="timer-lap-card__dur">
-                  {formatDurationCompact(lap.durationSeconds, t)}
-                </span>
-              </div>
-              {lap.exercises.length === 0 ? (
-                <p className="timer-lap-card__empty">{t('timerHistory.noMachines')}</p>
-              ) : (
-                <ul className="timer-lap-card__machines">
-                  {lap.exercises.map((ex) => {
-                    const name = ex.machineName || t('timerHistory.unknownMachine');
-                    const chip = (
-                      <>
-                        <span>{name}</span>
-                        {ex.setCount != null ? (
-                          <em>{t('timerHistory.setCount', { count: ex.setCount })}</em>
-                        ) : null}
-                      </>
-                    );
-                    return (
-                      <li key={ex.id}>
-                        {ex.machineCode ? (
-                          <Link
-                            className="timer-lap-chip"
-                            to={ROUTES.MACHINE_DETAIL.replace(':machineCode', ex.machineCode)}
-                          >
-                            {chip}
-                          </Link>
-                        ) : (
-                          <span className="timer-lap-chip">{chip}</span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ol>
+                  <div className="timer-lap__body">
+                    <div className="timer-lap__head">
+                      <div>
+                        <span className="timer-lap__name">
+                          {t('timerHistory.lapItem', { n: lap.lapNumber })}
+                        </span>
+                        <span className="timer-lap__range">
+                          {formatClock(lap.startedAt, i18n.language)}
+                          {' – '}
+                          {formatClock(lap.endedAt, i18n.language)}
+                        </span>
+                      </div>
+                      <strong className="timer-lap__dur">
+                        {formatDurationCompact(lap.durationSeconds, t)}
+                      </strong>
+                    </div>
+                    {lap.exercises.length === 0 ? (
+                      <p className="timer-lap-card__empty">{t('timerHistory.noMachines')}</p>
+                    ) : (
+                      <ul className="timer-lap__exercises">
+                        {lap.exercises.map((ex) => (
+                          <li key={ex.id}>
+                            <ExerciseRow ex={ex} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
       </PageShell>
     </div>
   );
