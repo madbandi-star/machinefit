@@ -1,24 +1,23 @@
-# Test handoff â ì¸ë¶ê¸°êµ¬ ì¶ì² ì£¼ìì¬í­ ë³µêµ¬
+# Test handoff — 80개 공통 머신 주의사항·사용팁 교체
 
 ## Summary
-ê³µíµ ë¨¸ì ì ìí¸/í¸ë¤ë§ ë£ê³  ì£¼ìì¬í­ì´ ë¹ `{}`ë¡ ë¨ì¼ë©´ì, ìì ì ëì¤ë ì£¼ì ë¬¸êµ¬ê° ê°ë ¤ì¡ìµëë¤. ê°ì ì íì ì¹´íë¡ê·¸ ì£¼ìì¬í­ì ë¤ì ì°ê³ , ë¹ ê°ì ì ì¥íì§ ììµëë¤.
+80개 공통 기구의 주의사항 3줄·사용팁 6줄(한/영)을 기존 카탈로그 문구 대신 이번에 주신 내용으로만 넣었습니다.
 
 ## Test focus
-1. ì¸ë¶ê¸°êµ¬ ì¶ì² ê²°ê³¼ íì´ì§ ìë¨ì **ì£¼ì** ëª©ë¡ì´ ë¤ì ë³´ì´ëì§
-2. ì²´ì¤í¸ íë ì¤ ê³µíµ/ë¸ëë ë³µì¬ë³¸: ì´ê¹¨ ë¶í¸ ì ì¤ë¨ ë± ê¸°ì¡´ ì£¼ì ë¬¸êµ¬
-3. ì¤ë¯¸ì¤ / íìë: ì¹´íë¡ê·¸ì ì£¼ìê° ìì¼ë©´ ì¨ê¹ ì ì§
-4. ë¸ëë ì ì© ì£¼ìì¬í­ì´ ìë ë¨¸ì ì ê¸°ì¡´ ë¬¸êµ¬ ì ì§
-5. **Render migrate 150 + backend ì¬ë°°í¬ íì**
+1. 체스트 프레스 추천 결과: 주의 3개, 사용팁 6개, 첫 주의가 시트/손잡이 가슴 중간 높이
+2. 랫풀다운: 바를 목 뒤로 당기지 않는다
+3. 스미스/파워랙/하프랙도 새 주의·팁이 보임
+4. 예전 사이벡스식 긴 주의문구는 더 이상 나오지 않음
+5. **Render migrate 151 + backend 재배포 필요** (프론트만으로는 DB 카탈로그가 안 바뀜. 백엔드 상수는 재배포 후 바로 적용)
 
 ## Fast checks
-- `npx tsx backend/server/utils/localize.util.test.ts`
-- `database/migrations/150_restore_standard_machine_coaching.sql` contains `standard_type_id`
-- `backend/server/services/recommendation.service.ts` contains `firstLocalizedRecord`
-- `backend/server/repositories/recommendation.repository.ts` contains `findTypeCoaching`
+- `npx tsx shared/src/constants/standard-machine-coaching.test.ts`
+- `database/migrations/151_replace_standard_machine_coaching.sql` contains `STD_CHEST_PRESS`
+- `shared/src/constants/standard-machine-coaching.ts` contains `시트를 조절해 손잡이가 가슴 중간 높이에 오도록 한다.`
 
-## As-is â To-be
-- as-is: ì¶ì² ê²°ê³¼ì ì£¼ìì¬í­ ìì (ì¤ë/íì/ê°ëë²ìë§)
-- to-be: ìì ì ëì¤ë ê¸°êµ¬ë³ ì£¼ìì¬í­ì´ ê²°ê³¼ íì´ì§ì ë¤ì íì
+## As-is → To-be
+- as-is: 브랜드별 긴 카탈로그 주의/팁 또는 빈 값
+- to-be: 제출하신 80개 공통 문구만 표시
 
 **Branch:** `main`  
-**Commit:** 92f537e3
+**Commit:** pending

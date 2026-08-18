@@ -8,6 +8,7 @@ import {
   isFreeWeightMachineCode,
   resolveActiveRecommendationSettings,
   recommendRepsForGoal,
+  resolveStandardMachineCoaching,
 } from '@machinefit/shared';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
@@ -171,6 +172,13 @@ export const recommendationService = {
       }
     );
 
+    const standardCoaching = resolveStandardMachineCoaching(
+      input.machineCode,
+      machine.standardTypeCode
+    );
+    const standardTips = pickLocalizedArray(standardCoaching?.tips ?? null, locale);
+    const standardWarnings = pickLocalizedArray(standardCoaching?.warnings ?? null, locale);
+
     const settingsTips = match ? pickLocalizedArray(match.tips, locale) : [];
     const catalogTips = pickLocalizedArray(machine.tips ?? null, locale);
     const settingsWarnings = match ? pickLocalizedArray(match.warnings, locale) : [];
@@ -180,8 +188,9 @@ export const recommendationService = {
       | { tips: Record<string, string[]> | null; warnings: Record<string, string[]> | null }
       | undefined;
     if (
-      (settingsTips.length === 0 && catalogTips.length === 0) ||
-      (settingsWarnings.length === 0 && catalogWarnings.length === 0)
+      standardTips.length === 0 &&
+      ((settingsTips.length === 0 && catalogTips.length === 0) ||
+        (settingsWarnings.length === 0 && catalogWarnings.length === 0))
     ) {
       typeCoaching = await recommendationRepository.findTypeCoaching(machineId);
     }
@@ -189,13 +198,15 @@ export const recommendationService = {
     const typeWarnings = pickLocalizedArray(typeCoaching?.warnings ?? null, locale);
 
     const baseTips =
-      settingsTips.length > 0
-        ? settingsTips
-        : catalogTips.length > 0
-          ? catalogTips
-          : typeTips.length > 0
-            ? typeTips
-            : pickLocalizedArray(DEFAULT_TIPS, locale);
+      standardTips.length > 0
+        ? standardTips
+        : settingsTips.length > 0
+          ? settingsTips
+          : catalogTips.length > 0
+            ? catalogTips
+            : typeTips.length > 0
+              ? typeTips
+              : pickLocalizedArray(DEFAULT_TIPS, locale);
 
     const hasCustomSettings = Boolean(
       savedPreferences?.customSettings &&
@@ -205,33 +216,40 @@ export const recommendationService = {
     );
     const usingAdjusted = activeSource === 'adjusted';
 
-    const tips = buildPersonalizedTips(baseTips, locale, {
-      workoutGoal: input.workoutGoal,
-      experienceLevel: input.experienceLevel,
-      targetMuscleGroup: input.targetMuscleGroup,
-      hasCustomPreferences: usingAdjusted || hasCustomSettings,
-    });
+    const tips = standardTips.length
+      ? standardTips
+      : buildPersonalizedTips(baseTips, locale, {
+          workoutGoal: input.workoutGoal,
+          experienceLevel: input.experienceLevel,
+          targetMuscleGroup: input.targetMuscleGroup,
+          hasCustomPreferences: usingAdjusted || hasCustomSettings,
+        });
 
     const warnings =
-      settingsWarnings.length > 0
-        ? settingsWarnings
-        : catalogWarnings.length > 0
-          ? catalogWarnings
-          : typeWarnings;
-    const tipsByLocale = {
-      [locale]: tips,
-      ...(match?.tips ?? {}),
-      ...(machine.tips ?? {}),
-      ...(typeCoaching?.tips ?? {}),
-    };
-    // Prefer the response locale's personalized tips; keep other catalog locales as fallback.
+      standardWarnings.length > 0
+        ? standardWarnings
+        : settingsWarnings.length > 0
+          ? settingsWarnings
+          : catalogWarnings.length > 0
+            ? catalogWarnings
+            : typeWarnings;
+    const tipsByLocale: Record<string, string[]> = standardCoaching
+      ? { ...standardCoaching.tips, [locale]: tips }
+      : {
+          [locale]: tips,
+          ...(match?.tips ?? {}),
+          ...(machine.tips ?? {}),
+          ...(typeCoaching?.tips ?? {}),
+        };
+    // Prefer the response locale's canonical / personalized tips.
     tipsByLocale[locale] = tips;
-    const warningsByLocale =
-      firstLocalizedRecord(
-        match?.warnings,
-        machine.warnings ?? undefined,
-        typeCoaching?.warnings ?? undefined
-      ) ?? (warnings.length ? { [locale]: warnings } : null);
+    const warningsByLocale = standardCoaching
+      ? standardCoaching.warnings
+      : firstLocalizedRecord(
+          match?.warnings,
+          machine.warnings ?? undefined,
+          typeCoaching?.warnings ?? undefined
+        ) ?? (warnings.length ? { [locale]: warnings } : null);
 
     const [id, youtubeVideos] = await Promise.all([
       recommendationRepository.save(
