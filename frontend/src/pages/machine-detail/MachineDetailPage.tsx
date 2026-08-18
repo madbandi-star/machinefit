@@ -341,10 +341,6 @@ export function MachineDetailPage() {
           </Link>
         </div>
       ) : null}
-      {/* After hero content so it is not buried under sticky UI; above Recommend CTA. */}
-      {!isPlanAddMode ? (
-        <BannerSlot slot="MACHINE_BOTTOM" className="machine-detail-page__banner" />
-      ) : null}
       {!isPlanAddMode && machineCode && isAuthenticated ? (
         <MachineShowcaseLinks machineCode={machineCode} />
       ) : null}
@@ -358,6 +354,9 @@ export function MachineDetailPage() {
             (logDate && logDate > todayDateKey ? logDate : null)
           }
         />
+      ) : null}
+      {!isPlanAddMode ? (
+        <BannerSlot slot="MACHINE_BOTTOM" className="machine-detail-page__banner" />
       ) : null}
     </div>
   );

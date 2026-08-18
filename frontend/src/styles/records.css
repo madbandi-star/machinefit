@@ -2127,7 +2127,7 @@ body:has(.records-page--history) .layout__content {
   }
 }
 
-/* Machine detail — banner above recommend CTA (CTA is no longer sticky). */
+/* Machine detail — banner sits under the recommend CTA. */
 .machine-detail-page {
   display: flex;
   flex-direction: column;

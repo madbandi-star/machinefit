@@ -1,32 +1,26 @@
 {
-  "title": "Polish timer session detail UI",
-  "summary": "?€?´ë¨¸ ?¸ì…˜ ?ì„¸ë¥??¬êµ¬?±í–ˆ?? ???œê³„ ?ˆì–´ë¡? ??ê¸°êµ¬/?¸íŠ¸ 3???µê³„, ??ë¸”ë¡+ê¸°êµ¬ ì¹???",
+  "title": "Move machine-detail ad banner below recommend CTA",
+  "summary": "?? ??(????) ???? MACHINE_BOTTOM ?? ??? ???? ?? ??? ???.",
   "git": {
     "branch": "main",
-    "commit": "ec344c8f"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/timer-history/TimerHistorySessionPage.tsx",
-    "frontend/src/styles/timer-history.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx",
+    "frontend/src/styles/records.css"
   ],
   "testFocus": [
-    "?€?´ë¨¸ ?¸ì…˜ ?ì„¸: ?œê³„Â·?œê°„?€ ì¹©Â????µê³„",
-    "??ë¸”ë¡: ë²ˆí˜¸+ê¸°ê°„ ê°•ì¡°, ê¸°êµ¬ ?‰ì— ?¸íŠ¸/ì¤‘ëŸ‰ ì¹?
+    "?? ??: ???? ?? ??? ?? ??? ????"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/timer-history/TimerHistorySessionPage.tsx -Pattern timer-session-detail|timer-lap-block|statSets",
-    "Select-String -Path frontend/src/styles/timer-history.css -Pattern timer-session-detail__clock|timer-ex__chip"
+    "Select-String -Path frontend/src/pages/machine-detail/MachineDetailPage.tsx -Pattern BannerSlot|RecommendCTA"
   ],
   "productionChecks": [
-    "Open one timer session detail on Pages after deploy"
+    "Open a machine detail page and confirm banner is below ????"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "?€?„ë¼??ì¤‘ì²© ì¹´ë“œë¡??¸ì…˜ ?ì„¸ê°€ ?½ê¸° ?´ë ¤?€",
-  "toBe": "?œê³„ ?ˆì–´ë¡?+ 3???µê³„ + ??ë¸”ë¡/ê¸°êµ¬ ì¹?
+  "asIs": "?? ??? ???? ?? ?? ??",
+  "toBe": "?? ??? ???? ?? ??? ??"
 }
