@@ -214,6 +214,11 @@ export function MyPage() {
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.FORTUNE_TODAY} label={tf('title')} icon="flame" />
           <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
+          <ListNavLink
+            to={ROUTES.MACHINE_DEX}
+            label={t('myPage.machineDex')}
+            icon="machines"
+          />
           {showAboveMember ? (
             <>
               <ListNavLink
@@ -225,11 +230,6 @@ export function MyPage() {
                 to={ROUTES.ACHIEVEMENTS}
                 label={t('myPage.achievements')}
                 icon="trophy"
-              />
-              <ListNavLink
-                to={ROUTES.MACHINE_DEX}
-                label={t('myPage.machineDex')}
-                icon="machines"
               />
             </>
           ) : null}
