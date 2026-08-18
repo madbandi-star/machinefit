@@ -1,35 +1,27 @@
 {
-  "title": "Richer machine dex page",
-  "summary": "머신도감이 너무 미니멀해서, 큰 진행률·헬스장 카드·등급 필터·2열 카드(이름·브랜드·발견 정보)로 다시 짰다.",
+  "title": "Align machine dex grid and grade chips",
+  "summary": "머신도감 등급 칩을 화면 안 4열 격자로 넣고, 카드 2열 높이를 맞춰 행·열이 어긋나지 않게 했다.",
   "git": {
     "branch": "main",
-    "commit": "66f891d5"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/pages/machine-showcase/MachineDexPage.tsx",
-    "frontend/src/styles/machine-showcase.css",
-    "frontend/src/i18n/locales/ko/community.json",
-    "frontend/src/i18n/locales/en/community.json",
-    "frontend/src/i18n/locales/ja/community.json",
-    "frontend/src/i18n/locales/zh/community.json"
+    "frontend/src/styles/machine-showcase.css"
   ],
   "testFocus": [
-    "마이페이지 → 머신도감: 뒤로/자랑하기",
-    "발견 수·진행 바·남음 칩",
-    "등급 칩 탭(이름+수), 빈 등급 안내",
-    "카드: 사진 아래 이름, 탭하면 기구 상세",
-    "헬스장 미등록 시 등록 CTA"
+    "등급 칩이 가로로 화면을 벗어나지 않고 4열×2행으로 보이는지",
+    "카드 2열이 같은 높이로 맞춰지는지"
   ],
   "fastChecks": [
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineDexPage.tsx -Pattern showcase-dex-hero",
-    "Select-String -Path frontend/src/pages/machine-showcase/MachineDexPage.tsx -Pattern showcase-dex-card__body"
+    "Select-String -Path frontend/src/styles/machine-showcase.css -Pattern 'repeat(4, minmax(0, 1fr))'"
   ],
   "productionChecks": [
-    "Open machine dex on phone-width and scan progress, filters, cards"
+    "Open machine dex on phone-width and confirm chips stay on screen"
   ],
   "deploy": {
     "expected": "GitHub Pages after push to main"
   },
-  "asIs": "작은 제목, 4px 바, 기호 칩, 3열 썸네일+오버레이 이름",
-  "toBe": "큰 진행률, 헬스장 카드, 큰 등급 칩, 2열 카드+캡션"
+  "asIs": "등급 칩이 화면 밖으로 밀림, 카드 높이 들쭉날쭉",
+  "toBe": "4열 칩, 2열 카드 높이 정렬"
 }

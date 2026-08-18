@@ -20,16 +20,6 @@ import { resolveShowcaseMediaUrl } from '@/utils/showcaseMediaUrl';
 import '@/styles/components.css';
 import '@/styles/machine-showcase.css';
 
-const GRADE_MARK: Record<MachineRarityGrade, string> = {
-  COMMON: '○',
-  UNCOMMON: '◇',
-  RARE: '◆',
-  EPIC: '✦',
-  LEGENDARY: '★',
-  MYTHIC: '✸',
-  UNIQUE: '❖',
-};
-
 function formatDiscoveredAt(iso: string, locale: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return '';
@@ -183,7 +173,7 @@ export function MachineDexPage() {
               className={gradeFilter === 'ALL' ? 'is-on' : ''}
               onClick={() => setGradeFilter('ALL')}
             >
-              {t('showcase.dexAll')}
+              <span>{t('showcase.dexAll')}</span>
               <em>{found}</em>
             </button>
             {MACHINE_RARITY_GRADES.map((grade) => {
@@ -198,8 +188,7 @@ export function MachineDexPage() {
                   style={{ ['--rarity-swatch' as string]: MACHINE_RARITY_META[grade].swatch }}
                   onClick={() => setGradeFilter(gradeFilter === grade ? 'ALL' : grade)}
                 >
-                  <span aria-hidden>{GRADE_MARK[grade]}</span>
-                  {t(`showcase.grades.${grade}`)}
+                  <span>{t(`showcase.grades.${grade}`)}</span>
                   <em>{count}</em>
                 </button>
               );
@@ -263,7 +252,7 @@ export function MachineDexPage() {
                     </div>
                     <div className="showcase-dex-card__body">
                       <strong>{item.machineName}</strong>
-                      {item.brandName ? <span className="showcase-dex-card__brand">{item.brandName}</span> : null}
+                      <span className="showcase-dex-card__brand">{item.brandName || '\u00a0'}</span>
                       <p className="showcase-dex-card__meta">
                         {[
                           rankLabel,
@@ -273,7 +262,7 @@ export function MachineDexPage() {
                           item.discoveredAt ? formatDiscoveredAt(item.discoveredAt, i18n.language) : null,
                         ]
                           .filter(Boolean)
-                          .join(' · ')}
+                          .join(' · ') || '\u00a0'}
                       </p>
                     </div>
                   </Link>
