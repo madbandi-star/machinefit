@@ -436,6 +436,11 @@
     "rareFound": "{{grade}} 머신을 발견했습니다. 전국 {{count}}개 헬스장.",
     "machinePosts": "이 머신 자랑글 {{count}}",
     "machineGyms": "이 머신이 있는 헬스장 {{count}}",
-    "gymShowcase": "기구 자랑글"
+    "gymShowcase": "기구 자랑글",
+    "postsStat": "자랑 {{count}}",
+    "gymsStat": "헬스장 {{count}}",
+    "glanceEmpty": "아직 이 기구 사진이 없어요. 첫 자랑을 올려 보세요.",
+    "thisMachineOnly": "이 기구만",
+    "clearFilter": "해제"
   }
 }

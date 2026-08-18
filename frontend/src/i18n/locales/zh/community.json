@@ -436,6 +436,11 @@
     "rareFound": "发现 {{grade}} 器械。全国 {{count}} 家健身房。",
     "machinePosts": "该器械晒图 {{count}}",
     "machineGyms": "拥有该器械的健身房 {{count}}",
-    "gymShowcase": "器械晒图"
+    "gymShowcase": "器械晒图",
+    "postsStat": "晒图 {{count}}",
+    "gymsStat": "健身房 {{count}}",
+    "glanceEmpty": "还没有这台器械的照片。来晒第一张吧。",
+    "thisMachineOnly": "仅此器械",
+    "clearFilter": "清除"
   }
 }

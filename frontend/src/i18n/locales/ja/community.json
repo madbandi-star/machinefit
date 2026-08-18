@@ -436,6 +436,11 @@
     "rareFound": "{{grade}} マシンを発見。全国 {{count}} ジム。",
     "machinePosts": "このマシンの自慢 {{count}}",
     "machineGyms": "このマシンがあるジム {{count}}",
-    "gymShowcase": "マシン自慢"
+    "gymShowcase": "マシン自慢",
+    "postsStat": "自慢 {{count}}",
+    "gymsStat": "ジム {{count}}",
+    "glanceEmpty": "まだこのマシンの写真がありません。最初の投稿をしてみましょう。",
+    "thisMachineOnly": "このマシンのみ",
+    "clearFilter": "解除"
   }
 }

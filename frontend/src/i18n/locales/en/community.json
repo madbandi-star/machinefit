@@ -436,6 +436,11 @@
     "rareFound": "{{grade}} machine found. {{count}} gyms nationwide.",
     "machinePosts": "Showcase posts {{count}}",
     "machineGyms": "Gyms with this machine {{count}}",
-    "gymShowcase": "Showcase posts"
+    "gymShowcase": "Showcase posts",
+    "postsStat": "{{count}} posts",
+    "gymsStat": "{{count}} gyms",
+    "glanceEmpty": "No photos of this machine yet. Be the first to post.",
+    "thisMachineOnly": "This machine",
+    "clearFilter": "Clear"
   }
 }

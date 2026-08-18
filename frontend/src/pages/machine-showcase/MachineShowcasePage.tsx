@@ -20,22 +20,41 @@ export function MachineShowcasePage() {
   const [params, setParams] = useSearchParams();
   const page = Math.max(1, parseInt(params.get('page') || '1', 10) || 1);
   const tab = (params.get('tab') as MachineShowcaseTab) || 'latest';
+  const machineCode = params.get('machineCode')?.trim() || undefined;
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locTried, setLocTried] = useState(false);
 
   const query = useQuery({
-    queryKey: QUERY_KEYS.machineShowcase({ page, tab, lat: coords?.lat, lng: coords?.lng }),
+    queryKey: QUERY_KEYS.machineShowcase({
+      page,
+      tab,
+      machineCode,
+      lat: coords?.lat,
+      lng: coords?.lng,
+    }),
     queryFn: async () =>
       (
         await machineShowcaseApi.list({
           page,
           limit: 18,
           tab,
+          machineCode,
           lat: coords?.lat,
           lng: coords?.lng,
         })
       ).data.data,
   });
+
+  const writeTo = machineCode
+    ? `${ROUTES.MACHINE_SHOWCASE_WRITE}?machineCode=${encodeURIComponent(machineCode)}`
+    : ROUTES.MACHINE_SHOWCASE_WRITE;
+
+  const clearMachineFilter = () => {
+    const nextParams = new URLSearchParams(params);
+    nextParams.delete('machineCode');
+    nextParams.set('page', '1');
+    setParams(nextParams);
+  };
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -71,10 +90,20 @@ export function MachineShowcasePage() {
             <h1>{t('showcase.title')}</h1>
             <p>{t('showcase.subtitle')}</p>
           </div>
-          <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="showcase-top__write">
+          <Link to={writeTo} className="showcase-top__write">
             {t('showcase.writeCtaShort')}
           </Link>
         </header>
+
+        {machineCode ? (
+          <div className="showcase-filter">
+            <span className="showcase-filter__label">{t('showcase.thisMachineOnly')}</span>
+            <span className="showcase-filter__code">{machineCode}</span>
+            <button type="button" className="showcase-filter__clear" onClick={clearMachineFilter}>
+              {t('showcase.clearFilter')}
+            </button>
+          </div>
+        ) : null}
 
         <div className="showcase-tabs" role="tablist" aria-label={t('showcase.title')}>
           {TABS.map((item) => (
@@ -116,7 +145,7 @@ export function MachineShowcasePage() {
               🏋️
             </span>
             <strong>{t('showcase.empty')}</strong>
-            <Link to={ROUTES.MACHINE_SHOWCASE_WRITE} className="btn btn--primary">
+            <Link to={writeTo} className="btn btn--primary">
               {t('showcase.writeCtaShort')}
             </Link>
           </div>

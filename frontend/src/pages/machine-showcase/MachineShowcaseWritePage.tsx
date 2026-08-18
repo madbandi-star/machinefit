@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { isAllGymsId, isRareOrHigher } from '@machinefit/shared';
@@ -21,12 +21,14 @@ export function MachineShowcaseWritePage() {
   const queryClient = useQueryClient();
   const showToast = useUIStore((s) => s.showToast);
   const { gyms, activeGymId } = useActiveGym();
+  const [searchParams] = useSearchParams();
+  const presetMachineCode = searchParams.get('machineCode')?.trim() ?? '';
 
   const [userGymId, setUserGymId] = useState(activeGymId ?? '');
   const [gymId, setGymId] = useState('');
   const [gymQ, setGymQ] = useState('');
   const [machineQ, setMachineQ] = useState('');
-  const [machineCode, setMachineCode] = useState('');
+  const [machineCode, setMachineCode] = useState(presetMachineCode);
   const [caption, setCaption] = useState('');
   const [tagsRaw, setTagsRaw] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -46,9 +48,18 @@ export function MachineShowcaseWritePage() {
     enabled: gymQ.trim().length >= 2,
   });
 
+  const presetMachineQuery = useQuery({
+    queryKey: QUERY_KEYS.machine(presetMachineCode),
+    queryFn: async () => (await machineApi.getByCode(presetMachineCode)).data.data,
+    enabled: Boolean(presetMachineCode),
+    staleTime: 5 * 60_000,
+  });
+
   const selectedMachine = useMemo(
-    () => machinesQuery.data?.find((m) => m.code === machineCode),
-    [machinesQuery.data, machineCode]
+    () =>
+      machinesQuery.data?.find((m) => m.code === machineCode) ??
+      (presetMachineQuery.data?.code === machineCode ? presetMachineQuery.data : undefined),
+    [machinesQuery.data, machineCode, presetMachineQuery.data]
   );
 
   const mutation = useMutation({
@@ -151,9 +162,12 @@ export function MachineShowcaseWritePage() {
             ))}
           </div>
           {selectedMachine ? (
-            <p>
+            <p className="showcase-write__picked">
               {getLocalizedName(selectedMachine.name, i18n.language, selectedMachine.code)}
+              {selectedMachine.brandCode ? ` · ${selectedMachine.brandCode}` : ''}
             </p>
+          ) : machineCode ? (
+            <p className="showcase-write__picked">{machineCode}</p>
           ) : null}
           <Link to={ROUTES.MACHINE_REQUESTS_WRITE}>{t('showcase.suggestMachine')}</Link>
         </section>
