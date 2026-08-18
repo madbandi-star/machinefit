@@ -4,7 +4,7 @@
 공통 머신 81개 유형에 시트·백패드·발·핸들 기본값을 넣었습니다. 이미 있는 브랜드 숫자는 덮어쓰지 않고, 비어 있던 기록만 채웁니다.
 
 ## Test focus
-1. 공통 머신 기록 펼침: 표에 숫자가 있는 항목만 타일로 보이는지
+1. 공통 머신 기록 편찬: 표에 숫자가 있는 항목만 타일로 보이는지
 2. 스미스 / 파워 랙 / 하프 랙: 네 항목 없음 (중량·횟수·가동범위만)
 3. 랫풀다운: 시트 4, 발 3. 핸들/백패드 없음
 4. 체스트 프레스: 시트 4, 핸들 2
@@ -13,6 +13,11 @@
 
 ## Fast checks
 `npm run test:smoke:changed`
+
+Also:
+- `database/migrations/149_standard_machine_fit_positions.sql` contains `STD_CHEST_PRESS`
+- `shared/src/constants/standard-machine-fit.ts` contains `STD_ASSISTED_PULLUP_DIP`
+- `backend/server/services/recommendation.service.ts` uses `match?.seatPosition ?? standardFit?.seatPosition`
 
 ## As-is → To-be
 - as-is: 공통 머신은 추천 중량 / 횟수 / 가동 범위만
