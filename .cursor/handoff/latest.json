@@ -1,41 +1,54 @@
 {
-  "title": "Soft-launch allowlist + under construction",
-  "summary": "Only allowlisted usernames (???1205, ?????, ???, ????0587) can use the app. Others are redirected to /under-construction and blocked from APIs.",
+  "title": "MachineFit PRO tips column (admin)",
+  "summary": "Wire machines.pro_tips as MachineFit PRO tips in admin tips editor. Same JSONB line-array shape as tips/warnings; max 5000 UTF-8 bytes per locale.",
   "git": {
     "branch": "main",
-    "commit": "20421f3e"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/constants/active-service-access.ts",
-    "frontend/src/pages/under-construction/UnderConstructionPage.tsx",
-    "frontend/src/routes/guards/ActiveServiceAccessGate.tsx",
-    "backend/server/middlewares/active-service-access.middleware.ts"
+    "database/migrations/153_machinefit_pro_tips.sql",
+    "shared/src/validators/admin-catalog.schema.ts",
+    "shared/src/types/machine.types.ts",
+    "backend/server/repositories/admin-catalog.repository.ts",
+    "frontend/src/pages/admin/machine-tips/AdminMachineTipsPage.tsx",
+    "frontend/src/api/admin.api.ts",
+    "frontend/src/i18n/locales/ko/admin.json",
+    "frontend/src/i18n/locales/en/admin.json",
+    "frontend/src/i18n/locales/ja/admin.json",
+    "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Login as non-allowlisted ? /under-construction",
-    "Allowlisted users reach Home",
-    "Non-allowlisted JWT gets API 403 SERVICE_ACCESS_RESTRICTED except /auth and GET /users/me"
+    "Admin ? ??·?: editor shows ???PRO? section",
+    "Save pro tips; reload shows saved lines",
+    "Reject save when locale content exceeds 5000 UTF-8 bytes"
   ],
   "fastChecks": [
     {
-      "id": "allowlist",
+      "id": "migration",
       "type": "file_contains",
-      "path": "shared/src/constants/active-service-access.ts",
-      "pattern": "???1205"
+      "path": "database/migrations/153_machinefit_pro_tips.sql",
+      "pattern": "pro_tips"
     },
     {
-      "id": "page",
+      "id": "schema-limit",
       "type": "file_contains",
-      "path": "frontend/src/pages/under-construction/UnderConstructionPage.tsx",
-      "pattern": "??? ?? ?"
+      "path": "shared/src/validators/admin-catalog.schema.ts",
+      "pattern": "5000"
+    },
+    {
+      "id": "admin-ui",
+      "type": "file_contains",
+      "path": "frontend/src/pages/admin/machine-tips/AdminMachineTipsPage.tsx",
+      "pattern": "proTips"
     }
   ],
   "productionChecks": [
-    "Pages + Render deploy; login with blocked account"
+    "Apply migration 153 on Render/DB if not auto-applied",
+    "Admin machine tips page after Pages deploy"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages + Render backend (migration 153)"
   },
-  "asIs": "Any account could use the full service.",
-  "toBe": "Only four invite usernames; others see under-construction."
+  "asIs": "Admin tips editor only had warnings + tips; pro_tips unused in UI.",
+  "toBe": "Admin can edit MachineFit PRO tips (pro_tips) with 5000-byte locale cap."
 }

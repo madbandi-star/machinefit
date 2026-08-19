@@ -59,7 +59,10 @@ export interface Machine {
   intermediateTips?: Record<string, string[]>;
   /** Reserved for future UI — not displayed yet. */
   advancedTips?: Record<string, string[]>;
-  /** Reserved for future UI — not displayed yet. */
+  /**
+   * MachineFit PRO tips (localized line arrays).
+   * App validation: max 5000 UTF-8 bytes per locale (and per line).
+   */
   proTips?: Record<string, string[]>;
   recommendedExperience?: ExperienceLevel | string;
   hasSeat: boolean;

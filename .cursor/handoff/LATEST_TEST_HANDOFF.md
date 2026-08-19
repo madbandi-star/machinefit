@@ -1,17 +1,21 @@
-# Test handoff ? Soft-launch allowlist
+ï»¿# Test handoff â€” MachineFit PRO tips
 
 ## Summary
-Only `ÇÍ·¯³Ê1205`, `Á¦ÀÌÁøÆÄÅ©`, `»ç·¹·¹`, `Áü¸ÞÀÌÆ®0587` may use the app. Other logged-in accounts go to `/under-construction`; APIs return 403 `SERVICE_ACCESS_RESTRICTED`.
+Admin **ì£¼ì˜Â·íŒ** editor now includes **ë¨¸ì‹ í•PROíŒ** (`machines.pro_tips`, JSONB `{ko:[],en:[]}`). App validation: **max 5000 UTF-8 bytes per locale** (and per line).
 
 ## Test focus
-1. Non-allowlisted login ¡æ construction page + cannot use features
-2. Allowlisted login ¡æ normal Home
-3. Logout from construction ¡æ login again
-4. Disable gate locally: `ACTIVE_SERVICE_ACCESS=0` / `VITE_ACTIVE_SERVICE_ACCESS=0`
+1. Admin â†’ ì£¼ì˜Â·íŒ â†’ open a machine â†’ see ë¨¸ì‹ í•PROíŒ section
+2. Save ko/en PRO tips â†’ reload â†’ values persist
+3. Oversized content (>5000 UTF-8 bytes for one locale) â†’ save fails validation
+4. Confirm migration `153_machinefit_pro_tips.sql` applied on DB (column already existed from 034; comment/ensure)
 
-## As-is ¡æ To-be
-- as-is: all accounts usable
-- to-be: invite-only soft launch
+## Fast checks
+- `npm run build --workspace=shared`
+- Grep: `proTips` in `AdminMachineTipsPage.tsx` and `5000` in `admin-catalog.schema.ts`
+
+## As-is â†’ To-be
+- **as-is:** Admin only edited warnings + tips; `pro_tips` unused in admin UI
+- **to-be:** Admin can manage MachineFit PRO tips with 5000-byte locale limit
 
 **Branch:** `main`  
-**Commit:** `20421f3e`
+**Commit:** pending (update after push)

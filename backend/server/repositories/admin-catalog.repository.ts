@@ -96,6 +96,7 @@ interface MachineAdminRow {
   description: Record<string, string> | null;
   tips: Record<string, string[]> | null;
   warnings: Record<string, string[]> | null;
+  pro_tips: Record<string, string[]> | null;
   has_seat: boolean;
   has_back_pad: boolean;
   has_foot_plate: boolean;
@@ -147,6 +148,7 @@ function mapMachine(row: MachineAdminRow): Machine {
     description: row.description ?? undefined,
     tips: row.tips ?? undefined,
     warnings: row.warnings ?? undefined,
+    proTips: row.pro_tips ?? undefined,
     hasSeat: row.has_seat,
     hasBackPad: row.has_back_pad,
     hasFootPlate: row.has_foot_plate,
@@ -765,8 +767,9 @@ export const adminCatalogRepository = {
   },
 
   /**
-   * Update catalog tips/warnings and mirror onto all machine_settings rows
-   * so recommendation responses pick up the same content.
+   * Update catalog tips/warnings/pro tips and mirror tips/warnings onto
+   * machine_settings so recommendation responses pick up the same content.
+   * MachineFit PRO tips stay on machines.pro_tips only.
    */
   async updateMachineTips(id: string, input: AdminMachineTipsUpdateInput): Promise<Machine> {
     const pool = getPool();
@@ -790,12 +793,22 @@ export const adminCatalogRepository = {
         ? { zh: input.warnings.zh.map((s) => s.trim()).filter(Boolean) }
         : {}),
     };
+    const proTips = {
+      ko: (input.proTips.ko ?? []).map((s) => s.trim()).filter(Boolean),
+      en: (input.proTips.en ?? []).map((s) => s.trim()).filter(Boolean),
+      ...(input.proTips.ja
+        ? { ja: input.proTips.ja.map((s) => s.trim()).filter(Boolean) }
+        : {}),
+      ...(input.proTips.zh
+        ? { zh: input.proTips.zh.map((s) => s.trim()).filter(Boolean) }
+        : {}),
+    };
 
     await pool.query(
       `UPDATE machines
-       SET tips = $2::jsonb, warnings = $3::jsonb, updated_at = NOW()
+       SET tips = $2::jsonb, warnings = $3::jsonb, pro_tips = $4::jsonb, updated_at = NOW()
        WHERE id = $1`,
-      [existing.id, JSON.stringify(tips), JSON.stringify(warnings)]
+      [existing.id, JSON.stringify(tips), JSON.stringify(warnings), JSON.stringify(proTips)]
     );
 
     await pool.query(

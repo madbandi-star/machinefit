@@ -21,6 +21,8 @@ type TipForm = {
   tipsEn: string;
   warningsKo: string;
   warningsEn: string;
+  proTipsKo: string;
+  proTipsEn: string;
 };
 
 function linesToText(lines?: string[] | null): string {
@@ -46,6 +48,8 @@ function fromMachine(machine: Machine): TipForm {
     tipsEn: linesToText(machine.tips?.en),
     warningsKo: linesToText(machine.warnings?.ko ?? machine.warnings?.en),
     warningsEn: linesToText(machine.warnings?.en),
+    proTipsKo: linesToText(machine.proTips?.ko ?? machine.proTips?.en),
+    proTipsEn: linesToText(machine.proTips?.en),
   };
 }
 
@@ -63,6 +67,8 @@ export function AdminMachineTipsPage() {
     tipsEn: '',
     warningsKo: '',
     warningsEn: '',
+    proTipsKo: '',
+    proTipsEn: '',
   });
 
   const listParams = useMemo(
@@ -108,6 +114,12 @@ export function AdminMachineTipsPage() {
             en: textToLines(form.warningsEn).length
               ? textToLines(form.warningsEn)
               : textToLines(form.warningsKo),
+          },
+          proTips: {
+            ko: textToLines(form.proTipsKo),
+            en: textToLines(form.proTipsEn).length
+              ? textToLines(form.proTipsEn)
+              : textToLines(form.proTipsKo),
           },
         })
       ).data.data;
@@ -186,11 +198,10 @@ export function AdminMachineTipsPage() {
               <div className="admin-empty">{t('admin:machineTips.empty')}</div>
             ) : (
               items.map((machine) => {
-                const tipCount = countLines(machine.tips, i18n.language.startsWith('ko') ? 'ko' : 'en');
-                const warnCount = countLines(
-                  machine.warnings,
-                  i18n.language.startsWith('ko') ? 'ko' : 'en'
-                );
+                const locale = i18n.language.startsWith('ko') ? 'ko' : 'en';
+                const tipCount = countLines(machine.tips, locale);
+                const warnCount = countLines(machine.warnings, locale);
+                const proTipCount = countLines(machine.proTips, locale);
                 return (
                   <article key={machine.id} className="admin-machine-tips-row">
                     <div className="admin-machine-tips-row__body">
@@ -207,6 +218,9 @@ export function AdminMachineTipsPage() {
                           {t('admin:machineTips.warningsCount', { count: warnCount })}
                         </span>
                         <span>{t('admin:machineTips.tipsCount', { count: tipCount })}</span>
+                        <span>
+                          {t('admin:machineTips.proTipsCount', { count: proTipCount })}
+                        </span>
                       </p>
                     </div>
                     <button
@@ -330,6 +344,35 @@ export function AdminMachineTipsPage() {
                       rows={4}
                       value={form.tipsEn}
                       onChange={(e) => setForm((f) => ({ ...f, tipsEn: e.target.value }))}
+                      placeholder={t('admin:machineTips.linesPlaceholder')}
+                    />
+                  </label>
+                </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:machineTips.sectionProTips')}
+                </h4>
+                <p className="admin-catalog-dialog__hint">{t('admin:machineTips.proTipsHint')}</p>
+                <div className="admin-catalog-fields">
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:machineTips.proTipsKo')}</span>
+                    <textarea
+                      className="input admin-machine-tips-textarea"
+                      rows={6}
+                      value={form.proTipsKo}
+                      onChange={(e) => setForm((f) => ({ ...f, proTipsKo: e.target.value }))}
+                      placeholder={t('admin:machineTips.linesPlaceholder')}
+                    />
+                  </label>
+                  <label className="admin-catalog-field admin-catalog-field--full">
+                    <span>{t('admin:machineTips.proTipsEn')}</span>
+                    <textarea
+                      className="input admin-machine-tips-textarea"
+                      rows={5}
+                      value={form.proTipsEn}
+                      onChange={(e) => setForm((f) => ({ ...f, proTipsEn: e.target.value }))}
                       placeholder={t('admin:machineTips.linesPlaceholder')}
                     />
                   </label>

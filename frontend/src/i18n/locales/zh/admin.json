@@ -453,13 +453,18 @@
     "formHint": "Fill Korean first. Empty English fields copy from Korean.",
     "sectionWarnings": "Warnings",
     "sectionTips": "Exercise tips",
+    "sectionProTips": "MachineFit PRO tips",
     "warningsKo": "Warnings (Korean)",
     "warningsEn": "Warnings (English)",
     "tipsKo": "Tips (Korean)",
     "tipsEn": "Tips (English)",
+    "proTipsKo": "MachineFit PRO tips (Korean)",
+    "proTipsEn": "MachineFit PRO tips (English)",
+    "proTipsHint": "Max 5000 UTF-8 bytes per language. Enter one item per line.",
     "linesPlaceholder": "One item per line",
     "warningsCount": "{{count}} warnings",
     "tipsCount": "{{count}} tips",
+    "proTipsCount": "{{count}} PRO",
     "medicalSafetyNote": "Do not write copy that reads like medical diagnosis, treatment, disease names, or prescriptions. Use general fitness safety tips only."
   },
   "machineCovers": {

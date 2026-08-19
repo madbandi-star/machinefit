@@ -131,10 +131,32 @@ const localizedLinesSchema = z.object({
   zh: z.array(z.string().max(500)).max(30).optional(),
 });
 
-/** Admin: per-machine 주의사항 / 운동팁 (localized line arrays). */
+const utf8ByteLength = (value: string): number => new TextEncoder().encode(value).length;
+
+/** MachineFit PRO tip lines: each line and locale block capped at 5000 UTF-8 bytes. */
+const proTipLineSchema = z
+  .string()
+  .refine((s) => utf8ByteLength(s) <= 5000, { message: 'Max 5000 bytes per line' });
+
+const proTipLocaleLinesSchema = z
+  .array(proTipLineSchema)
+  .max(30)
+  .refine((lines) => utf8ByteLength(lines.join('\n')) <= 5000, {
+    message: 'Max 5000 bytes per locale',
+  });
+
+const localizedProTipsSchema = z.object({
+  ko: proTipLocaleLinesSchema.default([]),
+  en: proTipLocaleLinesSchema.default([]),
+  ja: proTipLocaleLinesSchema.optional(),
+  zh: proTipLocaleLinesSchema.optional(),
+});
+
+/** Admin: per-machine 주의사항 / 운동팁 / 머신핏PRO팁 (localized line arrays). */
 export const adminMachineTipsUpdateSchema = z.object({
   tips: localizedLinesSchema,
   warnings: localizedLinesSchema,
+  proTips: localizedProTipsSchema.default({ ko: [], en: [] }),
 });
 
 export type AdminBrandListQuery = z.infer<typeof adminBrandListQuerySchema>;

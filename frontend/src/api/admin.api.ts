@@ -200,7 +200,11 @@ export const adminApi = {
 
   updateCatalogMachineTips: (
     id: string,
-    input: { tips: Record<string, string[]>; warnings: Record<string, string[]> }
+    input: {
+      tips: Record<string, string[]>;
+      warnings: Record<string, string[]>;
+      proTips: Record<string, string[]>;
+    }
   ) =>
     apiClient.put<ApiResponse<Machine>>(
       `/admin/catalog/machines/${encodeURIComponent(id)}/tips`,

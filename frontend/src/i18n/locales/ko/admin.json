@@ -619,7 +619,7 @@
   "machineTips": {
     "nav": "주의·팁",
     "title": "기구 주의사항·운동팁",
-    "subtitle": "추천 결과와 휴식 안내에 표시되는 기구별 주의사항·운동팁을 관리합니다.",
+    "subtitle": "추천 결과와 휴식 안내에 표시되는 기구별 주의사항·운동팁·머신핏PRO팁을 관리합니다.",
     "hint": "한 줄에 한 항목씩 입력하세요. 저장하면 해당 기구의 추천 설정에도 반영됩니다.",
     "search": "검색",
     "searchPlaceholder": "기구명·코드·브랜드로 검색",
@@ -634,13 +634,18 @@
     "formHint": "한글을 먼저 적고, 영문이 비어 있으면 한글 내용으로 채웁니다.",
     "sectionWarnings": "주의사항",
     "sectionTips": "운동팁",
+    "sectionProTips": "머신핏PRO팁",
     "warningsKo": "주의사항 (한글)",
     "warningsEn": "주의사항 (영문)",
     "tipsKo": "운동팁 (한글)",
     "tipsEn": "운동팁 (영문)",
+    "proTipsKo": "머신핏PRO팁 (한글)",
+    "proTipsEn": "머신핏PRO팁 (영문)",
+    "proTipsHint": "언어별 최대 5000바이트(UTF-8)입니다. 한 줄에 한 항목씩 입력하세요.",
     "linesPlaceholder": "한 줄에 한 항목",
     "warningsCount": "주의 {{count}}",
     "tipsCount": "팁 {{count}}",
+    "proTipsCount": "PRO {{count}}",
     "medicalSafetyNote": "의료 진단·치료·질환명·처방처럼 읽히는 문구는 등록하지 마세요. 일반적인 운동 안전·사용 팁만 작성합니다."
   },
   "machineCovers": {
