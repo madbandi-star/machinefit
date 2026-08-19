@@ -61,6 +61,8 @@ export interface RecommendationResult {
   activeSource?: SettingsActiveSource;
   tips: string[];
   warnings: string[];
+  /** MachineFit PRO tips (long-form catalog content). */
+  proTips?: string[];
   youtubeVideos: YoutubeVideo[];
   createdAt: string;
   weightBasis?: WeightRecommendationBasis;

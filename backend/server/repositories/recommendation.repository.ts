@@ -34,6 +34,7 @@ interface RecommendationRow {
   machine_id: string;
   machine_code: string;
   machine_name: Record<string, string>;
+  machine_pro_tips: Record<string, string[]> | null;
   brand_name: Record<string, string> | null;
   gender: string;
   height_cm: string;
@@ -279,7 +280,8 @@ export const recommendationRepository = {
     if (!pool) throw new AppError(404, 'NOT_FOUND', `Recommendation not found: ${id}`);
 
     const result = await pool.query<RecommendationRow>(
-      `SELECT r.*, m.code AS machine_code, m.name AS machine_name, m.id AS machine_id,
+      `SELECT r.*, m.code AS machine_code, m.name AS machine_name, m.pro_tips AS machine_pro_tips,
+              m.id AS machine_id,
               b.name AS brand_name
        FROM machine_recommendations r
        JOIN machines m ON m.id = r.machine_id
@@ -304,6 +306,7 @@ export const recommendationRepository = {
 
     let tips = pickLocalizedArray(row.tips, locale);
     let warnings = pickLocalizedArray(row.warnings, locale);
+    const proTips = pickLocalizedArray(row.machine_pro_tips, locale);
     const standardCoaching = resolveStandardMachineCoaching(row.machine_code);
     if (standardCoaching) {
       tips = pickLocalizedArray(standardCoaching.tips, locale);
@@ -335,6 +338,7 @@ export const recommendationRepository = {
       },
       tips,
       warnings,
+      ...(proTips.length > 0 ? { proTips } : {}),
       youtubeVideos: await this.findYoutubeVideos(row.machine_id),
       createdAt: row.created_at,
       weightBasis: row.weight_basis ?? undefined,

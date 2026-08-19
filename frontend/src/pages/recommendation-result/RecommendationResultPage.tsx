@@ -9,6 +9,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
+import { RecommendationProTips } from '@/components/recommendation/RecommendationProTips/RecommendationProTips';
 import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
@@ -539,6 +540,7 @@ export function RecommendationResultPage() {
           {bodyExpanded ? (
             <>
               <RecommendationTips tips={result.tips} />
+              <RecommendationProTips proTips={result.proTips ?? []} />
               <button
                 type="button"
                 className="history-record-card__body-toggle"

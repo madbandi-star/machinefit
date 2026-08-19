@@ -591,6 +591,30 @@
   margin-top: 0.3rem;
 }
 
+.recommendation-pro-tips {
+  padding: 0.65rem 0.85rem;
+  background: var(--glass-bg);
+  border: 1px solid color-mix(in srgb, var(--color-accent, #33eb91) 35%, var(--glass-border));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.recommendation-pro-tips__label {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.recommendation-pro-tips__body {
+  margin: 0.5rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--glass-border);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .recommendation-workout-log {
   display: flex;
   flex-direction: column;

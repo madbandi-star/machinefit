@@ -233,6 +233,7 @@ export const recommendationService = {
           : catalogWarnings.length > 0
             ? catalogWarnings
             : typeWarnings;
+    const proTips = pickLocalizedArray(machine.proTips ?? null, locale);
     const tipsByLocale: Record<string, string[]> = standardCoaching
       ? { ...standardCoaching.tips, [locale]: tips }
       : {
@@ -302,6 +303,7 @@ export const recommendationService = {
       activeSource,
       tips,
       warnings,
+      ...(proTips.length > 0 ? { proTips } : {}),
       youtubeVideos,
       createdAt: new Date().toISOString(),
       weightBasis,

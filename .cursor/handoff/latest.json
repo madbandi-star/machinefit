@@ -1,40 +1,39 @@
 {
-  "title": "PRO tips CSV import (2320 machines)",
-  "summary": "Import script loads machines.pro_tips from CSV (brand_code + machine_name). Each cell stored as one JSON array element. Ran against v3 bilingual CSV: 2320/2320 updated.",
+  "title": "Recommendation result: MachineFit PRO tips collapsible",
+  "summary": "Show machines.pro_tips below workout tips on recommendation result page. Default collapsed; API returns proTips on generate and getById.",
   "git": {
     "branch": "main",
-    "commit": "e4f5ab97"
+    "commit": "pending"
   },
   "changedFiles": [
-    "database/scripts/import-pro-tips-csv.ts",
-    "database/scripts/validate-pro-tips-csv.mjs",
-    "database/scripts/validate-pro-tips-csv.py",
-    "package.json"
+    "shared/src/types/recommendation.types.ts",
+    "backend/server/services/recommendation.service.ts",
+    "backend/server/repositories/recommendation.repository.ts",
+    "frontend/src/components/recommendation/RecommendationProTips/RecommendationProTips.tsx",
+    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
+    "frontend/src/styles/recommendation.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json"
   ],
   "testFocus": [
-    "Admin ??·? ? open machine ? ???PRO? section shows imported long-form text",
-    "API GET machine returns proTips.ko/en with one element each",
-    "Re-run validate: dbUnmatchedRows = 0"
+    "Recommend OEM machine ? result page ? ??? ?? ???PRO? (collapsed)",
+    "Tap summary expands long-form PRO content",
+    "Machine without pro_tips hides section",
+    "Reload result by id still shows proTips"
   ],
   "fastChecks": [
     {
-      "id": "import-script",
+      "id": "component",
       "type": "file_exists",
-      "path": "database/scripts/import-pro-tips-csv.ts"
-    },
-    {
-      "id": "npm-script",
-      "type": "file_contains",
-      "path": "package.json",
-      "pattern": "db:import-pro-tips"
+      "path": "frontend/src/components/recommendation/RecommendationProTips/RecommendationProTips.tsx"
     }
   ],
   "productionChecks": [
-    "Spot-check CYBEX / HAMMER_STRENGTH machine proTips in admin after cache refresh"
+    "Pages deploy + Render redeploy for proTips API field"
   ],
   "deploy": {
-    "expected": "Script commit only; DB already updated via local import"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "pro_tips empty on OEM catalog machines.",
-  "toBe": "2320 machines have bilingual PRO tips in machines.pro_tips."
+  "asIs": "PRO tips only in admin; not on recommendation result UI.",
+  "toBe": "Collapsible ???PRO? under tips on recommendation result."
 }
