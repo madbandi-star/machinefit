@@ -3,7 +3,7 @@
   "summary": "Wire machines.pro_tips as MachineFit PRO tips in admin tips editor. Same JSONB line-array shape as tips/warnings; max 5000 UTF-8 bytes per locale.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "5e201c81"
   },
   "changedFiles": [
     "database/migrations/153_machinefit_pro_tips.sql",
@@ -18,7 +18,7 @@
     "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "Admin ? ??·?: editor shows ???PRO? section",
+    "Admin ? ????: editor shows ???PRO? section",
     "Save pro tips; reload shows saved lines",
     "Reject save when locale content exceeds 5000 UTF-8 bytes"
   ],

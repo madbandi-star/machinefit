@@ -18,4 +18,4 @@ Admin **주의·팁** editor now includes **머신핏PRO팁** (`machines.pro_tip
 - **to-be:** Admin can manage MachineFit PRO tips with 5000-byte locale limit
 
 **Branch:** `main`  
-**Commit:** pending (update after push)
+**Commit:** `5e201c81`
