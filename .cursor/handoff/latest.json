@@ -3,7 +3,7 @@
   "summary": "Import script loads machines.pro_tips from CSV (brand_code + machine_name). Each cell stored as one JSON array element. Ran against v3 bilingual CSV: 2320/2320 updated.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "e4f5ab97"
   },
   "changedFiles": [
     "database/scripts/import-pro-tips-csv.ts",

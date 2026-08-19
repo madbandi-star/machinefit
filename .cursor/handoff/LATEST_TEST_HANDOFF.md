@@ -24,4 +24,4 @@ npm run db:import-pro-tips -- "<csv-path>"
 - **to-be:** Full bilingual PRO tip content per brand×80 machine
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `e4f5ab97`
