@@ -1,17 +1,17 @@
-ï»¿# Test handoff â€” Soft-launch allowlist
+# Test handoff ? Soft-launch allowlist
 
 ## Summary
-Only `í•ëŸ¬ë„ˆ1205`, `ì œì´ì§„íŒŒí¬`, `ì‚¬ë ˆë ˆ`, `ì§ë©”ì´íŠ¸0587` may use the app. Other logged-in accounts go to `/under-construction`; APIs return 403 `SERVICE_ACCESS_RESTRICTED`.
+Only `ÇÍ·¯³Ê1205`, `Á¦ÀÌÁøÆÄÅ©`, `»ç·¹·¹`, `Áü¸ŞÀÌÆ®0587` may use the app. Other logged-in accounts go to `/under-construction`; APIs return 403 `SERVICE_ACCESS_RESTRICTED`.
 
 ## Test focus
-1. Non-allowlisted login â†’ construction page + cannot use features
-2. Allowlisted login â†’ normal Home
-3. Logout from construction â†’ login again
+1. Non-allowlisted login ¡æ construction page + cannot use features
+2. Allowlisted login ¡æ normal Home
+3. Logout from construction ¡æ login again
 4. Disable gate locally: `ACTIVE_SERVICE_ACCESS=0` / `VITE_ACTIVE_SERVICE_ACCESS=0`
 
-## As-is â†’ To-be
+## As-is ¡æ To-be
 - as-is: all accounts usable
 - to-be: invite-only soft launch
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `20421f3e`

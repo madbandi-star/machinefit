@@ -3,7 +3,7 @@
   "summary": "Only allowlisted usernames (???1205, ?????, ???, ????0587) can use the app. Others are redirected to /under-construction and blocked from APIs.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "20421f3e"
   },
   "changedFiles": [
     "shared/src/constants/active-service-access.ts",
