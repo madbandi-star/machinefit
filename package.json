@@ -33,6 +33,7 @@
     "db:migrate:verify": "npm run db:migrate && npm run db:verify",
     "media:migrate-storage": "node --import tsx scripts/migrate-bytea-to-storage.mjs",
     "media:migrate-storage:dry": "node --import tsx scripts/migrate-bytea-to-storage.mjs --dry-run",
+    "media:verify-storage": "node --import tsx scripts/verify-storage-media.mjs",
     "test": "node scripts/run-unit-tests.mjs",
     "test:smoke:changed": "node scripts/smoke-changed.mjs",
     "test:smoke:auth": "node scripts/auth-smoke-load.mjs",

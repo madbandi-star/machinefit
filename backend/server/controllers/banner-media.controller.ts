@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { storageService } from '../services/storage.service.js';
+import { isDirectObjectUrl, redirectToObjectUrl } from '../utils/media-cdn.js';
 
 function mimeFromPath(storagePath: string): string {
   const ext = storagePath.split('.').pop()?.toLowerCase();
@@ -28,6 +29,11 @@ export async function serveBannerImage(
     const storagePath = parts.map(decodeURIComponent).join('/');
     if (!storagePath || storagePath.includes('..')) {
       res.status(400).end();
+      return;
+    }
+    // Prefer CDN/Storage direct URL — avoid streaming bytes through Render.
+    const publicUrl = storageService.bannerImagePublicUrl(storagePath);
+    if (isDirectObjectUrl(publicUrl) && redirectToObjectUrl(res, publicUrl)) {
       return;
     }
     const file = await storageService.readBannerImage(storagePath);

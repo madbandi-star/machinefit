@@ -59,6 +59,14 @@ export async function serveMachineCoverImage(req: Request, res: Response, next: 
       return;
     }
 
+    // BYTEA fallback path (kept until ops confirms zero need). Opt-in via API_PERF_LOG.
+    if (process.env.API_PERF_LOG === '1' || process.env.API_PERF_LOG === 'true') {
+      // eslint-disable-next-line no-console
+      console.info(
+        `BYTEA_FALLBACK\nGET /media/machine-covers\ncode=${machineCode}\nkind=${kind}\nmuscle=${targetMuscle ?? ''}`
+      );
+    }
+
     const blob = await machineCoverImageService.getBlob(machineCode, kind, targetMuscle);
     if (!blob) {
       res.status(404).end();

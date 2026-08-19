@@ -1,58 +1,43 @@
 ﻿{
-  "title": "BYTEA ??Storage/CDN dual-path media",
-  "summary": "Prefer Supabase Storage public/signed URLs with 302 redirect; keep BYTEA fallback. Added migration 152, migrate-bytea-to-storage script, brand-assets + ugc-images buckets.",
+  "title": "Storage media production verification",
+  "summary": "Verified 135/135 Storage URLs HTTP 200. Covers/muscle fully on Storage URLs. BYTEA kept. Banner/notice/motivation-cover prefer 302 to public Storage.",
   "git": {
     "branch": "main",
-    "commit": "61472848"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "database/migrations/152_media_storage_cdn.sql",
-    "scripts/migrate-bytea-to-storage.mjs",
-    "backend/server/utils/media-cdn.ts",
-    "backend/server/services/storage.service.ts",
-    "backend/server/services/machine-cover-image.service.ts",
-    "backend/server/services/admin-catalog.service.ts",
-    "backend/server/controllers/machine-cover-image-media.controller.ts",
-    "backend/server/controllers/muscle-group-image-media.controller.ts",
-    "backend/server/controllers/brand-asset-media.controller.ts",
-    "backend/server/controllers/photo-board.controller.ts",
-    "docs/MEDIA_STORAGE_CDN_MIGRATION_2026-08-19.md"
+    "scripts/verify-storage-media.mjs",
+    "docs/MEDIA_STORAGE_VERIFY_2026-08-19.md",
+    "backend/server/controllers/banner-media.controller.ts",
+    "backend/server/controllers/notice-media.controller.ts",
+    "backend/server/controllers/motivation-cover-media.controller.ts",
+    "backend/server/controllers/machine-cover-image-media.controller.ts"
   ],
   "testFocus": [
-    "Apply migration 152 (additive columns only)",
-    "DRY_RUN media migrator then real run on staging/prod",
-    "Cover/muscle/brand media: 302 to supabase when migrated; BYTEA if not",
-    "UI unchanged: home/search/detail/boards still show images"
+    "npm run media:verify-storage → failCount 0",
+    "Cover primaryImageUrl is supabase storage host",
+    "BYTEA not deleted"
   ],
   "fastChecks": [
     {
-      "id": "migration-152",
+      "id": "verify-script",
       "type": "file_contains",
-      "path": "database/migrations/152_media_storage_cdn.sql",
-      "pattern": "media_storage_migration_log"
+      "path": "scripts/verify-storage-media.mjs",
+      "pattern": "media:verify-storage"
     },
     {
-      "id": "media-cdn-redirect",
+      "id": "verify-doc",
       "type": "file_contains",
-      "path": "backend/server/utils/media-cdn.ts",
-      "pattern": "redirectToObjectUrl"
-    },
-    {
-      "id": "migrator-script",
-      "type": "file_contains",
-      "path": "scripts/migrate-bytea-to-storage.mjs",
-      "pattern": "BYTEA?뭆torage"
+      "path": "docs/MEDIA_STORAGE_VERIFY_2026-08-19.md",
+      "pattern": "BYTEA 삭제를 위한 조건이 충족되었는가"
     }
   ],
   "productionChecks": [
-    "Render redeploy after push",
-    "Run db:migrate 152 then npm run media:migrate-storage",
-    "Spot-check machine covers load from supabase.co host"
+    "Optional: API_PERF_LOG=1 and confirm no BYTEA_FALLBACK for covers"
   ],
   "deploy": {
-    "expected": "Pages + Render; DB migrate 152 required; Storage migrator is ops manual"
+    "expected": "Render backend for controller 302 tweaks; verify script is ops local"
   },
-  "asIs": "Catalog/UGC media streamed as BYTEA through Render even when Storage dual-write existed.",
-  "toBe": "Prefer Storage/CDN URLs with BYTEA fallback; BYTEA not deleted yet."
+  "asIs": "Migration done but production Storage health not formally verified.",
+  "toBe": "Verified Storage URLs healthy; BYTEA retained; clearer fallback logging."
 }
-

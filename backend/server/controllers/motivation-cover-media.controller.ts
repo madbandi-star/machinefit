@@ -1,9 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
-import { storageService } from '../services/storage.service.js';
+import {
+  motivationCoverPublicUrl,
+  storageService,
+} from '../services/storage.service.js';
+import { isDirectObjectUrl, redirectToObjectUrl } from '../utils/media-cdn.js';
 import { UGC_MEDIA_CACHE } from '../utils/media-response.js';
 
 /**
- * Stream motivation cover images via the API.
+ * Motivation cover images. Prefer Storage public URL redirect; stream only as fallback.
  * Mounted at /api/v1/media/motivation-covers — req.path is the storage path remainder.
  */
 export async function serveMotivationCover(req: Request, res: Response, next: NextFunction) {
@@ -35,6 +39,11 @@ export async function serveMotivationCover(req: Request, res: Response, next: Ne
 
     if (!storagePath) {
       res.status(404).end();
+      return;
+    }
+
+    const publicUrl = motivationCoverPublicUrl(storagePath);
+    if (isDirectObjectUrl(publicUrl) && redirectToObjectUrl(res, publicUrl, UGC_MEDIA_CACHE)) {
       return;
     }
 
