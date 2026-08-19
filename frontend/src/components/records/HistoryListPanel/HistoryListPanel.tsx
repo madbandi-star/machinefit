@@ -1,6 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import {
-  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -64,6 +63,7 @@ import { useCardVoicePrefsStore } from '@/store/cardVoicePrefs.store';
 import { getApiErrorMessage } from '@/utils/getApiErrorMessage';
 import { getApiErrorCode } from '@/utils/motivationAudio';
 import { useHistorySettingsComparisonData } from '@/hooks/useHistorySettingsComparisonData';
+import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
 import { computeHistorySummaryStats } from '@/utils/historySummaryStats';
 import {
   mergeHistoryPreferences,
@@ -256,8 +256,11 @@ export function HistoryListPanel() {
     // Wait for auth — firing before token restore causes frequent 401 → loadFailed.
     enabled: historyQueryEnabled,
     staleTime: 30_000,
-    // Keep list across gym/member key changes and post-delete refetches.
-    placeholderData: keepPreviousData,
+    placeholderData: (previousData) =>
+      previousData ??
+      queryClient.getQueryData(
+        QUERY_KEYS.historyList(activeGymId ?? '', memberKey, { limit: 40 })
+      ),
     retry: (failureCount, error) => {
       const status = (error as { response?: { status?: number } })?.response?.status;
       if (status === 401 || status === 403 || status === 404) return false;
@@ -287,6 +290,7 @@ export function HistoryListPanel() {
         signal,
       }),
     enabled: isAuthenticated && Boolean(activeGymId) && memberScopeReady && Boolean(activeMemberId),
+    staleTime: 30_000,
   });
 
   const { data: favoritesList } = useQuery({
@@ -324,6 +328,7 @@ export function HistoryListPanel() {
     Boolean(activeMemberId) &&
     memberScopeReady &&
     !isAllGymsId(activeGymId ?? '');
+  const plansFetchReady = useDeferredQueryEnabled(canUseWorkoutPlans, 280);
 
   const workoutCardsQueryKey = QUERY_KEYS.workoutCardsList(activeGymId ?? '', memberKey, {
     from: PLAN_RANGE_FROM,
@@ -342,7 +347,7 @@ export function HistoryListPanel() {
       });
       return res.data.data ?? [];
     },
-    enabled: canUseWorkoutPlans,
+    enabled: plansFetchReady,
     staleTime: 30_000,
   });
 
@@ -352,7 +357,7 @@ export function HistoryListPanel() {
       const res = await workoutCardApi.listTemplates({ gymId: activeGymId! });
       return res.data.data ?? [];
     },
-    enabled: canUseWorkoutPlans,
+    enabled: plansFetchReady,
     staleTime: 60_000,
   });
 

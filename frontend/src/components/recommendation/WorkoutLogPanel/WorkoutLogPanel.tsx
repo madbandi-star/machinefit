@@ -811,7 +811,7 @@ export function WorkoutLogPanel({
 
 
   const { data: machinePreferences, isFetched: isPreferencesFetched } = useQuery({
-    queryKey: ['machine-preferences', machineCode, activeGymId, activeMemberId],
+    queryKey: QUERY_KEYS.machinePreferences(machineCode, activeGymId, activeMemberId),
     queryFn: () =>
       machinePreferenceApi.get(machineCode, {
         gymId: activeGymId!,
@@ -1312,7 +1312,7 @@ export function WorkoutLogPanel({
           setPersonalTipMemo(savedPrefs.personalTipMemo ?? personalTipMemo.trim());
           // Patch tip only — do not invalidate prefs (avoids stale customSettings flash).
           queryClient.setQueryData(
-            ['machine-preferences', machineCode, activeGymId, activeMemberId],
+            QUERY_KEYS.machinePreferences(machineCode, activeGymId, activeMemberId),
             (prev: unknown) => {
               const current =
                 prev && typeof prev === 'object'

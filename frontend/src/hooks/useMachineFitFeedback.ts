@@ -8,6 +8,7 @@ import {
   recommendationFeedbackApi,
   type FitRating,
 } from '@/api';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import { useUIStore } from '@/store/ui.store';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
@@ -77,7 +78,11 @@ export function useMachineFitFeedback({
       : undefined;
 
   const feedbackQueryKey = ['recommendation-feedback', recommendationId];
-  const prefsQueryKey = ['machine-preferences', machineCode, preferenceScope?.gymId, preferenceScope?.memberId];
+  const prefsQueryKey = QUERY_KEYS.machinePreferences(
+    machineCode,
+    preferenceScope?.gymId,
+    preferenceScope?.memberId
+  );
 
   // Reset local edit state when switching machine / recommendation.
   useEffect(() => {

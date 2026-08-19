@@ -32,6 +32,11 @@ interface AdSlotProps {
   className?: string;
   /** When true, reserve no space if empty (default). */
   collapseWhenEmpty?: boolean;
+  /**
+   * Extra gate beyond authReady (e.g. idle / in-view).
+   * Default true — parent sets false until deferred.
+   */
+  fetchEnabled?: boolean;
 }
 
 export function AdSlot({
@@ -40,6 +45,7 @@ export function AdSlot({
   eventCount,
   maxVisible = 1,
   className,
+  fetchEnabled = true,
 }: AdSlotProps) {
   const regionId = useId();
   const impressed = useRef(new Set<string>());
@@ -50,6 +56,7 @@ export function AdSlot({
   // Identity for cache: persisted marketingOptIn alone is not enough — a decide
   // fired before JWT restore was cached as "no ad" and stuck across SPA navigations.
   const viewerKey = viewerId ?? 'anon';
+  const canFetch = authReady && fetchEnabled;
 
   const { data: decision } = useQuery({
     queryKey: [
@@ -70,7 +77,7 @@ export function AdSlot({
       });
       return res.data.data;
     },
-    enabled: authReady,
+    enabled: canFetch,
     staleTime: 30_000,
     refetchOnWindowFocus: false,
     retry: false,
@@ -90,7 +97,7 @@ export function AdSlot({
       const res = await bannerApi.listPublic(legacySlot!);
       return res.data.data?.banners ?? [];
     },
-    enabled: authReady && Boolean(legacySlot) && marketingOptIn,
+    enabled: canFetch && Boolean(legacySlot) && marketingOptIn,
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });

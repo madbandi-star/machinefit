@@ -1,20 +1,22 @@
-# Test handoff ? Performance diagnosis refresh
+ï»¿# Test handoff â€” API fan-out Phases 0â€“5
 
 ## Summary
-Re-measured production after Storage/CDN. Solo bottlenecks: FE shell + Home/Search/Records API fan-out. Warm API ~150ms. Covers on Storage. `PAGE_PERFORMANCE` now includes dns/connection/response/dom_loading.
+Home/Search/Records entry fan-out reduced via deferred queries, RQ key hygiene, and optional `home-bootstrap?include=todayCards,missed`. No feature removal.
 
 ## Test focus
-1. `localStorage.mf_page_perf=1` ¡æ console `PAGE_PERFORMANCE` includes nav breakdown lines
-2. No UI/API schema regressions (instrumentation only)
-3. Report `docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md` present
+1. Home: collapsed fortune = no fortune API; ads after idle/in-view
+2. Search: catalog loads; day-mark APIs ~200ms later
+3. Records: history/logs first; workout-cards/templates deferred
+4. Bootstrap include seeds today + missed card caches
 
 ## Fast checks
-- `pagePerformance.ts` contains `dom_loading=`
-- Diagnosis doc mentions `post Storage/CDN migration`
+- `useDeferredQueryEnabled.ts` exists
+- `home-bootstrap.service.ts` has `todayCards`
+- Phase 0 baseline doc exists
 
-## As-is ¡æ To-be
-- as-is: image CDN spend still recommended as top paid lever
-- to-be: covers Storage reflected; code-first advice for solo feel
+## As-is â†’ To-be
+- as-is: 6â€“10+ Home APIs, Search day-marks immediate, Records cards immediate
+- to-be: critical path first; secondary deferred; bootstrap includes cards
 
 **Branch:** `main`  
-**Commit:** `b129f28a`
+**Commit:** pending

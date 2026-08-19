@@ -144,7 +144,7 @@ export const authApi = {
 
 export const userApi = {
   getMe: () => apiClient.get<ApiResponse<User>>('/users/me'),
-  homeBootstrap: (params?: { gymId?: string; memberId?: string }) =>
+  homeBootstrap: (params?: { gymId?: string; memberId?: string; include?: string }) =>
     apiClient.get<ApiResponse<HomeBootstrapResponse>>('/users/me/home-bootstrap', { params }),
   updateMe: (data: {
     displayName?: string;
@@ -345,6 +345,10 @@ export interface HomeBootstrapResponse {
   activeMemberId: string | null;
   recentHistory: HistoryItem[];
   favorites: FavoriteItem[];
+  /** Optional when `include=todayCards` — seeds today planned cards. */
+  todayWorkoutCards?: import('@machinefit/shared').WorkoutCard[];
+  /** Optional when `include=missed` — seeds missed plan banner. */
+  missedWorkoutCards?: import('@machinefit/shared').WorkoutCard[];
 }
 
 export const userGymApi = {

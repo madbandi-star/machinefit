@@ -24,6 +24,8 @@ import { SEO_HOME_DESCRIPTION, SEO_HOME_TITLE } from '@/seo/siteSeo';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
+import { useRevealOnView } from '@/hooks/useRevealOnView';
 import { useAuthStore } from '@/store/auth.store';
 import { isProfileReadyForRecommend } from '@/utils/profileCompleteness';
 import { peekPersistedIsAuthenticated } from '@/utils/peekPersistedAuth';
@@ -39,6 +41,8 @@ export function HomePage() {
     () => isAuthenticated || peekPersistedIsAuthenticated()
   );
   const treatAsAuthed = isAuthenticated || (!authReady && assumeAuthed);
+  const adsIdleReady = useDeferredQueryEnabled(authReady && isAuthenticated, 350);
+  const { ref: bottomAdsRef, visible: bottomAdsVisible } = useRevealOnView();
 
   // Home is outside AuthGuard — sync /me so body metrics aren't stuck missing after F5.
   const meQuery = useQuery({
@@ -118,10 +122,12 @@ export function HomePage() {
       <HomeWorkoutSessionTimer />
       <WorkoutCompleteHost />
       <HomeWorkoutToolsSection />
-      <AdSlot placement="HOME_MIDDLE" event="PAGE_VIEW" />
+      <AdSlot placement="HOME_MIDDLE" event="PAGE_VIEW" fetchEnabled={adsIdleReady} />
       <RecentMachinesRow />
       <FavoriteMachinesRow />
-      <BannerSlot slot="MAIN_BOTTOM" />
+      <div ref={bottomAdsRef}>
+        <BannerSlot slot="MAIN_BOTTOM" fetchEnabled={adsIdleReady && bottomAdsVisible} />
+      </div>
     </div>
   );
 }

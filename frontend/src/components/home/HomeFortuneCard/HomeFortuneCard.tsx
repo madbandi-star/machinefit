@@ -138,11 +138,13 @@ export function HomeFortuneCard() {
       });
       return res.data.data;
     },
+    // Collapsed card: no network until user expands (peek stays emoji-only).
+    enabled: expanded,
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
   });
 
-  if (isLoading) {
+  if (expanded && isLoading) {
     return (
       <FortuneCardShell
         className="home-fortune-card home-fortune-card--loading"
@@ -156,7 +158,7 @@ export function HomeFortuneCard() {
     );
   }
 
-  if (isError) {
+  if (isError && expanded) {
     return (
       <FortuneCardShell
         className="home-fortune-card"
@@ -170,7 +172,7 @@ export function HomeFortuneCard() {
     );
   }
 
-  if (!data || data.status === 'needs_birth_profile') {
+  if (expanded && (!data || data.status === 'needs_birth_profile')) {
     return (
       <FortuneCardShell
         className="home-fortune-card home-fortune-card--gate"
@@ -189,9 +191,22 @@ export function HomeFortuneCard() {
     );
   }
 
+  // Collapsed + not yet fetched: show shell only (fetch on expand).
+  if (!data || !data.fortune || !data.scores) {
+    return (
+      <FortuneCardShell
+        className="home-fortune-card"
+        expanded={expanded}
+        onToggle={toggleExpanded}
+        peek={<span aria-hidden>🔥</span>}
+      >
+        {null}
+      </FortuneCardShell>
+    );
+  }
+
   const fortune = data.fortune;
   const scores = data.scores;
-  if (!fortune || !scores) return null;
 
   const emoji = keywordEmoji(fortune.keyword);
   const tone = keywordTone(fortune.keyword);

@@ -67,7 +67,8 @@ export function MyPage() {
     queryKey: QUERY_KEYS.me,
     queryFn: async () => (await userApi.getMe()).data.data,
     enabled: Boolean(user),
-    staleTime: 30_000,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {

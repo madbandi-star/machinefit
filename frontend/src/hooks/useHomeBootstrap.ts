@@ -6,6 +6,10 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { useAuthStore } from '@/store/auth.store';
 import { useGymStore } from '@/store/gym.store';
+import { getTodayDateKey } from '@/utils/historyDate';
+
+/** Includes that cut follow-up Home round-trips (optional fields on same schema). */
+const HOME_BOOTSTRAP_INCLUDE = 'todayCards,missed';
 
 function seedHomeBootstrapCache(
   queryClient: ReturnType<typeof useQueryClient>,
@@ -23,11 +27,25 @@ function seedHomeBootstrapCache(
     data.recentHistory
   );
   queryClient.setQueryData(QUERY_KEYS.favorites(data.activeGymId, memberKey), data.favorites);
+
+  const today = getTodayDateKey();
+  if (data.todayWorkoutCards && !isAllGymsId(data.activeGymId)) {
+    queryClient.setQueryData(
+      QUERY_KEYS.workoutCardsList(data.activeGymId, memberKey, { scheduledDate: today }),
+      data.todayWorkoutCards
+    );
+  }
+  if (data.missedWorkoutCards && !isAllGymsId(data.activeGymId)) {
+    queryClient.setQueryData(
+      QUERY_KEYS.workoutCardsMissed(data.activeGymId, memberKey),
+      data.missedWorkoutCards
+    );
+  }
 }
 
 /**
- * One round-trip for home: gyms, members, recent history, favorites.
- * Seeds React Query caches used by useActiveGym / home rows.
+ * One round-trip for home: gyms, members, recent history, favorites (+ optional cards).
+ * Seeds React Query caches used by useActiveGym / home rows (in queryFn to avoid races).
  */
 export function useHomeBootstrap() {
   const authReady = useAuthHydration();
@@ -44,8 +62,12 @@ export function useHomeBootstrap() {
       const res = await userApi.homeBootstrap({
         gymId: storedGymId ?? undefined,
         memberId: storedMemberId ?? undefined,
+        include: HOME_BOOTSTRAP_INCLUDE,
       });
-      return res.data.data;
+      const data = res.data.data;
+      // Seed before observers re-render so useActiveGym skips a parallel gyms GET.
+      seedHomeBootstrapCache(queryClient, data);
+      return data;
     },
     enabled: authReady && isAuthenticated,
     staleTime: 60_000,

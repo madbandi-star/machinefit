@@ -12,6 +12,8 @@ export async function getHomeBootstrap(req: Request, res: Response): Promise<voi
     .object({
       gymId: gymScopeIdSchema.optional(),
       memberId: memberIdSchema.optional(),
+      /** Comma list: todayCards,missed — optional extras; default payload unchanged. */
+      include: z.string().max(80).optional(),
     })
     .parse(req.query);
 

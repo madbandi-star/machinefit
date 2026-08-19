@@ -25,6 +25,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useBrandFavorites } from '@/hooks/useBrandFavorites';
 import { useMuscleGroupImageMap } from '@/hooks/useMuscleGroupImages';
@@ -81,7 +82,7 @@ export function MachineSearchPage() {
   const planDateRaw = searchParams.get('planDate');
   const planDate = planDateRaw ? normalizeDateKey(planDateRaw) : null;
   const { activeGymId } = useActiveGym();
-  const { activeMemberId } = useActiveMember();
+  const { activeMemberId, memberScopeReady } = useActiveMember();
   // Plan-add uses planDate; plain search still marks today’s already-added machines.
   const badgeDate = planDate ?? (isAuthenticated ? getTodayDateKey() : null);
   const dayRange = badgeDate ? getLocalDayRange(badgeDate) : null;
@@ -90,7 +91,10 @@ export function MachineSearchPage() {
     isAuthenticated &&
     Boolean(activeGymId) &&
     Boolean(activeMemberId) &&
+    memberScopeReady &&
     !isAllGymsId(activeGymId ?? '');
+  // Catalog paints first; day badges after short idle.
+  const dayMarksReady = useDeferredQueryEnabled(canLoadDayMarks, 220);
 
   useEffect(() => {
     setQuery(searchParams.get('q') ?? '');
@@ -276,7 +280,7 @@ export function MachineSearchPage() {
       });
       return res.data.data;
     },
-    enabled: canLoadDayMarks,
+    enabled: dayMarksReady,
     staleTime: 30_000,
   });
 
@@ -296,7 +300,7 @@ export function MachineSearchPage() {
       });
       return res.data.data;
     },
-    enabled: canLoadDayMarks && Boolean(dayRange),
+    enabled: dayMarksReady && Boolean(dayRange),
     staleTime: 30_000,
   });
 
@@ -315,7 +319,7 @@ export function MachineSearchPage() {
       });
       return res.data.data;
     },
-    enabled: canLoadDayMarks,
+    enabled: dayMarksReady,
     staleTime: 30_000,
   });
 

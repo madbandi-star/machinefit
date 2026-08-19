@@ -8,6 +8,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
+import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
 import { useTodayActivePlanCount } from '@/hooks/useTodayActivePlanCount';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
@@ -72,6 +73,7 @@ export function MissedWorkoutPlansBanner() {
     Boolean(activeMemberId) &&
     memberScopeReady &&
     !isAllGymsId(activeGymId ?? '');
+  const missedFetchReady = useDeferredQueryEnabled(gymReady, 220);
 
   const { data: missed = [] } = useQuery({
     queryKey: QUERY_KEYS.workoutCardsMissed(activeGymId ?? '', memberKey),
@@ -82,7 +84,7 @@ export function MissedWorkoutPlansBanner() {
       });
       return res.data.data ?? [];
     },
-    enabled: gymReady,
+    enabled: missedFetchReady,
     staleTime: 30_000,
   });
 

@@ -150,6 +150,9 @@ export const QUERY_KEYS = {
   userGyms: ['user', 'gyms'] as const,
   homeBootstrap: (gymId?: string | null, memberId?: string | null) =>
     ['user', 'home-bootstrap', gymId ?? '', memberId ?? ''] as const,
+  /** Shared by WorkoutLogPanel + useMachineFitFeedback (avoid ad-hoc key drift). */
+  machinePreferences: (machineCode: string, gymId?: string | null, memberId?: string | null) =>
+    ['machine-preferences', machineCode, gymId ?? undefined, memberId ?? undefined] as const,
   userGymMembers: (gymId: string) => ['user', 'gyms', gymId, 'members'] as const,
   memberProfileRequests: ['user', 'member-profile-requests'] as const,
   liftedWeight: ['user', 'lifted-weight'] as const,

@@ -4,16 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@/components/icons/Icon';
 import { noticeApi } from '@/api/notice.api';
 import { ROUTES } from '@/constants/routes';
+import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
 import '@/styles/notices.css';
 
 export function HomeNoticeBanner() {
   const { t, i18n } = useTranslation('community');
+  const fetchReady = useDeferredQueryEnabled(true, 150);
   const { data } = useQuery({
     queryKey: ['notices', 'banner', i18n.language],
     queryFn: async () => {
       const res = await noticeApi.banner(i18n.language.slice(0, 2));
       return res.data.data;
     },
+    enabled: fetchReady,
     staleTime: 60_000,
   });
 

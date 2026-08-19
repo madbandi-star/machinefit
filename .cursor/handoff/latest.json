@@ -1,39 +1,53 @@
 {
-  "title": "Performance bottleneck diagnosis refresh",
-  "summary": "Re-diagnosed after Storage/CDN. Solo bottlenecks remain FE bundle + Home/Search/Records API fan-out. Warm API ~150ms. Covers on Storage. PAGE_PERFORMANCE now logs dns/connection/response/dom_loading.",
+  "title": "API fan-out Phases 0?5",
+  "summary": "Reduced Home/Search/Records entry API fan-out: deferred secondary fetches, query-key unify, bootstrap include=todayCards,missed. No UI/schema breaks.",
   "git": {
     "branch": "main",
-    "commit": "b129f28a"
+    "commit": "pending"
   },
   "changedFiles": [
-    "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
-    "frontend/src/utils/pagePerformance.ts"
+    "docs/API_FANOUT_PHASE0_BASELINE_2026-08-19.md",
+    "frontend/src/hooks/useDeferredQueryEnabled.ts",
+    "frontend/src/hooks/useHomeBootstrap.ts",
+    "frontend/src/pages/home/HomePage.tsx",
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+    "frontend/src/pages/records/RecordsPage.tsx",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "backend/server/services/home-bootstrap.service.ts",
+    "backend/server/controllers/home-bootstrap.controller.ts"
   ],
   "testFocus": [
-    "localStorage mf_page_perf=1 ¡æ PAGE_PERFORMANCE includes dns/connection/response/dom_loading",
-    "No product UI/API schema change",
-    "Report reflects Storage covers live"
+    "Home: fortune does not fetch until expand; ads after idle",
+    "Search: machine list before day-mark APIs",
+    "Records: history shows quickly; plans/templates delayed",
+    "home-bootstrap?include=todayCards,missed returns optional fields"
   ],
   "fastChecks": [
     {
-      "id": "page-perf-nav",
+      "id": "defer-hook",
       "type": "file_contains",
-      "path": "frontend/src/utils/pagePerformance.ts",
-      "pattern": "dom_loading="
+      "path": "frontend/src/hooks/useDeferredQueryEnabled.ts",
+      "pattern": "useDeferredQueryEnabled"
     },
     {
-      "id": "diag-doc",
+      "id": "bootstrap-include",
       "type": "file_contains",
-      "path": "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
-      "pattern": "post Storage/CDN migration"
+      "path": "backend/server/services/home-bootstrap.service.ts",
+      "pattern": "todayCards"
+    },
+    {
+      "id": "phase0-doc",
+      "type": "file_contains",
+      "path": "docs/API_FANOUT_PHASE0_BASELINE_2026-08-19.md",
+      "pattern": "Phase 0 baseline"
     }
   ],
   "productionChecks": [
-    "Optional: mf_page_perf=1 on Home and copy PAGE_PERFORMANCE"
+    "localStorage mf_page_perf=1 on Home/Search/Records ? compare api_total vs baseline"
   ],
   "deploy": {
-    "expected": "Deploy Frontend if pagePerformance shipped; docs alone optional"
+    "expected": "Frontend Pages + Render backend (home-bootstrap include)"
   },
-  "asIs": "Prior diagnosis predated cover Storage; IMAGE spend advice outdated.",
-  "toBe": "Updated diagnosis + richer PAGE_PERFORMANCE fields; clear money vs code split."
+  "asIs": "Home 6?10+ parallel APIs; Search day-marks with catalog; Records heavy cards on entry.",
+  "toBe": "Critical path first; secondary deferred; bootstrap seeds today/missed cards."
 }

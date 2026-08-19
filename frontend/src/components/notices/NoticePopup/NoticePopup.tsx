@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { noticeApi } from '@/api/notice.api';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
+import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
 import { sanitizeNoticeHtml } from '@/utils/sanitizeNoticeHtml';
 import '@/styles/notices.css';
 
@@ -25,6 +26,7 @@ export function NoticePopup() {
   const { t, i18n } = useTranslation('community');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [open, setOpen] = useState(false);
+  const fetchReady = useDeferredQueryEnabled(isAuthenticated, 280);
 
   const { data } = useQuery({
     queryKey: ['notices', 'popup', i18n.language],
@@ -32,7 +34,7 @@ export function NoticePopup() {
       const res = await noticeApi.popup(i18n.language.slice(0, 2));
       return res.data.data;
     },
-    enabled: isAuthenticated,
+    enabled: fetchReady,
     staleTime: 60_000,
   });
 
