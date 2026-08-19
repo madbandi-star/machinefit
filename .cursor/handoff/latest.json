@@ -1,16 +1,16 @@
-ï»¿{
+{
   "title": "Performance bottleneck diagnosis refresh",
   "summary": "Re-diagnosed after Storage/CDN. Solo bottlenecks remain FE bundle + Home/Search/Records API fan-out. Warm API ~150ms. Covers on Storage. PAGE_PERFORMANCE now logs dns/connection/response/dom_loading.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "b129f28a"
   },
   "changedFiles": [
     "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
     "frontend/src/utils/pagePerformance.ts"
   ],
   "testFocus": [
-    "localStorage mf_page_perf=1 â†’ PAGE_PERFORMANCE includes dns/connection/response/dom_loading",
+    "localStorage mf_page_perf=1 ¡æ PAGE_PERFORMANCE includes dns/connection/response/dom_loading",
     "No product UI/API schema change",
     "Report reflects Storage covers live"
   ],
