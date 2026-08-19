@@ -1,40 +1,39 @@
 ﻿{
-  "title": "FW target muscle hero image updates immediately",
-  "summary": "Free-weight detail hero stuck on old cover until refresh when changing 타겟 부위. Fixed exact muscle-key cache seeding and preferMuscleCover in MachineHero.",
+  "title": "Performance bottleneck diagnosis refresh",
+  "summary": "Re-diagnosed after Storage/CDN. Solo bottlenecks remain FE bundle + Home/Search/Records API fan-out. Warm API ~150ms. Covers on Storage. PAGE_PERFORMANCE now logs dns/connection/response/dom_loading.",
   "git": {
     "branch": "main",
-    "commit": "8eb68d05"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/utils/machineDetailCache.ts",
-    "frontend/src/components/machines/MachineHero/MachineHero.tsx",
-    "frontend/src/pages/machine-detail/MachineDetailPage.tsx"
+    "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
+    "frontend/src/utils/pagePerformance.ts"
   ],
   "testFocus": [
-    "Search → free-weight → detail → pick target muscle → hero image changes without refresh",
-    "Switch muscle A → B → image follows each selection",
-    "Hard refresh with ?muscle= still correct"
+    "localStorage mf_page_perf=1 → PAGE_PERFORMANCE includes dns/connection/response/dom_loading",
+    "No product UI/API schema change",
+    "Report reflects Storage covers live"
   ],
   "fastChecks": [
     {
-      "id": "cache-exact-muscle",
+      "id": "page-perf-nav",
       "type": "file_contains",
-      "path": "frontend/src/utils/machineDetailCache.ts",
-      "pattern": "Cross-seeding would mark the wrong cover as fresh"
+      "path": "frontend/src/utils/pagePerformance.ts",
+      "pattern": "dom_loading="
     },
     {
-      "id": "hero-prefer-muscle",
+      "id": "diag-doc",
       "type": "file_contains",
-      "path": "frontend/src/components/machines/MachineHero/MachineHero.tsx",
-      "pattern": "preferMuscleCover: Boolean(isFreeWeight && selectedMuscle)"
+      "path": "docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md",
+      "pattern": "post Storage/CDN migration"
     }
   ],
   "productionChecks": [
-    "Pages: open FW machine detail, select chest then back — hero cover swaps without F5"
+    "Optional: mf_page_perf=1 on Home and copy PAGE_PERFORMANCE"
   ],
   "deploy": {
-    "expected": "Deploy Frontend to GitHub Pages success"
+    "expected": "Deploy Frontend if pagePerformance shipped; docs alone optional"
   },
-  "asIs": "Selecting 타겟 부위 did not change hero until full page refresh.",
-  "toBe": "Hero cover updates immediately on muscle chip / ?muscle= change."
+  "asIs": "Prior diagnosis predated cover Storage; IMAGE spend advice outdated.",
+  "toBe": "Updated diagnosis + richer PAGE_PERFORMANCE fields; clear money vs code split."
 }

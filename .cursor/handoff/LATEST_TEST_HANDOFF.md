@@ -1,20 +1,20 @@
-﻿# Test handoff — FW target muscle hero image
+﻿# Test handoff — Performance diagnosis refresh
 
 ## Summary
-Free-weight detail: changing 타겟 부위 left the hero on the previous cover until refresh. Cache no longer seeds muscle queries from base/list; hero prefers per-muscle cover URL.
+Re-measured production after Storage/CDN. Solo bottlenecks: FE shell + Home/Search/Records API fan-out. Warm API ~150ms. Covers on Storage. `PAGE_PERFORMANCE` now includes dns/connection/response/dom_loading.
 
 ## Test focus
-1. Search → free-weight → detail → select target muscle → hero image changes **without** refresh
-2. Switch muscle A → B → image follows each selection
-3. Hard refresh with `?muscle=` still shows the correct cover
+1. `localStorage.mf_page_perf=1` → console `PAGE_PERFORMANCE` includes nav breakdown lines
+2. No UI/API schema regressions (instrumentation only)
+3. Report `docs/PERF_BOTTLENECK_DIAGNOSIS_2026-08-19.md` present
 
 ## Fast checks
-- `frontend/src/utils/machineDetailCache.ts` contains exact-muscle-only cache note
-- `MachineHero.tsx` uses `preferMuscleCover` when FW + selectedMuscle
+- `pagePerformance.ts` contains `dom_loading=`
+- Diagnosis doc mentions `post Storage/CDN migration`
 
 ## As-is → To-be
-- as-is: hero stuck until F5 after muscle pick
-- to-be: hero updates immediately on muscle change
+- as-is: image CDN spend still recommended as top paid lever
+- to-be: covers Storage reflected; code-first advice for solo feel
 
 **Branch:** `main`  
-**Commit:** `8eb68d05`
+**Commit:** pending

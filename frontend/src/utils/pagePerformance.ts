@@ -44,6 +44,24 @@ function navTimingMs(): number {
   return Math.round(nav.responseEnd || nav.domContentLoadedEventEnd || performance.now());
 }
 
+/** Navigation Timing breakdown for cold document loads (SPA soft nav → ~0). */
+function navBreakdownLines(): string[] {
+  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+  if (!nav) {
+    return ['dns=0 ms', 'connection=0 ms', 'response=0 ms', 'dom_loading=0 ms'];
+  }
+  const dns = Math.max(0, Math.round(nav.domainLookupEnd - nav.domainLookupStart));
+  const connection = Math.max(0, Math.round(nav.connectEnd - nav.connectStart));
+  const response = Math.max(0, Math.round(nav.responseEnd - nav.requestStart));
+  const domLoading = Math.max(0, Math.round(nav.domContentLoadedEventEnd - nav.responseEnd));
+  return [
+    `dns=${dns} ms`,
+    `connection=${connection} ms`,
+    `response=${response} ms`,
+    `dom_loading=${domLoading} ms`,
+  ];
+}
+
 function emit(s: PagePerfSession, reason: 'settle' | 'leave'): void {
   if (s.finalized) return;
   s.finalized = true;
@@ -61,6 +79,7 @@ function emit(s: PagePerfSession, reason: 'settle' | 'leave'): void {
       'PAGE_PERFORMANCE',
       `page=${s.path}`,
       `navigation=${navTimingMs()} ms`,
+      ...navBreakdownLines(),
       `react_mount=${s.reactMountMs ?? 0} ms`,
       `first_render=${first} ms`,
       `api_total=${Math.round(s.apiMs)} ms`,
