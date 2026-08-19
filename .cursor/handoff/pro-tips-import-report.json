@@ -1,0 +1,18 @@
+{
+  "importedAt": "2026-08-19T22:59:35.085Z",
+  "csv": "C:\\Users\\Human\\Desktop\\project_1\\machinefit\\database\\catalog\\pro-tips\\hammer_strength_pro_tips.csv",
+  "brandFilter": "HAMMER_STRENGTH",
+  "clearFirst": false,
+  "clearBrand": true,
+  "updated": 80,
+  "metaStats": {
+    "VERIFIED": 52,
+    "PARTIALLY_VERIFIED": 16,
+    "BRAND_MODEL_NOT_FOUND": 12
+  },
+  "verify": {
+    "with_pro": "80",
+    "with_meta": "80",
+    "total": "80"
+  }
+}

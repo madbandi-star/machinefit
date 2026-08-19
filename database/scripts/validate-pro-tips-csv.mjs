@@ -19,6 +19,22 @@ const EXPECTED_MACHINES_PER_BRAND = 80;
 const EXPECTED_ROWS = EXPECTED_BRANDS * EXPECTED_MACHINES_PER_BRAND;
 const REQUIRED_TIP_HEADERS = ['brand_code', 'exercise_tip', 'exercise_tip_en'];
 const MACHINE_NAME_HEADERS = ['machine_name', 'machine_name_ko'];
+const GENERIC_PHRASES = [
+  '정확한 세부 모델 미확인',
+  '브랜드명만 변경',
+  'exercise_guidance_only',
+];
+const META_STATUSES = new Set([
+  'VERIFIED',
+  'PARTIALLY_VERIFIED',
+  'BRAND_MODEL_NOT_FOUND',
+  'exercise_guidance_only',
+]);
+
+function parseFlagValue(prefix) {
+  const hit = process.argv.find((a) => a.startsWith(prefix));
+  return hit ? hit.slice(prefix.length) : undefined;
+}
 
 function resolveMachineName(row) {
   return (row.machine_name_ko ?? row.machine_name ?? '').trim();
@@ -159,9 +175,13 @@ async function tryLoadDbCatalog() {
 }
 
 function main() {
-  const csvPath = process.argv[2];
+  const csvPath = process.argv.find((a) => !a.startsWith('--') && a.endsWith('.csv')) ?? process.argv[2];
+  const singleBrand = process.argv.includes('--single-brand');
+  const brandFilter = parseFlagValue('--brand=')?.trim().toUpperCase();
+  const expectedRows = singleBrand ? EXPECTED_MACHINES_PER_BRAND : EXPECTED_ROWS;
+
   if (!csvPath) {
-    console.error('Usage: node validate-pro-tips-csv.mjs <csv-path>');
+    console.error('Usage: node validate-pro-tips-csv.mjs <csv-path> [--single-brand] [--brand=CODE]');
     process.exit(2);
   }
   if (!fs.existsSync(csvPath)) {
@@ -170,11 +190,17 @@ function main() {
   }
 
   const raw = fs.readFileSync(csvPath, 'utf8').replace(/^\uFEFF/, '');
-  const { headers, records } = parseCsv(raw);
+  const { headers, records: allRecords } = parseCsv(raw);
+  const records = brandFilter
+    ? allRecords.filter((r) => (r.brand_code ?? '').trim().toUpperCase() === brandFilter)
+    : allRecords;
   const report = {
     file: csvPath,
     headers,
     rowCount: records.length,
+    singleBrand,
+    brandFilter,
+    expectedRows,
     errors: [],
     warnings: [],
     stats: {},
@@ -202,6 +228,12 @@ function main() {
   let maxEnBytes = 0;
   let sumKoBytes = 0;
   let sumEnBytes = 0;
+  const metaStatusCounts = {};
+  let metaInvalid = 0;
+  let verifiedMissingSource = 0;
+  let verifiedMissingModel = 0;
+  let notFoundWithModel = 0;
+  const genericPhraseHits = [];
 
   for (let i = 0; i < records.length; i++) {
     const rowNum = i + 2;
@@ -239,6 +271,21 @@ function main() {
     if (tipEn.trim() && enBytes > MAX_BYTES) overBytesEn.push({ row: rowNum, brand, machine, bytes: enBytes });
     if (koLines > MAX_LINES) overLinesKo.push({ row: rowNum, brand, machine, lines: koLines });
     if (enLines > MAX_LINES) overLinesEn.push({ row: rowNum, brand, machine, lines: enLines });
+
+    const status = (row.verification_status ?? '').trim();
+    if (status) {
+      if (!META_STATUSES.has(status)) metaInvalid++;
+      metaStatusCounts[status] = (metaStatusCounts[status] ?? 0) + 1;
+      if (status === 'VERIFIED' && !(row.source_url ?? '').trim()) verifiedMissingSource++;
+      if (status === 'VERIFIED' && !(row.verified_model ?? '').trim()) verifiedMissingModel++;
+      if (status === 'BRAND_MODEL_NOT_FOUND' && (row.verified_model ?? '').trim()) notFoundWithModel++;
+    }
+
+    for (const phrase of GENERIC_PHRASES) {
+      if (tipKo.includes(phrase) || tipEn.includes(phrase)) {
+        genericPhraseHits.push({ row: rowNum, brand, machine, phrase });
+      }
+    }
   }
 
   const duplicates = [...dup.entries()].filter(([, c]) => c > 1);
@@ -258,7 +305,7 @@ function main() {
 
   report.stats = {
     ...report.stats,
-    expectedRows: EXPECTED_ROWS,
+    expectedRows,
     brandCount: brandCounts.size,
     brandsWithWrongRowCount: wrongBrandCounts,
     unknownBrands: Object.fromEntries(unknownBrands),
@@ -278,12 +325,19 @@ function main() {
     overBytesEnExamples: overBytesEn.slice(0, 10),
     overLinesKoExamples: overLinesKo.slice(0, 5),
     overLinesEnExamples: overLinesEn.slice(0, 5),
+    metaStatusCounts,
+    metaInvalid,
+    verifiedMissingSource,
+    verifiedMissingModel,
+    notFoundWithModel,
+    genericPhraseHits: genericPhraseHits.slice(0, 20),
+    genericPhraseHitCount: genericPhraseHits.length,
   };
 
-  if (records.length !== EXPECTED_ROWS) {
-    report.errors.push(`Row count ${records.length} != expected ${EXPECTED_ROWS}`);
+  if (records.length !== expectedRows) {
+    report.errors.push(`Row count ${records.length} != expected ${expectedRows}`);
   }
-  if (Object.keys(wrongBrandCounts).length) {
+  if (!singleBrand && Object.keys(wrongBrandCounts).length) {
     report.errors.push(
       `Brands not exactly ${EXPECTED_MACHINES_PER_BRAND} rows: ${Object.keys(wrongBrandCounts).length}`
     );
@@ -294,6 +348,19 @@ function main() {
   if (overBytesEn.length) report.errors.push(`exercise_tip_en exceeds ${MAX_BYTES} bytes: ${overBytesEn.length} rows`);
   if (overLinesKo.length) report.warnings.push(`exercise_tip exceeds ${MAX_LINES} lines: ${overLinesKo.length} rows`);
   if (overLinesEn.length) report.warnings.push(`exercise_tip_en exceeds ${MAX_LINES} lines: ${overLinesEn.length} rows`);
+  if (metaInvalid) report.errors.push(`Invalid verification_status values: ${metaInvalid}`);
+  if (verifiedMissingSource) {
+    report.errors.push(`VERIFIED rows missing source_url: ${verifiedMissingSource}`);
+  }
+  if (verifiedMissingModel) {
+    report.errors.push(`VERIFIED rows missing verified_model: ${verifiedMissingModel}`);
+  }
+  if (notFoundWithModel) {
+    report.errors.push(`BRAND_MODEL_NOT_FOUND rows with verified_model set: ${notFoundWithModel}`);
+  }
+  if (genericPhraseHits.length) {
+    report.errors.push(`Generic/template phrase detected in tips: ${genericPhraseHits.length} hits`);
+  }
   if (emptyEn) report.warnings.push(`Empty exercise_tip_en rows: ${emptyEn} (will copy ko on import)`);
   if (unknownMachineNames.size) {
     report.warnings.push(

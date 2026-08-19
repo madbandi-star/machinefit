@@ -1,0 +1,13 @@
+{
+  "brand": "HAMMER_STRENGTH",
+  "generatedAt": "2026-08-19T22:57:09.290Z",
+  "outPath": "C:\\Users\\Human\\Desktop\\project_1\\machinefit\\database\\catalog\\pro-tips\\hammer_strength_pro_tips.csv",
+  "rowCount": 80,
+  "stats": {
+    "VERIFIED": 52,
+    "PARTIALLY_VERIFIED": 16,
+    "BRAND_MODEL_NOT_FOUND": 12
+  },
+  "maxKoBytes": 967,
+  "maxEnBytes": 845
+}

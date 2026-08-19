@@ -1,39 +1,52 @@
 {
-  "title": "Recommendation result: MachineFit PRO tips collapsible",
-  "summary": "Show machines.pro_tips below workout tips on recommendation result page. Default collapsed; API returns proTips on generate and getById.",
+  "title": "PRO tips meta + HAMMER_STRENGTH pilot (80 machines)",
+  "summary": "Phase A: machines.pro_tips_meta JSONB column, import/validate meta + --brand/--clear-brand. Phase B: HAMMER_STRENGTH 80 verified-brand CSV generated and imported to DB (52 VERIFIED, 16 PARTIALLY_VERIFIED, 12 BRAND_MODEL_NOT_FOUND).",
   "git": {
     "branch": "main",
-    "commit": "225fcc8c"
+    "commit": "8bb62c66"
   },
   "changedFiles": [
-    "shared/src/types/recommendation.types.ts",
-    "backend/server/services/recommendation.service.ts",
-    "backend/server/repositories/recommendation.repository.ts",
-    "frontend/src/components/recommendation/RecommendationProTips/RecommendationProTips.tsx",
-    "frontend/src/pages/recommendation-result/RecommendationResultPage.tsx",
-    "frontend/src/styles/recommendation.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json"
+    "database/migrations/154_pro_tips_meta.sql",
+    "database/catalog/pro-tips/research/hammer_strength_models.json",
+    "database/catalog/pro-tips/hammer_strength_pro_tips.csv",
+    "database/scripts/import-pro-tips-csv.ts",
+    "database/scripts/validate-pro-tips-csv.mjs",
+    "database/scripts/generate-hammer-strength-pro-tips.mjs",
+    "shared/src/types/pro-tips-meta.types.ts",
+    "shared/src/types/index.ts",
+    "package.json"
   ],
   "testFocus": [
-    "Recommend OEM machine ? result page ? ??? ?? ???PRO? (collapsed)",
-    "Tap summary expands long-form PRO content",
-    "Machine without pro_tips hides section",
-    "Reload result by id still shows proTips"
+    "Migration 154 applied: machines.pro_tips_meta exists",
+    "HAMMER_STRENGTH 80 machines have pro_tips.ko + pro_tips_meta.verification_status",
+    "Other 28 brands still have prior template pro_tips (2320-80=2240 unchanged)",
+    "Validate single-brand CSV passes with --single-brand --brand=HAMMER_STRENGTH",
+    "Import dry-run: npm run db:import-pro-tips -- database/catalog/pro-tips/hammer_strength_pro_tips.csv --dry-run --brand=HAMMER_STRENGTH"
   ],
   "fastChecks": [
     {
-      "id": "component",
+      "id": "validate-hs-csv",
+      "type": "shell",
+      "command": "node database/scripts/validate-pro-tips-csv.mjs database/catalog/pro-tips/hammer_strength_pro_tips.csv --single-brand --brand=HAMMER_STRENGTH"
+    },
+    {
+      "id": "migration-file",
       "type": "file_exists",
-      "path": "frontend/src/components/recommendation/RecommendationProTips/RecommendationProTips.tsx"
+      "path": "database/migrations/154_pro_tips_meta.sql"
+    },
+    {
+      "id": "generator",
+      "type": "file_exists",
+      "path": "database/scripts/generate-hammer-strength-pro-tips.mjs"
     }
   ],
   "productionChecks": [
-    "Pages deploy + Render redeploy for proTips API field"
+    "Run migration 154 on production DB before brand imports",
+    "Render redeploy not required for DB-only change; re-import per brand on prod DB"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Code commit + migration 154 on prod DB; no frontend/API contract change"
   },
-  "asIs": "PRO tips only in admin; not on recommendation result UI.",
-  "toBe": "Collapsible ???PRO? under tips on recommendation result."
+  "asIs": "2,320 OEM machines had template pro_tips; no verification metadata column.",
+  "toBe": "pro_tips_meta stores verification_status/verified_model/source_url; HAMMER_STRENGTH 80 machines have brand-specific verified tips."
 }

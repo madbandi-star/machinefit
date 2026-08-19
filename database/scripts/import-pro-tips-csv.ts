@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 /**
- * Import MachineFit PRO tips from CSV into machines.pro_tips.
+ * Import MachineFit PRO tips from CSV into machines.pro_tips + machines.pro_tips_meta.
  *
- * CSV columns: brand_code, machine_name, exercise_tip, exercise_tip_en
- * Each cell is stored as ONE array element (internal newlines preserved).
+ * CSV columns (minimum): brand_code, machine_name_ko|machine_name, exercise_tip, exercise_tip_en
+ * Optional meta: verification_status, verified_model, manufacturer, product_series,
+ *   source_url, verified_structure, verified_adjustments
  *
  * Usage:
- *   tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run] [--clear-first]
+ *   tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run]
+ *     [--clear-first] [--clear-brand] [--brand=CODE]
  */
 import './load-env.js';
 import fs from 'node:fs';
@@ -21,6 +23,12 @@ const ROOT = path.resolve(__dirname, '../..');
 const MAX_BYTES = 5000;
 const REQUIRED_TIP_HEADERS = ['brand_code', 'exercise_tip', 'exercise_tip_en'];
 const MACHINE_NAME_HEADERS = ['machine_name', 'machine_name_ko'];
+const EXCLUDED_BRANDS = new Set(['BODYWEIGHT', 'FREE_WEIGHT']);
+
+function parseFlagValue(prefix: string): string | undefined {
+  const hit = process.argv.find((a) => a.startsWith(prefix));
+  return hit ? hit.slice(prefix.length) : undefined;
+}
 
 function resolveMachineName(row: Record<string, string>): string {
   return (row.machine_name_ko ?? row.machine_name ?? '').trim();
@@ -106,6 +114,56 @@ function buildProTips(ko: string, en: string): Record<string, string[]> {
   };
 }
 
+function buildProTipsMeta(row: Record<string, string>): Record<string, unknown> | null {
+  const status = (row.verification_status ?? '').trim();
+  if (!status) return null;
+
+  const meta: Record<string, unknown> = {
+    verification_status: status,
+    imported_at: new Date().toISOString(),
+  };
+  const verifiedModel = (row.verified_model ?? '').trim();
+  if (verifiedModel) meta.verified_model = verifiedModel;
+  const manufacturer = (row.manufacturer ?? '').trim();
+  if (manufacturer) meta.manufacturer = manufacturer;
+  const series = (row.product_series ?? '').trim();
+  if (series) meta.product_series = series;
+  const sourceUrl = (row.source_url ?? '').trim();
+  if (sourceUrl) meta.source_url = sourceUrl;
+  const structure = (row.verified_structure ?? '').trim();
+  if (structure) meta.verified_structure = structure;
+  const adjustments = (row.verified_adjustments ?? '').trim();
+  if (adjustments) meta.verified_adjustments = adjustments;
+
+  return meta;
+}
+
+function validateMetaRow(rowNum: number, row: Record<string, string>): string[] {
+  const errors: string[] = [];
+  const status = (row.verification_status ?? '').trim();
+  if (!status) return errors;
+
+  const allowed = new Set([
+    'VERIFIED',
+    'PARTIALLY_VERIFIED',
+    'BRAND_MODEL_NOT_FOUND',
+    'exercise_guidance_only',
+  ]);
+  if (!allowed.has(status)) {
+    errors.push(`Row ${rowNum}: invalid verification_status "${status}"`);
+  }
+  if (status === 'VERIFIED' && !(row.source_url ?? '').trim()) {
+    errors.push(`Row ${rowNum}: VERIFIED requires source_url`);
+  }
+  if (status === 'VERIFIED' && !(row.verified_model ?? '').trim()) {
+    errors.push(`Row ${rowNum}: VERIFIED requires verified_model`);
+  }
+  if (status === 'BRAND_MODEL_NOT_FOUND' && (row.verified_model ?? '').trim()) {
+    errors.push(`Row ${rowNum}: BRAND_MODEL_NOT_FOUND must not set verified_model`);
+  }
+  return errors;
+}
+
 function validateRow(
   rowNum: number,
   brand: string,
@@ -156,13 +214,29 @@ async function loadMachineLookup(client: pg.Client): Promise<Map<string, string>
 async function clearOemProTips(client: pg.Client): Promise<number> {
   const res = await client.query(`
     UPDATE machines m
-    SET pro_tips = NULL, updated_at = NOW()
+    SET pro_tips = NULL, pro_tips_meta = NULL, updated_at = NOW()
     FROM brands b
     WHERE b.id = m.brand_id
       AND b.code NOT IN ('BODYWEIGHT', 'FREE_WEIGHT')
       AND m.is_active = TRUE
-      AND m.pro_tips IS NOT NULL
+      AND (m.pro_tips IS NOT NULL OR m.pro_tips_meta IS NOT NULL)
   `);
+  return res.rowCount ?? 0;
+}
+
+async function clearBrandProTips(client: pg.Client, brandCode: string): Promise<number> {
+  const res = await client.query(
+    `
+    UPDATE machines m
+    SET pro_tips = NULL, pro_tips_meta = NULL, updated_at = NOW()
+    FROM brands b
+    WHERE b.id = m.brand_id
+      AND b.code = $1
+      AND m.is_active = TRUE
+      AND (m.pro_tips IS NOT NULL OR m.pro_tips_meta IS NOT NULL)
+    `,
+    [brandCode]
+  );
   return res.rowCount ?? 0;
 }
 
@@ -171,11 +245,24 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
   const dryRun = flags.has('--dry-run');
   const clearFirst = flags.has('--clear-first');
+  const clearBrand = flags.has('--clear-brand');
+  const brandFilter = parseFlagValue('--brand=')?.trim().toUpperCase();
   const csvPath = args[0];
   if (!csvPath) {
-    console.error('Usage: tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run]');
+    console.error(
+      'Usage: tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run] [--clear-first] [--clear-brand] [--brand=CODE]'
+    );
     process.exit(2);
   }
+  if (clearFirst && clearBrand) {
+    console.error('Use either --clear-first or --clear-brand, not both.');
+    process.exit(2);
+  }
+  if (clearBrand && !brandFilter) {
+    console.error('--clear-brand requires --brand=CODE');
+    process.exit(2);
+  }
+
   const resolved = path.isAbsolute(csvPath) ? csvPath : path.join(process.cwd(), csvPath);
   if (!fs.existsSync(resolved)) {
     console.error(`File not found: ${resolved}`);
@@ -189,13 +276,22 @@ async function main(): Promise<void> {
   }
 
   const raw = fs.readFileSync(resolved, 'utf8').replace(/^\uFEFF/, '');
-  const { headers, records } = parseCsv(raw);
+  const { headers, records: allRecords } = parseCsv(raw);
 
   assertCsvHeaders(headers);
 
+  const records = brandFilter
+    ? allRecords.filter((r) => (r.brand_code ?? '').trim().toUpperCase() === brandFilter)
+    : allRecords;
+
   const preErrors: string[] = [];
-  const updates: { machineId: string; proTips: Record<string, string[]>; brand: string; machine: string }[] =
-    [];
+  const updates: {
+    machineId: string;
+    proTips: Record<string, string[]>;
+    proTipsMeta: Record<string, unknown> | null;
+    brand: string;
+    machine: string;
+  }[] = [];
 
   const client = new pg.Client(createPoolConfig(connectionString));
   await client.connect();
@@ -209,7 +305,13 @@ async function main(): Promise<void> {
     const tipKo = row.exercise_tip ?? '';
     const tipEn = row.exercise_tip_en ?? '';
 
+    if (EXCLUDED_BRANDS.has(brand)) {
+      preErrors.push(`Row ${rowNum}: excluded brand ${brand}`);
+      continue;
+    }
+
     preErrors.push(...validateRow(rowNum, brand, machine, tipKo, tipEn));
+    preErrors.push(...validateMetaRow(rowNum, row));
 
     const key = `${brand}\0${machine}`;
     const machineId = lookup.get(key);
@@ -221,6 +323,7 @@ async function main(): Promise<void> {
     updates.push({
       machineId,
       proTips: buildProTips(tipKo, tipEn),
+      proTipsMeta: buildProTipsMeta(row),
       brand,
       machine,
     });
@@ -234,19 +337,34 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  const metaStats = updates.reduce(
+    (acc, u) => {
+      const s = (u.proTipsMeta?.verification_status as string) ?? 'none';
+      acc[s] = (acc[s] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
   console.log(`Ready to import ${updates.length} PRO tips from ${path.basename(resolved)}`);
+  if (brandFilter) console.log(`Brand filter: ${brandFilter}`);
+  if (Object.keys(metaStats).length) console.log('Meta breakdown:', metaStats);
+
   if (dryRun) {
     console.log('Dry run — no DB writes.');
-    if (clearFirst) console.log('Would clear existing OEM pro_tips first (--clear-first).');
+    if (clearFirst) console.log('Would clear all OEM pro_tips first (--clear-first).');
+    if (clearBrand) console.log(`Would clear ${brandFilter} pro_tips first (--clear-brand).`);
     console.log(
       JSON.stringify(
         {
           rowCount: updates.length,
+          metaStats,
           sample: updates.slice(0, 2).map((u) => ({
             brand: u.brand,
             machine: u.machine,
             koBytes: utf8Len(u.proTips.ko[0] ?? ''),
             enBytes: utf8Len(u.proTips.en[0] ?? ''),
+            meta: u.proTipsMeta,
           })),
         },
         null,
@@ -262,35 +380,49 @@ async function main(): Promise<void> {
     if (clearFirst) {
       const cleared = await clearOemProTips(client);
       console.log(`Cleared pro_tips on ${cleared} OEM machines.`);
+    } else if (clearBrand && brandFilter) {
+      const cleared = await clearBrandProTips(client, brandFilter);
+      console.log(`Cleared pro_tips on ${cleared} ${brandFilter} machines.`);
     }
+
     let updated = 0;
     for (const u of updates) {
       const res = await client.query(
         `UPDATE machines
-         SET pro_tips = $2::jsonb, updated_at = NOW()
+         SET pro_tips = $2::jsonb,
+             pro_tips_meta = $3::jsonb,
+             updated_at = NOW()
          WHERE id = $1`,
-        [u.machineId, JSON.stringify(u.proTips)]
+        [u.machineId, JSON.stringify(u.proTips), u.proTipsMeta ? JSON.stringify(u.proTipsMeta) : null]
       );
       if ((res.rowCount ?? 0) > 0) updated++;
     }
     await client.query('COMMIT');
     console.log(`Imported PRO tips for ${updated} machines.`);
 
-    const verify = await client.query<{ with_pro: string; total: string }>(`
+    const verify = await client.query<{ with_pro: string; with_meta: string; total: string }>(
+      `
       SELECT
         COUNT(*) FILTER (
           WHERE pro_tips IS NOT NULL
             AND pro_tips != '{}'::jsonb
             AND jsonb_array_length(COALESCE(pro_tips->'ko', '[]'::jsonb)) > 0
         )::text AS with_pro,
+        COUNT(*) FILTER (
+          WHERE pro_tips_meta IS NOT NULL
+            AND pro_tips_meta->>'verification_status' IS NOT NULL
+        )::text AS with_meta,
         COUNT(*)::text AS total
       FROM machines m
       JOIN brands b ON b.id = m.brand_id
       WHERE b.code NOT IN ('BODYWEIGHT', 'FREE_WEIGHT')
         AND m.is_active = TRUE
-    `);
+        AND ($1::text IS NULL OR b.code = $1)
+    `,
+      [brandFilter ?? null]
+    );
     console.log(
-      `DB verify: ${verify.rows[0]?.with_pro ?? '?'} / ${verify.rows[0]?.total ?? '?'} OEM machines have pro_tips.ko`
+      `DB verify: ${verify.rows[0]?.with_pro ?? '?'} / ${verify.rows[0]?.total ?? '?'} have pro_tips.ko; ${verify.rows[0]?.with_meta ?? '?'} have pro_tips_meta`
     );
 
     const reportPath = path.join(ROOT, '.cursor/handoff/pro-tips-import-report.json');
@@ -301,9 +433,11 @@ async function main(): Promise<void> {
         {
           importedAt: new Date().toISOString(),
           csv: resolved,
+          brandFilter,
           clearFirst,
-          cleared: clearFirst ? 'see log' : undefined,
+          clearBrand,
           updated,
+          metaStats,
           verify: verify.rows[0],
         },
         null,
