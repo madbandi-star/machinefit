@@ -13,4 +13,4 @@ Recommendation result page shows **머신핏PRO팁** below **운동팁**. Defaul
 - **Render** redeploy required (API `proTips` field)
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `225fcc8c`

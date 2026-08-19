@@ -3,7 +3,7 @@
   "summary": "Show machines.pro_tips below workout tips on recommendation result page. Default collapsed; API returns proTips on generate and getById.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "225fcc8c"
   },
   "changedFiles": [
     "shared/src/types/recommendation.types.ts",
