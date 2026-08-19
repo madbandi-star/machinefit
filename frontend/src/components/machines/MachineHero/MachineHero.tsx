@@ -7,7 +7,10 @@ import type { MuscleGroup } from '@/constants/muscle-groups';
 import { getLocalizedName } from '@/utils/localizedName';
 import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
-import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
+import {
+  machinePlaceholderUrl,
+  resolveRecordMachineImageUrl,
+} from '@/utils/catalogAssets';
 import '@/styles/machines.css';
 
 interface MachineHeroProps {
@@ -22,7 +25,13 @@ export function MachineHero({ machine, compact = false, selectedMuscle = null }:
   const isFreeWeight = isFreeWeightMachineCode(machine.code);
   const showDefaultMuscle = shouldShowDefaultMachineMuscle(machine.code);
   const typeLabel = t('machineTypes.free_weight');
-  const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
+  // FW target chips update `?muscle=` before the muscle-keyed query refetches;
+  // prefer the per-muscle cover path so the hero swaps immediately (not only after refresh).
+  const imageUrl = resolveRecordMachineImageUrl(machine.code, {
+    primaryImageUrl: machine.primaryImageUrl,
+    targetMuscleGroup: isFreeWeight ? selectedMuscle : undefined,
+    preferMuscleCover: Boolean(isFreeWeight && selectedMuscle),
+  });
   const displayMuscle =
     isFreeWeight && selectedMuscle
       ? selectedMuscle

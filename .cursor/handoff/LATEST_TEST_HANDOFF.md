@@ -1,21 +1,20 @@
-﻿# Test handoff — Storage media verification
+﻿# Test handoff — FW target muscle hero image
 
 ## Summary
-Production Storage URLs verified 135/135 HTTP 200. Covers/muscle all Storage URLs. BYTEA not deleted. Banner/notice/motivation-cover prefer Storage 302.
+Free-weight detail: changing 타겟 부위 left the hero on the previous cover until refresh. Cache no longer seeds muscle queries from base/list; hero prefers per-muscle cover URL.
 
 ## Test focus
-1. `npm run media:verify-storage` → failCount 0
-2. Machine list `primaryImageUrl` hosts on supabase storage
-3. BYTEA columns still present
+1. Search → free-weight → detail → select target muscle → hero image changes **without** refresh
+2. Switch muscle A → B → image follows each selection
+3. Hard refresh with `?muscle=` still shows the correct cover
 
 ## Fast checks
-- `docs/MEDIA_STORAGE_VERIFY_2026-08-19.md` exists
-- `scripts/verify-storage-media.mjs` exists
+- `frontend/src/utils/machineDetailCache.ts` contains exact-muscle-only cache note
+- `MachineHero.tsx` uses `preferMuscleCover` when FW + selectedMuscle
 
 ## As-is → To-be
-- as-is: migration complete, unverified
-- to-be: verified healthy Storage URLs; BYTEA kept as safety net
+- as-is: hero stuck until F5 after muscle pick
+- to-be: hero updates immediately on muscle change
 
 **Branch:** `main`  
-**Commit:** 11418864
-
+**Commit:** pending (update after push)

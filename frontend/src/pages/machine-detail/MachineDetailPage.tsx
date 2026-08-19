@@ -228,6 +228,7 @@ export function MachineDetailPage() {
     resolveRecordMachineImageUrl(machine.code, {
       primaryImageUrl: machine.primaryImageUrl,
       targetMuscleGroup: muscleParam,
+      preferMuscleCover: Boolean(isFreeWeight && muscleParam),
     }) || undefined;
   const hasQuery = Boolean(muscleParam || logDateParam || planDateParam);
 

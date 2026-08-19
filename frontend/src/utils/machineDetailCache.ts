@@ -12,17 +12,20 @@ export function isMachineNotFoundError(error: unknown): boolean {
   return getHttpStatus(error) === 404;
 }
 
-/** Prefer an already-fetched machine from detail or search-list caches. */
+/**
+ * Prefer an already-fetched machine from detail or search-list caches.
+ * When `muscle` is set, only return that exact key — never fall back to base/list.
+ * Cross-seeding would mark the wrong cover as fresh under staleTime and skip refetch.
+ */
 export function findCachedMachine(
   queryClient: QueryClient,
   machineCode: string,
   muscle?: string | null
 ): Machine | undefined {
   if (muscle) {
-    const withMuscle = queryClient.getQueryData<Machine>(
+    return queryClient.getQueryData<Machine>(
       QUERY_KEYS.machine(machineCode, muscle)
     );
-    if (withMuscle) return withMuscle;
   }
 
   const base = queryClient.getQueryData<Machine>(QUERY_KEYS.machine(machineCode));

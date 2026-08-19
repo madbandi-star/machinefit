@@ -1,44 +1,40 @@
 ﻿{
-  "title": "Storage media production verification",
-  "summary": "Verified 135/135 Storage URLs HTTP 200. Covers/muscle fully on Storage URLs. BYTEA kept. Banner/notice/motivation-cover prefer 302 to public Storage.",
+  "title": "FW target muscle hero image updates immediately",
+  "summary": "Free-weight detail hero stuck on old cover until refresh when changing 타겟 부위. Fixed exact muscle-key cache seeding and preferMuscleCover in MachineHero.",
   "git": {
     "branch": "main",
-    "commit": "11418864"
+    "commit": "pending"
   },
   "changedFiles": [
-    "scripts/verify-storage-media.mjs",
-    "docs/MEDIA_STORAGE_VERIFY_2026-08-19.md",
-    "backend/server/controllers/banner-media.controller.ts",
-    "backend/server/controllers/notice-media.controller.ts",
-    "backend/server/controllers/motivation-cover-media.controller.ts",
-    "backend/server/controllers/machine-cover-image-media.controller.ts"
+    "frontend/src/utils/machineDetailCache.ts",
+    "frontend/src/components/machines/MachineHero/MachineHero.tsx",
+    "frontend/src/pages/machine-detail/MachineDetailPage.tsx"
   ],
   "testFocus": [
-    "npm run media:verify-storage → failCount 0",
-    "Cover primaryImageUrl is supabase storage host",
-    "BYTEA not deleted"
+    "Search → free-weight → detail → pick target muscle → hero image changes without refresh",
+    "Switch muscle A → B → image follows each selection",
+    "Hard refresh with ?muscle= still correct"
   ],
   "fastChecks": [
     {
-      "id": "verify-script",
+      "id": "cache-exact-muscle",
       "type": "file_contains",
-      "path": "scripts/verify-storage-media.mjs",
-      "pattern": "media:verify-storage"
+      "path": "frontend/src/utils/machineDetailCache.ts",
+      "pattern": "Cross-seeding would mark the wrong cover as fresh"
     },
     {
-      "id": "verify-doc",
+      "id": "hero-prefer-muscle",
       "type": "file_contains",
-      "path": "docs/MEDIA_STORAGE_VERIFY_2026-08-19.md",
-      "pattern": "BYTEA 삭제를 위한 조건이 충족되었는가"
+      "path": "frontend/src/components/machines/MachineHero/MachineHero.tsx",
+      "pattern": "preferMuscleCover: Boolean(isFreeWeight && selectedMuscle)"
     }
   ],
   "productionChecks": [
-    "Optional: API_PERF_LOG=1 and confirm no BYTEA_FALLBACK for covers"
+    "Pages: open FW machine detail, select chest then back — hero cover swaps without F5"
   ],
   "deploy": {
-    "expected": "Render backend for controller 302 tweaks; verify script is ops local"
+    "expected": "Deploy Frontend to GitHub Pages success"
   },
-  "asIs": "Migration done but production Storage health not formally verified.",
-  "toBe": "Verified Storage URLs healthy; BYTEA retained; clearer fallback logging."
+  "asIs": "Selecting 타겟 부위 did not change hero until full page refresh.",
+  "toBe": "Hero cover updates immediately on muscle chip / ?muscle= change."
 }
-
