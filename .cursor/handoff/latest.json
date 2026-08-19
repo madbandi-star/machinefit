@@ -3,7 +3,7 @@
   "summary": "Reduced Home/Search/Records entry API fan-out: deferred secondary fetches, query-key unify, bootstrap include=todayCards,missed. No UI/schema breaks.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "dc3da809"
   },
   "changedFiles": [
     "docs/API_FANOUT_PHASE0_BASELINE_2026-08-19.md",

@@ -1,4 +1,4 @@
-﻿# Test handoff — API fan-out Phases 0–5
+# Test handoff ? API fan-out Phases 0?5
 
 ## Summary
 Home/Search/Records entry fan-out reduced via deferred queries, RQ key hygiene, and optional `home-bootstrap?include=todayCards,missed`. No feature removal.
@@ -14,9 +14,9 @@ Home/Search/Records entry fan-out reduced via deferred queries, RQ key hygiene, 
 - `home-bootstrap.service.ts` has `todayCards`
 - Phase 0 baseline doc exists
 
-## As-is → To-be
-- as-is: 6–10+ Home APIs, Search day-marks immediate, Records cards immediate
+## As-is �� To-be
+- as-is: 6?10+ Home APIs, Search day-marks immediate, Records cards immediate
 - to-be: critical path first; secondary deferred; bootstrap includes cards
 
 **Branch:** `main`  
-**Commit:** pending
+**Commit:** `dc3da809`
