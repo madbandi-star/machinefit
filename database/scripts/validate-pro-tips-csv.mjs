@@ -17,7 +17,18 @@ const EXCLUDED_BRANDS = new Set(['BODYWEIGHT', 'FREE_WEIGHT']);
 const EXPECTED_BRANDS = 29;
 const EXPECTED_MACHINES_PER_BRAND = 80;
 const EXPECTED_ROWS = EXPECTED_BRANDS * EXPECTED_MACHINES_PER_BRAND;
-const REQUIRED_HEADERS = ['brand_code', 'machine_name', 'exercise_tip', 'exercise_tip_en'];
+const REQUIRED_TIP_HEADERS = ['brand_code', 'exercise_tip', 'exercise_tip_en'];
+const MACHINE_NAME_HEADERS = ['machine_name', 'machine_name_ko'];
+
+function resolveMachineName(row) {
+  return (row.machine_name_ko ?? row.machine_name ?? '').trim();
+}
+
+function assertCsvHeaders(headers, report) {
+  if (!MACHINE_NAME_HEADERS.some((h) => headers.includes(h))) {
+    report.errors.push('Missing column: machine_name or machine_name_ko');
+  }
+}
 
 function utf8Len(text) {
   return Buffer.byteLength(text ?? '', 'utf8');
@@ -169,9 +180,10 @@ function main() {
     stats: {},
   };
 
-  for (const h of REQUIRED_HEADERS) {
+  for (const h of REQUIRED_TIP_HEADERS) {
     if (!headers.includes(h)) report.errors.push(`Missing column: ${h}`);
   }
+  assertCsvHeaders(headers, report);
 
   const knownBrands = loadBrandCodes();
   const knownStdNames = loadStandardMachineNames();
@@ -195,7 +207,7 @@ function main() {
     const rowNum = i + 2;
     const row = records[i];
     const brand = (row.brand_code ?? '').trim().toUpperCase();
-    const machine = (row.machine_name ?? '').trim();
+    const machine = resolveMachineName(row);
     const tipKo = row.exercise_tip ?? '';
     const tipEn = row.exercise_tip_en ?? '';
 
@@ -298,7 +310,7 @@ function main() {
       for (let i = 0; i < records.length; i++) {
         const rowNum = i + 2;
         const brand = (records[i].brand_code ?? '').trim().toUpperCase();
-        const machine = (records[i].machine_name ?? '').trim();
+        const machine = resolveMachineName(records[i]);
         const key = `${brand}\0${machine}`;
         if (!dbMaps.std.has(key) && !dbMaps.full.has(key)) {
           unmatched.push({ row: rowNum, brand, machine });

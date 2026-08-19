@@ -6,7 +6,7 @@
  * Each cell is stored as ONE array element (internal newlines preserved).
  *
  * Usage:
- *   tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run]
+ *   tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run] [--clear-first]
  */
 import './load-env.js';
 import fs from 'node:fs';
@@ -19,7 +19,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 
 const MAX_BYTES = 5000;
-const REQUIRED_HEADERS = ['brand_code', 'machine_name', 'exercise_tip', 'exercise_tip_en'];
+const REQUIRED_TIP_HEADERS = ['brand_code', 'exercise_tip', 'exercise_tip_en'];
+const MACHINE_NAME_HEADERS = ['machine_name', 'machine_name_ko'];
+
+function resolveMachineName(row: Record<string, string>): string {
+  return (row.machine_name_ko ?? row.machine_name ?? '').trim();
+}
+
+function assertCsvHeaders(headers: string[]): void {
+  for (const h of REQUIRED_TIP_HEADERS) {
+    if (!headers.includes(h)) {
+      console.error(`Missing column: ${h}`);
+      process.exit(1);
+    }
+  }
+  if (!MACHINE_NAME_HEADERS.some((h) => headers.includes(h))) {
+    console.error('Missing column: machine_name or machine_name_ko');
+    process.exit(1);
+  }
+}
 
 function utf8Len(text: string): number {
   return Buffer.byteLength(text ?? '', 'utf8');
@@ -135,9 +153,24 @@ async function loadMachineLookup(client: pg.Client): Promise<Map<string, string>
   return map;
 }
 
+async function clearOemProTips(client: pg.Client): Promise<number> {
+  const res = await client.query(`
+    UPDATE machines m
+    SET pro_tips = NULL, updated_at = NOW()
+    FROM brands b
+    WHERE b.id = m.brand_id
+      AND b.code NOT IN ('BODYWEIGHT', 'FREE_WEIGHT')
+      AND m.is_active = TRUE
+      AND m.pro_tips IS NOT NULL
+  `);
+  return res.rowCount ?? 0;
+}
+
 async function main(): Promise<void> {
-  const args = process.argv.slice(2).filter((a) => a !== '--dry-run');
-  const dryRun = process.argv.includes('--dry-run');
+  const flags = new Set(process.argv.slice(2).filter((a) => a.startsWith('--')));
+  const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+  const dryRun = flags.has('--dry-run');
+  const clearFirst = flags.has('--clear-first');
   const csvPath = args[0];
   if (!csvPath) {
     console.error('Usage: tsx database/scripts/import-pro-tips-csv.ts <csv-path> [--dry-run]');
@@ -158,12 +191,7 @@ async function main(): Promise<void> {
   const raw = fs.readFileSync(resolved, 'utf8').replace(/^\uFEFF/, '');
   const { headers, records } = parseCsv(raw);
 
-  for (const h of REQUIRED_HEADERS) {
-    if (!headers.includes(h)) {
-      console.error(`Missing column: ${h}`);
-      process.exit(1);
-    }
-  }
+  assertCsvHeaders(headers);
 
   const preErrors: string[] = [];
   const updates: { machineId: string; proTips: Record<string, string[]>; brand: string; machine: string }[] =
@@ -177,7 +205,7 @@ async function main(): Promise<void> {
     const rowNum = i + 2;
     const row = records[i];
     const brand = (row.brand_code ?? '').trim().toUpperCase();
-    const machine = (row.machine_name ?? '').trim();
+    const machine = resolveMachineName(row);
     const tipKo = row.exercise_tip ?? '';
     const tipEn = row.exercise_tip_en ?? '';
 
@@ -209,6 +237,7 @@ async function main(): Promise<void> {
   console.log(`Ready to import ${updates.length} PRO tips from ${path.basename(resolved)}`);
   if (dryRun) {
     console.log('Dry run — no DB writes.');
+    if (clearFirst) console.log('Would clear existing OEM pro_tips first (--clear-first).');
     console.log(
       JSON.stringify(
         {
@@ -230,6 +259,10 @@ async function main(): Promise<void> {
 
   await client.query('BEGIN');
   try {
+    if (clearFirst) {
+      const cleared = await clearOemProTips(client);
+      console.log(`Cleared pro_tips on ${cleared} OEM machines.`);
+    }
     let updated = 0;
     for (const u of updates) {
       const res = await client.query(
@@ -268,6 +301,8 @@ async function main(): Promise<void> {
         {
           importedAt: new Date().toISOString(),
           csv: resolved,
+          clearFirst,
+          cleared: clearFirst ? 'see log' : undefined,
           updated,
           verify: verify.rows[0],
         },
