@@ -17,4 +17,4 @@ Free-weight detail: changing 타겟 부위 left the hero on the previous cover u
 - to-be: hero updates immediately on muscle change
 
 **Branch:** `main`  
-**Commit:** pending (update after push)
+**Commit:** `8eb68d05`

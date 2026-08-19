@@ -3,7 +3,7 @@
   "summary": "Free-weight detail hero stuck on old cover until refresh when changing 타겟 부위. Fixed exact muscle-key cache seeding and preferMuscleCover in MachineHero.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "8eb68d05"
   },
   "changedFiles": [
     "frontend/src/utils/machineDetailCache.ts",
