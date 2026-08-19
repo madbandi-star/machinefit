@@ -29,6 +29,8 @@
     "db:audit-rls": "tsx database/scripts/audit-rls-anon-leak.ts",
     "secrets:scan": "node scripts/check-no-hardcoded-secrets.mjs",
     "db:seed": "tsx database/scripts/seed.ts",
+    "db:import-pro-tips": "tsx database/scripts/import-pro-tips-csv.ts",
+    "db:validate-pro-tips": "node database/scripts/validate-pro-tips-csv.mjs",
     "db:setup": "npm run db:migrate && npm run db:seed",
     "db:migrate:verify": "npm run db:migrate && npm run db:verify",
     "media:migrate-storage": "node --import tsx scripts/migrate-bytea-to-storage.mjs",

@@ -1,54 +1,40 @@
 {
-  "title": "MachineFit PRO tips column (admin)",
-  "summary": "Wire machines.pro_tips as MachineFit PRO tips in admin tips editor. Same JSONB line-array shape as tips/warnings; max 5000 UTF-8 bytes per locale.",
+  "title": "PRO tips CSV import (2320 machines)",
+  "summary": "Import script loads machines.pro_tips from CSV (brand_code + machine_name). Each cell stored as one JSON array element. Ran against v3 bilingual CSV: 2320/2320 updated.",
   "git": {
     "branch": "main",
-    "commit": "5e201c81"
+    "commit": "pending"
   },
   "changedFiles": [
-    "database/migrations/153_machinefit_pro_tips.sql",
-    "shared/src/validators/admin-catalog.schema.ts",
-    "shared/src/types/machine.types.ts",
-    "backend/server/repositories/admin-catalog.repository.ts",
-    "frontend/src/pages/admin/machine-tips/AdminMachineTipsPage.tsx",
-    "frontend/src/api/admin.api.ts",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "database/scripts/import-pro-tips-csv.ts",
+    "database/scripts/validate-pro-tips-csv.mjs",
+    "database/scripts/validate-pro-tips-csv.py",
+    "package.json"
   ],
   "testFocus": [
-    "Admin ? ????: editor shows ???PRO? section",
-    "Save pro tips; reload shows saved lines",
-    "Reject save when locale content exceeds 5000 UTF-8 bytes"
+    "Admin ??·? ? open machine ? ???PRO? section shows imported long-form text",
+    "API GET machine returns proTips.ko/en with one element each",
+    "Re-run validate: dbUnmatchedRows = 0"
   ],
   "fastChecks": [
     {
-      "id": "migration",
-      "type": "file_contains",
-      "path": "database/migrations/153_machinefit_pro_tips.sql",
-      "pattern": "pro_tips"
+      "id": "import-script",
+      "type": "file_exists",
+      "path": "database/scripts/import-pro-tips-csv.ts"
     },
     {
-      "id": "schema-limit",
+      "id": "npm-script",
       "type": "file_contains",
-      "path": "shared/src/validators/admin-catalog.schema.ts",
-      "pattern": "5000"
-    },
-    {
-      "id": "admin-ui",
-      "type": "file_contains",
-      "path": "frontend/src/pages/admin/machine-tips/AdminMachineTipsPage.tsx",
-      "pattern": "proTips"
+      "path": "package.json",
+      "pattern": "db:import-pro-tips"
     }
   ],
   "productionChecks": [
-    "Apply migration 153 on Render/DB if not auto-applied",
-    "Admin machine tips page after Pages deploy"
+    "Spot-check CYBEX / HAMMER_STRENGTH machine proTips in admin after cache refresh"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend (migration 153)"
+    "expected": "Script commit only; DB already updated via local import"
   },
-  "asIs": "Admin tips editor only had warnings + tips; pro_tips unused in UI.",
-  "toBe": "Admin can edit MachineFit PRO tips (pro_tips) with 5000-byte locale cap."
+  "asIs": "pro_tips empty on OEM catalog machines.",
+  "toBe": "2320 machines have bilingual PRO tips in machines.pro_tips."
 }
