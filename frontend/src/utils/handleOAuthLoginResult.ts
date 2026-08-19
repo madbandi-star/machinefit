@@ -1,4 +1,5 @@
 import type { AuthTokens, OAuthLoginResult, User } from '@machinefit/shared';
+import { isActiveServiceUsername } from '@machinefit/shared';
 import { clearOAuthPending, saveOAuthPending } from '@/utils/oauthPending';
 import { ROUTES } from '@/constants/routes';
 
@@ -45,6 +46,13 @@ export function normalizeOAuthLoginResult(
   };
 }
 
+function postAuthDestination(user: User, from?: string): string {
+  if (!isActiveServiceUsername(user.displayName)) {
+    return ROUTES.UNDER_CONSTRUCTION;
+  }
+  return from ?? ROUTES.HOME;
+}
+
 export function handleOAuthLoginResult(opts: HandleOAuthOptions): void {
   const result = normalizeOAuthLoginResult(opts.data);
 
@@ -53,7 +61,7 @@ export function handleOAuthLoginResult(opts: HandleOAuthOptions): void {
     opts.setAuth(result.user, result.tokens);
     opts.syncUser(result.user);
     opts.onAuthenticatedToast();
-    opts.navigate(opts.from ?? ROUTES.HOME, { replace: true });
+    opts.navigate(postAuthDestination(result.user, opts.from), { replace: true });
     return;
   }
 
@@ -61,6 +69,10 @@ export function handleOAuthLoginResult(opts: HandleOAuthOptions): void {
     clearOAuthPending();
     opts.setAuth(result.user, result.tokens);
     opts.syncUser(result.user);
+    if (!isActiveServiceUsername(result.user.displayName)) {
+      opts.navigate(ROUTES.UNDER_CONSTRUCTION, { replace: true });
+      return;
+    }
     opts.navigate(ROUTES.AUTH_TERMS, { replace: true });
     return;
   }

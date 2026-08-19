@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
+import { isActiveServiceUsername } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { ROUTES } from '@/constants/routes';
@@ -26,8 +27,14 @@ export function ConsentRedirect() {
   const location = useLocation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const needsConsent = useAuthStore((s) => s.user?.needsConsent);
+  const displayName = useAuthStore((s) => s.user?.displayName);
 
   if (!hydrated || !isAuthenticated || !needsConsent) return null;
+  // Soft-launch: non-invited accounts skip consent UI → construction.
+  if (displayName && !isActiveServiceUsername(displayName)) {
+    if (location.pathname === ROUTES.UNDER_CONSTRUCTION) return null;
+    return <Navigate to={ROUTES.UNDER_CONSTRUCTION} replace />;
+  }
   if (location.pathname === ROUTES.AUTH_TERMS || isLegalDocPath(location.pathname)) {
     return null;
   }

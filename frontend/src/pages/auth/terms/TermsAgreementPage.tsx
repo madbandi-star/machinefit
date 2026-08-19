@@ -16,6 +16,7 @@ import {
 import {
   LEGAL_DOC_VERSIONS,
   MIN_PLATFORM_AGE,
+  isActiveServiceUsername,
   yearsSinceBirthDate,
   type AuthTokens,
   type User,
@@ -177,7 +178,10 @@ export function TermsAgreementPage() {
       return;
     }
     showToast(t('auth.consentUpdated'), 'success');
-    navigate(ROUTES.HOME, { replace: true });
+    navigate(
+      isActiveServiceUsername(next.displayName) ? ROUTES.HOME : ROUTES.UNDER_CONSTRUCTION,
+      { replace: true }
+    );
   };
 
   const mutation = useMutation({
