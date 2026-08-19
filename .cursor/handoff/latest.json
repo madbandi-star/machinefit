@@ -1,53 +1,41 @@
 {
-  "title": "API fan-out Phases 0?5",
-  "summary": "Reduced Home/Search/Records entry API fan-out: deferred secondary fetches, query-key unify, bootstrap include=todayCards,missed. No UI/schema breaks.",
+  "title": "Soft-launch allowlist + under construction",
+  "summary": "Only allowlisted usernames (???1205, ?????, ???, ????0587) can use the app. Others are redirected to /under-construction and blocked from APIs.",
   "git": {
     "branch": "main",
-    "commit": "dc3da809"
+    "commit": "pending"
   },
   "changedFiles": [
-    "docs/API_FANOUT_PHASE0_BASELINE_2026-08-19.md",
-    "frontend/src/hooks/useDeferredQueryEnabled.ts",
-    "frontend/src/hooks/useHomeBootstrap.ts",
-    "frontend/src/pages/home/HomePage.tsx",
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-    "frontend/src/pages/records/RecordsPage.tsx",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "backend/server/services/home-bootstrap.service.ts",
-    "backend/server/controllers/home-bootstrap.controller.ts"
+    "shared/src/constants/active-service-access.ts",
+    "frontend/src/pages/under-construction/UnderConstructionPage.tsx",
+    "frontend/src/routes/guards/ActiveServiceAccessGate.tsx",
+    "backend/server/middlewares/active-service-access.middleware.ts"
   ],
   "testFocus": [
-    "Home: fortune does not fetch until expand; ads after idle",
-    "Search: machine list before day-mark APIs",
-    "Records: history shows quickly; plans/templates delayed",
-    "home-bootstrap?include=todayCards,missed returns optional fields"
+    "Login as non-allowlisted ? /under-construction",
+    "Allowlisted users reach Home",
+    "Non-allowlisted JWT gets API 403 SERVICE_ACCESS_RESTRICTED except /auth and GET /users/me"
   ],
   "fastChecks": [
     {
-      "id": "defer-hook",
+      "id": "allowlist",
       "type": "file_contains",
-      "path": "frontend/src/hooks/useDeferredQueryEnabled.ts",
-      "pattern": "useDeferredQueryEnabled"
+      "path": "shared/src/constants/active-service-access.ts",
+      "pattern": "???1205"
     },
     {
-      "id": "bootstrap-include",
+      "id": "page",
       "type": "file_contains",
-      "path": "backend/server/services/home-bootstrap.service.ts",
-      "pattern": "todayCards"
-    },
-    {
-      "id": "phase0-doc",
-      "type": "file_contains",
-      "path": "docs/API_FANOUT_PHASE0_BASELINE_2026-08-19.md",
-      "pattern": "Phase 0 baseline"
+      "path": "frontend/src/pages/under-construction/UnderConstructionPage.tsx",
+      "pattern": "??? ?? ?"
     }
   ],
   "productionChecks": [
-    "localStorage mf_page_perf=1 on Home/Search/Records ? compare api_total vs baseline"
+    "Pages + Render deploy; login with blocked account"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend (home-bootstrap include)"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Home 6?10+ parallel APIs; Search day-marks with catalog; Records heavy cards on entry.",
-  "toBe": "Critical path first; secondary deferred; bootstrap seeds today/missed cards."
+  "asIs": "Any account could use the full service.",
+  "toBe": "Only four invite usernames; others see under-construction."
 }

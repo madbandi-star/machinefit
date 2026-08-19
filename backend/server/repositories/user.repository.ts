@@ -162,10 +162,10 @@ export const userRepository = {
     return result.rows[0] ? mapUser(result.rows[0]) : null;
   },
 
-  /** Slim auth lookup — id / active / role only (hot path). */
+  /** Slim auth lookup — id / active / role / displayName (hot path). */
   async findAuthSnapshotById(
     id: string
-  ): Promise<{ id: string; isActive: boolean; roleCode: string } | null> {
+  ): Promise<{ id: string; isActive: boolean; roleCode: string; displayName: string } | null> {
     const pool = getPool();
     if (!pool) return null;
 
@@ -173,8 +173,9 @@ export const userRepository = {
       id: string;
       is_active: boolean;
       role_code: string;
+      display_name: string;
     }>(
-      `SELECT u.id, u.is_active, r.code AS role_code
+      `SELECT u.id, u.is_active, u.display_name, r.code AS role_code
        FROM users u
        JOIN roles r ON r.id = u.role_id
        WHERE u.id = $1`,
@@ -186,6 +187,7 @@ export const userRepository = {
       id: row.id,
       isActive: row.is_active,
       roleCode: row.role_code,
+      displayName: row.display_name,
     };
   },
 

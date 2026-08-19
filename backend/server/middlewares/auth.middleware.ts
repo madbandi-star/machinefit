@@ -16,6 +16,8 @@ import { findDevUserById } from '../data/dev-users.js';
 export interface AuthPayload {
   userId: string;
   roleCode: RoleCode;
+  /** Live displayName for soft-launch allowlist (optional on JWT-only fallback). */
+  displayName?: string;
 }
 
 declare global {
@@ -54,6 +56,7 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
     return {
       userId: user.id,
       roleCode: isRoleCode(user.roleCode) ? user.roleCode : Role.MEMBER,
+      displayName: user.displayName,
     };
   }
 
@@ -63,6 +66,7 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
     return {
       userId: dev.id,
       roleCode: isRoleCode(dev.roleCode) ? dev.roleCode : Role.MEMBER,
+      displayName: dev.displayName,
     };
   }
 
@@ -71,6 +75,7 @@ async function resolveLiveAuth(payload: AuthPayload): Promise<AuthPayload | null
   return {
     userId: payload.userId,
     roleCode: payload.roleCode,
+    displayName: payload.displayName,
   };
 }
 

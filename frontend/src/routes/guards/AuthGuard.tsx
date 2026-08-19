@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Role, hasMinRole, type RoleCode } from '@machinefit/shared';
+import { Role, hasMinRole, type RoleCode, isActiveServiceUsername } from '@machinefit/shared';
 import { userApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -75,6 +75,16 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
 
   if (!hasMinRole(roleCode, minRole)) {
     return <Navigate to={ROUTES.HOME} replace />;
+  }
+
+  const liveUser = meQuery.data ?? user;
+  if (
+    liveUser &&
+    !isActiveServiceUsername(liveUser.displayName) &&
+    location.pathname !== ROUTES.AUTH_SIGNUP_COMPLETE &&
+    location.pathname !== ROUTES.UNDER_CONSTRUCTION
+  ) {
+    return <Navigate to={ROUTES.UNDER_CONSTRUCTION} replace />;
   }
 
   if (children) return <>{children}</>;

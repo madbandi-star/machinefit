@@ -52,6 +52,8 @@ export const ROUTES = {
   TRADE_REPORTS: '/my-page/trade/reports',
   TRADE_STATS: '/my-page/trade/stats',
   LOGIN: '/login',
+  /** Soft-launch: non-allowlisted accounts. */
+  UNDER_CONSTRUCTION: '/under-construction',
   /** @deprecated Local signup removed — redirects to login. */
   REGISTER: '/login',
   /** Staged OAuth signup / legal version reconsent. */

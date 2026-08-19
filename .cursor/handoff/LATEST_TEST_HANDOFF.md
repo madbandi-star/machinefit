@@ -1,22 +1,17 @@
-# Test handoff ? API fan-out Phases 0?5
+﻿# Test handoff — Soft-launch allowlist
 
 ## Summary
-Home/Search/Records entry fan-out reduced via deferred queries, RQ key hygiene, and optional `home-bootstrap?include=todayCards,missed`. No feature removal.
+Only `핏러너1205`, `제이진파크`, `사레레`, `짐메이트0587` may use the app. Other logged-in accounts go to `/under-construction`; APIs return 403 `SERVICE_ACCESS_RESTRICTED`.
 
 ## Test focus
-1. Home: collapsed fortune = no fortune API; ads after idle/in-view
-2. Search: catalog loads; day-mark APIs ~200ms later
-3. Records: history/logs first; workout-cards/templates deferred
-4. Bootstrap include seeds today + missed card caches
+1. Non-allowlisted login → construction page + cannot use features
+2. Allowlisted login → normal Home
+3. Logout from construction → login again
+4. Disable gate locally: `ACTIVE_SERVICE_ACCESS=0` / `VITE_ACTIVE_SERVICE_ACCESS=0`
 
-## Fast checks
-- `useDeferredQueryEnabled.ts` exists
-- `home-bootstrap.service.ts` has `todayCards`
-- Phase 0 baseline doc exists
-
-## As-is �� To-be
-- as-is: 6?10+ Home APIs, Search day-marks immediate, Records cards immediate
-- to-be: critical path first; secondary deferred; bootstrap includes cards
+## As-is → To-be
+- as-is: all accounts usable
+- to-be: invite-only soft launch
 
 **Branch:** `main`  
-**Commit:** `dc3da809`
+**Commit:** pending

@@ -1335,3 +1335,45 @@
   background: var(--color-text);
   color: var(--color-surface, #fff);
 }
+
+.under-construction {
+  max-width: 28rem;
+  margin: 2rem auto;
+  padding: 1.5rem 1.25rem 2rem;
+  text-align: center;
+}
+
+.under-construction__eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.under-construction__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.under-construction__body {
+  margin: 0 0 1rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  word-break: keep-all;
+}
+
+.under-construction__account,
+.under-construction__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  word-break: break-word;
+}
+
+.under-construction__actions {
+  margin-top: 1.5rem;
+}

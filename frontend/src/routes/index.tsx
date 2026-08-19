@@ -9,9 +9,11 @@ import { EasyLayout } from '@/layouts/EasyLayout';
 import { AuthGuard } from '@/routes/guards/AuthGuard';
 import { GuestGuard } from '@/routes/guards/GuestGuard';
 import { ConsentFlowGuard } from '@/routes/guards/ConsentFlowGuard';
+import { ActiveServiceAccessGate } from '@/routes/guards/ActiveServiceAccessGate';
 import { ROUTES } from '@/constants/routes';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { HomePage } from '@/pages/home/HomePage';
+import { UnderConstructionPage } from '@/pages/under-construction/UnderConstructionPage';
 import { RouterErrorElement } from '@/routes/RouterErrorElement';
 import { OpsTelemetryBridge } from '@/components/ops/OpsTelemetryBridge';
 import { SeoRouteSync } from '@/seo/SeoRouteSync';
@@ -541,10 +543,14 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
       errorElement: <RouterErrorElement />,
       children: [
         {
-      element: <MainLayout />,
-      errorElement: <RouterErrorElement />,
-      children: [
+          element: <MainLayout />,
+          errorElement: <RouterErrorElement />,
+          children: [
+            {
+              element: <ActiveServiceAccessGate />,
+              children: [
         { path: ROUTES.HOME, element: <HomePage /> },
+        { path: ROUTES.UNDER_CONSTRUCTION, element: <UnderConstructionPage /> },
         { path: ROUTES.TERMS, element: lazyRoute(termsPage) },
         { path: ROUTES.PRIVACY, element: lazyRoute(privacyPage) },
         { path: ROUTES.REFUND, element: lazyRoute(commerceLegalPage) },
@@ -687,8 +693,10 @@ export const router = Sentry.wrapCreateBrowserRouterV7(createBrowserRouter)(
           ],
         },
         { path: ROUTES.NOT_FOUND, element: lazyRoute(notFound) },
-      ],
-    },
+              ],
+            },
+          ],
+        },
     {
       element: (
         <AuthGuard>

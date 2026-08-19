@@ -48,12 +48,14 @@ import { timerHistoryRouter } from './timer-history.routes.js';
 import * as webhookController from '../controllers/webhook.controller.js';
 import { webhookRateLimit, apiBurstRateLimit, apiUserMinuteRateLimit } from '../middlewares/rate-limit.middleware.js';
 import { optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
+import { activeServiceAccessMiddleware } from '../middlewares/active-service-access.middleware.js';
 
 export const apiRouter = Router();
 
 apiRouter.use(healthRouter);
 /** Attach user when JWT present so identity rate limits can key by userId. */
 apiRouter.use(optionalAuthMiddleware);
+apiRouter.use(activeServiceAccessMiddleware);
 apiRouter.use(apiBurstRateLimit, apiUserMinuteRateLimit);
 apiRouter.use('/ops', opsRouter);
 apiRouter.use(complianceRouter);

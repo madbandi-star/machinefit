@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { isActiveServiceUsername } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
@@ -18,6 +19,9 @@ export function GuestGuard({ children }: GuestGuardProps) {
   if (isAuthenticated && user) {
     if (user.needsConsent) {
       return <Navigate to={ROUTES.AUTH_TERMS} replace />;
+    }
+    if (!isActiveServiceUsername(user.displayName)) {
+      return <Navigate to={ROUTES.UNDER_CONSTRUCTION} replace />;
     }
     return <Navigate to={ROUTES.HOME} replace />;
   }
