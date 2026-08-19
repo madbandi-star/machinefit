@@ -3,7 +3,7 @@
   "summary": "Phase A: machines.pro_tips_meta JSONB column, import/validate meta + --brand/--clear-brand. Phase B: HAMMER_STRENGTH 80 verified-brand CSV generated and imported to DB (52 VERIFIED, 16 PARTIALLY_VERIFIED, 12 BRAND_MODEL_NOT_FOUND).",
   "git": {
     "branch": "main",
-    "commit": "8bb62c66"
+    "commit": "592dd883"
   },
   "changedFiles": [
     "database/migrations/154_pro_tips_meta.sql",
