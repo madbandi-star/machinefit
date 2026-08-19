@@ -3,7 +3,7 @@
   "summary": "Verified 135/135 Storage URLs HTTP 200. Covers/muscle fully on Storage URLs. BYTEA kept. Banner/notice/motivation-cover prefer 302 to public Storage.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "11418864"
   },
   "changedFiles": [
     "scripts/verify-storage-media.mjs",
@@ -41,3 +41,4 @@
   "asIs": "Migration done but production Storage health not formally verified.",
   "toBe": "Verified Storage URLs healthy; BYTEA retained; clearer fallback logging."
 }
+

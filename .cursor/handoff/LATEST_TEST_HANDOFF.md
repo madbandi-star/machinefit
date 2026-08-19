@@ -17,4 +17,5 @@ Production Storage URLs verified 135/135 HTTP 200. Covers/muscle all Storage URL
 - to-be: verified healthy Storage URLs; BYTEA kept as safety net
 
 **Branch:** `main`  
-**Commit:** PENDING
+**Commit:** 11418864
+
