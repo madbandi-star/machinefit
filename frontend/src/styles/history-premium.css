@@ -455,7 +455,7 @@
 
 .history-page-premium .history-record-card__header-actions {
   display: inline-flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
   gap: 0.3rem;
   flex-shrink: 0;
@@ -466,10 +466,9 @@
   z-index: 1;
 }
 
-/* Guide icons (warnings / tips / PRO) — header right */
+/* Guide icons (warnings / tips / PRO) — header right under title/meta */
 .history-card-guide {
-  flex: 0 1 auto;
-  min-width: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

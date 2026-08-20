@@ -359,11 +359,6 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
             <div className="history-record-card__hero-aside">
               <div className="history-record-card__header-actions">
-                <HistoryCardGuideIcons
-                  machineCode={card.machineCode}
-                  recommendationId={card.recommendationId}
-                  enabled={isAuthenticated}
-                />
                 {canReorder ? (
                   <details ref={orderMenuRef} className="history-record-card__order-menu">
                     <summary
@@ -511,6 +506,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   </div>
                 </Link>
               </div>
+              <HistoryCardGuideIcons
+                machineCode={card.machineCode}
+                recommendationId={card.recommendationId}
+                enabled={isAuthenticated}
+              />
             </div>
           </div>
         </div>
