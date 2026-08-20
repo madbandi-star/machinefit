@@ -5,7 +5,11 @@ import type {
   YoutubeVideo,
   StandardMachineFitPositions,
 } from '@machinefit/shared';
-import { STANDARD_MACHINE_FIT_POSITIONS, resolveStandardMachineCoaching } from '@machinefit/shared';
+import {
+  STANDARD_MACHINE_FIT_POSITIONS,
+  resolveStandardMachineCoaching,
+  stripProTipSeparatorsFromLines,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_SETTINGS, type MockSettingRule } from '../data/mock.js';
 import { pickLocalizedArray } from '../utils/localize.util.js';
@@ -306,7 +310,9 @@ export const recommendationRepository = {
 
     let tips = pickLocalizedArray(row.tips, locale);
     let warnings = pickLocalizedArray(row.warnings, locale);
-    const proTips = pickLocalizedArray(row.machine_pro_tips, locale);
+    const proTips = stripProTipSeparatorsFromLines(
+      pickLocalizedArray(row.machine_pro_tips, locale)
+    );
     const standardCoaching = resolveStandardMachineCoaching(row.machine_code);
     if (standardCoaching) {
       tips = pickLocalizedArray(standardCoaching.tips, locale);

@@ -8,6 +8,10 @@ import type {
   Machine,
   PaginatedResponse,
 } from '@machinefit/shared';
+import {
+  stripProTipSeparatorsFromLines,
+  stripProTipSeparatorsFromLocalized,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
@@ -148,7 +152,7 @@ function mapMachine(row: MachineAdminRow): Machine {
     description: row.description ?? undefined,
     tips: row.tips ?? undefined,
     warnings: row.warnings ?? undefined,
-    proTips: row.pro_tips ?? undefined,
+    proTips: stripProTipSeparatorsFromLocalized(row.pro_tips) ?? undefined,
     hasSeat: row.has_seat,
     hasBackPad: row.has_back_pad,
     hasFootPlate: row.has_foot_plate,
@@ -794,13 +798,13 @@ export const adminCatalogRepository = {
         : {}),
     };
     const proTips = {
-      ko: (input.proTips.ko ?? []).map((s) => s.trim()).filter(Boolean),
-      en: (input.proTips.en ?? []).map((s) => s.trim()).filter(Boolean),
+      ko: stripProTipSeparatorsFromLines(input.proTips.ko ?? []),
+      en: stripProTipSeparatorsFromLines(input.proTips.en ?? []),
       ...(input.proTips.ja
-        ? { ja: input.proTips.ja.map((s) => s.trim()).filter(Boolean) }
+        ? { ja: stripProTipSeparatorsFromLines(input.proTips.ja) }
         : {}),
       ...(input.proTips.zh
-        ? { zh: input.proTips.zh.map((s) => s.trim()).filter(Boolean) }
+        ? { zh: stripProTipSeparatorsFromLines(input.proTips.zh) }
         : {}),
     };
 

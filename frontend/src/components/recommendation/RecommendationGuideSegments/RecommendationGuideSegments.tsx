@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { stripProTipSeparatorsFromLines } from '@machinefit/shared';
 import '@/styles/recommendation.css';
 
 type GuideSegmentId = 'warnings' | 'tips' | 'proTips';
@@ -49,7 +50,7 @@ export function RecommendationGuideSegments({
   );
   const tipItems = useMemo(() => (tips ?? []).map((w) => w.trim()).filter(Boolean), [tips]);
   const proContent = useMemo(
-    () => (proTips ?? []).filter(Boolean).join('\n\n').trim(),
+    () => stripProTipSeparatorsFromLines(proTips).join('\n\n').trim(),
     [proTips]
   );
 

@@ -1,5 +1,9 @@
 import type { Brand, Machine } from '@machinefit/shared';
-import { BRAND_CODES, machineMatchesMuscleGroupFilter } from '@machinefit/shared';
+import {
+  BRAND_CODES,
+  machineMatchesMuscleGroupFilter,
+  stripProTipSeparatorsFromLocalized,
+} from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { MOCK_BRANDS, MOCK_MACHINES } from '../data/mock.js';
 import { brandAssetMediaUrl } from '../utils/public-api-base.js';
@@ -95,7 +99,7 @@ function mapMachine(
     beginnerTips: row.beginner_tips ?? undefined,
     intermediateTips: row.intermediate_tips ?? undefined,
     advancedTips: row.advanced_tips ?? undefined,
-    proTips: row.pro_tips ?? undefined,
+    proTips: stripProTipSeparatorsFromLocalized(row.pro_tips) ?? undefined,
     recommendedExperience: row.recommended_experience ?? undefined,
     hasSeat: row.has_seat,
     hasBackPad: row.has_back_pad,

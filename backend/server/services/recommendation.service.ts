@@ -9,6 +9,7 @@ import {
   resolveActiveRecommendationSettings,
   recommendRepsForGoal,
   resolveStandardMachineCoaching,
+  stripProTipSeparatorsFromLines,
 } from '@machinefit/shared';
 import { recommendationRepository } from '../repositories/recommendation.repository.js';
 import { preferenceRepository } from '../repositories/preference.repository.js';
@@ -233,7 +234,9 @@ export const recommendationService = {
           : catalogWarnings.length > 0
             ? catalogWarnings
             : typeWarnings;
-    const proTips = pickLocalizedArray(machine.proTips ?? null, locale);
+    const proTips = stripProTipSeparatorsFromLines(
+      pickLocalizedArray(machine.proTips ?? null, locale)
+    );
     const tipsByLocale: Record<string, string[]> = standardCoaching
       ? { ...standardCoaching.tips, [locale]: tips }
       : {

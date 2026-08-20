@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { stripProTipSeparatorsFromLines } from '@machinefit/shared';
 import { Icon } from '@/components/icons/Icon';
 import '@/styles/recommendation.css';
 
@@ -37,7 +38,10 @@ export function RecommendationProTips({ proTips, machineCode }: RecommendationPr
   const { t } = useTranslation('machines');
   const labelId = useId();
 
-  const content = (proTips ?? []).filter(Boolean).join('\n\n').trim();
+  const content = useMemo(
+    () => stripProTipSeparatorsFromLines(proTips).join('\n\n').trim(),
+    [proTips]
+  );
   const storageKey = seenStorageKey(machineCode, content);
   const [seen, setSeen] = useState(() => (content ? readSeen(storageKey) : true));
   const [open, setOpen] = useState(false);

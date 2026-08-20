@@ -8,6 +8,7 @@ export * from './recommend-volume.js';
 export * from './daily-insights.js';
 export * from './rest-timer.js';
 export * from './recommendation-personalization.js';
+export * from './pro-tips-format.js';
 export * from './free-weight.js';
 export * from './free-weight-load.js';
 export * from './bodyweight-load.js';

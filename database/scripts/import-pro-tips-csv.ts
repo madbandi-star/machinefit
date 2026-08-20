@@ -104,9 +104,20 @@ function parseCsv(content: string): { headers: string[]; records: Record<string,
   return { headers, records };
 }
 
+function stripHorizontalRuleSeparators(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .filter((line) => !/^\s*-{3,}\s*$/.test(line))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 function buildProTips(ko: string, en: string): Record<string, string[]> {
-  const koTrim = ko.trim();
-  const enTrim = en.trim();
+  const koTrim = stripHorizontalRuleSeparators(ko);
+  const enTrim = stripHorizontalRuleSeparators(en);
   const enFinal = enTrim || koTrim;
   return {
     ko: koTrim ? [koTrim] : [],
@@ -302,8 +313,8 @@ async function main(): Promise<void> {
     const row = records[i];
     const brand = (row.brand_code ?? '').trim().toUpperCase();
     const machine = resolveMachineName(row);
-    const tipKo = row.exercise_tip ?? '';
-    const tipEn = row.exercise_tip_en ?? '';
+    const tipKo = stripHorizontalRuleSeparators(row.exercise_tip ?? '');
+    const tipEn = stripHorizontalRuleSeparators(row.exercise_tip_en ?? '');
 
     if (EXCLUDED_BRANDS.has(brand)) {
       preErrors.push(`Row ${rowNum}: excluded brand ${brand}`);

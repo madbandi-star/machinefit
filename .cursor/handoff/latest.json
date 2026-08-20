@@ -1,32 +1,40 @@
 {
-  "title": "Tips: remove ACSM/Schoenfeld, explain RIR/ROM",
-  "summary": "Goal tip copy no longer cites ACSM/Schoenfeld. RIR and ROM keep beginner-friendly inline explanations.",
+  "title": "PRO tips: strip --- separators (display + source)",
+  "summary": "Remove markdown --- horizontal rules from PRO tip display and stored catalog (shared util, API mapping, migration 184, CSV cleanup).",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/utils/recommendation-personalization.ts"
+    "shared/src/utils/pro-tips-format.ts",
+    "frontend/src/components/recommendation/RecommendationGuideSegments/RecommendationGuideSegments.tsx",
+    "frontend/src/components/recommendation/RecommendationProTips/RecommendationProTips.tsx",
+    "backend/server/repositories/machine.repository.ts",
+    "backend/server/repositories/recommendation.repository.ts",
+    "backend/server/services/recommendation.service.ts",
+    "backend/server/repositories/admin-catalog.repository.ts",
+    "database/migrations/184_strip_pro_tips_horizontal_rules.sql",
+    "database/catalog/pro-tips/*.csv",
+    "database/scripts/import-pro-tips-csv.ts"
   ],
   "testFocus": [
-    "New recommendation tips: no ACSM/Schoenfeld wording",
-    "Hypertrophy tip explains RIR; rehab/posture tips explain ROM"
+    "Records / result PRO tip panel: no --- lines between sections",
+    "Section breaks still readable via blank lines"
   ],
   "fastChecks": [
     {
-      "id": "no-acsm-in-tips",
-      "type": "grep",
-      "path": "shared/src/utils/recommendation-personalization.ts",
-      "pattern": "ACSM 근력|Schoenfeld 등"
+      "id": "strip-util",
+      "type": "shell",
+      "command": "cd shared && npx vitest run src/utils/pro-tips-format.test.ts"
     }
   ],
   "productionChecks": [
-    "Render backend redeploy needed (shared tip generation)",
-    "Existing saved tips in history may still show old wording until re-recommended"
+    "Render backend + run migration 184",
+    "GitHub Pages frontend"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend (shared)"
+    "expected": "Frontend Pages + Render backend (shared + migration)"
   },
-  "asIs": "Tips cited ACSM/Schoenfeld; RIR/ROM had little explanation.",
-  "toBe": "No ACSM/Schoenfeld in tip strings; RIR/ROM explained in plain language."
+  "asIs": "PRO tips showed literal --- separators.",
+  "toBe": "--- removed on display and cleaned from catalog/DB."
 }
