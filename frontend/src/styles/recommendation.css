@@ -624,6 +624,119 @@
   word-break: break-word;
 }
 
+/* —— Guide segments (warnings / tips / PRO on one row) —— */
+.recommendation-guide-segments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.15rem;
+}
+
+.recommendation-guide-segments__chips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.recommendation-guide-segments__chips:has(> :nth-child(1):last-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.recommendation-guide-segments__chips:has(> :nth-child(2):last-child) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.recommendation-guide-segments__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 2.35rem;
+  padding: 0.4rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--color-surface, #fff) 88%, transparent);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.recommendation-guide-segments__chip-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recommendation-guide-segments__chip.is-active {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 42%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.recommendation-guide-segments__chip--warnings.is-active {
+  border-color: color-mix(in srgb, #f59e0b 45%, var(--glass-border));
+  background: color-mix(in srgb, #f59e0b 12%, transparent);
+}
+
+.recommendation-guide-segments__chip--proTips.is-active {
+  border-color: color-mix(in srgb, var(--color-accent, #33eb91) 48%, var(--glass-border));
+  background: color-mix(in srgb, var(--color-accent, #33eb91) 12%, transparent);
+}
+
+.recommendation-guide-segments__chip--unread:not(.is-active) {
+  animation: recommendation-pro-tips-pulse 2.4s ease-in-out infinite;
+}
+
+.recommendation-guide-segments__dot {
+  flex-shrink: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  animation: recommendation-pro-tips-dot 2.4s ease-in-out infinite;
+}
+
+.recommendation-guide-segments__panel {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  animation: recommendation-pro-tips-reveal 0.28s ease-out both;
+}
+
+.recommendation-guide-segments__panel.recommendation-tips__list,
+.recommendation-guide-segments__panel.recommendation-warnings__list {
+  padding-left: 1.35rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.recommendation-guide-segments__pro-body {
+  margin: 0;
+  padding-top: 0.65rem;
+  border-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recommendation-guide-segments__chip--unread:not(.is-active),
+  .recommendation-guide-segments__dot,
+  .recommendation-guide-segments__panel {
+    animation: none;
+  }
+}
+
 /* 1) Collapsed unread: soft border/icon pulse */
 .recommendation-pro-tips--unread:not([open]) {
   animation: recommendation-pro-tips-pulse 2.4s ease-in-out infinite;

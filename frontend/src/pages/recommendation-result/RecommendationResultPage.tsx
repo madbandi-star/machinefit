@@ -8,15 +8,13 @@ import { isAllGymsId, isFreeWeightMachineCode, resolveWorkoutLogSeedWeightKg, re
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
-import { RecommendationTips } from '@/components/recommendation/RecommendationTips/RecommendationTips';
-import { RecommendationProTips } from '@/components/recommendation/RecommendationProTips/RecommendationProTips';
+import { RecommendationGuideSegments } from '@/components/recommendation/RecommendationGuideSegments/RecommendationGuideSegments';
 import {
   WorkoutLogPanel,
   type WorkoutLogPanelControl,
 } from '@/components/recommendation/WorkoutLogPanel/WorkoutLogPanel';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { ActiveSettingsSourceBanner } from '@/components/recommendation/ActiveSettingsSourceBanner/ActiveSettingsSourceBanner';
-import { RecommendationWarnings } from '@/components/recommendation/RecommendationWarnings/RecommendationWarnings';
 import { MachineCardDisclaimerNotices } from '@/components/compliance/MachineCardDisclaimerNotices';
 import { AdSlot } from '@/ads/AdSlot';
 import { recommendationApi, workoutCardApi } from '@/api';
@@ -398,7 +396,6 @@ export function RecommendationResultPage() {
       </header>
 
       <div className="recommendation-result-page__content history-page-premium">
-        <RecommendationWarnings warnings={result.warnings ?? []} />
         <article
           className={`history-record-card history-record-card--premium history-record-card--unlogged recommendation-result-page__body-card${
             bodyExpanded ? '' : ' history-record-card--collapsed'
@@ -537,13 +534,15 @@ export function RecommendationResultPage() {
             }
           />
 
+          <RecommendationGuideSegments
+            warnings={result.warnings}
+            tips={result.tips}
+            proTips={result.proTips}
+            machineCode={result.machineCode}
+          />
+
           {bodyExpanded ? (
             <>
-              <RecommendationTips tips={result.tips} />
-              <RecommendationProTips
-                proTips={result.proTips ?? []}
-                machineCode={result.machineCode}
-              />
               <button
                 type="button"
                 className="history-record-card__body-toggle"
