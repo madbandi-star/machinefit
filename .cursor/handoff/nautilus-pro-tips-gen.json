@@ -1,0 +1,17 @@
+{
+  "brand": "NAUTILUS",
+  "generatedAt": "2026-08-20T02:20:04.591Z",
+  "outPath": "/workspace/database/catalog/pro-tips/nautilus_pro_tips.csv",
+  "rowCount": 80,
+  "stats": {
+    "VERIFIED": 24,
+    "PARTIALLY_VERIFIED": 45,
+    "BRAND_MODEL_NOT_FOUND": 11
+  },
+  "maxKoBytes": 3103,
+  "maxEnBytes": 2531,
+  "proTipUniqueFingerprints": 50,
+  "contaminationIssues": 0,
+  "overBytes": 0,
+  "style": "trainer-coaching-v2"
+}

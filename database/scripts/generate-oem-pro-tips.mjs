@@ -36,6 +36,17 @@ const BRAND_META = {
     rideKo: '라이프 피트니스(Insignia·Signature·Axiom) 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Life Fitness (Insignia / Signature / Axiom) path instead of fighting it.',
   },
+  NAUTILUS: {
+    displayKo: '노틸러스',
+    displayEn: 'NAUTILUS',
+    manufacturerDefault: 'Nautilus',
+    researchFile: 'nautilus_models.json',
+    csvFile: 'nautilus_pro_tips.csv',
+    noModelKo: '노틸러스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Nautilus SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '노틸러스(Inspiration·Impact·Leverage) 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Nautilus (Inspiration / Impact / Leverage) path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -351,6 +362,11 @@ function introKo(entry, family, flags) {
   else if (flags.select) bits.push('셀렉터 스택');
   if (flags.signature) bits.push('Signature');
   if (flags.cableMotion) bits.push('Cable Motion');
+  if (/inspiration/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Inspiration Lock N Load');
+  } else if (/impact|nitro/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Impact/Nitro');
+  }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
     .replace(/입니다\.?$/, '')
@@ -373,6 +389,11 @@ function introEn(entry, family, flags) {
   else if (flags.select) bits.push('selectorized stack');
   if (flags.signature) bits.push('Signature');
   if (flags.cableMotion) bits.push('Cable Motion');
+  if (/inspiration/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Inspiration Lock N Load');
+  } else if (/impact|nitro/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Impact/Nitro');
+  }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
     : brandMeta.rideEn;
