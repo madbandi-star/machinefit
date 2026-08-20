@@ -1,21 +1,14 @@
-# Test handoff — Search My Brands scope
+# Test handoff — Home plan / fortune spacing
 
 ## Summary
 
-Logged-in users on machine search with brand **전체** now only see machines from **내 브랜드**. Guests still see the full catalog.
+`.home-fortune-card` now has `margin-top: 0.85rem` so “오늘의 운동계획” and “오늘의 헬창운세” are not flush.
 
 ## As-is → To-be
 
-- **As-is:** Brand chips = My Brands, but list/search with 전체 returned all brands.
-- **To-be:** 전체 passes `brandCodes=<favorite codes>` to `/machines`; backend filters `b.code = ANY(...)`.
+- **As-is:** Cards stacked with 0 vertical gap.
+- **To-be:** Clear gap above the fortune card.
 
-## Fast checks
+## Fast check
 
-1. Login → `/machines` → 전체 → results only from favorite brands.
-2. Search a machine name that exists only on a non-favorite brand → no results.
-3. Guest → 전체 still shows non-favorite brands.
-4. Select one My Brand chip → that brand only (unchanged).
-
-## Deploy
-
-Needs **Render** (shared + API) and **GitHub Pages** (FE).
+Open home while today’s plan is visible → visual gap between the two blocks.

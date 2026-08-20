@@ -1,42 +1,30 @@
 {
-  "title": "Search: My Brands only for logged-in “전체”",
-  "summary": "Logged-in machine search with brand=전체 now queries only favorite brand codes via brandCodes. Guests still see full catalog. Backend machine list accepts brandCodes ANY filter.",
+  "title": "Home: space between plan and fortune cards",
+  "summary": "Add top margin on HomeFortuneCard so today’s workout plan and 헬창운세 are not flush.",
   "git": {
     "branch": "main",
-    "commit": "66e0a010"
+    "commit": "a016beb0"
   },
   "changedFiles": [
-    "shared/src/validators/machine.schema.ts",
-    "backend/server/repositories/machine.repository.ts",
-    "backend/server/services/machine.service.ts",
-    "frontend/src/pages/machine-search/MachineSearchPage.tsx"
+    "frontend/src/styles/fortune.css"
   ],
   "testFocus": [
-    "Login → Search → brand 전체 → only My Brands machines appear in list/search",
-    "Login → select a My Brand chip → that brand only",
-    "Guest → 전체 still shows all brands",
-    "Text search for a non-favorite brand machine returns empty while logged in"
+    "Home (logged in, with today’s plan visible) → plan card and fortune card have clear vertical gap (~0.85rem)"
   ],
   "fastChecks": [
     {
-      "id": "schema-brandCodes",
+      "id": "fortune-margin",
       "type": "grep",
-      "path": "shared/src/validators/machine.schema.ts",
-      "pattern": "brandCodes"
-    },
-    {
-      "id": "fe-my-brands-all",
-      "type": "grep",
-      "path": "frontend/src/pages/machine-search/MachineSearchPage.tsx",
-      "pattern": "params.brandCodes"
+      "path": "frontend/src/styles/fortune.css",
+      "pattern": "margin: 0\\.85rem 0 0"
     }
   ],
   "productionChecks": [
-    "Pages + Render redeploy (shared schema + API brandCodes + FE)"
+    "GitHub Pages deploy only (CSS)"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend"
+    "expected": "Frontend Pages"
   },
-  "asIs": "Logged-in 전체 search returned machines from all brands.",
-  "toBe": "Logged-in 전체 search is scoped to My Brands; guests unchanged."
+  "asIs": "Plan and fortune cards sat flush with no gap.",
+  "toBe": "Fortune card has 0.85rem top margin (matches home-section rhythm)."
 }
