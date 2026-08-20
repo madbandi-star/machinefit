@@ -141,11 +141,17 @@ SET
   pro_tips_meta = ${buildMeta(row)},
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = ${sqlString(nameKo)};
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = ${sqlString(nameKo)};
 `);
 }
 

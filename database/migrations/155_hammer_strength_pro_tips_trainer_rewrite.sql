@@ -169,14 +169,20 @@ If position breaks, cut the load.
 
 "Keep the back on the pad and press through the center of the chest. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Chest Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Hammer Strength Select 라인의 셀렉터라이즈드 체스트 프레스(HS-CP)입니다.","verifiedAdjustments":"시트 높이, 스택 핀, 손잡이","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Chest Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Hammer Strength Select 라인의 셀렉터라이즈드 체스트 프레스(HS-CP)입니다.","verifiedAdjustments":"시트 높이, 스택 핀, 손잡이","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '체스트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 프레스';
 
 
 UPDATE machines m
@@ -329,14 +335,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Incline Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인의 독립 스택 인클라인 체스트 프레스(MTSIP)입니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Incline Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인의 독립 스택 인클라인 체스트 프레스(MTSIP)입니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '인클라인 체스트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '인클라인 체스트 프레스';
 
 
 UPDATE machines m
@@ -491,14 +503,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Decline Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인의 독립 스택 디클라인 체스트 프레스(MTSDP)입니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Decline Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인의 독립 스택 디클라인 체스트 프레스(MTSDP)입니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '디클라인 체스트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '디클라인 체스트 프레스';
 
 
 UPDATE machines m
@@ -657,14 +675,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Wide Chest","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-wide-chest","verifiedStructure":"공식 명칭은 Wide Chest(IL-WC)이며, 수렴(converging) 궤적의 플레이트로드 체스트 프레스입니다. 별도 \"Converging Chest Press\" SKU는 없습니다.","verifiedAdjustments":"시트, 팔 시작 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Wide Chest","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-wide-chest","verifiedStructure":"공식 명칭은 Wide Chest(IL-WC)이며, 수렴(converging) 궤적의 플레이트로드 체스트 프레스입니다. 별도 \"Converging Chest Press\" SKU는 없습니다.","verifiedAdjustments":"시트, 팔 시작 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '컨버징 체스트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '컨버징 체스트 프레스';
 
 
 UPDATE machines m
@@ -819,14 +843,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Chest Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Chest Press(MTSCP)로 좌우 독립 스택과 아이소래터럴 프레스 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Chest Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Chest Press(MTSCP)로 좌우 독립 스택과 아이소래터럴 프레스 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 체스트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 체스트 프레스';
 
 
 UPDATE machines m
@@ -983,14 +1013,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Bench Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"플레이트로드 Iso-Lateral Bench Press(IL-BP)로 독립 팔 프레스 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Bench Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"플레이트로드 Iso-Lateral Bench Press(IL-BP)로 독립 팔 프레스 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '플레이트로드 체스트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 체스트 프레스';
 
 
 UPDATE machines m
@@ -1137,14 +1173,20 @@ If position breaks, cut the load.
 
 "Pin the scapula and bring the elbows together in front. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Pectoral Fly(HS-PEC) 셀렉터라이즈드 펙덱 머신입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Pectoral Fly(HS-PEC) 셀렉터라이즈드 펙덱 머신입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '펙덱';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '펙덱';
 
 
 UPDATE machines m
@@ -1293,14 +1335,20 @@ Slow the tempo and repeat one clean path.
 
 "In rear-delt mode, open the elbows back and out. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly/Rear Deltoid","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Pectoral Fly/Rear Deltoid(HS-FLY)로 펙덱·리어 델트 양면 사용이 가능합니다.","verifiedAdjustments":"시트, 팔 패드 방향, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly/Rear Deltoid","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Pectoral Fly/Rear Deltoid(HS-FLY)로 펙덱·리어 델트 양면 사용이 가능합니다.","verifiedAdjustments":"시트, 팔 패드 방향, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '리어 델트 / 리버스 펙덱';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트 / 리버스 펙덱';
 
 
 UPDATE machines m
@@ -1451,14 +1499,20 @@ If position breaks, cut the load.
 
 "Open the chest, then hug inward through the elbows. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"공식 플라이 전용 모델은 Select Pectoral Fly(HS-PEC)입니다. HS-FLY는 리어 델트 겸용입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"공식 플라이 전용 모델은 Select Pectoral Fly(HS-PEC)입니다. HS-FLY는 리어 델트 겸용입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '플라이 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플라이 머신';
 
 
 UPDATE machines m
@@ -1609,14 +1663,20 @@ Match both sides, then confirm with a light set.
 
 "Depress the scapula and bend the elbows straight back. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Seated Dip","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Seated Dip(PL-DIP)으로 보조 없이 좌식 딥 동작을 수행합니다.","verifiedAdjustments":"시트, 그립, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Seated Dip","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Seated Dip(PL-DIP)으로 보조 없이 좌식 딥 동작을 수행합니다.","verifiedAdjustments":"시트, 그립, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '딥 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 머신';
 
 
 UPDATE machines m
@@ -1767,14 +1827,20 @@ If position breaks, cut the load.
 
 "For dips, use less assistance and keep the shoulders stable. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Hammer Strength Select Assist Dip Chin","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Assist Dip Chin(HS-ADC)은 딥과 친업을 모두 지원하는 어시스트 머신입니다. 딥 전용 SKU는 없습니다.","verifiedAdjustments":"무릎 패드, 보조 중량, 그립","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Hammer Strength Select Assist Dip Chin","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Assist Dip Chin(HS-ADC)은 딥과 친업을 모두 지원하는 어시스트 머신입니다. 딥 전용 SKU는 없습니다.","verifiedAdjustments":"무릎 패드, 보조 중량, 그립","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '어시스트 딥';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 딥';
 
 
 UPDATE machines m
@@ -1931,14 +1997,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Super Incline Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Super Incline Press(IL-FMP)로 높은 인클라인 각도 프레스를 제공합니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Super Incline Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Super Incline Press(IL-FMP)로 높은 인클라인 각도 프레스를 제공합니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '슈퍼 인클라인 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '슈퍼 인클라인 프레스';
 
 
 UPDATE machines m
@@ -2087,14 +2159,20 @@ If position breaks, cut the load.
 
 "Pull the bar toward the chest and drive the elbows down. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Lat Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Lat Pulldown(HS-PD) 셀렉터라이즈드 랫풀다운 머신입니다.","verifiedAdjustments":"시트, 허벅지 패드, 스택 핀, 바","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Lat Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Lat Pulldown(HS-PD) 셀렉터라이즈드 랫풀다운 머신입니다.","verifiedAdjustments":"시트, 허벅지 패드, 스택 핀, 바","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '랫풀다운';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '랫풀다운';
 
 
 UPDATE machines m
@@ -2251,14 +2329,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Wide Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Wide Pulldown(IL-WPD)로 와이드 그립 랫풀다운을 제공합니다.","verifiedAdjustments":"시트, 그립, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Wide Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Wide Pulldown(IL-WPD)로 와이드 그립 랫풀다운을 제공합니다.","verifiedAdjustments":"시트, 그립, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '와이드 랫풀다운';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '와이드 랫풀다운';
 
 
 UPDATE machines m
@@ -2413,14 +2497,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Front Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Front Pulldown(MTSFP)으로 전방(프론트) 풀다운 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Front Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Front Pulldown(MTSFP)으로 전방(프론트) 풀다운 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '프론트 풀다운';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 풀다운';
 
 
 UPDATE machines m
@@ -2575,14 +2665,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Front Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인에서 아이소래터럴 풀다운은 Front Pulldown(MTSFP)이 공식 대응 모델입니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Front Pulldown","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인에서 아이소래터럴 풀다운은 Front Pulldown(MTSFP)이 공식 대응 모델입니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 랫풀다운';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 랫풀다운';
 
 
 UPDATE machines m
@@ -2739,14 +2835,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral High Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral High Row(IL-HR)로 상부 등·후면 어깨 중심의 하이 로우를 제공합니다.","verifiedAdjustments":"시트, 가슴 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral High Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral High Row(IL-HR)로 상부 등·후면 어깨 중심의 하이 로우를 제공합니다.","verifiedAdjustments":"시트, 가슴 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '하이로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하이로우';
 
 
 UPDATE machines m
@@ -2901,14 +3003,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral High Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral High Row(MTSHR)로 독립 스택 하이 로우를 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral High Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral High Row(MTSHR)로 독립 스택 하이 로우를 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 하이로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 하이로우';
 
 
 UPDATE machines m
@@ -3061,14 +3169,20 @@ If position breaks, cut the load.
 
 "Keep the chest on the pad and pull the elbows back. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Seated Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Seated Row(HS-RW) 좌식 셀렉터라이즈드 로우 머신입니다.","verifiedAdjustments":"시트, 가슴/발 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Seated Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Seated Row(HS-RW) 좌식 셀렉터라이즈드 로우 머신입니다.","verifiedAdjustments":"시트, 가슴/발 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '시티드 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 로우';
 
 
 UPDATE machines m
@@ -3227,14 +3341,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Rowing","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"일반 \"로우 머신\"은 Plate-Loaded Iso-Lateral Rowing(IL-ROW)이 가장 근접합니다. 전용 단일 SKU명은 없습니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Rowing","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"일반 \"로우 머신\"은 Plate-Loaded Iso-Lateral Rowing(IL-ROW)이 가장 근접합니다. 전용 단일 SKU명은 없습니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '로우 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 머신';
 
 
 UPDATE machines m
@@ -3395,14 +3515,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Low Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Low Row(IL-LR)로 낮은 각도 로우를 제공합니다.","verifiedAdjustments":"시트, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Low Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Low Row(IL-LR)로 낮은 각도 로우를 제공합니다.","verifiedAdjustments":"시트, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '로우 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 로우';
 
 
 UPDATE machines m
@@ -3557,14 +3683,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Row(MTSRW)가 미드/수평 로우에 해당하는 공식 MTS 모델입니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Row(MTSRW)가 미드/수평 로우에 해당하는 공식 MTS 모델입니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '미드 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '미드 로우';
 
 
 UPDATE machines m
@@ -3719,14 +3851,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Row(MTSRW)로 좌우 독립 로우 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Row(MTSRW)로 좌우 독립 로우 동작을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우';
 
 
 UPDATE machines m
@@ -3889,14 +4027,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Low Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"MTS에 Low Row SKU가 없어 Plate-Loaded Iso-Lateral Low Row(IL-LR)가 로우 로우에 가장 근접합니다.","verifiedAdjustments":"시트, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Low Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"MTS에 Low Row SKU가 없어 Plate-Loaded Iso-Lateral Low Row(IL-LR)가 로우 로우에 가장 근접합니다.","verifiedAdjustments":"시트, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 로우 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우 로우';
 
 
 UPDATE machines m
@@ -4055,14 +4199,20 @@ Match both sides, then confirm with a light set.
 
 "Chest on the pad, elbows back, one-second squeeze."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Chest/Back","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Chest/Back(IL-CB)은 가슴·등 겸용 머신으로, 가슴 지지 로우 기능을 포함합니다. 전용 chest-supported row SKU는 없습니다.","verifiedAdjustments":"시트, 가슴 패드, 중량, 모드","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Chest/Back","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Chest/Back(IL-CB)은 가슴·등 겸용 머신으로, 가슴 지지 로우 기능을 포함합니다. 전용 chest-supported row SKU는 없습니다.","verifiedAdjustments":"시트, 가슴 패드, 중량, 모드","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '체스트 서포티드 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 서포티드 로우';
 
 
 UPDATE machines m
@@ -4219,14 +4369,20 @@ Match both sides, then confirm with a light set.
 
 "Keep a neutral spine and drive the elbows back. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded T-Bar Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded T-Bar Row(PL-TBR) 공식 T바 로우 머신입니다.","verifiedAdjustments":"가슴 패드, 발 위치, 중량, 그립","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded T-Bar Row","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded T-Bar Row(PL-TBR) 공식 T바 로우 머신입니다.","verifiedAdjustments":"가슴 패드, 발 위치, 중량, 그립","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = 'T바 로우 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = 'T바 로우 머신';
 
 
 UPDATE machines m
@@ -4379,14 +4535,20 @@ Match both sides, then confirm with a light set.
 
 "Keep the scapula set and pull the arms through an arc. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Pullover","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Pullover(PL-PO) 공식 풀오버 머신입니다.","verifiedAdjustments":"시트, 어깨 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Pullover","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Pullover(PL-PO) 공식 풀오버 머신입니다.","verifiedAdjustments":"시트, 어깨 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '풀오버';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '풀오버';
 
 
 UPDATE machines m
@@ -4535,14 +4697,20 @@ If position breaks, cut the load.
 
 "Pull the chest to the bar and set the scapula down. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Assist Dip Chin","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Assist Dip Chin(HS-ADC)으로 보조 풀업·친업·딥을 지원합니다.","verifiedAdjustments":"무릎 패드, 보조 중량, 그립","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Assist Dip Chin","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Assist Dip Chin(HS-ADC)으로 보조 풀업·친업·딥을 지원합니다.","verifiedAdjustments":"무릎 패드, 보조 중량, 그립","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '어시스트 풀업 / 친업';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 친업';
 
 
 UPDATE machines m
@@ -4691,14 +4859,20 @@ Slow the tempo and repeat one clean path.
 
 "Drop the ribs and press nearly vertical over the head. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Shoulder Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Shoulder Press(HS-SP) 셀렉터라이즈드 숄더 프레스입니다.","verifiedAdjustments":"시트, 등 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Shoulder Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Shoulder Press(HS-SP) 셀렉터라이즈드 숄더 프레스입니다.","verifiedAdjustments":"시트, 등 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '숄더 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스';
 
 
 UPDATE machines m
@@ -4853,14 +5027,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Shoulder Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Shoulder Press(MTSSP)로 좌우 독립 숄더 프레스를 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Shoulder Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Shoulder Press(MTSSP)로 좌우 독립 숄더 프레스를 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 숄더 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 숄더 프레스';
 
 
 UPDATE machines m
@@ -5017,14 +5197,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Shoulder Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Shoulder Press(IL-SP) 공식 플레이트로드 숄더 프레스입니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Shoulder Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Shoulder Press(IL-SP) 공식 플레이트로드 숄더 프레스입니다.","verifiedAdjustments":"시트, 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '플레이트로드 숄더 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 숄더 프레스';
 
 
 UPDATE machines m
@@ -5173,14 +5359,20 @@ Slow the tempo and repeat one clean path.
 
 "Lead with the elbows, not the hands. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Lateral Raise","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Lateral Raise(HS-LR) 셀렉터라이즈드 레터럴 레이즈입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Lateral Raise","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Lateral Raise(HS-LR) 셀렉터라이즈드 레터럴 레이즈입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '레터럴 레이즈';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레터럴 레이즈';
 
 
 UPDATE machines m
@@ -5337,14 +5529,20 @@ Match both sides, then confirm with a light set.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Lateral Raise","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Lateral Raise(PL-LR) 플레이트로드 레터럴 레이즈입니다.","verifiedAdjustments":"시트, 팔 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Lateral Raise","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Lateral Raise(PL-LR) 플레이트로드 레터럴 레이즈입니다.","verifiedAdjustments":"시트, 팔 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '머신 레터럴 레이즈';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '머신 레터럴 레이즈';
 
 
 UPDATE machines m
@@ -5495,14 +5693,20 @@ Slow the tempo and repeat one clean path.
 
 "Pin the scapula and move the elbows back and out. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly/Rear Deltoid","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"전용 리어 델트 단독 SKU는 없고, HS-FLY의 리어 델트 모드가 공식 대응입니다.","verifiedAdjustments":"시트, 팔 패드 방향, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Hammer Strength Select Pectoral Fly/Rear Deltoid","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"전용 리어 델트 단독 SKU는 없고, HS-FLY의 리어 델트 모드가 공식 대응입니다.","verifiedAdjustments":"시트, 팔 패드 방향, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '리어 델트';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트';
 
 
 UPDATE machines m
@@ -5647,14 +5851,20 @@ Slow the tempo and repeat one clean path.
 
 "Keep the shoulders down and ride the elbow path. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 프론트 레이즈 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 프론트 레이즈 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '프론트 레이즈';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 레이즈';
 
 
 UPDATE machines m
@@ -5799,14 +6009,20 @@ Slow the tempo and repeat one clean path.
 
 "Keep the shoulders down and ride the elbow path. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 업라이트 로우 전용 머신이 확인되지 않습니다. Seated/Standing Shrug(PL-SH)는 다른 동작입니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 업라이트 로우 전용 머신이 확인되지 않습니다. Seated/Standing Shrug(PL-SH)는 다른 동작입니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '업라이트 로우';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '업라이트 로우';
 
 
 UPDATE machines m
@@ -5951,14 +6167,20 @@ Slow the tempo and repeat one clean path.
 
 "Keep the shoulders down and ride the elbow path. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 회전근개(로테이터) 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 회전근개(로테이터) 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '로테이터 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로테이터 머신';
 
 
 UPDATE machines m
@@ -6103,14 +6325,20 @@ Slow the tempo and repeat one clean path.
 
 "Keep the shoulders down and ride the elbow path. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"숄더 프레스와 레터럴 레이즈를 하나의 공식 복합 머신으로 제공하는 Hammer Strength 제품은 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"숄더 프레스와 레터럴 레이즈를 하나의 공식 복합 머신으로 제공하는 Hammer Strength 제품은 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '숄더 프레스 / 레터럴 복합 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스 / 레터럴 복합 머신';
 
 
 UPDATE machines m
@@ -6261,14 +6489,20 @@ Match both sides, then confirm with a light set.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Leg Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Leg Press(PL-LP) 공식 45° 레그 프레스입니다.","verifiedAdjustments":"시트/백 패드, 발 위치, 중량, 안전 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Leg Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Leg Press(PL-LP) 공식 45° 레그 프레스입니다.","verifiedAdjustments":"시트/백 패드, 발 위치, 중량, 안전 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '레그 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스';
 
 
 UPDATE machines m
@@ -6421,14 +6655,20 @@ Match both sides, then confirm with a light set.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Leg Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Leg Press(PL-LP)가 45° 각도 레그 프레스 공식 모델입니다.","verifiedAdjustments":"시트/백 패드, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Leg Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Leg Press(PL-LP)가 45° 각도 레그 프레스 공식 모델입니다.","verifiedAdjustments":"시트/백 패드, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '45도 레그 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '45도 레그 프레스';
 
 
 UPDATE machines m
@@ -6581,14 +6821,20 @@ Match both sides, then confirm with a light set.
 
 "Pelvis glued, whole-foot horizontal drive, 2–3 sec return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Linear Leg Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Linear Leg Press(HSLLP)로 수평(리니어) 레그 프레스를 제공합니다.","verifiedAdjustments":"시트, 발판, 중량, 안전 스top","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Linear Leg Press","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Linear Leg Press(HSLLP)로 수평(리니어) 레그 프레스를 제공합니다.","verifiedAdjustments":"시트, 발판, 중량, 안전 스top","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '수평 레그 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '수평 레그 프레스';
 
 
 UPDATE machines m
@@ -6741,14 +6987,20 @@ Match both sides, then confirm with a light set.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Hack Squat","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Hack Squat(PL-HSQ) 공식 핵 스쿼트 머신입니다.","verifiedAdjustments":"어깨 패드, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Hack Squat","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Hack Squat(PL-HSQ) 공식 핵 스쿼트 머신입니다.","verifiedAdjustments":"어깨 패드, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '핵 스쿼트';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '핵 스쿼트';
 
 
 UPDATE machines m
@@ -6903,14 +7155,20 @@ Match both sides, then confirm with a light set.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded V-Squat","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"V-Squat(PL-VSQ)가 스쿼at 프레ss에 가장 근접합니다. 전용 \"Squat Press\" SKU는 없습니다.","verifiedAdjustments":"어깨 패드, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded V-Squat","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"V-Squat(PL-VSQ)가 스쿼at 프레ss에 가장 근접합니다. 전용 \"Squat Press\" SKU는 없습니다.","verifiedAdjustments":"어깨 패드, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '스쿼트 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스쿼트 프레스';
 
 
 UPDATE machines m
@@ -7059,14 +7317,20 @@ Match both sides, then confirm with a light set.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Belt Squat","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Belt Squat(PL-BSQ) 공식 벨트 스쿼at 머신입니다.","verifiedAdjustments":"벨트 높이, 발 위치, 중량, 딥 어태치먼트(옵션)","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Belt Squat","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Belt Squat(PL-BSQ) 공식 벨트 스쿼at 머신입니다.","verifiedAdjustments":"벨트 높이, 발 위치, 중량, 딥 어태치먼트(옵션)","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '벨트 스쿼트';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '벨트 스쿼트';
 
 
 UPDATE machines m
@@ -7215,14 +7479,20 @@ If position breaks, cut the load.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Leg Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Leg Extension(HS-LE) 셀렉터라이즈드 레그 익스텐션입니다.","verifiedAdjustments":"시트, 종아리 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Leg Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Leg Extension(HS-LE) 셀렉터라이즈드 레그 익스텐션입니다.","verifiedAdjustments":"시트, 종아리 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '레그 익스텐션';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 익스텐션';
 
 
 UPDATE machines m
@@ -7371,14 +7641,20 @@ If position breaks, cut the load.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Seated Leg Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Seated Leg Curl(HS-SLC) 좌식 셀렉터라이즈드 레그 컬입니다.","verifiedAdjustments":"시트, 종아리 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Seated Leg Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Seated Leg Curl(HS-SLC) 좌식 셀렉터라이즈드 레그 컬입니다.","verifiedAdjustments":"시트, 종아리 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '시티드 레그 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 레그 컬';
 
 
 UPDATE machines m
@@ -7535,14 +7811,20 @@ Match both sides, then confirm with a light set.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Leg Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Leg Curl(IL-LC) 엎드린(라잉) 레그 컬입니다.","verifiedAdjustments":"패드 높이, 발/종아리 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Iso-Lateral Leg Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Iso-Lateral Leg Curl(IL-LC) 엎드린(라잉) 레그 컬입니다.","verifiedAdjustments":"패드 높이, 발/종아리 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '라잉 레그 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '라잉 레그 컬';
 
 
 UPDATE machines m
@@ -7687,14 +7969,20 @@ If position breaks, cut the load.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 스탠딩 레그 컬 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 스탠딩 레그 컬 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '스탠딩 레그 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 레그 컬';
 
 
 UPDATE machines m
@@ -7845,14 +8133,20 @@ If position breaks, cut the load.
 
 "Whole-foot drive, pelvis stays honest."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"MTS Kneeling Leg Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Kneeling Leg Curl(MTSKC)은 무릎 꿇은 단측 레그 컬에 가장 근접합니다. 전용 standing single-leg curl SKU는 없습니다.","verifiedAdjustments":"패드, 스택 핀, 무릎 위치","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"MTS Kneeling Leg Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Kneeling Leg Curl(MTSKC)은 무릎 꿇은 단측 레그 컬에 가장 근접합니다. 전용 standing single-leg curl SKU는 없습니다.","verifiedAdjustments":"패드, 스택 핀, 무릎 위치","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '싱글 레그 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '싱글 레그 컬';
 
 
 UPDATE machines m
@@ -7995,14 +8289,20 @@ Slow the tempo and repeat one clean path.
 
 "Drive with the glutes, not the lower back. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 바벨형 힙 쓰러st 전용 머신이 확인되지 않습니다. Glute Drive(PL-GLD)는 다른 동작입니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 바벨형 힙 쓰러st 전용 머신이 확인되지 않습니다. Glute Drive(PL-GLD)는 다른 동작입니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '힙 쓰러스트';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 쓰러스트';
 
 
 UPDATE machines m
@@ -8155,14 +8455,20 @@ Match both sides, then confirm with a light set.
 
 "Anchor the pelvis and drive through the glutes. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Glute Drive","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Glute Drive(PL-GLD) 공식 글루트 드라이브 머신입니다.","verifiedAdjustments":"시트/패드, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Glute Drive","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Glute Drive(PL-GLD) 공식 글루트 드라이브 머신입니다.","verifiedAdjustments":"시트/패드, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '글루트 드라이브';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 드라이브';
 
 
 UPDATE machines m
@@ -8305,14 +8611,20 @@ Slow the tempo and repeat one clean path.
 
 "Drive with the glutes, not the lower back. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 글루트 킥백 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 글루트 킥백 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '글루트 킥백';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 킥백';
 
 
 UPDATE machines m
@@ -8461,14 +8773,20 @@ Slow the tempo and repeat one clean path.
 
 "Keep the pelvis on the seat and push the leg out to the side. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Hip Abduction","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Hip Abduction(HS-HAB) 셀렉터라이즈드 힙 어브덕션입니다.","verifiedAdjustments":"시트, 다리 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Hip Abduction","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Hip Abduction(HS-HAB) 셀렉터라이즈드 힙 어브덕션입니다.","verifiedAdjustments":"시트, 다리 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '힙 어브덕션';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어브덕션';
 
 
 UPDATE machines m
@@ -8617,14 +8935,20 @@ Slow the tempo and repeat one clean path.
 
 "Anchor the pelvis and bring the leg toward the midline. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Hip Adduction","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Hip Adduction(HS-HAD) 셀렉터라이즈드 힙 어덕션입니다.","verifiedAdjustments":"시트, 다리 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Hip Adduction","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Hip Adduction(HS-HAD) 셀렉터라이즈드 힙 어덕션입니다.","verifiedAdjustments":"시트, 다리 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '힙 어덕션';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어덕션';
 
 
 UPDATE machines m
@@ -8773,14 +9097,20 @@ Slow the tempo and repeat one clean path.
 
 "Set foot and pelvis position for the selected mode first. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Hip/Glute","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Hip/Glute(HS-HG)로 글루트·힙 복합 셀렉터라이즈드 머신입니다.","verifiedAdjustments":"시트, 패드, 스택 핀, 모드","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Hip/Glute","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Hip/Glute(HS-HG)로 글루트·힙 복합 셀렉터라이즈드 머신입니다.","verifiedAdjustments":"시트, 패드, 스택 핀, 모드","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '글루트 / 힙 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 / 힙 머신';
 
 
 UPDATE machines m
@@ -8927,14 +9257,20 @@ If position breaks, cut the load.
 
 "Balls of the feet only, pause on top, no bounce."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Standing Calf","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Standing Calf(HS-SC) 셀렉터라이즈드 스탠딩 카프입니다.","verifiedAdjustments":"어깨 패드, 발 위치, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Standing Calf","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Standing Calf(HS-SC) 셀렉터라이즈드 스탠딩 카프입니다.","verifiedAdjustments":"어깨 패드, 발 위치, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '스탠딩 카프';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 카프';
 
 
 UPDATE machines m
@@ -9087,14 +9423,20 @@ Match both sides, then confirm with a light set.
 
 "Balls of the feet only, pause on top, no bounce."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Seated Calf Raise","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Seated Calf Raise(PL-CALF) 좌식 카프 레이즈입니다.","verifiedAdjustments":"시트, 무릎 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Seated Calf Raise","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Plate-Loaded Seated Calf Raise(PL-CALF) 좌식 카프 레이즈입니다.","verifiedAdjustments":"시트, 무릎 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '시티드 카프';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 카프';
 
 
 UPDATE machines m
@@ -9247,14 +9589,20 @@ Match both sides, then confirm with a light set.
 
 "Balls of the feet only, pause on top, no bounce."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Super Horizontal Calf","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"레그 프레스 발판에서의 카프는 공식 전용 SKU가 없습니다. 수평 카프 Super Horizontal Calf(PL-SHC)가 가장 근접한 대안입니다.","verifiedAdjustments":"패드, 발 위치, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Super Horizontal Calf","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"레그 프레스 발판에서의 카프는 공식 전용 SKU가 없습니다. 수평 카프 Super Horizontal Calf(PL-SHC)가 가장 근접한 대안입니다.","verifiedAdjustments":"패드, 발 위치, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '레그 프레스 카프';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스 카프';
 
 
 UPDATE machines m
@@ -9403,14 +9751,20 @@ If position breaks, cut the load.
 
 "Keep the upper arm on the pad and curl through the wrists. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Biceps Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Biceps Curl(HS-BC) 셀렉터라이즈드 바이셉 컬입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Biceps Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Biceps Curl(HS-BC) 셀렉터라이즈드 바이셉 컬입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '바이셉 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉 컬';
 
 
 UPDATE machines m
@@ -9555,14 +9909,20 @@ If position breaks, cut the load.
 
 "Fix the elbows and move only below them. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 프리처 컬 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 프리처 컬 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '프리처 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프리처 컬';
 
 
 UPDATE machines m
@@ -9717,14 +10077,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Biceps Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Biceps Curl(MTSBC)로 좌우 독립 바이셉 컬을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Iso-Lateral Biceps Curl","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS Iso-Lateral Biceps Curl(MTSBC)로 좌우 독립 바이셉 컬을 제공합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '아이소래터럴 바이셉 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 바이셉 컬';
 
 
 UPDATE machines m
@@ -9879,14 +10245,20 @@ Match both sides, then confirm with a light set.
 
 "Fix the elbow position and curl with the biceps only. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Seated Biceps","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"일반 암 컬은 Plate-Loaded Seated Biceps(PL-BI)가 가장 근접합니다. Select Biceps Curl(HS-BC)도 대안입니다.","verifiedAdjustments":"시트, 팔 패드, 중량","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Seated Biceps","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"일반 암 컬은 Plate-Loaded Seated Biceps(PL-BI)가 가장 근접합니다. Select Biceps Curl(HS-BC)도 대안입니다.","verifiedAdjustments":"시트, 팔 패드, 중량","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '암 컬';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '암 컬';
 
 
 UPDATE machines m
@@ -10035,14 +10407,20 @@ If position breaks, cut the load.
 
 "Keep the upper arm fixed and extend through the elbows. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Triceps Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Triceps Extension(HS-TE) 셀렉터라이즈드 트라이셉스 익스텐션입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Triceps Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Triceps Extension(HS-TE) 셀렉터라이즈드 트라이셉스 익스텐션입니다.","verifiedAdjustments":"시트, 팔 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '트라이셉스 익스텐션';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 익스텐션';
 
 
 UPDATE machines m
@@ -10199,14 +10577,20 @@ Match the stronger side to the weaker side’s speed.
 
 "Match sides, one-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"MTS Iso-Lateral Triceps Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"공식 \"Triceps Press\" SKU는 없고, MTS Iso-Lateral Triceps Extension(MTSTE)이 가장 근접합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"MTS Iso-Lateral Triceps Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"공식 \"Triceps Press\" SKU는 없고, MTS Iso-Lateral Triceps Extension(MTSTE)이 가장 근접합니다.","verifiedAdjustments":"시트, 패드, 좌·우 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '트라이셉스 프레스';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 프레스';
 
 
 UPDATE machines m
@@ -10361,14 +10745,20 @@ Match both sides, then confirm with a light set.
 
 "Choose the official model for the intended dip or extension action. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Seated Dip","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"딥은 Seated Dip(PL-DIP), 트라이셉스는 Select Triceps Extension(HS-TE) 등 별도 SKU입니다. 단일 복합 모델은 없습니다.","verifiedAdjustments":"시트, 그립, 중량(딥) / 스택(익스텐션)","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Seated Dip","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"딥은 Seated Dip(PL-DIP), 트라이셉스는 Select Triceps Extension(HS-TE) 등 별도 SKU입니다. 단일 복합 모델은 없습니다.","verifiedAdjustments":"시트, 그립, 중량(딥) / 스택(익스텐션)","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '딥 / 트라이셉스 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 / 트라이셉스 머신';
 
 
 UPDATE machines m
@@ -10513,14 +10903,20 @@ If position breaks, cut the load.
 
 "Fix the elbows and move only below them. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"바이셉스와 트라이셉스를 하나의 공식 복합 머신으로 제공하는 Hammer Strength 제품은 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"바이셉스와 트라이셉스를 하나의 공식 복합 머신으로 제공하는 Hammer Strength 제품은 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '바이셉스 / 트라이셉스 복합 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉스 / 트라이셉스 복합 머신';
 
 
 UPDATE machines m
@@ -10665,14 +11061,20 @@ If position breaks, cut the load.
 
 "Torso curl, squeeze, slow return — not the neck."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Abdominal Crunch","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Abdominal Crunch(HS-ABC) 셀렉터라이즈드 복근 크런치입니다. MTS Abdominal Crunch(MTSAB)도 별도 존재합니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Abdominal Crunch","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"Select Abdominal Crunch(HS-ABC) 셀렉터라이즈드 복근 크런치입니다. MTS Abdominal Crunch(MTSAB)도 별도 존재합니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '앱 크런치';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '앱 크런치';
 
 
 UPDATE machines m
@@ -10817,14 +11219,20 @@ If position breaks, cut the load.
 
 "Torso curl, squeeze, slow return — not the neck."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Abdominal Crunch","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인의 셀렉터라이즈드 복근 크런치 머신입니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"MTS Abdominal Crunch","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"MTS","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/motion-technology-selectorised","verifiedStructure":"MTS 라인의 셀렉터라이즈드 복근 크런치 머신입니다.","verifiedAdjustments":"시트, 패드, 스택 핀","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '어브도미널';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어브도미널';
 
 
 UPDATE machines m
@@ -10979,14 +11387,20 @@ Match both sides, then confirm with a light set.
 
 "Torso curl, squeeze, slow return — not the neck."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Ground Base Combo Twist","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Ground Base 플레이트로드 회전/트위스트 계열로 몸통 회전 저항을 제공합니다. 전용 '로터리 토르소' 셀렉터라이즈드 모델은 없습니다.","verifiedAdjustments":"발 위치, 중량, 그립","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Ground Base Combo Twist","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"Ground Base 플레이트로드 회전/트위스트 계열로 몸통 회전 저항을 제공합니다. 전용 '로터리 토르소' 셀렉터라이즈드 모델은 없습니다.","verifiedAdjustments":"발 위치, 중량, 그립","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '로터리 토르소';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로터리 토르소';
 
 
 UPDATE machines m
@@ -11127,14 +11541,20 @@ If position breaks, cut the load.
 
 "Torso curl, squeeze, slow return — not the neck."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 사이드 밴드(측면 굴곡) 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 공식 라인업에 사이드 밴드(측면 굴곡) 전용 머신이 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '사이드 밴드';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '사이드 밴드';
 
 
 UPDATE machines m
@@ -11279,14 +11699,20 @@ If position breaks, cut the load.
 
 "Torso curl, squeeze, slow return — not the neck."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Back Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"좌석형 셀렉터라이즈드 백 익스텐션으로 골반을 고정하고 몸통을 뒤로 젖히는 구조입니다.","verifiedAdjustments":"시트, 허벅지·골반 패드","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Back Extension","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"좌석형 셀렉터라이즈드 백 익스텐션으로 골반을 고정하고 몸통을 뒤로 젖히는 구조입니다.","verifiedAdjustments":"시트, 허벅지·골반 패드","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '백 익스텐션';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '백 익스텐션';
 
 
 UPDATE machines m
@@ -11439,14 +11865,20 @@ Match both sides, then confirm with a light set.
 
 "Lift the legs back from the glutes, not by arching the lower back. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Glute Ham / Reverse Hyper Combo","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"글ute ham과 reverse hyper 기능을 결합한 플레이트로드 머신으로 고관절 신전/역방향 하이퍼 동작을 제공합니다.","verifiedAdjustments":"패드 높이, 발/종아리 위치, 중량, 모드","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Plate-Loaded Glute Ham / Reverse Hyper Combo","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded","verifiedStructure":"글ute ham과 reverse hyper 기능을 결합한 플레이트로드 머신으로 고관절 신전/역방향 하이퍼 동작을 제공합니다.","verifiedAdjustments":"패드 높이, 발/종아리 위치, 중량, 모드","importedAt":"2026-08-20T01:39:15.827Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '힙 익스텐션';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 익스텐션';
 
 
 UPDATE machines m
@@ -11587,14 +12019,20 @@ If position breaks, cut the load.
 
 "Torso curl, squeeze, slow return — not the neck."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"복근과 허리(백 익스텐션)를 하나의 공식 복합 머신으로 제공하는 Hammer Strength 제품은 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"복근과 허리(백 익스텐션)를 하나의 공식 복합 머신으로 제공하는 Hammer Strength 제품은 확인되지 않습니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '복근 / 허리 복합 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '복근 / 허리 복합 머신';
 
 
 UPDATE machines m
@@ -11733,14 +12171,20 @@ If position breaks, cut the load.
 
 "Brace first, then set the elbow direction. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 브랜드명의 전용 케이블 크로스오버는 확인되지 않습니다. Life Fitness Adjustable Cable Crossover는 별도 Life Fitness 브랜드입니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Life Fitness (Hammer Strength)","productSeries":null,"sourceUrl":null,"verifiedStructure":"Hammer Strength 브랜드명의 전용 케이블 크로스오버는 확인되지 않습니다. Life Fitness Adjustable Cable Crossover는 별도 Life Fitness 브랜드입니다.","verifiedAdjustments":null,"importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '케이블 크로스오버';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '케이블 크로스오버';
 
 
 UPDATE machines m
@@ -11879,14 +12323,20 @@ If position breaks, cut the load.
 
 "Set both carriage heights for the exercise, brace the torso, then pull. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"HD Elite Dual Adjustable Pulley","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/cable-machines-functional-trainers/hd-elite-dual-adjustable-pulley","verifiedStructure":"HD Elite 라인의 듀얼 어저스터블 풀리(DAP)로 양쪽 캐리지 높이를 조절하는 케이블 스테이션입니다. 공식 페이지에 단종 표기가 있습니다.","verifiedAdjustments":"좌·우 캐리지 높이, 액세서리, 중량 스택","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"HD Elite Dual Adjustable Pulley","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/cable-machines-functional-trainers/hd-elite-dual-adjustable-pulley","verifiedStructure":"HD Elite 라인의 듀얼 어저스터블 풀리(DAP)로 양쪽 캐리지 높이를 조절하는 케이블 스테이션입니다. 공식 페이지에 단종 표기가 있습니다.","verifiedAdjustments":"좌·우 캐리지 높이, 액세서리, 중량 스택","importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '듀얼 어저스터블 풀리';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '듀얼 어저스터블 풀리';
 
 
 UPDATE machines m
@@ -12027,14 +12477,20 @@ If position breaks, cut the load.
 
 "Confirm grip and foot placement for each rig module before you start. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"HD Athletic Bridge","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/racks/hd-athletic-bridge","verifiedStructure":"HD Athletic Bridge/Perimeter/Rig 구성으로 멀ti-station 정글짐·리그 형태의 기능 트레이닝 공간을 제공합니다. 단일 '정글짐' SKU는 아닙니다.","verifiedAdjustments":"리그 모듈, Xmember, 액세서리, 바/케이블 높이","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"HD Athletic Bridge","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/racks/hd-athletic-bridge","verifiedStructure":"HD Athletic Bridge/Perimeter/Rig 구성으로 멀ti-station 정글짐·리그 형태의 기능 트레이닝 공간을 제공합니다. 단일 '정글짐' SKU는 아닙니다.","verifiedAdjustments":"리그 모듈, Xmember, 액세서리, 바/케이블 높이","importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '멀티 정글짐';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '멀티 정글짐';
 
 
 UPDATE machines m
@@ -12181,14 +12637,20 @@ If position breaks, cut the load.
 
 "For dips stabilize the shoulders; for pull-ups lead with the chest to the bar. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Assist Dip Chin","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"무릎 패드 보조 중량으로 풀업·친업·딥을 모두 지원하는 Select 어시스트 머신입니다.","verifiedAdjustments":"무릎 패드 높이, 보조 중량, 그립(풀업/딥)","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Hammer Strength Select Assist Dip Chin","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Select","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select","verifiedStructure":"무릎 패드 보조 중량으로 풀업·친업·딥을 모두 지원하는 Select 어시스트 머신입니다.","verifiedAdjustments":"무릎 패드 높이, 보조 중량, 그립(풀업/딥)","importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '어시스트 풀업 / 딥';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 딥';
 
 
 UPDATE machines m
@@ -12331,14 +12793,20 @@ Match both sides, then confirm with a light set.
 
 "Align the body to the bar path and set your foot position first. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Smith Machine","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://shop.lifefitness.com/products/hammer-strength-smith-machine-1","verifiedStructure":"수직 또는 고정 바 경로를 따라 바벨을 움직이는 Hammer Strength 스미스 머신입니다. Vertical Smith(HSSMV)도 별도 존재합니다.","verifiedAdjustments":"바 높이, 안전 스top, 플레이트, 벤치(옵션)","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate-Loaded Smith Machine","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"Plate-Loaded","sourceUrl":"https://shop.lifefitness.com/products/hammer-strength-smith-machine-1","verifiedStructure":"수직 또는 고정 바 경로를 따라 바벨을 움직이는 Hammer Strength 스미스 머신입니다. Vertical Smith(HSSMV)도 별도 존재합니다.","verifiedAdjustments":"바 높이, 안전 스top, 플레이트, 벤치(옵션)","importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '스미스 머신';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스미스 머신';
 
 
 UPDATE machines m
@@ -12477,14 +12945,20 @@ If position breaks, cut the load.
 
 "Set bar and safety heights first, then center the body in the rack. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"HD Elite iD Power Rack","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/racks/hd-elite-id-power-rack","verifiedStructure":"HD Elite iD 모듈형 파워 랙으로 7게이지 스틸, Hammerlock, Anvil Bracing 등 프리미엄 랙 시스템입니다.","verifiedAdjustments":"J-cup/바 서포트 높이, 세이프티, 액세서리, 바 위치","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"HD Elite iD Power Rack","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/racks/hd-elite-id-power-rack","verifiedStructure":"HD Elite iD 모듈형 파워 랙으로 7게이지 스틸, Hammerlock, Anvil Bracing 등 프리미엄 랙 시스템입니다.","verifiedAdjustments":"J-cup/바 서포트 높이, 세이프티, 액세서리, 바 위치","importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '파워 랙';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '파워 랙';
 
 
 UPDATE machines m
@@ -12623,14 +13097,20 @@ If position breaks, cut the load.
 
 "Clear space on the open front side and set feet to the bar path. One-second peak, controlled return."$e$)
   ),
-  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"HD Elite iD Half Rack","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/racks/hd-elite-id-half-rack","verifiedStructure":"HD Elite iD 하프 랙으로 오픈 전면 구조의 프리미엄 랙 시스템입니다. Standard Half Rack(ELT-HR-STRD)도 카탈로그에 있습니다.","verifiedAdjustments":"J-cup/바 서포트 높이, 세이프티, 액세서리","importedAt":"2026-08-20T01:07:27.389Z"}$meta$::jsonb,
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"HD Elite iD Half Rack","manufacturer":"Life Fitness (Hammer Strength)","productSeries":"HD Elite","sourceUrl":"https://www.lifefitness.com/en-us/catalog/strength-training/racks/hd-elite-id-half-rack","verifiedStructure":"HD Elite iD 하프 랙으로 오픈 전면 구조의 프리미엄 랙 시스템입니다. Standard Half Rack(ELT-HR-STRD)도 카탈로그에 있습니다.","verifiedAdjustments":"J-cup/바 서포트 높이, 세이프티, 액세서리","importedAt":"2026-08-20T01:39:15.828Z"}$meta$::jsonb,
   updated_at = NOW()
 FROM brands b
-LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
 WHERE b.id = m.brand_id
   AND b.code = 'HAMMER_STRENGTH'
   AND m.is_active = TRUE
-  AND COALESCE(st.name->>'ko', m.name->>'ko') = '하프 랙';
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하프 랙';
 
 
 DO $$
@@ -12653,5 +13133,3 @@ BEGIN
     RAISE EXCEPTION 'HAMMER_STRENGTH trainer PRO tips rewrite incomplete: % / 80', updated_count;
   END IF;
 END $$;
-
--- redeploy trigger 2026-08-20T01:27:43Z
