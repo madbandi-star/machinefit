@@ -1211,6 +1211,16 @@ body:has(.records-page--history) .layout__content {
   -webkit-tap-highlight-color: transparent;
 }
 
+.history-record-card__order-trigger--draggable {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  cursor: grab;
+}
+
+.history-record-card__order-trigger--draggable:active {
+  cursor: grabbing;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .history-record-card__order-trigger:hover {
     border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
@@ -1222,10 +1232,6 @@ body:has(.records-page--history) .layout__content {
   border-color: color-mix(in srgb, var(--color-primary) 45%, var(--glass-border));
   color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-}
-
-.history-record-card--reorderable {
-  -webkit-touch-callout: none;
 }
 
 .history-record-card__order-panel {

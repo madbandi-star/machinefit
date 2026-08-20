@@ -1,11 +1,8 @@
-# Test handoff: Strip PRO tip `---` separators
+# Test handoff: Order button tap vs long-press drag
 
 ## Summary
-Display + source cleanup for markdown `---` lines in PRO tips.
+↑↓ button: short tap opens order menu; long-press + drag reorders same-day cards.
 
 ## Test focus
-1. Open PRO tip on records/result → no `---` lines
-2. Sections still separated by blank lines
-
-## Note
-Migration `184_strip_pro_tips_horizontal_rules.sql` must run on production DB.
+1. Tap ↑↓ → menu
+2. Long-press ↑↓ → drag to another card → order updates (no menu)

@@ -301,6 +301,7 @@
     "orderControlsLabel": "Reorder",
     "orderMenuAria": "Workout order menu",
     "orderDragAria": "Long-press and drag to reorder",
+    "orderMenuAndDragAria": "Tap for order menu, long-press and drag to reorder",
     "orderMoveUp": "Move up",
     "orderMoveDown": "Move down",
     "orderMoveTop": "Move to top",

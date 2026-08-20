@@ -1,40 +1,36 @@
 {
-  "title": "PRO tips: strip --- separators (display + source)",
-  "summary": "Remove markdown --- horizontal rules from PRO tip display and stored catalog (shared util, API mapping, migration 184, CSV cleanup).",
+  "title": "Records: order button tap=menu, long-press=drag",
+  "summary": "↑↓ order button: short tap opens the order menu; long-press then drag reorders same-day cards. Card-body long-press removed.",
   "git": {
     "branch": "main",
-    "commit": "53a76764"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/utils/pro-tips-format.ts",
-    "frontend/src/components/recommendation/RecommendationGuideSegments/RecommendationGuideSegments.tsx",
-    "frontend/src/components/recommendation/RecommendationProTips/RecommendationProTips.tsx",
-    "backend/server/repositories/machine.repository.ts",
-    "backend/server/repositories/recommendation.repository.ts",
-    "backend/server/services/recommendation.service.ts",
-    "backend/server/repositories/admin-catalog.repository.ts",
-    "database/migrations/184_strip_pro_tips_horizontal_rules.sql",
-    "database/catalog/pro-tips/*.csv",
-    "database/scripts/import-pro-tips-csv.ts"
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/records.css",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Records / result PRO tip panel: no --- lines between sections",
-    "Section breaks still readable via blank lines"
+    "Records → tap ↑↓ → order menu opens",
+    "Records → long-press ↑↓ (~0.4s) → drag to another same-day card → order changes; menu does not open"
   ],
   "fastChecks": [
     {
-      "id": "strip-util",
-      "type": "shell",
-      "command": "cd shared && npx vitest run src/utils/pro-tips-format.test.ts"
+      "id": "order-btn-drag",
+      "type": "grep",
+      "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+      "pattern": "handleOrderPointerDown"
     }
   ],
   "productionChecks": [
-    "Render backend + run migration 184",
-    "GitHub Pages frontend"
+    "GitHub Pages after Deploy Frontend success"
   ],
   "deploy": {
-    "expected": "Frontend Pages + Render backend (shared + migration)"
+    "expected": "Frontend Pages"
   },
-  "asIs": "PRO tips showed literal --- separators.",
-  "toBe": "--- removed on display and cleaned from catalog/DB."
+  "asIs": "Long-press on card body started drag.",
+  "toBe": "↑↓ short tap = menu; long-press drag = reorder."
 }

@@ -159,7 +159,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     Boolean(reorderDateKey);
   const longPressTimerRef = useRef<number | null>(null);
   const pressOriginRef = useRef<{ x: number; y: number } | null>(null);
-  const suppressClickUntilRef = useRef(0);
+  const suppressOrderClickUntilRef = useRef(0);
 
   const clearLongPress = useCallback(() => {
     if (longPressTimerRef.current != null) {
@@ -171,37 +171,27 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
   useEffect(() => () => clearLongPress(), [clearLongPress]);
 
-  const isReorderIgnoreTarget = useCallback((target: EventTarget | null) => {
-    if (!(target instanceof Element)) return true;
-    return Boolean(
-      target.closest(
-        'a, button, input, textarea, select, label, [role="button"], [role="menu"], [role="menuitem"], [role="dialog"], .history-record-card__order-panel'
-      )
-    );
-  }, []);
-
-  const handleCardPointerDown = useCallback(
-    (event: ReactPointerEvent<HTMLElement>) => {
+  const handleOrderPointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
       if (!canDragReorder || typeof orderIndex !== 'number') return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
-      if (isReorderIgnoreTarget(event.target)) return;
 
       clearLongPress();
       pressOriginRef.current = { x: event.clientX, y: event.clientY };
       longPressTimerRef.current = window.setTimeout(() => {
         longPressTimerRef.current = null;
         pressOriginRef.current = null;
-        suppressClickUntilRef.current = Date.now() + 600;
+        suppressOrderClickUntilRef.current = Date.now() + 700;
         setOrderMenuOpen(false);
         hapticTap();
         onReorderDragStart?.(orderIndex);
       }, 420);
     },
-    [canDragReorder, clearLongPress, isReorderIgnoreTarget, onReorderDragStart, orderIndex]
+    [canDragReorder, clearLongPress, onReorderDragStart, orderIndex]
   );
 
-  const handleCardPointerMove = useCallback(
-    (event: ReactPointerEvent<HTMLElement>) => {
+  const handleOrderPointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
       if (!pressOriginRef.current || longPressTimerRef.current == null) return;
       const dx = event.clientX - pressOriginRef.current.x;
       const dy = event.clientY - pressOriginRef.current.y;
@@ -210,16 +200,19 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     [clearLongPress]
   );
 
-  const handleCardPointerEnd = useCallback(() => {
+  const handleOrderPointerEnd = useCallback(() => {
     clearLongPress();
   }, [clearLongPress]);
 
-  const handleCardClickCapture = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    if (Date.now() < suppressClickUntilRef.current || isDragSource) {
+  const handleOrderClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
-    }
-  }, [isDragSource]);
+      if (Date.now() < suppressOrderClickUntilRef.current || isDragSource) return;
+      setOrderMenuOpen((open) => !open);
+    },
+    [isDragSource]
+  );
 
   const updateOrderPanelPosition = useCallback(() => {
     const trigger = orderTriggerRef.current;
@@ -481,20 +474,12 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         isReordering ? ' history-record-card--reordering' : ''
       }${isDragSource ? ' history-record-card--dragging' : ''}${
         isDragOver ? ' history-record-card--drag-over' : ''
-      }${canDragReorder ? ' history-record-card--reorderable' : ''}`}
+      }`}
       data-history-reorder-date={canDragReorder ? reorderDateKey : undefined}
       data-history-reorder-index={canDragReorder ? orderIndex : undefined}
       aria-grabbed={isDragSource || undefined}
-      title={canDragReorder ? t('machines:history.orderDragAria') : undefined}
-      onPointerDown={handleCardPointerDown}
-      onPointerMove={handleCardPointerMove}
-      onPointerUp={(event) => {
-        handleCardPointerEnd();
-        if (!isDragSource) doubleTapCollapse.onPointerUp(event);
-      }}
-      onPointerCancel={handleCardPointerEnd}
-      onClickCapture={handleCardClickCapture}
-      onDoubleClick={isDragSource ? undefined : doubleTapCollapse.onDoubleClick}
+      onPointerUp={doubleTapCollapse.onPointerUp}
+      onDoubleClick={doubleTapCollapse.onDoubleClick}
     >
       <header className="history-record-card__header">
         <div className="history-record-card__hero">
@@ -528,16 +513,25 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                       ref={orderTriggerRef}
                       className={`history-record-card__order-trigger${
                         orderMenuOpen ? ' is-open' : ''
-                      }`}
-                      aria-label={t('machines:history.orderMenuAria')}
+                      }${canDragReorder ? ' history-record-card__order-trigger--draggable' : ''}`}
+                      aria-label={
+                        canDragReorder
+                          ? t('machines:history.orderMenuAndDragAria')
+                          : t('machines:history.orderMenuAria')
+                      }
+                      title={
+                        canDragReorder
+                          ? t('machines:history.orderMenuAndDragAria')
+                          : t('machines:history.orderMenuAria')
+                      }
                       aria-haspopup="menu"
                       aria-expanded={orderMenuOpen}
                       disabled={orderDisabled}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setOrderMenuOpen((open) => !open);
-                      }}
+                      onPointerDown={handleOrderPointerDown}
+                      onPointerMove={handleOrderPointerMove}
+                      onPointerUp={handleOrderPointerEnd}
+                      onPointerCancel={handleOrderPointerEnd}
+                      onClick={handleOrderClick}
                     >
                       <ArrowUpDown size={16} strokeWidth={2.25} aria-hidden />
                     </button>
