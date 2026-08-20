@@ -47,6 +47,17 @@ const BRAND_META = {
     rideKo: '노틸러스(Inspiration·Impact·Leverage) 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Nautilus (Inspiration / Impact / Leverage) path instead of fighting it.',
   },
+  CYBEX: {
+    displayKo: '사이벡스',
+    displayEn: 'CYBEX',
+    manufacturerDefault: 'Cybex',
+    researchFile: 'cybex_models.json',
+    csvFile: 'cybex_pro_tips.csv',
+    noModelKo: '사이벡스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Cybex SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '사이벡스(Eagle NX·Prestige·VR3) 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Cybex (Eagle NX / Prestige / VR3) path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -366,6 +377,10 @@ function introKo(entry, family, flags) {
     bits.push('Inspiration Lock N Load');
   } else if (/impact|nitro/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
     bits.push('Impact/Nitro');
+  } else if (/eagle nx|dual axis/.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ').toLowerCase())) {
+    bits.push('Eagle NX Dual Axis');
+  } else if (/prestige|vr3/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Prestige/VR3');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -393,6 +408,10 @@ function introEn(entry, family, flags) {
     bits.push('Inspiration Lock N Load');
   } else if (/impact|nitro/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
     bits.push('Impact/Nitro');
+  } else if (/eagle nx|dual axis/.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ').toLowerCase())) {
+    bits.push('Eagle NX Dual Axis');
+  } else if (/prestige|vr3/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Prestige/VR3');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`

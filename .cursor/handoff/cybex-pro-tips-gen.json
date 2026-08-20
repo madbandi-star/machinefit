@@ -1,0 +1,17 @@
+{
+  "brand": "CYBEX",
+  "generatedAt": "2026-08-20T02:23:52.489Z",
+  "outPath": "/workspace/database/catalog/pro-tips/cybex_pro_tips.csv",
+  "rowCount": 80,
+  "stats": {
+    "VERIFIED": 14,
+    "PARTIALLY_VERIFIED": 54,
+    "BRAND_MODEL_NOT_FOUND": 12
+  },
+  "maxKoBytes": 3107,
+  "maxEnBytes": 2359,
+  "proTipUniqueFingerprints": 54,
+  "contaminationIssues": 0,
+  "overBytes": 0,
+  "style": "trainer-coaching-v2"
+}
