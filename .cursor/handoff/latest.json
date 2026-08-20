@@ -1,52 +1,42 @@
 {
-  "title": "PRO tips meta + HAMMER_STRENGTH pilot (80 machines)",
-  "summary": "Phase A: machines.pro_tips_meta JSONB column, import/validate meta + --brand/--clear-brand. Phase B: HAMMER_STRENGTH 80 verified-brand CSV generated and imported to DB (52 VERIFIED, 16 PARTIALLY_VERIFIED, 12 BRAND_MODEL_NOT_FOUND).",
+  "title": "Search: My Brands only for logged-in “전체”",
+  "summary": "Logged-in machine search with brand=전체 now queries only favorite brand codes via brandCodes. Guests still see full catalog. Backend machine list accepts brandCodes ANY filter.",
   "git": {
     "branch": "main",
-    "commit": "592dd883"
+    "commit": "uncommitted"
   },
   "changedFiles": [
-    "database/migrations/154_pro_tips_meta.sql",
-    "database/catalog/pro-tips/research/hammer_strength_models.json",
-    "database/catalog/pro-tips/hammer_strength_pro_tips.csv",
-    "database/scripts/import-pro-tips-csv.ts",
-    "database/scripts/validate-pro-tips-csv.mjs",
-    "database/scripts/generate-hammer-strength-pro-tips.mjs",
-    "shared/src/types/pro-tips-meta.types.ts",
-    "shared/src/types/index.ts",
-    "package.json"
+    "shared/src/validators/machine.schema.ts",
+    "backend/server/repositories/machine.repository.ts",
+    "backend/server/services/machine.service.ts",
+    "frontend/src/pages/machine-search/MachineSearchPage.tsx"
   ],
   "testFocus": [
-    "Migration 154 applied: machines.pro_tips_meta exists",
-    "HAMMER_STRENGTH 80 machines have pro_tips.ko + pro_tips_meta.verification_status",
-    "Other 28 brands still have prior template pro_tips (2320-80=2240 unchanged)",
-    "Validate single-brand CSV passes with --single-brand --brand=HAMMER_STRENGTH",
-    "Import dry-run: npm run db:import-pro-tips -- database/catalog/pro-tips/hammer_strength_pro_tips.csv --dry-run --brand=HAMMER_STRENGTH"
+    "Login → Search → brand 전체 → only My Brands machines appear in list/search",
+    "Login → select a My Brand chip → that brand only",
+    "Guest → 전체 still shows all brands",
+    "Text search for a non-favorite brand machine returns empty while logged in"
   ],
   "fastChecks": [
     {
-      "id": "validate-hs-csv",
-      "type": "shell",
-      "command": "node database/scripts/validate-pro-tips-csv.mjs database/catalog/pro-tips/hammer_strength_pro_tips.csv --single-brand --brand=HAMMER_STRENGTH"
+      "id": "schema-brandCodes",
+      "type": "grep",
+      "path": "shared/src/validators/machine.schema.ts",
+      "pattern": "brandCodes"
     },
     {
-      "id": "migration-file",
-      "type": "file_exists",
-      "path": "database/migrations/154_pro_tips_meta.sql"
-    },
-    {
-      "id": "generator",
-      "type": "file_exists",
-      "path": "database/scripts/generate-hammer-strength-pro-tips.mjs"
+      "id": "fe-my-brands-all",
+      "type": "grep",
+      "path": "frontend/src/pages/machine-search/MachineSearchPage.tsx",
+      "pattern": "params.brandCodes"
     }
   ],
   "productionChecks": [
-    "Run migration 154 on production DB before brand imports",
-    "Render redeploy not required for DB-only change; re-import per brand on prod DB"
+    "Pages + Render redeploy (shared schema + API brandCodes + FE)"
   ],
   "deploy": {
-    "expected": "Code commit + migration 154 on prod DB; no frontend/API contract change"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "2,320 OEM machines had template pro_tips; no verification metadata column.",
-  "toBe": "pro_tips_meta stores verification_status/verified_model/source_url; HAMMER_STRENGTH 80 machines have brand-specific verified tips."
+  "asIs": "Logged-in 전체 search returned machines from all brands.",
+  "toBe": "Logged-in 전체 search is scoped to My Brands; guests unchanged."
 }

@@ -367,6 +367,11 @@ export function MachineSearchPage() {
     return map;
   }, [favorites]);
 
+  const favoriteBrandCodesKey = useMemo(
+    () => brandsForFilter.map((b) => b.code).join(','),
+    [brandsForFilter]
+  );
+
   const {
     data,
     isLoading,
@@ -375,13 +380,27 @@ export function MachineSearchPage() {
     isSuccess: machinesSuccess,
     refetch: refetchMachines,
   } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, 'search', appliedQuery, muscleGroup, brandCode],
+    queryKey: [
+      ...QUERY_KEYS.machines,
+      'search',
+      appliedQuery,
+      muscleGroup,
+      brandCode,
+      isAuthenticated ? favoriteBrandCodesKey : 'guest',
+    ],
+    enabled: !isAuthenticated || !brandChipsLoading,
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = {
         limit: 100,
       };
       if (muscleGroup) params.muscleGroup = muscleGroup;
-      if (brandCode) params.brandCode = brandCode;
+      if (brandCode) {
+        params.brandCode = brandCode;
+      } else if (isAuthenticated) {
+        // “전체” for logged-in users = My Brands only (not full catalog).
+        if (!favoriteBrandCodesKey) return [];
+        params.brandCodes = favoriteBrandCodesKey;
+      }
       if (appliedQuery.trim()) params.q = appliedQuery.trim();
       const res = await machineApi.list(params);
       const items = res.data.data?.items;

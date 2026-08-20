@@ -15,6 +15,7 @@ function listCacheKey(query: MachineListQuery): string {
     page: query.page,
     limit: query.limit,
     brandCode: query.brandCode ?? '',
+    brandCodes: query.brandCodes ?? [],
     muscleGroup: query.muscleGroup ?? '',
     machineType: query.machineType ?? '',
     q: query.q ?? '',
@@ -38,6 +39,7 @@ export const machineService = {
       const offset = (query.page - 1) * query.limit;
       const { items, total } = await machineRepository.findMany({
         brandCode: query.brandCode,
+        brandCodes: query.brandCode ? undefined : query.brandCodes,
         muscleGroup: query.muscleGroup,
         machineType: query.machineType,
         q: query.q,

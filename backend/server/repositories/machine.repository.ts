@@ -174,6 +174,7 @@ function primaryImageSqlForMuscle(muscleParamIndex: number | null): string {
 export const machineRepository = {
   async findMany(filters: {
     brandCode?: string;
+    brandCodes?: string[];
     muscleGroup?: string;
     machineType?: string;
     q?: string;
@@ -185,6 +186,12 @@ export const machineRepository = {
       let items = [...MOCK_MACHINES];
       if (filters.brandCode) {
         items = filterMockMachinesByBrand(filters.brandCode);
+      } else if (filters.brandCodes?.length) {
+        const allowed = new Set(filters.brandCodes);
+        items = items.filter((m) => {
+          const brand = MOCK_BRANDS.find((b) => b.id === m.brandId);
+          return brand ? allowed.has(brand.code) : false;
+        });
       }
       if (filters.muscleGroup) {
         items = items.filter((m) =>
@@ -211,6 +218,9 @@ export const machineRepository = {
     if (filters.brandCode) {
       conditions.push(`b.code = $${idx++}`);
       params.push(filters.brandCode);
+    } else if (filters.brandCodes?.length) {
+      conditions.push(`b.code = ANY($${idx++}::text[])`);
+      params.push(filters.brandCodes);
     }
     if (filters.muscleGroup) {
       // Free-weight brand: every FW_* can target any muscle (biceps/triceps/arms/core included).

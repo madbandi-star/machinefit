@@ -5,6 +5,22 @@ export const machineListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   brandCode: z.string().optional(),
+  /** Comma-separated brand codes (e.g. My Brands “전체” filter). Ignored when brandCode is set. */
+  brandCodes: z
+    .string()
+    .optional()
+    .transform((raw) => {
+      if (!raw?.trim()) return undefined;
+      const codes = [
+        ...new Set(
+          raw
+            .split(',')
+            .map((c) => c.trim().toUpperCase())
+            .filter(Boolean)
+        ),
+      ];
+      return codes.length ? codes : undefined;
+    }),
   muscleGroup: z.string().optional(),
   machineType: z.string().optional(),
   q: z.string().optional(),

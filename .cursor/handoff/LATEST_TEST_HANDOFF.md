@@ -1,18 +1,21 @@
-# PRO tips OEM rollout handoff
+# Test handoff — Search My Brands scope
 
-## Status: COMPLETE + DEPLOYED
+## Summary
 
-All 29 OEM brands (migrations 155–183) are on `main`.
-Render health: `version: e6b616f` (2026-08-20).
+Logged-in users on machine search with brand **전체** now only see machines from **내 브랜드**. Guests still see the full catalog.
 
-## Totals
-- Machines: 29 × 80 = 2,320 tip rows
-- VERIFIED 771 / PARTIALLY_VERIFIED 786 / BRAND_MODEL_NOT_FOUND 763
-- Cross-brand identical tips: 0
-- Artifact check: CSV + research + migration present for all 29
+## As-is → To-be
 
-## All-NOT_FOUND (honest — no public strength SKU catalog)
-FOCUS, TGS_STRENGTH, STEX, EDITION80
+- **As-is:** Brand chips = My Brands, but list/search with 전체 returned all brands.
+- **To-be:** 전체 passes `brandCodes=<favorite codes>` to `/machines`; backend filters `b.code = ANY(...)`.
 
-## Remaining OEM brands
-0
+## Fast checks
+
+1. Login → `/machines` → 전체 → results only from favorite brands.
+2. Search a machine name that exists only on a non-favorite brand → no results.
+3. Guest → 전체 still shows non-favorite brands.
+4. Select one My Brand chip → that brand only (unchanged).
+
+## Deploy
+
+Needs **Render** (shared + API) and **GitHub Pages** (FE).
