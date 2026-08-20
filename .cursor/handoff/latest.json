@@ -3,7 +3,7 @@
   "summary": "Logged-in machine search with brand=전체 now queries only favorite brand codes via brandCodes. Guests still see full catalog. Backend machine list accepts brandCodes ANY filter.",
   "git": {
     "branch": "main",
-    "commit": "uncommitted"
+    "commit": "66e0a010"
   },
   "changedFiles": [
     "shared/src/validators/machine.schema.ts",
