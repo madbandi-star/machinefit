@@ -5,7 +5,7 @@ Order-move panel is fixed to the trigger and clamped inside the viewport (no lef
 
 ## Git
 - Branch: `main`
-- Commit: pending (update after push)
+- Commit: `abfa92b6`
 
 ## Changed files
 - `frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx`

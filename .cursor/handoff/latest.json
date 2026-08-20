@@ -3,7 +3,7 @@
   "summary": "Order-move panel is now fixed to the trigger and clamped inside the viewport (no left-edge overflow). Same-day cards can also be reordered by dragging the grip handle.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "abfa92b6"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
