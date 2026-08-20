@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Role, hasMinRole } from '@machinefit/shared';
 import { RarityBadge } from '@/components/machine-showcase/RarityBadge';
 import { machineShowcaseApi } from '@/api/machine-showcase.api';
 import { useAuthStore } from '@/store/auth.store';
@@ -14,20 +15,25 @@ const PREVIEW_LIMIT = 6;
 export function MachineShowcaseLinks({ machineCode }: { machineCode: string }) {
   const { t } = useTranslation('community');
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const roleCode = useAuthStore((s) => s.user?.roleCode);
+  /** Hidden for plain `member`; visible for premium_member and above. */
+  const showShowcase = isAuthenticated && hasMinRole(roleCode, Role.PREMIUM_MEMBER);
   const postsQuery = useQuery({
     queryKey: QUERY_KEYS.machineShowcase({ machineCode, tab: 'latest', limit: PREVIEW_LIMIT }),
     queryFn: async () =>
       (await machineShowcaseApi.list({ machineCode, tab: 'latest', limit: PREVIEW_LIMIT })).data
         .data,
-    enabled: isAuthenticated,
+    enabled: showShowcase,
     staleTime: 60_000,
   });
   const gymsQuery = useQuery({
     queryKey: QUERY_KEYS.machineShowcaseGyms(machineCode),
     queryFn: async () => (await machineShowcaseApi.machineGyms(machineCode)).data.data,
-    enabled: isAuthenticated,
+    enabled: showShowcase,
     staleTime: 60_000,
   });
+
+  if (!showShowcase) return null;
 
   const posts = postsQuery.data?.items ?? [];
   const postCount = postsQuery.data?.meta.total ?? 0;
