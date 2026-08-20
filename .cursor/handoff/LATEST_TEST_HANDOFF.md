@@ -5,7 +5,7 @@ Header ⚠️/💡/★ removed. History cards use the same `[주의][운동팁][
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `74a2f514`
 
 ## Test focus
 1. No guide icons in card header

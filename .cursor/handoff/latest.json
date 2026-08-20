@@ -3,7 +3,7 @@
   "summary": "Remove header ⚠️/💡/★ icons. History cards now show [주의][운동팁][PRO팁] chip row under the workout log, same UI as the recommendation result card.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "74a2f514"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
