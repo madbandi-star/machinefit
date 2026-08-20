@@ -80,6 +80,17 @@ const BRAND_META = {
     rideKo: '매트릭스 Ultra(G7)·Versa·Magnum 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Matrix Ultra (G7) / Versa / Magnum path instead of fighting it.',
   },
+  PRECOR: {
+    displayKo: '프리코',
+    displayEn: 'PRECOR',
+    manufacturerDefault: 'Precor',
+    researchFile: 'precor_models.json',
+    csvFile: 'precor_pro_tips.csv',
+    noModelKo: '프리코 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Precor SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '프리코 Discovery(DSL)·Resolute(RSL)·Plate Loaded 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Precor Discovery (DSL) / Resolute (RSL) / Plate Loaded path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -409,6 +420,16 @@ function introKo(entry, family, flags) {
     bits.push('Ultra G7');
   } else if (/versa|magnum|aura/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
     bits.push('Versa/Magnum/Aura');
+  } else if (/discovery selectorized|dsl\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Discovery DSL');
+  } else if (/resolute|rsl\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Resolute RSL');
+  } else if (/discovery plate|dpl\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Discovery Plate Loaded');
+  } else if (/vitality|vsl/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Vitality');
+  } else if (/fts|queenax|functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('FTS/Queenax');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -446,6 +467,16 @@ function introEn(entry, family, flags) {
     bits.push('Ultra G7');
   } else if (/versa|magnum|aura/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
     bits.push('Versa/Magnum/Aura');
+  } else if (/discovery selectorized|dsl\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Discovery DSL');
+  } else if (/resolute|rsl\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Resolute RSL');
+  } else if (/discovery plate|dpl\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Discovery Plate Loaded');
+  } else if (/vitality|vsl/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Vitality');
+  } else if (/fts|queenax|functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('FTS/Queenax');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
