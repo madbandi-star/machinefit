@@ -1,0 +1,17 @@
+{
+  "brand": "HOIST",
+  "generatedAt": "2026-08-20T02:26:59.197Z",
+  "outPath": "/workspace/database/catalog/pro-tips/hoist_pro_tips.csv",
+  "rowCount": 80,
+  "stats": {
+    "VERIFIED": 24,
+    "PARTIALLY_VERIFIED": 44,
+    "BRAND_MODEL_NOT_FOUND": 12
+  },
+  "maxKoBytes": 3025,
+  "maxEnBytes": 2370,
+  "proTipUniqueFingerprints": 51,
+  "contaminationIssues": 0,
+  "overBytes": 0,
+  "style": "trainer-coaching-v2"
+}

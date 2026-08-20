@@ -1,44 +1,28 @@
-﻿# Test handoff — PRO tips meta + HAMMER_STRENGTH pilot
+﻿# PRO tips OEM rollout handoff
 
-## Summary
+## Done (after HS on main)
+| Brand | V / P / N | Migration |
+|-------|-----------|-----------|
+| LIFE_FITNESS | 34 / 35 / 11 | 156 |
+| NAUTILUS | 24 / 45 / 11 | 157 |
+| CYBEX | 14 / 54 / 12 | 158 |
+| HOIST | 24 / 44 / 12 | 159 |
+| MATRIX | 20 / 48 / 12 | 160 |
+| PRECOR | 30 / 38 / 12 | 161 |
+| PRIME_FITNESS | 34 / 38 / 8 | 162 |
 
-Phase **A** (infrastructure) and Phase **B** pilot for **HAMMER_STRENGTH** are implemented locally.
-
-- New column: `machines.pro_tips_meta` (migration `154_pro_tips_meta.sql`) — applied on dev DB
-- Import script saves meta + supports `--brand=CODE`, `--clear-brand`, `--clear-first`
-- Validate script supports `--single-brand`, meta quality checks (VERIFIED requires source_url, no template phrases)
-- Generated + imported **80** HAMMER_STRENGTH PRO tips with verification metadata
-
-## Verification counts (HAMMER_STRENGTH)
-
-| Status | Count |
-|--------|------:|
-| VERIFIED | 52 |
-| PARTIALLY_VERIFIED | 16 |
-| BRAND_MODEL_NOT_FOUND | 12 |
-
-## Fast checks
-
+## Pipeline
 ```bash
-node database/scripts/validate-pro-tips-csv.mjs database/catalog/pro-tips/hammer_strength_pro_tips.csv --single-brand --brand=HAMMER_STRENGTH
-npm run db:import-pro-tips -- database/catalog/pro-tips/hammer_strength_pro_tips.csv --dry-run --brand=HAMMER_STRENGTH
+node database/scripts/generate-oem-pro-tips.mjs --brand=CODE
+npm run db:validate-pro-tips -- database/catalog/pro-tips/<slug>_pro_tips.csv --brand=CODE
+node database/scripts/export-oem-pro-tips-migration.mjs --brand=CODE --migration=NNN_<slug>_pro_tips.sql
 ```
 
-## DB spot-check (after import)
+## Next
+ARSENAL_STRENGTH → FREEMOTION → PARAMOUNT → ROGERS_STRENGTH → PANATTA → GYM80 → TECHNOGYM → ATLANTIS → GYMLECO → WATSON → TELJU → NEWTECH → DRAX → LEXCO → BODYSTONE → FOCUS → MIGANG → TGS_STRENGTH → IKK_SPORTS → STEX → EDITION80
 
-```sql
-SELECT pro_tips_meta->>'verification_status' AS status, COUNT(*)
-FROM machines m JOIN brands b ON b.id = m.brand_id
-WHERE b.code = 'HAMMER_STRENGTH' AND m.is_active
-GROUP BY 1;
--- expect 52 / 16 / 12
-```
-
-## As-is → To-be
-
-- **As-is:** Template pro_tips for all 2,320 OEM machines; no verification metadata.
-- **To-be:** HAMMER_STRENGTH 80 machines have manufacturer-verified tips + `pro_tips_meta`; other brands unchanged until rolled out brand-by-brand.
-
-## Note
-
-Production DB needs migration `154` before importing other brands. No API/UI contract change — recommendation still reads `pro_tips` text only.
+## Notes
+- Branch/PR: `cursor/life-fitness-pro-tips-35b3` → https://github.com/madbandi-star/machinefit/pull/269
+- PRIME sources: Evolution (E-*), Hybrid (H-*), Plate Loaded (P-*/XP-*), FT-123, L-130, PRODIGY racks
+- No API/UI/recommend changes; PRECOR↔PRIME tip identity 0
+- Deploy via Render migrate (agent DB auth failed)

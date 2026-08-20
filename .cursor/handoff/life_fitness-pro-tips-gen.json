@@ -1,0 +1,17 @@
+{
+  "brand": "LIFE_FITNESS",
+  "generatedAt": "2026-08-20T02:14:45.970Z",
+  "outPath": "/workspace/database/catalog/pro-tips/life_fitness_pro_tips.csv",
+  "rowCount": 80,
+  "stats": {
+    "VERIFIED": 34,
+    "PARTIALLY_VERIFIED": 35,
+    "BRAND_MODEL_NOT_FOUND": 11
+  },
+  "maxKoBytes": 3159,
+  "maxEnBytes": 2570,
+  "proTipUniqueFingerprints": 55,
+  "contaminationIssues": 0,
+  "overBytes": 0,
+  "style": "trainer-coaching-v2"
+}
