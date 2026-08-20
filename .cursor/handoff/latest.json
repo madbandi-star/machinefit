@@ -1,47 +1,23 @@
-{
-  "title": "Fix favorites bulk select-delete",
-  "summary": "선택 삭제가 동작하지 않던 원인을 수정. DELETE-with-body 대신 POST /favorites/bulk-delete 사용(404 시 단건 DELETE 폴백). home-bootstrap useEffect가 즐겨찾기 캐시를 덮어쓰지 않도록 변경.",
-  "git": {
-    "branch": "main",
-    "commit": "a3b92eb0"
-  },
-  "changedFiles": [
-    "backend/server/routes/favorite.routes.ts",
-    "frontend/src/api/index.ts",
-    "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
-    "frontend/src/hooks/useHomeBootstrap.ts"
-  ],
+﻿{
+  "title": "Easy mode picker: show favorite hearts",
+  "summary": "이지모드 기구찾기 목록에 검색 페이지와 동일한 ♥ 즐겨찾기 버튼을 표시합니다.",
+  "git": { "branch": "main", "commit": "d92272c5" },
+  "changedFiles": ["frontend/src/components/easy-mode/EasyMachinePicker.tsx"],
   "testFocus": [
-    "홈 → 즐겨찾기 전체보기 → 항목 선택 → [선택 삭제] → confirm 후 목록에서 사라짐",
-    "단건 ♥ 제거도 정상",
-    "삭제 후 홈으로 돌아와도 삭제된 항목이 다시 나타나지 않음"
+    "이지모드 → 기구찾기 → 목록 각 행에 ♥ 표시",
+    "♥ 탭 시 즐겨찾기 추가/해제",
+    "♥ 눌러도 상세로 들어가지 않음"
   ],
   "fastChecks": [
     {
-      "id": "bulk-post-route",
+      "id": "easy-picker-show-favorite",
       "type": "grep",
-      "path": "backend/server/routes/favorite.routes.ts",
-      "pattern": "bulk-delete"
-    },
-    {
-      "id": "fe-post-bulk",
-      "type": "grep",
-      "path": "frontend/src/api/index.ts",
-      "pattern": "favorites/bulk-delete"
-    },
-    {
-      "id": "no-bootstrap-reseed",
-      "type": "grep",
-      "path": "frontend/src/hooks/useHomeBootstrap.ts",
-      "pattern": "Do not re-seed favorites"
+      "path": "frontend/src/components/easy-mode/EasyMachinePicker.tsx",
+      "pattern": "showFavorite|useFavoritesList|favoriteByCode"
     }
   ],
-  "productionChecks": [
-    "Render backend redeploy required for POST /favorites/bulk-delete (FE falls back to per-id DELETE until then)"
-  ],
-  "deploy": {
-    "expected": "Frontend Pages + Render backend"
-  },
-  "asIs": "즐겨찾기 페이지에서 [선택 삭제]를 눌러도 선택된 항목이 삭제되지 않음.",
-  "toBe": "선택 삭제 확인 후 서버·목록에서 제거되고, 홈 복귀 시에도 유지됨."
+  "productionChecks": [],
+  "deploy": { "expected": "Frontend Pages" },
+  "asIs": "이지모드 기구찾기 목록에 하트(즐겨찾기) 아이콘 없음",
+  "toBe": "검색 추천머신과 같이 각 기구에 ♥ 표시·토글"
 }
