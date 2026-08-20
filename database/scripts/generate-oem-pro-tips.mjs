@@ -245,6 +245,50 @@ const BRAND_META = {
     rideKo: '디랙스 Welliv Pro·Pure Plate·Forge 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the DRAX Welliv Pro / Pure Plate / Forge path instead of fighting it.',
   },
+  LEXCO: {
+    displayKo: '렉스코',
+    displayEn: 'LEXCO',
+    manufacturerDefault: 'Lexco',
+    researchFile: 'lexco_models.json',
+    csvFile: 'lexco_pro_tips.csv',
+    noModelKo: '렉스코 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Lexco SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '렉스코 Master(LM)·Falcon(LS)·Master Pro Plate(LP) 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Lexco Master (LM) / Falcon (LS) / Master Pro Plate (LP) path instead of fighting it.',
+  },
+  BODYSTONE: {
+    displayKo: '바디스톤',
+    displayEn: 'BODYSTONE',
+    manufacturerDefault: 'Bodystone',
+    researchFile: 'bodystone_models.json',
+    csvFile: 'bodystone_pro_tips.csv',
+    noModelKo: '바디스톤 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Bodystone SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '바디스톤 SW Club·Kairos 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Bodystone SW Club / Kairos path instead of fighting it.',
+  },
+  FOCUS: {
+    displayKo: '포커스',
+    displayEn: 'FOCUS',
+    manufacturerDefault: 'Focus',
+    researchFile: 'focus_models.json',
+    csvFile: 'focus_pro_tips.csv',
+    noModelKo: '포커스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Focus SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '포커스 기구 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Focus machine path instead of fighting it.',
+  },
+  MIGANG: {
+    displayKo: '미강',
+    displayEn: 'MIGANG',
+    manufacturerDefault: 'Migang',
+    researchFile: 'migang_models.json',
+    csvFile: 'migang_pro_tips.csv',
+    noModelKo: '미강 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Migang SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '미강 Power Gym 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Migang Power Gym path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -658,6 +702,26 @@ function introKo(entry, family, flags) {
     bits.push('Forge');
   } else if (BRAND === 'DRAX') {
     bits.push('DRAX line');
+  } else if (/master pro plate|\bLP[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'LEXCO') {
+    bits.push('Lexco LP Plate');
+  } else if (/falcon|\bLS[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'LEXCO') {
+    bits.push('Lexco Falcon');
+  } else if (/master|\bLM[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'LEXCO') {
+    bits.push('Lexco Master');
+  } else if (BRAND === 'LEXCO') {
+    bits.push('Lexco line');
+  } else if (/kairos/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Kairos');
+  } else if (/sw club|\bSW[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'BODYSTONE') {
+    bits.push('SW Club');
+  } else if (BRAND === 'BODYSTONE') {
+    bits.push('Bodystone line');
+  } else if (BRAND === 'FOCUS') {
+    bits.push('Focus line');
+  } else if (/power gym|hammer/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'MIGANG') {
+    bits.push('Power Gym');
+  } else if (BRAND === 'MIGANG') {
+    bits.push('Migang line');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -779,6 +843,26 @@ function introEn(entry, family, flags) {
     bits.push('Forge');
   } else if (BRAND === 'DRAX') {
     bits.push('DRAX line');
+  } else if (/master pro plate|\bLP[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'LEXCO') {
+    bits.push('Lexco LP Plate');
+  } else if (/falcon|\bLS[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'LEXCO') {
+    bits.push('Lexco Falcon');
+  } else if (/master|\bLM[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'LEXCO') {
+    bits.push('Lexco Master');
+  } else if (BRAND === 'LEXCO') {
+    bits.push('Lexco line');
+  } else if (/kairos/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Kairos');
+  } else if (/sw club|\bSW[- ]?\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'BODYSTONE') {
+    bits.push('SW Club');
+  } else if (BRAND === 'BODYSTONE') {
+    bits.push('Bodystone line');
+  } else if (BRAND === 'FOCUS') {
+    bits.push('Focus line');
+  } else if (/power gym|hammer/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'MIGANG') {
+    bits.push('Power Gym');
+  } else if (BRAND === 'MIGANG') {
+    bits.push('Migang line');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
