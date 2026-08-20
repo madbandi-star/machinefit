@@ -778,6 +778,14 @@
   border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
 }
 
+.easy-s2-coach__pro {
+  width: 100%;
+}
+
+.easy-s2-coach__pro .recommendation-guide-segments {
+  margin-top: 0;
+}
+
 .easy-s2-coach__ai {
   margin: 0.1rem 0 0;
   padding: 0.55rem 0.7rem;

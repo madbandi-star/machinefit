@@ -22,6 +22,7 @@ import {
 import { EasyDuplicateReplacePanel } from '@/components/easy-mode/EasyDuplicateReplacePanel';
 import { EasyMachinePicker } from '@/components/easy-mode/EasyMachinePicker';
 import { EasyWizardShell } from '@/components/easy-mode/EasyWizardShell';
+import { RecommendationGuideSegments } from '@/components/recommendation/RecommendationGuideSegments/RecommendationGuideSegments';
 import { LegalDisclaimerBanner } from '@/components/compliance/LegalDisclaimerBanner';
 import { HomeWorkoutToolsSection } from '@/components/home/HomeWorkoutToolsSection/HomeWorkoutToolsSection';
 import { NumericStepper } from '@/components/form/NumericStepper/NumericStepper';
@@ -982,11 +983,13 @@ export function EasyWizardPage() {
     ].filter(Boolean) as Array<{ key: string; label: string; value: string }>;
     const tips = (recommendation.tips ?? []).slice(0, 3);
     const warnings = (recommendation.warnings ?? []).slice(0, 2);
+    const proTips = recommendation.proTips ?? [];
     const aiDiffers =
       ai.recommendedWeightKg !== settings.recommendedWeightKg ||
       ai.recommendedRepsMin !== settings.recommendedRepsMin ||
       ai.recommendedRepsMax !== settings.recommendedRepsMax;
-    const hasDetails = tips.length > 0 || warnings.length > 0 || aiDiffers;
+    const hasDetails =
+      tips.length > 0 || warnings.length > 0 || proTips.length > 0 || aiDiffers;
 
     return (
       <EasyWizardShell
@@ -1104,6 +1107,15 @@ export function EasyWizardPage() {
                       </li>
                     ))}
                   </ul>
+                </div>
+              ) : null}
+
+              {proTips.length > 0 ? (
+                <div className="easy-s2-coach__pro">
+                  <RecommendationGuideSegments
+                    proTips={proTips}
+                    machineCode={machineCode}
+                  />
                 </div>
               ) : null}
 

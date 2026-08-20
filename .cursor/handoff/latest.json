@@ -1,28 +1,23 @@
 {
-  "title": "Records: order button tap=menu, long-press=drag",
-  "summary": "↑↓ order button: short tap opens the order menu; long-press then drag reorders same-day cards. Card-body long-press removed.",
+  "title": "Easy mode step 2: PRO tips under workout tips",
+  "summary": "Easy wizard 2/3 recommendation confirm shows RecommendationGuideSegments (PRO tip chip) below the tips card.",
   "git": {
     "branch": "main",
-    "commit": "297c72d5"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/styles/records.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
+    "frontend/src/styles/easy-mode.css"
   ],
   "testFocus": [
-    "Records → tap ↑↓ → order menu opens",
-    "Records → long-press ↑↓ (~0.4s) → drag to another same-day card → order changes; menu does not open"
+    "Easy mode → pick machine → step 2 → below 운동팁, PRO팁 chip appears when machine has pro tips; tap expands content"
   ],
   "fastChecks": [
     {
-      "id": "order-btn-drag",
+      "id": "easy-pro-tips",
       "type": "grep",
-      "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-      "pattern": "handleOrderPointerDown"
+      "path": "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
+      "pattern": "easy-s2-coach__pro"
     }
   ],
   "productionChecks": [
@@ -31,6 +26,6 @@
   "deploy": {
     "expected": "Frontend Pages"
   },
-  "asIs": "Long-press on card body started drag.",
-  "toBe": "↑↓ short tap = menu; long-press drag = reorder."
+  "asIs": "Easy step 2 showed warnings/tips only.",
+  "toBe": "PRO tip chip under tips, same segment UI as records/result."
 }

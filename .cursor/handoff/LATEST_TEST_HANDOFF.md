@@ -1,8 +1,8 @@
-# Test handoff: Order button tap vs long-press drag
+# Test handoff: Easy mode step 2 PRO tips
 
 ## Summary
-↑↓ button: short tap opens order menu; long-press + drag reorders same-day cards.
+Easy wizard recommendation confirm (2/3) shows PRO tip chip under 운동팁.
 
 ## Test focus
-1. Tap ↑↓ → menu
-2. Long-press ↑↓ → drag to another card → order updates (no menu)
+1. Easy mode → machine with PRO tips → step 2 → PRO팁 under tips
+2. Tap chip → content expands
