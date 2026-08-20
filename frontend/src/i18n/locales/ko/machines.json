@@ -302,7 +302,7 @@
     "deleteDayRemoved": "운동기록이 삭제되었습니다.",
     "orderControlsLabel": "운동 순서",
     "orderMenuAria": "운동 순서 메뉴",
-    "orderDragAria": "드래그하여 순서 이동",
+    "orderDragAria": "길게 눌러 끌어 순서 이동",
     "orderMoveUp": "위로 이동",
     "orderMoveDown": "아래로 이동",
     "orderMoveTop": "맨 위로 이동",

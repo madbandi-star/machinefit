@@ -8,6 +8,7 @@ import {
   memo,
   type CSSProperties,
   type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +19,6 @@ import {
   ChevronDown,
   ChevronRight,
   Clock3,
-  GripVertical,
   Heart,
   Settings,
   Target,
@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { WorkoutCardOrderControl } from '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl';
 import type { WorkoutCardOrderMove } from '@/utils/workoutCardOrder';
+import { hapticTap } from '@/utils/haptic';
 import '@/components/records/WorkoutCardOrderControl/WorkoutCardOrderControl.css';
 import type {
   RecommendationSettings,
@@ -151,7 +152,74 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     typeof orderTotal === 'number' &&
     orderTotal > 1 &&
     Boolean(onOrderMove);
-  const canDragReorder = canReorder && Boolean(onReorderDragStart) && Boolean(reorderDateKey);
+  const canDragReorder =
+    canReorder &&
+    !orderDisabled &&
+    Boolean(onReorderDragStart) &&
+    Boolean(reorderDateKey);
+  const longPressTimerRef = useRef<number | null>(null);
+  const pressOriginRef = useRef<{ x: number; y: number } | null>(null);
+  const suppressClickUntilRef = useRef(0);
+
+  const clearLongPress = useCallback(() => {
+    if (longPressTimerRef.current != null) {
+      window.clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    pressOriginRef.current = null;
+  }, []);
+
+  useEffect(() => () => clearLongPress(), [clearLongPress]);
+
+  const isReorderIgnoreTarget = useCallback((target: EventTarget | null) => {
+    if (!(target instanceof Element)) return true;
+    return Boolean(
+      target.closest(
+        'a, button, input, textarea, select, label, [role="button"], [role="menu"], [role="menuitem"], [role="dialog"], .history-record-card__order-panel'
+      )
+    );
+  }, []);
+
+  const handleCardPointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLElement>) => {
+      if (!canDragReorder || typeof orderIndex !== 'number') return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (isReorderIgnoreTarget(event.target)) return;
+
+      clearLongPress();
+      pressOriginRef.current = { x: event.clientX, y: event.clientY };
+      longPressTimerRef.current = window.setTimeout(() => {
+        longPressTimerRef.current = null;
+        pressOriginRef.current = null;
+        suppressClickUntilRef.current = Date.now() + 600;
+        setOrderMenuOpen(false);
+        hapticTap();
+        onReorderDragStart?.(orderIndex);
+      }, 420);
+    },
+    [canDragReorder, clearLongPress, isReorderIgnoreTarget, onReorderDragStart, orderIndex]
+  );
+
+  const handleCardPointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLElement>) => {
+      if (!pressOriginRef.current || longPressTimerRef.current == null) return;
+      const dx = event.clientX - pressOriginRef.current.x;
+      const dy = event.clientY - pressOriginRef.current.y;
+      if (dx * dx + dy * dy > 100) clearLongPress();
+    },
+    [clearLongPress]
+  );
+
+  const handleCardPointerEnd = useCallback(() => {
+    clearLongPress();
+  }, [clearLongPress]);
+
+  const handleCardClickCapture = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    if (Date.now() < suppressClickUntilRef.current || isDragSource) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, [isDragSource]);
 
   const updateOrderPanelPosition = useCallback(() => {
     const trigger = orderTriggerRef.current;
@@ -413,11 +481,20 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         isReordering ? ' history-record-card--reordering' : ''
       }${isDragSource ? ' history-record-card--dragging' : ''}${
         isDragOver ? ' history-record-card--drag-over' : ''
-      }`}
+      }${canDragReorder ? ' history-record-card--reorderable' : ''}`}
       data-history-reorder-date={canDragReorder ? reorderDateKey : undefined}
       data-history-reorder-index={canDragReorder ? orderIndex : undefined}
-      onPointerUp={doubleTapCollapse.onPointerUp}
-      onDoubleClick={doubleTapCollapse.onDoubleClick}
+      aria-grabbed={isDragSource || undefined}
+      title={canDragReorder ? t('machines:history.orderDragAria') : undefined}
+      onPointerDown={handleCardPointerDown}
+      onPointerMove={handleCardPointerMove}
+      onPointerUp={(event) => {
+        handleCardPointerEnd();
+        if (!isDragSource) doubleTapCollapse.onPointerUp(event);
+      }}
+      onPointerCancel={handleCardPointerEnd}
+      onClickCapture={handleCardClickCapture}
+      onDoubleClick={isDragSource ? undefined : doubleTapCollapse.onDoubleClick}
     >
       <header className="history-record-card__header">
         <div className="history-record-card__hero">
@@ -444,23 +521,6 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
             <div className="history-record-card__hero-aside">
               <div className="history-record-card__header-actions">
-                {canDragReorder ? (
-                  <button
-                    type="button"
-                    className="history-record-card__drag-handle"
-                    aria-label={t('machines:history.orderDragAria')}
-                    disabled={orderDisabled}
-                    onPointerDown={(event) => {
-                      if (orderDisabled || typeof orderIndex !== 'number') return;
-                      event.preventDefault();
-                      event.stopPropagation();
-                      setOrderMenuOpen(false);
-                      onReorderDragStart?.(orderIndex);
-                    }}
-                  >
-                    <GripVertical size={16} strokeWidth={2.25} aria-hidden />
-                  </button>
-                ) : null}
                 {canReorder ? (
                   <>
                     <button

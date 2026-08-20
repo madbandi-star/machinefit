@@ -300,7 +300,7 @@
     "deleteDayRemoved": "Workout records were deleted.",
     "orderControlsLabel": "Reorder",
     "orderMenuAria": "Workout order menu",
-    "orderDragAria": "Drag to reorder",
+    "orderDragAria": "Long-press and drag to reorder",
     "orderMoveUp": "Move up",
     "orderMoveDown": "Move down",
     "orderMoveTop": "Move to top",

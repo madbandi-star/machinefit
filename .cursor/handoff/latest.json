@@ -1,43 +1,36 @@
 {
-  "title": "Records: fix order menu position + touch drag reorder",
-  "summary": "Order-move panel is now fixed to the trigger and clamped inside the viewport (no left-edge overflow). Same-day cards can also be reordered by dragging the grip handle.",
+  "title": "Records: long-press card to reorder (no grip)",
+  "summary": "Remove the grip handle. Same-day reorder starts by long-pressing the card (~420ms), then dragging onto another card.",
   "git": {
     "branch": "main",
-    "commit": "abfa92b6"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
     "frontend/src/styles/records.css",
-    "frontend/src/styles/history-premium.css",
-    "frontend/src/utils/workoutCardOrder.ts",
-    "frontend/src/utils/workoutCardOrder.test.ts",
     "frontend/src/i18n/locales/ko/machines.json",
     "frontend/src/i18n/locales/en/machines.json",
     "frontend/src/i18n/locales/ja/machines.json",
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Records → open ↑↓ order button on a card → menu stays fully on screen (not past left edge)",
-    "Records → drag grip (⋮⋮) on a same-day card → drop on another card → order persists after refresh"
+    "Records → long-press a card body (not buttons/links) → drag over another same-day card → release → order changes",
+    "Short tap / scroll / ↑↓ menu still work; grip handle is gone"
   ],
   "fastChecks": [
     {
-      "id": "order-panel-portal",
+      "id": "no-grip",
       "type": "grep",
       "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-      "pattern": "createPortal"
+      "pattern": "GripVertical|drag-handle",
+      "expect": "absent"
     },
     {
-      "id": "drag-handle",
+      "id": "long-press",
       "type": "grep",
       "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-      "pattern": "history-record-card__drag-handle"
-    },
-    {
-      "id": "reorder-by-index",
-      "type": "shell",
-      "command": "cd frontend && npx vitest run src/utils/workoutCardOrder.test.ts"
+      "pattern": "420"
     }
   ],
   "productionChecks": [
@@ -46,6 +39,6 @@
   "deploy": {
     "expected": "Frontend Pages"
   },
-  "asIs": "Order menu panel overflowed off the left of the viewport; reorder only via button menu.",
-  "toBe": "Order menu is viewport-clamped under the trigger; grip drag-and-drop reorders same-day cards."
+  "asIs": "Reorder required the grip (⋮⋮) handle.",
+  "toBe": "Long-press the card, then drop on another same-day card to reorder."
 }

@@ -999,62 +999,65 @@ export function HistoryListPanel() {
     [canPersistOrder, orderedCardsForDate, persistDayOrder]
   );
 
-  const isDragReorderActive = dragReorder != null;
+  const beginDragReorder = useCallback(
+    (dateKey: string, fromIndex: number) => {
+      setDragReorder({ dateKey, fromIndex, overIndex: fromIndex });
+      document.body.classList.add('history-reorder-dragging');
 
-  useEffect(() => {
-    if (!isDragReorderActive) {
-      document.body.classList.remove('history-reorder-dragging');
-      return;
-    }
-    document.body.classList.add('history-reorder-dragging');
-
-    const resolveOverIndex = (clientY: number) => {
-      const current = dragReorderRef.current;
-      if (!current) return 0;
-      const nodes = Array.from(
-        document.querySelectorAll<HTMLElement>(
-          `[data-history-reorder-date="${CSS.escape(current.dateKey)}"]`
-        )
-      );
-      if (nodes.length === 0) return current.fromIndex;
-      let overIndex = current.fromIndex;
-      for (const node of nodes) {
-        const idx = Number(node.dataset.historyReorderIndex);
-        if (Number.isNaN(idx)) continue;
-        const rect = node.getBoundingClientRect();
-        if (clientY < rect.top + rect.height / 2) {
+      const resolveOverIndex = (clientY: number) => {
+        const current = dragReorderRef.current;
+        if (!current) return fromIndex;
+        const nodes = Array.from(
+          document.querySelectorAll<HTMLElement>(
+            `[data-history-reorder-date="${CSS.escape(current.dateKey)}"]`
+          )
+        );
+        if (nodes.length === 0) return current.fromIndex;
+        let overIndex = current.fromIndex;
+        for (const node of nodes) {
+          const idx = Number(node.dataset.historyReorderIndex);
+          if (Number.isNaN(idx)) continue;
+          const rect = node.getBoundingClientRect();
+          if (clientY < rect.top + rect.height / 2) {
+            overIndex = idx;
+            break;
+          }
           overIndex = idx;
-          break;
         }
-        overIndex = idx;
-      }
-      return overIndex;
-    };
+        return overIndex;
+      };
 
-    const onPointerMove = (event: PointerEvent) => {
-      const overIndex = resolveOverIndex(event.clientY);
-      setDragReorder((prev) =>
-        prev && prev.overIndex !== overIndex ? { ...prev, overIndex } : prev
-      );
-    };
+      const onPointerMove = (event: PointerEvent) => {
+        const overIndex = resolveOverIndex(event.clientY);
+        setDragReorder((prev) =>
+          prev && prev.overIndex !== overIndex ? { ...prev, overIndex } : prev
+        );
+      };
 
-    const endDrag = () => {
-      const current = dragReorderRef.current;
-      setDragReorder(null);
-      if (!current || current.fromIndex === current.overIndex) return;
-      handleOrderDropByIndex(current.dateKey, current.fromIndex, current.overIndex);
-    };
+      const endDrag = () => {
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', endDrag);
+        window.removeEventListener('pointercancel', endDrag);
+        document.body.classList.remove('history-reorder-dragging');
+        const current = dragReorderRef.current;
+        setDragReorder(null);
+        if (!current || current.fromIndex === current.overIndex) return;
+        handleOrderDropByIndex(current.dateKey, current.fromIndex, current.overIndex);
+      };
 
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('pointerup', endDrag);
-    window.addEventListener('pointercancel', endDrag);
-    return () => {
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+    },
+    [handleOrderDropByIndex]
+  );
+
+  useEffect(
+    () => () => {
       document.body.classList.remove('history-reorder-dragging');
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', endDrag);
-      window.removeEventListener('pointercancel', endDrag);
-    };
-  }, [isDragReorderActive, handleOrderDropByIndex]);
+    },
+    []
+  );
 
   const requestDelete = useCallback(
     (card: HistoryRecordCardData) => {
@@ -1532,12 +1535,7 @@ export function HistoryListPanel() {
                     reorderDateKey={canPersistOrder ? group.dateKey : undefined}
                     onReorderDragStart={
                       canPersistOrder
-                        ? (fromIndex) =>
-                            setDragReorder({
-                              dateKey: group.dateKey,
-                              fromIndex,
-                              overIndex: fromIndex,
-                            })
+                        ? (fromIndex) => beginDragReorder(group.dateKey, fromIndex)
                         : undefined
                     }
                     isDragSource={
