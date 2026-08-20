@@ -1,22 +1,36 @@
 ﻿{
-  "title": "Count session: always show full-mode button",
-  "summary": "홈 횟수세기 소형 배너에도 휴식 타이머처럼 「전체모드」 버튼을 항상 표시합니다.",
+  "title": "Timer history: Today label + spacing",
+  "summary": "타이머 기록 날짜가 오늘이면 「오늘 · 날짜」로 표시하고, 달력과 날짜 헤더 사이 여백을 늘렸습니다.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost.tsx"],
+  "changedFiles": [
+    "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
+    "frontend/src/styles/timer-history.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
+  ],
   "testFocus": [
-    "홈 → 횟수세기 시작 → 소형 배너에 「전체모드」",
-    "전체모드 → 전체화면 → 소형모드로 복귀 후 다시 전체모드"
+    "타이머 기록 → 오늘 선택 시 「오늘 · …」",
+    "다른 날짜는 기존 날짜 헤더",
+    "달력과 날짜 헤더 사이 여백"
   ],
   "fastChecks": [
     {
-      "id": "count-expand-always",
+      "id": "selected-today",
       "type": "grep",
-      "path": "frontend/src/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost.tsx",
-      "pattern": "onExpand=\\{expand\\}"
+      "path": "frontend/src/pages/timer-history/TimerHistoryPage.tsx",
+      "pattern": "selectedToday"
+    },
+    {
+      "id": "day-spacing",
+      "type": "grep",
+      "path": "frontend/src/styles/timer-history.css",
+      "pattern": "timer-history-day \\{[\\s\\S]*margin-top"
     }
   ],
   "productionChecks": [],
   "deploy": { "expected": "Frontend Pages" },
-  "asIs": "횟수세기 소형 배너에 전체모드가 설정(운동 중 전체 화면)이 켜져 있을 때만 보임",
-  "toBe": "휴식 타이머와 동일하게 항상 「전체모드」 표시"
+  "asIs": "오늘도 일반 날짜만 표시, 달력과 헤더가 붙어 있음",
+  "toBe": "오늘이면 「오늘 · 날짜」, 달력 아래 여백 확보"
 }

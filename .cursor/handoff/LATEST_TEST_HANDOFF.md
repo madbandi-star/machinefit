@@ -1,21 +1,19 @@
-﻿# Test handoff — Count session full-mode button
+﻿# Test handoff — Timer history today label + spacing
 
 ## Summary
-홈 횟수세기 소형 배너에 휴식 타이머와 같이 「전체모드」를 항상 표시.
+타이머 기록 페이지에서 선택일이 오늘이면 「오늘 · 날짜」로 표시. 달력과 날짜 헤더 사이 여백 추가.
 
 ## Test focus
-1. 홈 → 횟수세기 시작
-2. 소형 배너에 「전체모드」 버튼 확인 (설정 「운동 중 전체 화면」 OFF여도)
-3. 탭 → 전체화면 → 소형모드 → 다시 전체모드
+1. 타이머 기록 열기 (기본 오늘)
+2. 헤더가 「오늘 · …」인지
+3. 다른 날짜 선택 → 일반 날짜만
+4. 달력과 날짜 헤더 간격이 넉넉한지
 
 ## Fast checks
 ```
-rg -n "onExpand=\{expand\}" frontend/src/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost.tsx
+rg -n "selectedToday" frontend/src/pages/timer-history/TimerHistoryPage.tsx
+rg -n "margin-top: 0.85rem" frontend/src/styles/timer-history.css
 ```
-
-## As-is → To-be
-- **as-is**: `workoutFullscreenDisplay`일 때만 expand
-- **to-be**: 휴식과 동일하게 항상 expand
 
 ## Deploy note
 Frontend only (Pages).

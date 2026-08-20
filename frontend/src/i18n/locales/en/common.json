@@ -2306,6 +2306,7 @@
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "goToday": "Today",
+    "selectedToday": "Today · {{date}}",
     "dayWithDataAria": "Timer history on {{date}}",
     "dayMeta": "Total {{duration}} · {{sessions}} session(s) · {{laps}} laps",
     "emptyDay": "No timer history on this date.",

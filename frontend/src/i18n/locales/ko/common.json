@@ -2256,6 +2256,7 @@
     "prevMonth": "이전 달",
     "nextMonth": "다음 달",
     "goToday": "오늘",
+    "selectedToday": "오늘 · {{date}}",
     "dayWithDataAria": "{{date}} 타이머 기록 있음",
     "dayMeta": "총 운동시간 {{duration}} · 타이머 세션 {{sessions}}회 · 랩 {{laps}}개",
     "emptyDay": "이 날짜에는 타이머 기록이 없습니다.",

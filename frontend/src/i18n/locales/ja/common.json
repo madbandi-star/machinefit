@@ -2267,6 +2267,7 @@
     "prevMonth": "前の月",
     "nextMonth": "次の月",
     "goToday": "今日",
+    "selectedToday": "今日 · {{date}}",
     "dayWithDataAria": "{{date}} にタイマー記録あり",
     "dayMeta": "合計 {{duration}} · セッション {{sessions}}回 · ラップ {{laps}}",
     "emptyDay": "この日のタイマー記録はありません。",

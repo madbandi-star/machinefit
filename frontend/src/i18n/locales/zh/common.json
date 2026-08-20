@@ -2267,6 +2267,7 @@
     "prevMonth": "上个月",
     "nextMonth": "下个月",
     "goToday": "今天",
+    "selectedToday": "今天 · {{date}}",
     "dayWithDataAria": "{{date}} 有计时记录",
     "dayMeta": "总计 {{duration}} · 计时 {{sessions}} 次 · {{laps}} 圈",
     "emptyDay": "这一天没有计时记录。",

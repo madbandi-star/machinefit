@@ -94,7 +94,13 @@ export function TimerHistoryPage() {
 
         <section className="timer-history-day" aria-live="polite">
           <header className="timer-history-day__head">
-            <h2>{formatHistoryDateHeader(selectedDate, i18n.language)}</h2>
+            <h2>
+              {selectedDate === todayKey
+                ? t('timerHistory.selectedToday', {
+                    date: formatHistoryDateHeader(selectedDate, i18n.language),
+                  })
+                : formatHistoryDateHeader(selectedDate, i18n.language)}
+            </h2>
           </header>
           {dayQuery.isLoading ? (
             <Skeleton count={2} height={64} />
