@@ -1321,7 +1321,7 @@ export function HistoryListPanel() {
               key={group.dateKey}
               className={`records-list__date-group${
                 isExpanded ? ' records-list__date-group--expanded' : ' records-list__date-group--collapsed'
-              }`}
+              }${isTodayGroup ? ' records-list__date-group--today' : ''}`}
             >
               <h2 className="records-list__date-heading">
                 <button
@@ -1340,6 +1340,11 @@ export function HistoryListPanel() {
                         translateMuscleGroup
                       )}
                     </span>
+                    {isTodayGroup ? (
+                      <span className="records-list__today-badge">
+                        {t('machines:history.todayBadge')}
+                      </span>
+                    ) : null}
                   </span>
                   <Icon
                     name="chevronDown"
@@ -1429,6 +1434,7 @@ export function HistoryListPanel() {
                       card.targetMuscleGroup && isFreeWeightMachineCode(card.machineCode)
                     )}
                     isFocused={historyCardMatchesFocus(card, focusId)}
+                    isTodayDay={isTodayGroup}
                     onDelete={() => requestDelete(card)}
                     deleteDisabled={deleteMutation.isPending}
                     orderIndex={orderIndex}

@@ -315,6 +315,7 @@
     "dayActionsApplyTemplateHint": "将已保存的套路加载到这一天",
     "dayActionsDeleteHint": "将删除该日期的全部运动记录",
     "deleteDayMenuToday": "删除今日全部运动记录",
+    "todayBadge": "今天",
     "deleteDayMenuSelected": "删除此日期全部运动记录",
     "deleteDayTitle": "Delete all workout records",
     "deleteDayMessage": "This deletes every workout record for the selected date.\n\nDeleted records cannot be restored.",

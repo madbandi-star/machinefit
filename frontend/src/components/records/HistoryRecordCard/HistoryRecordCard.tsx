@@ -66,6 +66,8 @@ interface HistoryRecordCardProps {
   isAuthenticated: boolean;
   lockTargetMuscle: boolean;
   isFocused?: boolean;
+  /** Soft highlight when this card belongs to today's date group. */
+  isTodayDay?: boolean;
   onDelete: () => void;
   deleteDisabled?: boolean;
   /** 0-based index within the same calendar day group. */
@@ -104,6 +106,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   isAuthenticated,
   lockTargetMuscle,
   isFocused = false,
+  isTodayDay = false,
   onDelete,
   deleteDisabled = false,
   orderIndex,
@@ -323,8 +326,10 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
       className={`history-record-card history-record-card--premium${
         isWorkoutLogSaved ? ' history-record-card--logged' : ' history-record-card--unlogged'
       }${isFocused ? ' history-record-card--focused' : ''}${
-        expanded ? '' : ' history-record-card--collapsed'
-      }${isReordering ? ' history-record-card--reordering' : ''}`}
+        isTodayDay ? ' history-record-card--today' : ''
+      }${expanded ? '' : ' history-record-card--collapsed'}${
+        isReordering ? ' history-record-card--reordering' : ''
+      }`}
       onPointerUp={doubleTapCollapse.onPointerUp}
       onDoubleClick={doubleTapCollapse.onDoubleClick}
     >

@@ -73,6 +73,55 @@
   min-width: 0;
 }
 
+.records-list__today-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  color: var(--color-primary);
+  font-size: 0.6875rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.history-page-premium .records-list__date-group--today {
+  padding: 0.45rem 0.55rem 0.55rem;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--history-card-border, var(--glass-border)));
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+.history-page-premium .records-list__date-group--today .records-list__date-heading {
+  border-bottom-color: color-mix(in srgb, var(--color-primary) 22%, var(--history-card-border));
+  color: var(--color-text);
+}
+
+.history-page-premium .records-list__date-group--today .records-list__date-icon {
+  opacity: 1;
+}
+
+.history-page-premium .history-record-card--today {
+  border-color: color-mix(in srgb, var(--color-primary) 34%, var(--history-card-border));
+  box-shadow:
+    var(--history-shadow-card),
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 10%, transparent);
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--color-primary) 8%, transparent) 0%,
+      var(--history-card-bg) 42%
+    );
+}
+
+.history-page-premium .history-record-card--today.history-record-card--logged {
+  border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
+}
+
 .history-page-premium .records-list__date-chevron {
   flex-shrink: 0;
   color: var(--history-text-dim);

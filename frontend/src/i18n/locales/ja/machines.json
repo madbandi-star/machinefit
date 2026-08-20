@@ -315,6 +315,7 @@
     "dayActionsApplyTemplateHint": "保存したルーティンをこの日に読み込み",
     "dayActionsDeleteHint": "この日の運動記録をすべて削除します",
     "deleteDayMenuToday": "今日の運動記録をすべて削除",
+    "todayBadge": "今日",
     "deleteDayMenuSelected": "この日の運動記録をすべて削除",
     "deleteDayTitle": "Delete all workout records",
     "deleteDayMessage": "This deletes every workout record for the selected date.\n\nDeleted records cannot be restored.",
