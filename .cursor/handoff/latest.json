@@ -1,30 +1,22 @@
 ﻿{
-  "title": "Points history search on My Hellchang Power",
-  "summary": "내 헬창력 페이지 헬창력 내역에 검색창을 추가해 설명·날짜·포인트로 필터링합니다.",
+  "title": "Count session: always show full-mode button",
+  "summary": "홈 횟수세기 소형 배너에도 휴식 타이머처럼 「전체모드」 버튼을 항상 표시합니다.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "frontend/src/pages/points/PointsPage.tsx",
-    "frontend/src/pages/points/PointsPage.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
-  ],
+  "changedFiles": ["frontend/src/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost.tsx"],
   "testFocus": [
-    "내 헬창력 → 헬창력 내역 검색창 표시",
-    "설명/날짜/포인트 키워드로 목록 필터",
-    "결과 없음 메시지 / 카운트 N/M"
+    "홈 → 횟수세기 시작 → 소형 배너에 「전체모드」",
+    "전체모드 → 전체화면 → 소형모드로 복귀 후 다시 전체모드"
   ],
   "fastChecks": [
     {
-      "id": "points-search",
+      "id": "count-expand-always",
       "type": "grep",
-      "path": "frontend/src/pages/points/PointsPage.tsx",
-      "pattern": "searchPlaceholder|filteredItems|SearchBar"
+      "path": "frontend/src/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost.tsx",
+      "pattern": "onExpand=\\{expand\\}"
     }
   ],
   "productionChecks": [],
   "deploy": { "expected": "Frontend Pages" },
-  "asIs": "헬창력 내역 검색 없음",
-  "toBe": "내역 상단 검색으로 필터링"
+  "asIs": "횟수세기 소형 배너에 전체모드가 설정(운동 중 전체 화면)이 켜져 있을 때만 보임",
+  "toBe": "휴식 타이머와 동일하게 항상 「전체모드」 표시"
 }

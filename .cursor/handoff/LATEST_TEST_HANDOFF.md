@@ -1,22 +1,21 @@
-﻿# Test handoff — Points history search
+﻿# Test handoff — Count session full-mode button
 
 ## Summary
-내 헬창력 → 헬창력 내역에 검색창 추가. 설명·액션·날짜·포인트로 클라이언트 필터.
+홈 횟수세기 소형 배너에 휴식 타이머와 같이 「전체모드」를 항상 표시.
 
 ## Test focus
-1. 마이/내 헬창력 페이지 열기
-2. 내역 위 검색창 입력
-3. 매칭 행만 표시, 카운트 `N/전체`
-4. 결과 없으면 emptySearch 문구
+1. 홈 → 횟수세기 시작
+2. 소형 배너에 「전체모드」 버튼 확인 (설정 「운동 중 전체 화면」 OFF여도)
+3. 탭 → 전체화면 → 소형모드 → 다시 전체모드
 
 ## Fast checks
 ```
-rg -n "searchPlaceholder|filteredItems|SearchBar" frontend/src/pages/points/PointsPage.tsx
+rg -n "onExpand=\{expand\}" frontend/src/components/recommendation/GlobalCountSessionHost/GlobalCountSessionHost.tsx
 ```
 
 ## As-is → To-be
-- **as-is**: 내역 전체만 스크롤
-- **to-be**: 검색으로 필터
+- **as-is**: `workoutFullscreenDisplay`일 때만 expand
+- **to-be**: 휴식과 동일하게 항상 expand
 
 ## Deploy note
 Frontend only (Pages).

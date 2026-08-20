@@ -118,7 +118,7 @@ export function GlobalCountSessionHost() {
       onPause={pause}
       onResume={resume}
       onStop={stop}
-      onExpand={workoutFullscreenDisplay ? expand : undefined}
+      onExpand={expand}
       placement="auto"
       offsetForRest={restActive}
     />
