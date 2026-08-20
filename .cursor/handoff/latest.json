@@ -1,36 +1,33 @@
 {
-  "title": "Records: long-press card to reorder (no grip)",
-  "summary": "Remove the grip handle. Same-day reorder starts by long-pressing the card (~420ms), then dragging onto another card.",
+  "title": "Records: guide chips at card bottom like result page",
+  "summary": "Remove header ⚠️/💡/★ icons. History cards now show [주의][운동팁][PRO팁] chip row under the workout log, same UI as the recommendation result card.",
   "git": {
     "branch": "main",
-    "commit": "1568c2b4"
+    "commit": "pending"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
-    "frontend/src/styles/records.css",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "frontend/src/components/records/HistoryCardGuideSegments/HistoryCardGuideSegments.tsx",
+    "frontend/src/components/records/HistoryCardGuideIcons/HistoryCardGuideIcons.tsx",
+    "frontend/src/styles/history-premium.css"
   ],
   "testFocus": [
-    "Records → long-press a card body (not buttons/links) → drag over another same-day card → release → order changes",
-    "Short tap / scroll / ↑↓ menu still work; grip handle is gone"
+    "Records → individual machine card: no guide icons in header",
+    "Below workout log: [주의]/[운동팁]/[PRO팁] chips when content exists; tap expands panel like result page"
   ],
   "fastChecks": [
     {
-      "id": "no-grip",
+      "id": "no-header-icons",
       "type": "grep",
-      "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-      "pattern": "GripVertical|drag-handle",
+      "path": "frontend/src/components/records",
+      "pattern": "HistoryCardGuideIcons",
       "expect": "absent"
     },
     {
-      "id": "long-press",
+      "id": "bottom-segments",
       "type": "grep",
       "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-      "pattern": "420"
+      "pattern": "HistoryCardGuideSegments"
     }
   ],
   "productionChecks": [
@@ -39,6 +36,6 @@
   "deploy": {
     "expected": "Frontend Pages"
   },
-  "asIs": "Reorder required the grip (⋮⋮) handle.",
-  "toBe": "Long-press the card, then drop on another same-day card to reorder."
+  "asIs": "Guide content opened from header icon trio.",
+  "toBe": "Same chip row as result page under the log section."
 }

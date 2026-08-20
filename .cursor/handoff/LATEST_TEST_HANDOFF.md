@@ -1,20 +1,16 @@
-# Test handoff: Long-press card reorder (no grip)
+# Test handoff: History guide chips at bottom
 
 ## Summary
-Grip handle removed. Same-day reorder: long-press card (~420ms) → drag to another card → release.
+Header ⚠️/💡/★ removed. History cards use the same `[주의][운동팁][PRO팁]` chips as the result page, under the workout log.
 
 ## Git
 - Branch: `main`
-- Commit: `1568c2b4`
+- Commit: pending
 
 ## Test focus
-1. Long-press card body (not buttons/links) → drag → drop on another same-day card → order updates
-2. Grip gone; ↑↓ menu and normal taps still work
-
-## Fast checks
-- No `GripVertical` / `drag-handle` in `HistoryRecordCard.tsx`
-- Long-press timeout `420` present
+1. No guide icons in card header
+2. Chips under workout log; tap to expand content
 
 ## As-is → To-be
-- **As-is:** Drag via grip handle
-- **To-be:** Long-press card then drop to reorder
+- **As-is:** Header icon trio
+- **To-be:** Bottom chip segments (result-page UI)
