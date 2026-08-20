@@ -91,6 +91,17 @@ const BRAND_META = {
     rideKo: '프리코 Discovery(DSL)·Resolute(RSL)·Plate Loaded 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Precor Discovery (DSL) / Resolute (RSL) / Plate Loaded path instead of fighting it.',
   },
+  PRIME_FITNESS: {
+    displayKo: '프라임 피트니스',
+    displayEn: 'PRIME FITNESS',
+    manufacturerDefault: 'PRIME Fitness USA',
+    researchFile: 'prime_fitness_models.json',
+    csvFile: 'prime_fitness_pro_tips.csv',
+    noModelKo: '프라임 피트니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated PRIME Fitness SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '프라임 Evolution·Hybrid SmartCam / Plate Loaded 3-peg 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the PRIME Evolution / Hybrid SmartCam / Plate Loaded 3-peg path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -428,8 +439,16 @@ function introKo(entry, family, flags) {
     bits.push('Discovery Plate Loaded');
   } else if (/vitality|vsl/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Vitality');
-  } else if (/fts|queenax|functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/fts\s*glide|queenax/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('FTS/Queenax');
+  } else if (/evolution|e-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Evolution SmartCam');
+  } else if (/hybrid|h-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Hybrid SmartCam');
+  } else if (/plate loaded|p-\d+|xp-\d+|3-peg|smartstrength/i.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' '))) {
+    bits.push('Plate Loaded 3-peg');
+  } else if (/prodigy|functional trainer|ft-123|chin\s*\|\s*dip|l-130|assist/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('PRODIGY/FT/Assist');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -475,8 +494,16 @@ function introEn(entry, family, flags) {
     bits.push('Discovery Plate Loaded');
   } else if (/vitality|vsl/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Vitality');
-  } else if (/fts|queenax|functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/fts\s*glide|queenax/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('FTS/Queenax');
+  } else if (/evolution|e-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Evolution SmartCam');
+  } else if (/hybrid|h-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Hybrid SmartCam');
+  } else if (/plate loaded|p-\d+|xp-\d+|3-peg|smartstrength/i.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' '))) {
+    bits.push('Plate Loaded 3-peg');
+  } else if (/prodigy|functional trainer|ft-123|chin\s*\|\s*dip|l-130|assist/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('PRODIGY/FT/Assist');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
