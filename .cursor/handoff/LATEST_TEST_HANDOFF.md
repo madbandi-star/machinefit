@@ -1,4 +1,4 @@
-# PRO tips OEM rollout handoff
+﻿# PRO tips OEM rollout handoff
 
 ## Done (after HS on main)
 | Brand | V / P / N | Migration |
@@ -7,6 +7,8 @@
 | NAUTILUS | 24 / 45 / 11 | 157 |
 | CYBEX | 14 / 54 / 12 | 158 |
 | HOIST | 24 / 44 / 12 | 159 |
+| MATRIX | 20 / 48 / 12 | 160 |
+| PRECOR | 30 / 38 / 12 | 161 |
 
 ## Pipeline
 ```bash
@@ -16,8 +18,10 @@ node database/scripts/export-oem-pro-tips-migration.mjs --brand=CODE --migration
 ```
 
 ## Next
-MATRIX → PRECOR → PRIME_FITNESS → ARSENAL_STRENGTH → FREEMOTION → PARAMOUNT → ROGERS_STRENGTH → PANATTA → GYM80 → TECHNOGYM → ATLANTIS → GYMLECO → WATSON → TELJU → NEWTECH → DRAX → LEXCO → BODYSTONE → FOCUS → MIGANG → TGS_STRENGTH → IKK_SPORTS → STEX → EDITION80
+PRIME_FITNESS → ARSENAL_STRENGTH → FREEMOTION → PARAMOUNT → ROGERS_STRENGTH → PANATTA → GYM80 → TECHNOGYM → ATLANTIS → GYMLECO → WATSON → TELJU → NEWTECH → DRAX → LEXCO → BODYSTONE → FOCUS → MIGANG → TGS_STRENGTH → IKK_SPORTS → STEX → EDITION80
 
 ## Notes
-- No API/UI/recommend changes; cross-brand tip identity 0
+- Branch/PR: `cursor/life-fitness-pro-tips-35b3` → https://github.com/madbandi-star/machinefit/pull/269
+- PRECOR sources: Discovery DSL (2018 Spec Tables), DPL / Vitality / FTS·Queenax for gaps
+- No API/UI/recommend changes; MATRIX↔PRECOR tip identity 0
 - Deploy via Render migrate (agent DB auth failed)
