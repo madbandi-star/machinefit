@@ -190,6 +190,13 @@
   min-width: 0;
 }
 
+.home-session-timer__label-main {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
 .home-session-timer__label,
 .home-session-timer__ended-label {
   font-size: 0.6875rem;
@@ -199,8 +206,7 @@
 }
 
 .home-session-timer__ended-label {
-  margin-left: auto;
-  text-align: right;
+  text-align: left;
 }
 
 .home-session-timer__time,

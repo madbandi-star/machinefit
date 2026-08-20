@@ -48,7 +48,10 @@ export function HomeWorkoutSessionTimer() {
         aria-busy="true"
       >
         <div className="home-session-timer__display">
-          <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
+          <div className="home-session-timer__label-line">
+            <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
+            <span className="home-session-timer__history">{t('pages.home.sessionTimerHistory')}</span>
+          </div>
           <span className="home-session-timer__time">00:00:00</span>
         </div>
         <div className="home-session-timer__actions">
@@ -59,7 +62,6 @@ export function HomeWorkoutSessionTimer() {
             {t('pages.home.sessionTimerEnd')}
           </button>
         </div>
-        <span className="home-session-timer__history">{t('pages.home.sessionTimerHistory')}</span>
       </section>
     );
   }
@@ -96,12 +98,22 @@ export function HomeWorkoutSessionTimer() {
       <div className="home-session-timer__row">
         <div className="home-session-timer__display" aria-live="polite" aria-atomic="true">
           <div className="home-session-timer__label-line">
-            <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
-            {showEndedSummary ? (
-              <span className="home-session-timer__ended-label">
-                {t('pages.home.sessionTimerEndedLabel')}
-              </span>
-            ) : null}
+            <div className="home-session-timer__label-main">
+              <span className="home-session-timer__label">{t('pages.home.sessionTimerTitle')}</span>
+              {showEndedSummary ? (
+                <span className="home-session-timer__ended-label">
+                  {t('pages.home.sessionTimerEndedLabel')}
+                </span>
+              ) : null}
+            </div>
+            <Link
+              to={ROUTES.TIMER_HISTORY}
+              className="home-session-timer__history"
+              aria-label={t('pages.home.sessionTimerHistoryAria')}
+            >
+              {t('pages.home.sessionTimerHistory')}
+              <span aria-hidden="true"> →</span>
+            </Link>
           </div>
           <div className="home-session-timer__time-line">
             <span className="home-session-timer__time" data-status={status}>
@@ -164,15 +176,6 @@ export function HomeWorkoutSessionTimer() {
           ))}
         </ol>
       ) : null}
-
-      <Link
-        to={ROUTES.TIMER_HISTORY}
-        className="home-session-timer__history"
-        aria-label={t('pages.home.sessionTimerHistoryAria')}
-      >
-        {t('pages.home.sessionTimerHistory')}
-        <span aria-hidden="true"> →</span>
-      </Link>
     </section>
   );
 }
