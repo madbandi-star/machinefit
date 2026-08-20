@@ -113,6 +113,50 @@ const BRAND_META = {
     rideKo: '아스널 Reloaded(ISO)·M1 Selectorized·Alpha 랙 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Arsenal Reloaded (ISO) / M1 Selectorized / Alpha rack path instead of fighting it.',
   },
+  FREEMOTION: {
+    displayKo: '프리모션',
+    displayEn: 'FREEMOTION',
+    manufacturerDefault: 'Freemotion Fitness',
+    researchFile: 'freemotion_models.json',
+    csvFile: 'freemotion_pro_tips.csv',
+    noModelKo: '프리모션 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Freemotion SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '프리모션 EPIC Selectorized(ES)·EPIC Plate Loaded·GENESIS 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Freemotion EPIC Selectorized (ES) / EPIC Plate Loaded / GENESIS path instead of fighting it.',
+  },
+  PARAMOUNT: {
+    displayKo: '파라마운트',
+    displayEn: 'PARAMOUNT',
+    manufacturerDefault: 'Paramount Fitness',
+    researchFile: 'paramount_models.json',
+    csvFile: 'paramount_pro_tips.csv',
+    noModelKo: '파라마운트 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Paramount SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '파라마운트 Rotary(FW)·Total(FW-8xxx)·FS·XFW Smith·XFT 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Paramount Rotary (FW) / Total (FW-8xxx) / FS / XFW Smith / XFT path instead of fighting it.',
+  },
+  ROGERS_STRENGTH: {
+    displayKo: '로저스 스트렝스',
+    displayEn: 'ROGERS STRENGTH',
+    manufacturerDefault: 'Rogers Athletic',
+    researchFile: 'rogers_strength_models.json',
+    csvFile: 'rogers_strength_pro_tips.csv',
+    noModelKo: '로저스 스트렝스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Rogers Strength SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '로저스 Pendulum Performance·Power Rack 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Rogers Pendulum Performance / Power Rack path instead of fighting it.',
+  },
+  PANATTA: {
+    displayKo: '파나타',
+    displayEn: 'PANATTA',
+    manufacturerDefault: 'Panatta',
+    researchFile: 'panatta_models.json',
+    csvFile: 'panatta_pro_tips.csv',
+    noModelKo: '파나타 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Panatta SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '파나타 Fit Evo(1FE) 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Panatta Fit Evo (1FE) path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -466,6 +510,26 @@ function introKo(entry, family, flags) {
     bits.push('M1 Selectorized');
   } else if (/alpha/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Alpha racks');
+  } else if (/epic selectorized|es\d{3}/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('EPIC Selectorized ES');
+  } else if (/epic plate/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('EPIC Plate Loaded');
+  } else if (/genesis/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('GENESIS cable');
+  } else if (/paramount rotary|fw-\d{3,4}\s*rotary|rotary chest|rotary lat|rotary row|rotary shoulder/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Paramount Rotary FW');
+  } else if (/total chest|total shoulder|total leg|fw-8\d{3}|fw-9\d{3}/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Paramount Total');
+  } else if (/xfw|smith/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('XFW Smith');
+  } else if (/xft|extreme functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('XFT Functional');
+  } else if (/fs-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Paramount FS');
+  } else if (/pendulum/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pendulum Performance');
+  } else if (/fit\s*evo|1fe\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Fit Evo 1FE');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -527,6 +591,26 @@ function introEn(entry, family, flags) {
     bits.push('M1 Selectorized');
   } else if (/alpha/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Alpha racks');
+  } else if (/epic selectorized|es\d{3}/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('EPIC Selectorized ES');
+  } else if (/epic plate/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('EPIC Plate Loaded');
+  } else if (/genesis/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('GENESIS cable');
+  } else if (/paramount rotary|fw-\d{3,4}\s*rotary|rotary chest|rotary lat|rotary row|rotary shoulder/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Paramount Rotary FW');
+  } else if (/total chest|total shoulder|total leg|fw-8\d{3}|fw-9\d{3}/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Paramount Total');
+  } else if (/xfw|smith/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('XFW Smith');
+  } else if (/xft|extreme functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('XFT Functional');
+  } else if (/fs-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Paramount FS');
+  } else if (/pendulum/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pendulum Performance');
+  } else if (/fit\s*evo|1fe\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Fit Evo 1FE');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
