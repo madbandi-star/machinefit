@@ -27,6 +27,7 @@ import {
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useAuthStore } from '@/store/auth.store';
 import { getLocalDayRange, getTodayDateKey } from '@/utils/historyDate';
 import { getLocalizedName } from '@/utils/localizedName';
@@ -224,6 +225,15 @@ export function EasyMachinePicker({
     return keys;
   }, [dayPlans, dayHistory, dayLogs]);
 
+  const { data: favorites, isFetched: favoritesFetched } = useFavoritesList();
+  const favoriteByCode = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const item of favorites ?? []) {
+      map.set(item.machineCode, item.id);
+    }
+    return map;
+  }, [favorites]);
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [...QUERY_KEYS.machines, 'easy-picker', debouncedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
@@ -392,6 +402,9 @@ export function EasyMachinePicker({
                       machine={machine}
                       selectedMuscle={muscleGroup}
                       alreadyPlanned={alreadyPlanned}
+                      showFavorite
+                      initialFavorited={favoritesFetched ? favoriteByCode.has(machine.code) : null}
+                      initialFavoriteId={favoriteByCode.get(machine.code)}
                       onSelect={(m) => {
                         setDetail(m);
                         if (
