@@ -1,0 +1,12975 @@
+-- Import NEWTECH MachineFit PRO tips (trainer coaching style).
+-- Source: database/catalog/pro-tips/newtech_pro_tips.csv
+-- Backup previous pro_tips / pro_tips_meta before UPDATE.
+
+CREATE TABLE IF NOT EXISTS _backup_newtech_pro_tips_20260820 (
+  machine_id UUID PRIMARY KEY,
+  code TEXT,
+  machine_name_ko TEXT,
+  pro_tips JSONB,
+  pro_tips_meta JSONB,
+  backed_up_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO _backup_newtech_pro_tips_20260820 (machine_id, code, machine_name_ko, pro_tips, pro_tips_meta)
+SELECT m.id,
+       m.code,
+       COALESCE(st.name->>'ko', m.name->>'ko'),
+       m.pro_tips,
+       m.pro_tips_meta
+FROM machines m
+JOIN brands b ON b.id = m.brand_id
+LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
+WHERE b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+ON CONFLICT (machine_id) DO NOTHING;
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Chest Press (Rotary) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "등을 패드에 붙이고 가슴 중앙으로 밀기"
+
+OnHim 라인 로터리 체스트 프레스로 앉은 자세에서 가슴 전면을 밀어내는 셀렉터라이즈드 머신. 셀렉터 스택 · OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이 시작 위치를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 손잡이 시작 위치, 중량 스택 핀을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 앞으로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(OnHim Chest Press (Rotary))은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"등을 패드에 붙이고 가슴 중앙으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Chest Press (Rotary) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep the back on the pad and press through mid-chest"
+
+OnHim 라인 로터리 체스트 프레스로 앉은 자세에서 가슴 전면을 밀어내는 셀렉터라이즈드 머신입니다. Lean into the selectorized stack design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 손잡이 시작 위치, 중량 스택 핀.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (OnHim Chest Press (Rotary)), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the back on the pad and press through mid-chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Chest Press (Rotary)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/seated-chest-press-1","verifiedStructure":"OnHim 라인 로터리 체스트 프레스로 앉은 자세에서 가슴 전면을 밀어내는 셀렉터라이즈드 머신입니다.","verifiedAdjustments":"시트 높이, 손잡이 시작 위치, 중량 스택 핀","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Incline Chest Press · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "견갑을 고정하고 대각선 위·앞으로 밀기"
+
+M-Torture Torture Incline Chest Press(NT-T-ICP)로 상부 가슴을 위한 인클라인 프레스. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 등판 각도, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+인클라인 궤적으로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과아치해 요추에 힘을 주는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Incline Chest Press의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"견갑을 고정하고 대각선 위·앞으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Incline Chest Press · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Set the scapulae and press up and forward on a diagonal"
+
+M-Torture Torture Incline Chest Press(NT-T-ICP)로 상부 가슴을 위한 인클라인 프레스입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 등판 각도, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Incline Chest Press. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set the scapulae and press up and forward on a diagonal. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Incline Chest Press","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/incline-chest-press-1","verifiedStructure":"M-Torture Torture Incline Chest Press(NT-T-ICP)로 상부 가슴을 위한 인클라인 프레스입니다.","verifiedAdjustments":"시트, 등판 각도, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '인클라인 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Plate Decline Press · Plate Loaded
+
+🎯 ONE KEY CUE
+🔥 "하부 가슴을 향해 아래·앞으로 통제하며 밀기"
+
+Plate Loaded Plate Decline Press로 하부 가슴을 겨냥한 플레이트로드 디클라인 프레스. 플레이트 로딩 · Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트/등판, 손잡이, 양쪽 플레이트 로딩을 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+디클라인 각도로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 과벌려 어깨에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Plate Decline Press은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"하부 가슴을 향해 아래·앞으로 통제하며 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Plate Decline Press · Plate Loaded
+
+🎯 ONE KEY CUE
+🔥 "Press down and forward toward the lower chest with control"
+
+Plate Loaded Plate Decline Press로 하부 가슴을 겨냥한 플레이트로드 디클라인 프레스입니다. Lean into the plate-loaded design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트/등판, 손잡이, 양쪽 플레이트 로딩. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Plate Decline Press is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Press down and forward toward the lower chest with control. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate Decline Press","manufacturer":"Newtech Wellness","productSeries":"Plate Loaded","sourceUrl":"https://newtechworldwide.com/products/plate-decline-press","verifiedStructure":"Plate Loaded Plate Decline Press로 하부 가슴을 겨냥한 플레이트로드 디클라인 프레스입니다.","verifiedAdjustments":"시트/등판, 손잡이, 양쪽 플레이트 로딩","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '디클라인 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 컨버징 체스트 프레스
+
+🎯 ONE KEY CUE
+🔥 "넓은 시작에서 중앙으로 모으며 밀기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 암 시작 폭, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔이 바깥에서 안쪽으로 모이며 프레스.
+손잡이가 직선으로만 가는 게 아닙니다. 기구가 만들어 주는 안쪽 궤적을 그대로 타세요. 억지로 모으지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 평행으로만 밀어 수렴 궤적을 무시하는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "컨버징 체스트 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"넓은 시작에서 중앙으로 모으며 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Converging Chest Press
+
+🎯 ONE KEY CUE
+🔥 "Start wide and press while converging toward center"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 암 시작 폭, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+The handles are not a straight line — ride the converging path. Do not force them together.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Converging Chest Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Start wide and press while converging toward center. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech OnHim/M-Torture 공개 카탈로그에 Converging Chest Press 전용 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 암 시작 폭, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '컨버징 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 체스트 프레스
+
+🎯 ONE KEY CUE
+🔥 "좌우 암을 같은 속도로 밀며 불균형을 확인"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 밀었다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 밀어 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 체스트 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral Chest Press
+
+🎯 ONE KEY CUE
+🔥 "Press both independent arms at the same speed and check balance"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Double-check both sides start at the same height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Press out on the machine path, then return under control. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Chest Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral Chest Press 명칭의 전용 모델이 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Plate Flat Press · Plate Loaded
+
+🎯 ONE KEY CUE
+🔥 "견갑을 모은 채 바벨 벤치처럼 수직으로 밀기"
+
+Plate Loaded Plate Flat Press(NT-P-FBP)로 수평 체스트 프레스 플레이트로드 머신. 플레이트 로딩 · Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+등판, 손잡이, 양쪽 플레이트 로딩을 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 위로 밀었다 천천히 내리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들리고 반동으로 미는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Plate Flat Press은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"견갑을 모은 채 바벨 벤치처럼 수직으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Plate Flat Press · Plate Loaded
+
+🎯 ONE KEY CUE
+🔥 "Brace the scapulae and press vertically like a bench press"
+
+Plate Loaded Plate Flat Press(NT-P-FBP)로 수평 체스트 프레스 플레이트로드 머신입니다. Lean into the plate-loaded design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 등판, 손잡이, 양쪽 플레이트 로딩. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Plate Flat Press is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the scapulae and press vertically like a bench press. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate Flat Press","manufacturer":"Newtech Wellness","productSeries":"Plate Loaded","sourceUrl":"https://newtechworldwide.com/products/plate-flat-press","verifiedStructure":"Plate Loaded Plate Flat Press(NT-P-FBP)로 수평 체스트 프레스 플레이트로드 머신입니다.","verifiedAdjustments":"등판, 손잡이, 양쪽 플레이트 로딩","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Pec Dec Fly (With Reverse) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 패드에 붙인 채 가슴으로 모으기"
+
+OnHim Pec Dec Fly(With Reverse)로 전면 펙덱과 리버스 모드를 제공하는 플라이 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 암 패드 시작 위치, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 앞에서 모았다 천천히 벌리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 으쓱하며 팔을 과도하게 펴는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Pec Dec Fly (With Reverse)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 패드에 붙인 채 가슴으로 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Pec Dec Fly (With Reverse) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep elbows on the pads and squeeze the handles together through the chest"
+
+OnHim Pec Dec Fly(With Reverse)로 전면 펙덱과 리버스 모드를 제공하는 플라이 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 암 패드 시작 위치, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Pec Dec Fly (With Reverse). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep elbows on the pads and squeeze the handles together through the chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Pec Dec Fly (With Reverse)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/pec-dec-fly-with-reverse","verifiedStructure":"OnHim Pec Dec Fly(With Reverse)로 전면 펙덱과 리버스 모드를 제공하는 플라이 머신입니다.","verifiedAdjustments":"시트 높이, 암 패드 시작 위치, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '펙덱';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Pec Dec Fly (With Reverse) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "가슴을 고정하고 후면 어깨로 팔을 벌리기"
+
+전용 리어델트 SKU는 없고 OnHim Pec Dec Fly의 리버스(후면) 모드로 대체 확인됩니다. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 암 패드 방향(리버스), 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앞에서 뒤로 팔을 벌렸다 천천히 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 승모를 으쓱하며 무게를 들어 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Pec Dec Fly (With Reverse)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 고정하고 후면 어깨로 팔을 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Pec Dec Fly (With Reverse) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Brace the chest and open the arms with the rear delts"
+
+전용 리어델트 SKU는 없고 OnHim Pec Dec Fly의 리버스(후면) 모드로 대체 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 암 패드 방향(리버스), 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Pec Dec Fly (With Reverse). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the chest and open the arms with the rear delts. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"OnHim Pec Dec Fly (With Reverse)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/pec-dec-fly-with-reverse","verifiedStructure":"전용 리어델트 SKU는 없고 OnHim Pec Dec Fly의 리버스(후면) 모드로 대체 확인됩니다.","verifiedAdjustments":"시트, 암 패드 방향(리버스), 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트 / 리버스 펙덱';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Standing Fly Chest & Back · OnHim
+
+🎯 ONE KEY CUE
+🔥 "가슴을 열고 팔꿈치를 살짝 굽힌 채 모으기"
+
+OnHim Standing Fly Chest & Back(NT-OH-SBF)로 서서 하는 가슴·등 플라이 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풋 지지, 암 높이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 호를 그리며 모았다 천천히 벌리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 과도하게 펴 어깨에 부담을 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Standing Fly Chest & Back의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 열고 팔꿈치를 살짝 굽힌 채 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Standing Fly Chest & Back · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Open the chest and bring the arms together with soft elbows"
+
+OnHim Standing Fly Chest & Back(NT-OH-SBF)로 서서 하는 가슴·등 플라이 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풋 지지, 암 높이, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Standing Fly Chest & Back. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Open the chest and bring the arms together with soft elbows. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Standing Fly Chest & Back","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/standing-fly-chest-back","verifiedStructure":"OnHim Standing Fly Chest & Back(NT-OH-SBF)로 서서 하는 가슴·등 플라이 머신입니다.","verifiedAdjustments":"풋 지지, 암 높이, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플라이 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Dip · OnHim
+
+🎯 ONE KEY CUE
+🔥 "어깨를 내리고 팔꿈치로 몸을 밀어 올리기"
+
+OnHim Seated Dip로 앉은 자세에서 딥·삼두 푸시다운 패턴을 수행하는 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 아래로 눌러 팔을 폈다 천천히 굽히기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨가 귀로 올라가며 반동으로 미는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Seated Dip의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어깨를 내리고 팔꿈치로 몸을 밀어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Dip · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep the shoulders down and drive up through the elbows"
+
+OnHim Seated Dip로 앉은 자세에서 딥·삼두 푸시다운 패턴을 수행하는 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Seated Dip. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the shoulders down and drive up through the elbows. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Seated Dip","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/seated-dip","verifiedStructure":"OnHim Seated Dip로 앉은 자세에서 딥·삼두 푸시다운 패턴을 수행하는 머신입니다.","verifiedAdjustments":"시트 높이, 손잡이, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Chin-Up, Dip Assist (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "어시스트 패드를 쓰고 어깨를 내린 채 딥"
+
+전용 딥 어시스트만 있는 SKU는 없고 Chin-Up/Dip 통합 어시스트(Thomson)로 확인됩니다. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎 패드(어시스트), 딥 바 폭, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+딥 바에서 몸을 내렸다가 팔로 밀어 올리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치가 과도하게 벌어지며 어깨가 말리는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Chin-Up, Dip Assist (Thomson)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어시스트 패드를 쓰고 어깨를 내린 채 딥. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Chin-Up, Dip Assist (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Use the assist pad and keep the shoulders down through the dip"
+
+전용 딥 어시스트만 있는 SKU는 없고 Chin-Up/Dip 통합 어시스트(Thomson)로 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎 패드(어시스트), 딥 바 폭, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Chin-Up, Dip Assist (Thomson). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Use the assist pad and keep the shoulders down through the dip. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"OnHim Chin-Up, Dip Assist (Thomson)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/chin-up-dip-assist","verifiedStructure":"전용 딥 어시스트만 있는 SKU는 없고 Chin-Up/Dip 통합 어시스트(Thomson)로 확인됩니다.","verifiedAdjustments":"무릎 패드(어시스트), 딥 바 폭, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 딥';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 슈퍼 인클라인 프레스
+
+🎯 ONE KEY CUE
+🔥 "높은 인클라인에서 상부 가슴을 향해 위·앞으로 밀기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+높은 인클라인 각도에서 프레스 후 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 각도를 무시한 채 수평처럼 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "슈퍼 인클라인 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"높은 인클라인에서 상부 가슴을 향해 위·앞으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Super Incline Press
+
+🎯 ONE KEY CUE
+🔥 "On a steep incline, press up and forward for upper chest"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Super Incline Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On a steep incline, press up and forward for upper chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 공개 카탈로그에 Super Incline Press 전용 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '슈퍼 인클라인 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Lat Pulldown (High Pulley) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "가슴을 들고 팔꿈치로 바를 아래로 당기기"
+
+OnHim Lat Pulldown(High Pulley)로 하이 풀리 랫풀다운 스테이션. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+허벅지 패드, 손잡이/바 선택, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+바를 쇄골 쪽으로 당겼다 천천히 올리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 상체를 젖히며 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Lat Pulldown (High Pulley)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 들고 팔꿈치로 바를 아래로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Lat Pulldown (High Pulley) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Lift the chest and pull the bar down with the elbows"
+
+OnHim Lat Pulldown(High Pulley)로 하이 풀리 랫풀다운 스테이션입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 허벅지 패드, 손잡이/바 선택, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Lat Pulldown (High Pulley). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Lift the chest and pull the bar down with the elbows. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Lat Pulldown (High Pulley)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/lat-pulldown-high-pulley","verifiedStructure":"OnHim Lat Pulldown(High Pulley)로 하이 풀리 랫풀다운 스테이션입니다.","verifiedAdjustments":"허벅지 패드, 손잡이/바 선택, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Wide Pulldown Front · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "넓은 그립으로 광배 바깥쪽을 느끼며 당기기"
+
+M-Torture Torture Wide Pulldown Front(NT-T-WP(F))로 와이드 그립 전면 풀다운. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 허벅지 고정, 바 폭, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+와이드 바를 가슴 상부로 당겼다 올리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손을 가슴 앞으로만 당겨 광배 자극이 떨어지는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Wide Pulldown Front의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"넓은 그립으로 광배 바깥쪽을 느끼며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Wide Pulldown Front · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Use a wide grip and pull to feel the outer lats"
+
+M-Torture Torture Wide Pulldown Front(NT-T-WP(F))로 와이드 그립 전면 풀다운입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 허벅지 고정, 바 폭, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Wide Pulldown Front. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Use a wide grip and pull to feel the outer lats. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Wide Pulldown Front","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/wide-pulldown-front","verifiedStructure":"M-Torture Torture Wide Pulldown Front(NT-T-WP(F))로 와이드 그립 전면 풀다운입니다.","verifiedAdjustments":"시트, 허벅지 고정, 바 폭, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '와이드 랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Wide Pulldown Front · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "바를 목 뒤가 아닌 쇄골·가슴 상부로 당기기"
+
+Torture Wide Pulldown Front로 전면(Front) 궤적의 풀다운 머신. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 허벅지 패드, 바, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앞에서 아래로 당겼다 천천히 신장.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 바를 목 뒤로 넘겨 어깨를 압박하는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Wide Pulldown Front의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"바를 목 뒤가 아닌 쇄골·가슴 상부로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Wide Pulldown Front · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Pull the bar to the collarbone/upper chest, not behind the neck"
+
+Torture Wide Pulldown Front로 전면(Front) 궤적의 풀다운 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 허벅지 패드, 바, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Wide Pulldown Front. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pull the bar to the collarbone/upper chest, not behind the neck. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Wide Pulldown Front","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/wide-pulldown-front","verifiedStructure":"Torture Wide Pulldown Front로 전면(Front) 궤적의 풀다운 머신입니다.","verifiedAdjustments":"시트, 허벅지 패드, 바, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 랫풀다운
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 깊이로 당기며 불균형을 확인"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 아래로 당겼다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 강한 쪽만 먼저 당겨 비대칭을 키우는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 랫풀다운"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral Lat Pulldown
+
+🎯 ONE KEY CUE
+🔥 "Pull both sides to the same depth and check for imbalance"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Lat Pulldown", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral Lat Pulldown 전용 모델이 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture High Row · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "가슴을 패드에 붙이고 팔꿈치를 뒤로 끌어당기기"
+
+M-Torture Torture High Row(NT-T-HR)로 높은 각도에서 당기는 하이로우. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 몸통 쪽으로 당겼다 천천히 신장.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 승모만 으쓱하며 손만 당기는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture High Row의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 패드에 붙이고 팔꿈치를 뒤로 끌어당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture High Row · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the chest on the pad and drive the elbows back"
+
+M-Torture Torture High Row(NT-T-HR)로 높은 각도에서 당기는 하이로우입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture High Row. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the chest on the pad and drive the elbows back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture High Row","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/high-row","verifiedStructure":"M-Torture Torture High Row(NT-T-HR)로 높은 각도에서 당기는 하이로우입니다.","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하이로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 하이로우
+
+🎯 ONE KEY CUE
+🔥 "높은 궤적에서 좌우를 대칭으로 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 하이로우 궤적으로 당기기.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 과도하게 회전시키며 당기는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 하이로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral High Row
+
+🎯 ONE KEY CUE
+🔥 "Pull both sides symmetrically along a high-row path"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral High Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral High Row 전용 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 하이로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Row · OnHim
+
+🎯 ONE KEY CUE
+🔥 "가슴을 편 채 팔꿈치를 옆구리로 당기기"
+
+OnHim Seated Row로 앉아서 수행하는 기본 시티드 로우. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드(해당 시), 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 복부 쪽으로 당겼다 천천히 뻗기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과도하게 말며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Seated Row의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 편 채 팔꿈치를 옆구리로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Row · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep the chest tall and pull the elbows to the ribs"
+
+OnHim Seated Row로 앉아서 수행하는 기본 시티드 로우입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드(해당 시), 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Seated Row. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the chest tall and pull the elbows to the ribs. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Seated Row","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/seated-row","verifiedStructure":"OnHim Seated Row로 앉아서 수행하는 기본 시티드 로우입니다.","verifiedAdjustments":"시트, 가슴 패드(해당 시), 손잡이, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Low Row (Rotary) (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "코어를 고정하고 견갑을 모으며 당기기"
+
+일반 '로우 머신' 단일 SKU명은 없고 Torture Low Row(Rotary)가 대표 로우로 확인됩니다. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 풋 지지, 손잡이, 중량을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 몸쪽으로 당겼다 천천히 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 크게 흔들며 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Low Row (Rotary) (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"코어를 고정하고 견갑을 모으며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Low Row (Rotary) (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Brace the core and pull while retracting the scapulae"
+
+일반 '로우 머신' 단일 SKU명은 없고 Torture Low Row(Rotary)가 대표 로우로 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 풋 지지, 손잡이, 중량.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Low Row (Rotary) (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the core and pull while retracting the scapulae. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Torture Low Row (Rotary) (New)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/low-row-2-r","verifiedStructure":"일반 '로우 머신' 단일 SKU명은 없고 Torture Low Row(Rotary)가 대표 로우로 확인됩니다.","verifiedAdjustments":"시트, 풋 지지, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Low Row (Rotary) (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "낮은 손잡이에서 팔꿈치를 뒤로 낮게 당기기"
+
+M-Torture Torture Low Row(Rotary)(NT-T-LR-2)로 낮은 궤적의 로우 로우. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이 높이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 풋 지지, 손잡이 높이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+낮은 궤적으로 당겼다 천천히 신장.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 어깨만 으쓱하고 광배를 쓰지 않는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Low Row (Rotary) (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"낮은 손잡이에서 팔꿈치를 뒤로 낮게 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Low Row (Rotary) (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "From a low handle path, drive the elbows back and low"
+
+M-Torture Torture Low Row(Rotary)(NT-T-LR-2)로 낮은 궤적의 로우 로우입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 풋 지지, 손잡이 높이, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Low Row (Rotary) (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"From a low handle path, drive the elbows back and low. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Low Row (Rotary) (New)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/low-row-2-r","verifiedStructure":"M-Torture Torture Low Row(Rotary)(NT-T-LR-2)로 낮은 궤적의 로우 로우입니다.","verifiedAdjustments":"시트, 풋 지지, 손잡이 높이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Front Row · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "중간 높이에서 팔꿈치를 뒤로 수평에 가깝게 당기기"
+
+Mid Row 명칭 SKU는 없고 Torture Front Row(NT-T-FR2)가 중간 높이 로우에 가장 가깝습니다. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 중량을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+중간 궤적으로 당겼다 천천히 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손잡이를 너무 높게/낮게 당겨 자극이 분산되는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Front Row의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"중간 높이에서 팔꿈치를 뒤로 수평에 가깝게 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Front Row · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Pull the elbows back nearly horizontally at mid height"
+
+Mid Row 명칭 SKU는 없고 Torture Front Row(NT-T-FR2)가 중간 높이 로우에 가장 가깝습니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 중량.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Front Row. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pull the elbows back nearly horizontally at mid height. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Torture Front Row","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/front-row","verifiedStructure":"Mid Row 명칭 SKU는 없고 Torture Front Row(NT-T-FR2)가 중간 높이 로우에 가장 가깝습니다.","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '미드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 로우
+
+🎯 ONE KEY CUE
+🔥 "좌우 독립 암을 대칭으로 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 로우 후 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 강한 쪽만 크게 당겨 비대칭을 키우는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral Row
+
+🎯 ONE KEY CUE
+🔥 "Pull both independent arms symmetrically"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral Row 전용 모델이 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 로우 로우
+
+🎯 ONE KEY CUE
+🔥 "낮은 궤적에서 좌우를 같은 깊이로 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 풋 지지, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 낮은 로우 궤적으로 독립 반복.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 골반이 돌아가며 한쪽으로 치우치는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 로우 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral Low Row
+
+🎯 ONE KEY CUE
+🔥 "Pull both sides to equal depth on a low-row path"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 풋 지지, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Low Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral Low Row 전용 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 풋 지지, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 체스트 서포티드 로우
+
+🎯 ONE KEY CUE
+🔥 "가슴을 패드에 고정하고 팔꿈치로만 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+가슴 패드, 시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+가슴 지지 상태에서 당겼다 천천히 신장.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 패드를 떠나 상체를 들어 올리며 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "체스트 서포티드 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 가슴 → 패드에 고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴은 패드에, 팔꿈치는 뒤로, 끝에서 1초."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Chest Supported Row
+
+🎯 ONE KEY CUE
+🔥 "Pin the chest to the pad and pull only with the elbows"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 가슴 패드, 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Chest Supported Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Chest → glued to pad
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Chest on the pad, elbows back, one-second squeeze."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 공개 카탈로그에 Chest-Supported Row 전용 머신 SKU가 명확히 확인되지 않습니다.","verifiedAdjustments":"가슴 패드, 시트, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 서포티드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Linear T-Bar Row (NEW) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "가슴을 붙인 채 팔꿈치로 T바를 몸통으로 당기기"
+
+M-Torture Torture Linear T-Bar Row로 선형 가이드 T바 로우 머신. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이 높이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+가슴/복부 패드, 손잡이 높이, 플레이트 로딩을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 몸쪽으로 당겼다 천천히 내리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 수평(리니어) 궤적은 45° 레그 프레스와 골반 느낌이 다릅니다. 시트에 골반을 붙인 채 수평으로 민다는 감각을 먼저 만드세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 붙인 채 팔꿈치로 T바를 몸통으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Linear T-Bar Row (NEW) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the chest braced and pull the T-bar to the torso with the elbows"
+
+M-Torture Torture Linear T-Bar Row로 선형 가이드 T바 로우 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 가슴/복부 패드, 손잡이 높이, 플레이트 로딩.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Linear/horizontal paths feel different from a 45° sled. Keep the pelvis glued and press on the horizontal line.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the chest braced and pull the T-bar to the torso with the elbows. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Linear T-Bar Row (NEW)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/torture-linear-t-bar-row","verifiedStructure":"M-Torture Torture Linear T-Bar Row로 선형 가이드 T바 로우 머신입니다.","verifiedAdjustments":"가슴/복부 패드, 손잡이 높이, 플레이트 로딩","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = 'T바 로우 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 풀오버
+
+🎯 ONE KEY CUE
+🔥 "갈비뼈를 고정하고 광배로 아치를 그리며 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+팔 패드를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔 패드/손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+머리 위쪽에서 엉덩이 방향으로 호를 그리며 당기기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치만 굽혀 삼두 운동으로 바꾸는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "풀오버"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"갈비뼈를 고정하고 광배로 아치를 그리며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Pullover
+
+🎯 ONE KEY CUE
+🔥 "Brace the ribcage and pull in an arc with the lats"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔 패드/손잡이, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Pullover", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the ribcage and pull in an arc with the lats. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech OnHim/M-Torture 카탈로그에 Pullover 전용 머신 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 팔 패드/손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '풀오버';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Chin-Up, Dip Assist (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "어깨를 내리고 가슴을 들어 바 아래로 당기기"
+
+OnHim Chin-Up, Dip Assist(Thomson)로 어시스트 친업·풀업이 가능한 복합 어시스트. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+바 그립를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎 패드(어시스트 중량), 바 그립, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+매달린 자세에서 몸을 끌어올렸다 천천히 내리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 몸통을 흔들며 턱만 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Chin-Up, Dip Assist (Thomson)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어깨를 내리고 가슴을 들어 바 아래로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Chin-Up, Dip Assist (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Depress the shoulders, lift the chest, and pull the body to the bar"
+
+OnHim Chin-Up, Dip Assist(Thomson)로 어시스트 친업·풀업이 가능한 복합 어시스트입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎 패드(어시스트 중량), 바 그립, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Chin-Up, Dip Assist (Thomson). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Depress the shoulders, lift the chest, and pull the body to the bar. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Chin-Up, Dip Assist (Thomson)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/chin-up-dip-assist","verifiedStructure":"OnHim Chin-Up, Dip Assist(Thomson)로 어시스트 친업·풀업이 가능한 복합 어시스트입니다.","verifiedAdjustments":"무릎 패드(어시스트 중량), 바 그립, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 친업';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Shoulder Press · OnHim
+
+🎯 ONE KEY CUE
+🔥 "코어를 고정하고 손잡이를 귀 옆으로 밀어 올리기"
+
+OnHim Shoulder Press로 앉아서 수행하는 셀렉터라이즈드 숄더 프레스. 셀렉터 스택 · OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이 시작 위치를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 손잡이 시작 위치, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 위로 밀었다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과아치해 흉부로 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(OnHim Shoulder Press)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"코어를 고정하고 손잡이를 귀 옆으로 밀어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Shoulder Press · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Brace the core and press the handles up beside the ears"
+
+OnHim Shoulder Press로 앉아서 수행하는 셀렉터라이즈드 숄더 프레스입니다. Lean into the selectorized stack design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 손잡이 시작 위치, 중량 스택.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (OnHim Shoulder Press), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the core and press the handles up beside the ears. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Shoulder Press","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/shoulder-press","verifiedStructure":"OnHim Shoulder Press로 앉아서 수행하는 셀렉터라이즈드 숄더 프레스입니다.","verifiedAdjustments":"시트 높이, 손잡이 시작 위치, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 숄더 프레스
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 높이로 밀어 올리며 확인"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 프레스 후 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 올려 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 숄더 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral Shoulder Press
+
+🎯 ONE KEY CUE
+🔥 "Press both sides to the same height and check balance"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Double-check both sides start at the same height.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Press or raise on the guided path, then lower without dumping the shoulders. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Shoulder Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral Shoulder Press 전용 모델이 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Plate Shoulder Press · Plate Loaded
+
+🎯 ONE KEY CUE
+🔥 "견갑을 안정시킨 채 수직으로 밀기"
+
+Plate Loaded Plate Shoulder Press로 플레이트 로딩 숄더 프레스. 플레이트 로딩 · Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 양쪽 플레이트 로딩을 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 위로 밀었다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 과도하게 벌려 어깨 전면에 압박을 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Plate Shoulder Press은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"견갑을 안정시킨 채 수직으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Plate Shoulder Press · Plate Loaded
+
+🎯 ONE KEY CUE
+🔥 "Stabilize the scapulae and press vertically"
+
+Plate Loaded Plate Shoulder Press로 플레이트 로딩 숄더 프레스입니다. Lean into the plate-loaded design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 양쪽 플레이트 로딩. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Plate Shoulder Press is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Stabilize the scapulae and press vertically. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Plate Shoulder Press","manufacturer":"Newtech Wellness","productSeries":"Plate Loaded","sourceUrl":"https://newtechworldwide.com/products/plate-shouldwe-press","verifiedStructure":"Plate Loaded Plate Shoulder Press로 플레이트 로딩 숄더 프레스입니다.","verifiedAdjustments":"시트, 손잡이, 양쪽 플레이트 로딩","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Standing Lateral Raise · OnHim
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 살짝 굽힌 채 측면으로 들기"
+
+OnHim Standing Lateral Raise로 서서 수행하는 사이드 레터럴 레이즈 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풋 지지, 암 패드 높이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 옆으로 들어 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 승모를 으쓱하며 무게를 들어 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Standing Lateral Raise의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 살짝 굽힌 채 측면으로 들기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Standing Lateral Raise · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep a soft elbow and raise the arms out to the sides"
+
+OnHim Standing Lateral Raise로 서서 수행하는 사이드 레터럴 레이즈 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풋 지지, 암 패드 높이, 중량 스택.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Standing Lateral Raise. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep a soft elbow and raise the arms out to the sides. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Standing Lateral Raise","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/standing-lateral-raise","verifiedStructure":"OnHim Standing Lateral Raise로 서서 수행하는 사이드 레터럴 레이즈 머신입니다.","verifiedAdjustments":"풋 지지, 암 패드 높이, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레터럴 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Lateral Raise · OnHim
+
+🎯 ONE KEY CUE
+🔥 "상체를 고정하고 측면 어깨로만 들기"
+
+OnHim Seated Lateral Raise로 앉아서 하는 머신 레터럴 레이즈. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 암 패드, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+암 패드를 옆으로 들어 올렸다 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 몸을 흔들며 드는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Seated Lateral Raise의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상체를 고정하고 측면 어깨로만 들기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Lateral Raise · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Brace the torso and lift only with the side delts"
+
+OnHim Seated Lateral Raise로 앉아서 하는 머신 레터럴 레이즈입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 암 패드, 중량 스택.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Seated Lateral Raise. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the torso and lift only with the side delts. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Seated Lateral Raise","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/lateral-raise","verifiedStructure":"OnHim Seated Lateral Raise로 앉아서 하는 머신 레터럴 레이즈입니다.","verifiedAdjustments":"시트 높이, 암 패드, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '머신 레터럴 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Pec Dec Fly (With Reverse) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "가슴을 고정하고 후면 삼각근으로 벌리기"
+
+리어델트 단독 SKU는 없고 Pec Dec Fly 리버스 모드로 후면 어깨 자극이 확인됩니다. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 리버스 암 설정, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+팔을 뒤에서 벌렸다 천천히 모으기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔을 과도하게 펴 승모 위주로 드는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Pec Dec Fly (With Reverse)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 고정하고 후면 삼각근으로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Pec Dec Fly (With Reverse) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Brace the chest and open with the rear delts"
+
+리어델트 단독 SKU는 없고 Pec Dec Fly 리버스 모드로 후면 어깨 자극이 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 리버스 암 설정, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Pec Dec Fly (With Reverse). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the chest and open with the rear delts. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"OnHim Pec Dec Fly (With Reverse)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/pec-dec-fly-with-reverse","verifiedStructure":"리어델트 단독 SKU는 없고 Pec Dec Fly 리버스 모드로 후면 어깨 자극이 확인됩니다.","verifiedAdjustments":"시트, 리버스 암 설정, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 프론트 레이즈
+
+🎯 ONE KEY CUE
+🔥 "어깨 높이까지만 앞쪽으로 통제하며 들기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트/풋 지지, 손잡이·패드, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 앞으로 들어 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 머리 위까지 들어 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "프론트 레이즈"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어깨 높이까지만 앞쪽으로 통제하며 들기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Front Raise
+
+🎯 ONE KEY CUE
+🔥 "Raise forward with control only to shoulder height"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트/풋 지지, 손잡이·패드, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Front Raise", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Raise forward with control only to shoulder height. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 카탈로그에 Front Raise 전용 머신 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트/풋 지지, 손잡이·패드, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 업라이트 로우
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 손보다 높게 유지하며 위로 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 쇄골 높이까지 당겼다 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 손목이 꺾이며 어깨를 과도하게 내회전하는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "업라이트 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 손보다 높게 유지하며 위로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Upright Row
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbows higher than the hands while pulling up"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Upright Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbows higher than the hands while pulling up. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Upright Row 전용 머신 SKU가 확인되지 않습니다.","verifiedAdjustments":"손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '업라이트 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 로테이터 머신
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 옆구리에 붙인 채 작은 각도로만 회전"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+팔꿈치 패드, 가동 범위, 가벼운 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+내회전·외회전을 천천히 반복.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무거운 무게로 큰 가동 범위를 억지로 만드는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "로테이터 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 옆구리에 붙인 채 작은 각도로만 회전. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Rotator Machine
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbow at the side and rotate only through a small range"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 팔꿈치 패드, 가동 범위, 가벼운 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Rotator Machine", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbow at the side and rotate only through a small range. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 공개 카탈로그에 Rotator Cuff 전용 머신 SKU가 확인되지 않습니다.","verifiedAdjustments":"팔꿈치 패드, 가동 범위, 가벼운 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로테이터 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 숄더 프레스 / 레터럴 복합 머신
+
+🎯 ONE KEY CUE
+🔥 "프레스와 레이즈를 구분해 각각 올바른 궤적으로 수행"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 프레스/레이즈 전환, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+프레스 후 레터럴, 또는 반대 순으로 분리 반복.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한 세팅으로 두 동작을 억지로 섞는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "숄더 프레스 / 레터럴 복합 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"프레스와 레이즈를 구분해 각각 올바른 궤적으로 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Shoulder Press / Lateral Combo
+
+🎯 ONE KEY CUE
+🔥 "Separate press and raise patterns and use the correct path for each"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 프레스/레이즈 전환, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Shoulder Press / Lateral Combo", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Separate press and raise patterns and use the correct path for each. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 카탈로그에 숄더 프레스와 레터럴이 한 프레임인 복합 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 프레스/레이즈 전환, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스 / 레터럴 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Power Leg Press (Thomson) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "허리를 등판에 붙인 채 발뒤꿈치로 밀기"
+
+M-Torture Torture Power Leg Press(Thomson)(NT-T-PLP)로 대표 레그 프레스. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+등판 각도, 발 위치(풋 지지), 안전 스토퍼, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+풋 지지판을 밀어 올렸다 천천히 굽히기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Power Leg Press (Thomson)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Power Leg Press (Thomson) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the low back on the pad and drive through the heels"
+
+M-Torture Torture Power Leg Press(Thomson)(NT-T-PLP)로 대표 레그 프레스입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 등판 각도, 발 위치(풋 지지), 안전 스토퍼, 플레이트.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Power Leg Press (Thomson). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Power Leg Press (Thomson)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/power-leg-press","verifiedStructure":"M-Torture Torture Power Leg Press(Thomson)(NT-T-PLP)로 대표 레그 프레스입니다.","verifiedAdjustments":"등판 각도, 발 위치(풋 지지), 안전 스토퍼, 플레이트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Power Leg Press Premium (Thomson) (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "경사 궤적에서 무릎이 발끝 방향을 유지하게 밀기"
+
+Torture Power Leg Press Premium(Thomson)로 경사(약 45도급) 파워 레그 프레스. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+등판, 발 위치(풋 지지), 안전핀, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+풋 지지판을 밀어 올렸다 통제하며 내리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들리고 허리가 말리는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Power Leg Press Premium (Thomson) (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Power Leg Press Premium (Thomson) (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "On the angled sled, press while keeping knees tracking over the toes"
+
+Torture Power Leg Press Premium(Thomson)로 경사(약 45도급) 파워 레그 프레스입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 등판, 발 위치(풋 지지), 안전핀, 플레이트.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Power Leg Press Premium (Thomson) (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Power Leg Press Premium (Thomson) (New)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/toture-power-leg-press-premium-thomsonnew","verifiedStructure":"Torture Power Leg Press Premium(Thomson)로 경사(약 45도급) 파워 레그 프레스입니다.","verifiedAdjustments":"등판, 발 위치(풋 지지), 안전핀, 플레이트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '45도 레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Leg Press (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정하고 수평으로 밀어내기"
+
+OnHim Seated Leg Press(Thomson)(NT-OH-SLP)로 수평·좌식 레그 프레스. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 거리부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+수평 궤적에 맞춰 발판 중앙에 발을 안정적으로 두세요. 무릎·발끝 방향을 맞춥니다.
+⚙️ 조절 포인트
+시트 거리, 발 위치(풋 지지), 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+풋 지지판을 앞으로 밀었다 천천히 복귀.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 과도하게 잠그며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 수평(리니어) 궤적은 45° 레그 프레스와 골반 느낌이 다릅니다. 시트에 골반을 붙인 채 수평으로 민다는 감각을 먼저 만드세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반은 시트에, 발 전체로 수평으로 밀고, 복귀는 2~3초."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Leg Press (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis and press the platform horizontally"
+
+OnHim Seated Leg Press(Thomson)(NT-OH-SLP)로 수평·좌식 레그 프레스입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet on the horizontal path and keep knees tracking with toes.
+⚙️ Adjustments
+Check 시트 거리, 발 위치(풋 지지), 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Linear/horizontal paths feel different from a 45° sled. Keep the pelvis glued and press on the horizontal line.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pelvis glued, whole-foot horizontal drive, 2–3 sec return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Seated Leg Press (Thomson)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/seated-leg-press","verifiedStructure":"OnHim Seated Leg Press(Thomson)(NT-OH-SLP)로 수평·좌식 레그 프레스입니다.","verifiedAdjustments":"시트 거리, 발 위치(풋 지지), 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '수평 레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Hack Squat (Thomson) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "등을 패드에 붙이고 무릎이 발끝 위로 가게 앉았다 일어나기"
+
+M-Torture Torture Hack Squat(Thomson)로 등판 지지 핵 스쿼트. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+어깨 패드, 등판, 발 위치(풋 지지), 안전 스토퍼, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+캐리지를 내려 스쿼트 후 밀어 올리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 발 위치가 너무 낮아 무릎만 과굴곡되는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Hack Squat (Thomson)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Hack Squat (Thomson) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the back on the pad and squat with knees tracking over the toes"
+
+M-Torture Torture Hack Squat(Thomson)로 등판 지지 핵 스쿼트입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 어깨 패드, 등판, 발 위치(풋 지지), 안전 스토퍼, 플레이트.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Hack Squat (Thomson). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Hack Squat (Thomson)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/hack-squat","verifiedStructure":"M-Torture Torture Hack Squat(Thomson)로 등판 지지 핵 스쿼트입니다.","verifiedAdjustments":"어깨 패드, 등판, 발 위치(풋 지지), 안전 스토퍼, 플레이트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '핵 스쿼트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Hack Press (Thomson) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "상체를 고정하고 하체로 프레스하듯 밀어 올리기"
+
+Squat Press 명칭 SKU는 없고 Torture Hack Press(NT-T-HP)가 스쿼트·프레스 혼합형으로 확인됩니다. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+등판/어깨 패드, 발 위치(풋 지지), 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+앉았다 발바닥으로 밀어 올리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎만 튕기며 가동 범위를 줄이는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Hack Press (Thomson)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Hack Press (Thomson) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Brace the torso and drive up in a squat-press pattern"
+
+Squat Press 명칭 SKU는 없고 Torture Hack Press(NT-T-HP)가 스쿼트·프레스 혼합형으로 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 등판/어깨 패드, 발 위치(풋 지지), 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Hack Press (Thomson). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Torture Hack Press (Thomson)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/hack-press","verifiedStructure":"Squat Press 명칭 SKU는 없고 Torture Hack Press(NT-T-HP)가 스쿼트·프레스 혼합형으로 확인됩니다.","verifiedAdjustments":"등판/어깨 패드, 발 위치(풋 지지), 플레이트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스쿼트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Belt Squat (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "상체 중립을 유지한 채 벨트로 앉아 일어나기"
+
+M-Torture Torture Belt Squat로 벨트에 하중을 거는 벨트 스쿼트. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+벨트 높이, 발 위치(풋 지지 플랫폼), 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+플랫폼에서 스쿼트 후 일어서기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과도하게 숙여 벨트만 당기는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Belt Squat (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Belt Squat (New) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep a neutral torso and sit-stand against the belt load"
+
+M-Torture Torture Belt Squat로 벨트에 하중을 거는 벨트 스쿼트입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 벨트 높이, 발 위치(풋 지지 플랫폼), 플레이트.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Belt Squat (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Belt Squat (New)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/torture-belt-squat-new","verifiedStructure":"M-Torture Torture Belt Squat로 벨트에 하중을 거는 벨트 스쿼트입니다.","verifiedAdjustments":"벨트 높이, 발 위치(풋 지지 플랫폼), 플레이트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '벨트 스쿼트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Leg Extension · OnHim
+
+🎯 ONE KEY CUE
+🔥 "엉덩이를 붙인 채 무릎만으로 펴기"
+
+OnHim Leg Extension으로 대퇴사두 고립용 레그 익스텐션. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 백패드, 발목 롤러, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+발목 패드를 위로 펴었다 천천히 굽히기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 젖히며 반동으로 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Leg Extension의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Leg Extension · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep the hips down and extend only at the knees"
+
+OnHim Leg Extension으로 대퇴사두 고립용 레그 익스텐션입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 백패드, 발목 롤러, 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Leg Extension. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Leg Extension","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/leg-extension","verifiedStructure":"OnHim Leg Extension으로 대퇴사두 고립용 레그 익스텐션입니다.","verifiedAdjustments":"시트, 백패드, 발목 롤러, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Leg Curl (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "허벅지를 고정한 채 발뒤꿈치로 당기기"
+
+OnHim Seated Leg Curl로 앉아서 수행하는 햄스트링 컬. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 허벅지 고정 패드, 발목 롤러, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+발목 패드를 아래로 당겼다 천천히 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들리고 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Seated Leg Curl (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Leg Curl (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Lock the thighs down and curl with the heels"
+
+OnHim Seated Leg Curl로 앉아서 수행하는 햄스트링 컬입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 허벅지 고정 패드, 발목 롤러, 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Seated Leg Curl (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Seated Leg Curl (New)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/onhim-seated-leg-curl-new","verifiedStructure":"OnHim Seated Leg Curl로 앉아서 수행하는 햄스트링 컬입니다.","verifiedAdjustments":"시트, 허벅지 고정 패드, 발목 롤러, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Leg Curl · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "골반을 패드에 붙인 채 발뒤꿈치로 당기기"
+
+M-Torture Torture Leg Curl로 엎드려(라잉) 수행하는 레그 컬. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+골반 패드, 발목 롤러, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+발목 패드를 엉덩이 쪽으로 당겼다 내리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 들어 올리는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Leg Curl의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Leg Curl · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the hips on the pad and curl with the heels"
+
+M-Torture Torture Leg Curl로 엎드려(라잉) 수행하는 레그 컬입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 골반 패드, 발목 롤러, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Leg Curl. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Leg Curl","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/leg-curl-2","verifiedStructure":"M-Torture Torture Leg Curl로 엎드려(라잉) 수행하는 레그 컬입니다.","verifiedAdjustments":"골반 패드, 발목 롤러, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '라잉 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 스탠딩 레그 컬
+
+🎯 ONE KEY CUE
+🔥 "서는 자세에서 한 다리씩 발뒤꿈치로 당기기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+지지 패드, 발목 롤러, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+한 다리로 컬 후 천천히 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 크게 숙이며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "스탠딩 레그 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Standing Leg Curl
+
+🎯 ONE KEY CUE
+🔥 "In a standing setup, curl one heel at a time"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 지지 패드, 발목 롤러, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Standing Leg Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Standing Leg Curl 전용 SKU는 없고 Kneeling Leg Curl만 확인됩니다.","verifiedAdjustments":"지지 패드, 발목 롤러, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 싱글 레그 컬
+
+🎯 ONE KEY CUE
+🔥 "한 다리씩 대칭 가동 범위로 컬하기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트/패드, 발목 롤러, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+좌·우를 번갈아 컬 후 복귀.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 강한 다리만 깊게 당기는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "싱글 레그 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Single Leg Curl
+
+🎯 ONE KEY CUE
+🔥 "Curl one leg at a time through a matched range"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트/패드, 발목 롤러, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Single Leg Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Single Leg Curl 전용 모델명이 확인되지 않습니다.","verifiedAdjustments":"시트/패드, 발목 롤러, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '싱글 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Hip Thrust · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "턱을 살짝 당기고 엉덩이로 천장 밀어 올리기"
+
+M-Torture Torture Hip Thrust(NT-T-HTT)로 머신 힙 쓰러스트. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+등 패드, 벨트/패드 위치, 풋 지지, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+발을 디딘 채 고관절을 신전했다 내리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 무릎만 펴는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Hip Thrust의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"턱을 살짝 당기고 엉덩이로 천장 밀어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Hip Thrust · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Tuck the chin slightly and drive the hips to the ceiling"
+
+M-Torture Torture Hip Thrust(NT-T-HTT)로 머신 힙 쓰러스트입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 등 패드, 벨트/패드 위치, 풋 지지, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Hip Thrust. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Tuck the chin slightly and drive the hips to the ceiling. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Hip Thrust","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/hip-thrust","verifiedStructure":"M-Torture Torture Hip Thrust(NT-T-HTT)로 머신 힙 쓰러스트입니다.","verifiedAdjustments":"등 패드, 벨트/패드 위치, 풋 지지, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 쓰러스트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 글루트 드라이브
+
+🎯 ONE KEY CUE
+🔥 "골반을 전방으로 밀어 올리며 둔근 수축"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+등 패드, 풋 지지, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+고관절 신전 후 천천히 하강.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 요추로만 들어 올리는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "글루트 드라이브"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반을 전방으로 밀어 올리며 둔근 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Glute Drive
+
+🎯 ONE KEY CUE
+🔥 "Drive the pelvis forward and squeeze the glutes at the top"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 등 패드, 풋 지지, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Glute Drive", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Drive the pelvis forward and squeeze the glutes at the top. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Glute Drive 명칭의 전용 SKU가 확인되지 않습니다(힙 쓰러스트와 별도).","verifiedAdjustments":"등 패드, 풋 지지, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 드라이브';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Glute Kick-Back · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정한 채 엉덩이로 뒤로 차기"
+
+M-Torture Torture Glute Kick-Back으로 둔근 킥백 머신. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+손/가슴 지지, 발목·허벅지 패드, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+무릎을 약간 굽힌 채 다리를 뒤로 뻗었다 복귀.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 반동으로 차는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Glute Kick-Back의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반을 고정한 채 엉덩이로 뒤로 차기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Glute Kick-Back · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis and kick back with the glute"
+
+M-Torture Torture Glute Kick-Back으로 둔근 킥백 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 손/가슴 지지, 발목·허벅지 패드, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Glute Kick-Back. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the pelvis and kick back with the glute. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Glute Kick-Back","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/glute-kick-back-2","verifiedStructure":"M-Torture Torture Glute Kick-Back으로 둔근 킥백 머신입니다.","verifiedAdjustments":"손/가슴 지지, 발목·허벅지 패드, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 킥백';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Hip Abduction (Single Move) (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "상체를 세운 채 무릎을 바깥으로 벌리기"
+
+OnHim Hip Abduction(Single Move)로 고관절 외전 전용 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 무릎·허벅지 패드, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+패드를 외전했다 천천히 모으기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 패드를 튕기듯 벌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Hip Abduction (Single Move) (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상체를 세운 채 무릎을 바깥으로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Hip Abduction (Single Move) (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep the torso upright and open the knees outward"
+
+OnHim Hip Abduction(Single Move)로 고관절 외전 전용 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 무릎·허벅지 패드, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Hip Abduction (Single Move) (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the torso upright and open the knees outward. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Hip Abduction (Single Move) (New)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/hip-abduction-single-move","verifiedStructure":"OnHim Hip Abduction(Single Move)로 고관절 외전 전용 머신입니다.","verifiedAdjustments":"시트, 무릎·허벅지 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어브덕션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Hip Adduction/Abduction Combo · OnHim
+
+🎯 ONE KEY CUE
+🔥 "무릎을 안쪽으로 모으며 내전근 수축"
+
+어덕션 단독 SKU보다 OnHim Hip Adduction/Abduction Combo의 내전 모드로 확인됩니다. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 패드 방향(내전), 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+패드를 모았다 천천히 벌리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 숙이며 반동으로 모으는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Hip Adduction/Abduction Combo의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"무릎을 안쪽으로 모으며 내전근 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Hip Adduction/Abduction Combo · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Squeeze the knees inward and contract the adductors"
+
+어덕션 단독 SKU보다 OnHim Hip Adduction/Abduction Combo의 내전 모드로 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 패드 방향(내전), 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Hip Adduction/Abduction Combo. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Squeeze the knees inward and contract the adductors. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"OnHim Hip Adduction/Abduction Combo","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/hip-adduction-abduction-combo","verifiedStructure":"어덕션 단독 SKU보다 OnHim Hip Adduction/Abduction Combo의 내전 모드로 확인됩니다.","verifiedAdjustments":"시트, 패드 방향(내전), 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어덕션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Hip Adduction/Abduction Combo · OnHim
+
+🎯 ONE KEY CUE
+🔥 "목표(외전/내전)에 맞게 패드 방향을 맞춘 뒤 통제 반복"
+
+글루트/힙 통합 명칭 SKU는 없고 외전·내전 콤보가 힙 머신으로 확인됩니다. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 패드 모드 전환, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+선택한 모드의 가동 범위로 천천히 반복.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 모드를 확인하지 않고 잘못된 방향으로 힘을 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Hip Adduction/Abduction Combo의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목표(외전/내전)에 맞게 패드 방향을 맞춘 뒤 통제 반복. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Hip Adduction/Abduction Combo · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Set the pad direction for abduction or adduction, then move with control"
+
+글루트/힙 통합 명칭 SKU는 없고 외전·내전 콤보가 힙 머신으로 확인됩니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 패드 모드 전환, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Hip Adduction/Abduction Combo. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set the pad direction for abduction or adduction, then move with control. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"OnHim Hip Adduction/Abduction Combo","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/hip-adduction-abduction-combo","verifiedStructure":"글루트/힙 통합 명칭 SKU는 없고 외전·내전 콤보가 힙 머신으로 확인됩니다.","verifiedAdjustments":"시트, 패드 모드 전환, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 / 힙 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Standing Calf Raise (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "발볼로 밀어 올리고 정점에서 종아리 수축"
+
+OnHim Standing Calf Raise로 서서 하는 카프 레이즈 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+어깨 패드 높이, 풋 지지(발볼), 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+발뒤꿈치를 올렸다 천천히 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 굽혀 반동으로 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Standing Calf Raise (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Standing Calf Raise (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Drive through the balls of the feet and squeeze the calves at the top"
+
+OnHim Standing Calf Raise로 서서 하는 카프 레이즈 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 어깨 패드 높이, 풋 지지(발볼), 중량 스택.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Standing Calf Raise (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Standing Calf Raise (New)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/onhim-standing-calf-raise-new","verifiedStructure":"OnHim Standing Calf Raise로 서서 하는 카프 레이즈 머신입니다.","verifiedAdjustments":"어깨 패드 높이, 풋 지지(발볼), 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Seated Calf Raise (NEW) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "무릎 패드를 고정한 채 발볼로만 올리기"
+
+M-Torture Torture Seated Calf Raise로 앉아서 하는 시티드 카프. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+무릎 패드, 풋 지지(발볼), 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+발뒤꿈치를 올렸다 깊게 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들리고 무게를 튕기는
+자세가 무너지면 무게를 낮추세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Seated Calf Raise (NEW)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Seated Calf Raise (NEW) · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the knee pad locked and raise only through the balls of the feet"
+
+M-Torture Torture Seated Calf Raise로 앉아서 하는 시티드 카프입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 무릎 패드, 풋 지지(발볼), 중량.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Seated Calf Raise (NEW). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Seated Calf Raise (NEW)","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/torture-seated-calf-raise","verifiedStructure":"M-Torture Torture Seated Calf Raise로 앉아서 하는 시티드 카프입니다.","verifiedAdjustments":"무릎 패드, 풋 지지(발볼), 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 레그 프레스 카프
+
+🎯 ONE KEY CUE
+🔥 "레그 프레스에서 무릎을 편 채 발볼로만 카프"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+레그 프레스 풋 지지 위치, 안전 스토퍼, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+풋 지지 하단에서 발뒤꿈치를 올렸다 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 크게 굽히며 프레스와 섞는
+자세가 무너지면 무게를 낮추세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "레그 프레스 카프"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Leg Press Calf
+
+🎯 ONE KEY CUE
+🔥 "On a leg press, keep the knees soft-locked and raise only with the calves"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 레그 프레스 풋 지지 위치, 안전 스토퍼, 중량.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Leg Press Calf", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/m-torture","verifiedStructure":"Newtech 카탈로그에 Leg Press Calf 전용 파생 SKU는 확인되지 않습니다.","verifiedAdjustments":"레그 프레스 풋 지지 위치, 안전 스토퍼, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Arm Curl · OnHim
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 패드에 고정하고 손잡이만 끌어 올리기"
+
+OnHim Arm Curl로 셀렉터라이즈드 바이셉(암) 컬 머신. 셀렉터 스택 · OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 어깨 쪽으로 컬했다 천천히 펴기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 젖히며 반동으로 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(OnHim Arm Curl)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 패드에 고정하고 손잡이만 끌어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Arm Curl · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Pin the elbows to the pad and curl only the handles"
+
+OnHim Arm Curl로 셀렉터라이즈드 바이셉(암) 컬 머신입니다. Lean into the selectorized stack design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (OnHim Arm Curl), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pin the elbows to the pad and curl only the handles. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Arm Curl","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/arm-curl","verifiedStructure":"OnHim Arm Curl로 셀렉터라이즈드 바이셉(암) 컬 머신입니다.","verifiedAdjustments":"시트, 팔꿈치 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Preacher Curl Bench (Rotary) · Benches
+
+🎯 ONE KEY CUE
+🔥 "겨드랑이를 패드에 붙인 채 하단에서 통제 컬"
+
+Preacher Curl Bench(Rotary)로 프리처 패드를 갖춘 컬 벤치. Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 프리처 패드 각도, 바/덤벨을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+바를 올려 컬했다 천천히 신장.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨가 들리며 패드에서 떨어지는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Preacher Curl Bench (Rotary)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"겨드랑이를 패드에 붙인 채 하단에서 통제 컬. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Preacher Curl Bench (Rotary) · Benches
+
+🎯 ONE KEY CUE
+🔥 "Keep the armpits on the pad and curl with control from the bottom"
+
+Preacher Curl Bench(Rotary)로 프리처 패드를 갖춘 컬 벤치입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 프리처 패드 각도, 바/덤벨.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Preacher Curl Bench (Rotary). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the armpits on the pad and curl with control from the bottom. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Preacher Curl Bench (Rotary)","manufacturer":"Newtech Wellness","productSeries":"Benches","sourceUrl":"https://newtechworldwide.com/products/preacher-curl-bench","verifiedStructure":"Preacher Curl Bench(Rotary)로 프리처 패드를 갖춘 컬 벤치입니다.","verifiedAdjustments":"시트 높이, 프리처 패드 각도, 바/덤벨","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프리처 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 아이소래터럴 바이셉 컬
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 속도로 컬하며 불균형 확인"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 컬 후 펴기.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 강한 팔만 먼저 올리는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 바이셉 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Iso-Lateral Biceps Curl
+
+🎯 ONE KEY CUE
+🔥 "Curl both sides at the same speed and check balance"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Double-check both sides start at the same height.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Curl or extend only at the elbow, then reverse slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Biceps Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 카탈로그에 Iso-Lateral Biceps Curl 전용 모델이 확인되지 않습니다.","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 바이셉 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Arm Curl · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "상완을 고정하고 전완만으로 컬하기"
+
+M-Torture Torture Arm Curl로 암 컬(바이셉) 플레이트/토처 라인 머신. 플레이트 로딩 · M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 손잡이, 중량을 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 끌어올렸다 천천히 내리기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Arm Curl은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상완을 고정하고 전완만으로 컬하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Arm Curl · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Lock the upper arms and curl with the forearms only"
+
+M-Torture Torture Arm Curl로 암 컬(바이셉) 플레이트/토처 라인 머신입니다. Lean into the plate-loaded design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 손잡이, 중량. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Arm Curl is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Lock the upper arms and curl with the forearms only. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Arm Curl","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/arm-curl-2","verifiedStructure":"M-Torture Torture Arm Curl로 암 컬(바이셉) 플레이트/토처 라인 머신입니다.","verifiedAdjustments":"시트, 팔꿈치 패드, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '암 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Torture Overhead Extension · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 귀 옆에 고정하고 전완만 펴기"
+
+M-Torture Torture Overhead Extension(NT-T-OHE)로 오버헤드 삼두 익스텐션. M-Torture 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 등판, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+머리 위에서 팔을 펴었다 천천히 굽히기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치가 벌어지며 어깨로 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Torture Overhead Extension의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 귀 옆에 고정하고 전완만 펴기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Torture Overhead Extension · M-Torture
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbows by the ears and extend only the forearms"
+
+M-Torture Torture Overhead Extension(NT-T-OHE)로 오버헤드 삼두 익스텐션입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 등판, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Torture Overhead Extension. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbows by the ears and extend only the forearms. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Torture Overhead Extension","manufacturer":"Newtech Wellness","productSeries":"M-Torture","sourceUrl":"https://newtechworldwide.com/products/over-head-extension","verifiedStructure":"M-Torture Torture Overhead Extension(NT-T-OHE)로 오버헤드 삼두 익스텐션입니다.","verifiedAdjustments":"시트, 등판, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Dip · OnHim
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 몸통 가까이 두고 아래로 눌러 펴기"
+
+Triceps Press 단독 명칭보다 OnHim Seated Dip의 프레스/딥 패턴이 가장 가깝습니다. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 눌러 펴었다 천천히 굽히기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨가 말리며 가동 범위를 줄이는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Seated Dip의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 몸통 가까이 두고 아래로 눌러 펴기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Dip · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbows close and press down to extension"
+
+Triceps Press 단독 명칭보다 OnHim Seated Dip의 프레스/딥 패턴이 가장 가깝습니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Seated Dip. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbows close and press down to extension. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"OnHim Seated Dip","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/seated-dip","verifiedStructure":"Triceps Press 단독 명칭보다 OnHim Seated Dip의 프레스/딥 패턴이 가장 가깝습니다.","verifiedAdjustments":"시트, 손잡이, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Seated Dip · OnHim
+
+🎯 ONE KEY CUE
+🔥 "어깨를 안정시킨 채 삼두로 밀어 올리기"
+
+OnHim Seated Dip로 딥·삼두를 함께 자극하는 딥/트라이셉스 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트 높이를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이 폭를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트 높이, 손잡이 폭, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+딥 궤적으로 눌렀다 천천히 복귀.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 상체를 흔들며 미는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Seated Dip의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어깨를 안정시킨 채 삼두로 밀어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Seated Dip · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Stabilize the shoulders and drive up with the triceps"
+
+OnHim Seated Dip로 딥·삼두를 함께 자극하는 딥/트라이셉스 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트 높이, 손잡이 폭, 중량 스택.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Seated Dip. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Stabilize the shoulders and drive up with the triceps. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Seated Dip","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/seated-dip","verifiedStructure":"OnHim Seated Dip로 딥·삼두를 함께 자극하는 딥/트라이셉스 머신입니다.","verifiedAdjustments":"시트 높이, 손잡이 폭, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 / 트라이셉스 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 바이셉스 / 트라이셉스 복합 머신
+
+🎯 ONE KEY CUE
+🔥 "컬과 익스텐션을 구분해 각각 올바른 궤적으로 수행"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 모드 전환, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+바이셉 컬과 삼두 익스텐션을 분리 반복.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한 세팅으로 두 동작을 억지로 섞는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "바이셉스 / 트라이셉스 복합 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"컬과 익스텐션을 구분해 각각 올바른 궤적으로 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Biceps / Triceps Combo
+
+🎯 ONE KEY CUE
+🔥 "Separate curl and extension patterns and use the correct path for each"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 모드 전환, 중량.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Biceps / Triceps Combo", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Separate curl and extension patterns and use the correct path for each. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 카탈로그에 바이셉/트라이셉 통합 복합 머신 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 모드 전환, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉스 / 트라이셉스 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Sit Up · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "갈비뼈를 골반 쪽으로 말아 올리기"
+
+앱 크런치 셀렉터라이즈드 전용 SKU보다 Sit Up 스테이션이 복근 굴곡으로 확인됩니다. 셀렉터 스택 · Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+발 고정(풋 지지), 등판 각도를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 말아 올렸다 천천히 내리기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 목만 당겨 올라오는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(Sit Up)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Sit Up · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "Curl the ribcage toward the pelvis"
+
+앱 크런치 셀렉터라이즈드 전용 SKU보다 Sit Up 스테이션이 복근 굴곡으로 확인됩니다. Lean into the selectorized stack design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 발 고정(풋 지지), 등판 각도.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (Sit Up), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Sit Up","manufacturer":"Newtech Wellness","productSeries":"Benches / Bodyweight Stations","sourceUrl":"https://newtechworldwide.com/products/sit-up","verifiedStructure":"앱 크런치 셀렉터라이즈드 전용 SKU보다 Sit Up 스테이션이 복근 굴곡으로 확인됩니다.","verifiedAdjustments":"발 고정(풋 지지), 등판 각도","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '앱 크런치';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Dip & Leg Raise · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "골반을 말아 올리며 다리를 들어 올리기"
+
+어브도미널 전용 셀렉터 머신보다 Dip & Leg Raise의 레그 레이즈로 복근 자극이 확인됩니다. 셀렉터 스택 · Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+팔꿈치·등 지지, 풋 지지(다리)를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+무릎/다리를 들어 올렸다 천천히 내리기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 다리를 흔드는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(Dip & Leg Raise)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Dip & Leg Raise · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "Posteriorly tilt the pelvis and raise the legs"
+
+어브도미널 전용 셀렉터 머신보다 Dip & Leg Raise의 레그 레이즈로 복근 자극이 확인됩니다. Lean into the selectorized stack design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 팔꿈치·등 지지, 풋 지지(다리).
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (Dip & Leg Raise), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Dip & Leg Raise","manufacturer":"Newtech Wellness","productSeries":"Benches / Bodyweight Stations","sourceUrl":"https://newtechworldwide.com/products/dip-leg-raise","verifiedStructure":"어브도미널 전용 셀렉터 머신보다 Dip & Leg Raise의 레그 레이즈로 복근 자극이 확인됩니다.","verifiedAdjustments":"팔꿈치·등 지지, 풋 지지(다리)","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어브도미널';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Rotary Torso · OnHim
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정한 채 갈비뼈만 회전"
+
+OnHim Rotary Torso로 몸통 회전(로터리 토르소) 머신. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 무릎·골반 고정, 손잡이/패드, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+좌·우로 천천히 회전 반복.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎이 함께 돌아가며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Rotary Torso의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Rotary Torso · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Lock the pelvis and rotate only through the ribcage"
+
+OnHim Rotary Torso로 몸통 회전(로터리 토르소) 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 무릎·골반 고정, 손잡이/패드, 중량 스택.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Rotary Torso. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Rotary Torso","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/rotary-torso","verifiedStructure":"OnHim Rotary Torso로 몸통 회전(로터리 토르소) 머신입니다.","verifiedAdjustments":"시트, 무릎·골반 고정, 손잡이/패드, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로터리 토르소';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — 사이드 밴드
+
+🎯 ONE KEY CUE
+🔥 "옆구리를 길게 늘린 뒤 측면으로 말아 올리기"
+
+뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+측면으로 숙였다 옆구리로 일으켜 세우기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리만 꺾어 요추에 과부하를 주는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "사이드 밴드"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Side Bend
+
+🎯 ONE KEY CUE
+🔥 "Lengthen the side body then curl upward in a side bend"
+
+There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Side Bend", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"Newtech Wellness","productSeries":null,"sourceUrl":"https://newtechworldwide.com/collections/on-him","verifiedStructure":"Newtech 카탈로그에 Side Bend 전용 머신 SKU가 확인되지 않습니다.","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '사이드 밴드';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Roman Chair (45~90° Adjust Type) · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "골반을 패드에 두고 척추를 중립으로 펴기"
+
+Roman Chair(45~90° Adjust)로 백 익스텐션·힙 신전을 수행하는 로만 체어. Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+골반 패드 높이, 발목 고정(풋 지지), 각도를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 숙였다 중립까지 펴 올리기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 목을 과도하게 젖히며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Roman Chair (45~90° Adjust Type)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Roman Chair (45~90° Adjust Type) · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "Keep the hips on the pad and extend with a neutral spine"
+
+Roman Chair(45~90° Adjust)로 백 익스텐션·힙 신전을 수행하는 로만 체어입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 골반 패드 높이, 발목 고정(풋 지지), 각도.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Roman Chair (45~90° Adjust Type). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Roman Chair (45~90° Adjust Type)","manufacturer":"Newtech Wellness","productSeries":"Benches / Bodyweight Stations","sourceUrl":"https://newtechworldwide.com/products/roman-chair-45-90-adjust-type","verifiedStructure":"Roman Chair(45~90° Adjust)로 백 익스텐션·힙 신전을 수행하는 로만 체어입니다.","verifiedAdjustments":"골반 패드 높이, 발목 고정(풋 지지), 각도","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '백 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Reverse Hyper (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "상체를 고정하고 둔근·햄으로 다리를 뒤로 올리기"
+
+OnHim Reverse Hyper로 고관절 신전(힙 익스텐션) 리버스 하이퍼. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+복부·골반 패드, 발목 스트랩/패드, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+다리를 뒤로 올렸다 천천히 내리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 다리를 튕기는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Reverse Hyper (New)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상체를 고정하고 둔근·햄으로 다리를 뒤로 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Reverse Hyper (New) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Brace the torso and lift the legs back with the glutes and hamstrings"
+
+OnHim Reverse Hyper로 고관절 신전(힙 익스텐션) 리버스 하이퍼입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 복부·골반 패드, 발목 스트랩/패드, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Reverse Hyper (New). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the torso and lift the legs back with the glutes and hamstrings. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Reverse Hyper (New)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/onhim-reverse-hyper-new","verifiedStructure":"OnHim Reverse Hyper로 고관절 신전(힙 익스텐션) 리버스 하이퍼입니다.","verifiedAdjustments":"복부·골반 패드, 발목 스트랩/패드, 중량","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Dip & Leg Raise · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "레그 레이즈와 상체 지지를 구분해 코어로만 들기"
+
+복근/허리 복합 셀렉터 SKU보다 Dip & Leg Raise가 복근·코어 복합 스테이션으로 확인됩니다. 셀렉터 스택 · Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+⚙️ 조절 포인트
+팔꿈치 패드, 등 지지, 풋 지지를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+다리 올림과 지지 자세를 통제하며 반복.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 몸 전체를 흔드는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(Dip & Leg Raise)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Dip & Leg Raise · Benches / Bodyweight Stations
+
+🎯 ONE KEY CUE
+🔥 "Separate the leg raise from torso swinging and lift with the core"
+
+복근/허리 복합 셀렉터 SKU보다 Dip & Leg Raise가 복근·코어 복합 스테이션으로 확인됩니다. Lean into the selectorized stack design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 팔꿈치 패드, 등 지지, 풋 지지.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (Dip & Leg Raise), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Dip & Leg Raise","manufacturer":"Newtech Wellness","productSeries":"Benches / Bodyweight Stations","sourceUrl":"https://newtechworldwide.com/products/dip-leg-raise","verifiedStructure":"복근/허리 복합 셀렉터 SKU보다 Dip & Leg Raise가 복근·코어 복합 스테이션으로 확인됩니다.","verifiedAdjustments":"팔꿈치 패드, 등 지지, 풋 지지","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '복근 / 허리 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Cable Cross Over · Cable Motion
+
+🎯 ONE KEY CUE
+🔥 "가슴 높이에서 팔꿈치를 고정각으로 모으기"
+
+Cable Motion Cable Cross Over로 양측 하이/로우 케이블 크로스오버. Cable Motion · Cable Motion 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풀리 높이, 손잡이, 좌·우 스택 핀을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양 케이블을 앞에서 교차·모았다 천천히 벌리기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 완전히 펴 어깨에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Cable Cross Over의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴 높이에서 팔꿈치를 고정각으로 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Cable Cross Over · Cable Motion
+
+🎯 ONE KEY CUE
+🔥 "Keep a fixed elbow angle and sweep the handles together at chest height"
+
+Cable Motion Cable Cross Over로 양측 하이/로우 케이블 크로스오버입니다. Lean into the Cable Motion design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풀리 높이, 손잡이, 좌·우 스택 핀.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Cable Cross Over. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep a fixed elbow angle and sweep the handles together at chest height. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Cable Cross Over","manufacturer":"Newtech Wellness","productSeries":"Cable Motion","sourceUrl":"https://newtechworldwide.com/products/cable-cross-over","verifiedStructure":"Cable Motion Cable Cross Over로 양측 하이/로우 케이블 크로스오버입니다.","verifiedAdjustments":"풀리 높이, 손잡이, 좌·우 스택 핀","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '케이블 크로스오버';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Dual Pulley · Cable Motion
+
+🎯 ONE KEY CUE
+🔥 "풀리 높이를 동작에 맞춘 뒤 대칭으로 당기기"
+
+Cable Motion Dual Pulley로 좌우 높이 조절이 되는 듀얼 어저스터블 풀리. Cable Motion · Cable Motion 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+좌·우 풀리 높이, 손잡이/어태치먼트, 스택 핀을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+선택한 각도에서 케이블을 당겼다 복귀.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 높이 설정을 무시하고 비대칭으로 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Dual Pulley의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"풀리 높이를 동작에 맞춘 뒤 대칭으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Dual Pulley · Cable Motion
+
+🎯 ONE KEY CUE
+🔥 "Set both pulley heights for the move, then pull symmetrically"
+
+Cable Motion Dual Pulley로 좌우 높이 조절이 되는 듀얼 어저스터블 풀리입니다. Lean into the Cable Motion design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 좌·우 풀리 높이, 손잡이/어태치먼트, 스택 핀.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Dual Pulley. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set both pulley heights for the move, then pull symmetrically. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Dual Pulley","manufacturer":"Newtech Wellness","productSeries":"Cable Motion","sourceUrl":"https://newtechworldwide.com/products/dual-pulley","verifiedStructure":"Cable Motion Dual Pulley로 좌우 높이 조절이 되는 듀얼 어저스터블 풀리입니다.","verifiedAdjustments":"좌·우 풀리 높이, 손잡이/어태치먼트, 스택 핀","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '듀얼 어저스터블 풀리';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Multi Gym Pro (8Station) · Cable Motion
+
+🎯 ONE KEY CUE
+🔥 "사용 스테이션만 선택해 궤적에 맞게 수행"
+
+Cable Motion Multi Gym Pro(8Station)로 다스테이션 멀티 정글짐. Cable Motion · Cable Motion 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+스테이션별 핀, 시트/패드, 케이블 어태치먼트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+해당 스테이션의 표준 가동 범위로 반복.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 케이블이 꼬인 채 억지로 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Multi Gym Pro (8Station)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"사용 스테이션만 선택해 궤적에 맞게 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Multi Gym Pro (8Station) · Cable Motion
+
+🎯 ONE KEY CUE
+🔥 "Pick one station and follow that station’s movement path"
+
+Cable Motion Multi Gym Pro(8Station)로 다스테이션 멀티 정글짐입니다. Lean into the Cable Motion design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 스테이션별 핀, 시트/패드, 케이블 어태치먼트.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on Multi Gym Pro (8Station). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pick one station and follow that station’s movement path. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Multi Gym Pro (8Station)","manufacturer":"Newtech Wellness","productSeries":"Cable Motion","sourceUrl":"https://newtechworldwide.com/products/multi-gym-pro-8station","verifiedStructure":"Cable Motion Multi Gym Pro(8Station)로 다스테이션 멀티 정글짐입니다.","verifiedAdjustments":"스테이션별 핀, 시트/패드, 케이블 어태치먼트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '멀티 정글짐';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — OnHim Chin-Up, Dip Assist (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "어시스트 무게를 맞춘 뒤 어깨를 내린 채 풀업 또는 딥"
+
+OnHim Chin-Up, Dip Assist(Thomson)로 풀업·딥 모두 어시스트 가능한 복합기. OnHim 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+⚙️ 조절 포인트
+무릎 패드(어시스트), 풀업 바/딥 바 선택, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+선택한 바에서 풀업 또는 딥을 통제 반복.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어시스트에만 의존해 가동 범위를 줄이는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 OnHim Chin-Up, Dip Assist (Thomson)의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어시스트 무게를 맞춘 뒤 어깨를 내린 채 풀업 또는 딥. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — OnHim Chin-Up, Dip Assist (Thomson) · OnHim
+
+🎯 ONE KEY CUE
+🔥 "Set the assist load, keep the shoulders down, then do pull-ups or dips"
+
+OnHim Chin-Up, Dip Assist(Thomson)로 풀업·딥 모두 어시스트 가능한 복합기입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 무릎 패드(어시스트), 풀업 바/딥 바 선택, 중량 스택.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on OnHim Chin-Up, Dip Assist (Thomson). Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set the assist load, keep the shoulders down, then do pull-ups or dips. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"OnHim Chin-Up, Dip Assist (Thomson)","manufacturer":"Newtech Wellness","productSeries":"OnHim","sourceUrl":"https://newtechworldwide.com/products/chin-up-dip-assist","verifiedStructure":"OnHim Chin-Up, Dip Assist(Thomson)로 풀업·딥 모두 어시스트 가능한 복합기입니다.","verifiedAdjustments":"무릎 패드(어시스트), 풀업 바/딥 바 선택, 중량 스택","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 딥';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Smith Machine (Vertical) (Thomson) · Smith & Squat Racks
+
+🎯 ONE KEY CUE
+🔥 "바가 가이드를 따라가게 두고 척추 중립으로 밀기"
+
+Smith Machine(Vertical)(Thomson)로 수직 가이드 스미스 머신. Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+바 훅/안전핀, 풋 지지 위치, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+바를 레일을 따라 올렸다 천천히 내리기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 안전핀을 너무 낮게 두고 무리하는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"바가 가이드를 따라가게 두고 척추 중립으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Smith Machine (Vertical) (Thomson) · Smith & Squat Racks
+
+🎯 ONE KEY CUE
+🔥 "Keep the bar on the guides and press with a neutral spine"
+
+Smith Machine(Vertical)(Thomson)로 수직 가이드 스미스 머신입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 바 훅/안전핀, 풋 지지 위치, 플레이트.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the bar on the guides and press with a neutral spine. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Smith Machine (Vertical) (Thomson)","manufacturer":"Newtech Wellness","productSeries":"Smith & Squat Racks","sourceUrl":"https://newtechworldwide.com/products/smith-vertical-2000","verifiedStructure":"Smith Machine(Vertical)(Thomson)로 수직 가이드 스미스 머신입니다.","verifiedAdjustments":"바 훅/안전핀, 풋 지지 위치, 플레이트","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스미스 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Power Rack · Smith & Squat Racks
+
+🎯 ONE KEY CUE
+🔥 "세이프티를 맞춘 뒤 코어를 잡고 바벨 패턴 수행"
+
+Newtech Power Rack으로 스쿼트·프레스용 풀 파워 랙. Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+제이훅, 세이프티 바, 풋 지지 스탠스를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+랙에서 바를 언랙·리프트·리랙.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 세이프티 없이 고중량을 다루는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"세이프티를 맞춘 뒤 코어를 잡고 바벨 패턴 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Power Rack · Smith & Squat Racks
+
+🎯 ONE KEY CUE
+🔥 "Set the safeties, brace the core, then run the barbell pattern"
+
+Newtech Power Rack으로 스쿼트·프레스용 풀 파워 랙입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 제이훅, 세이프티 바, 풋 지지 스탠스.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set the safeties, brace the core, then run the barbell pattern. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Power Rack","manufacturer":"Newtech Wellness","productSeries":"Smith & Squat Racks","sourceUrl":"https://newtechworldwide.com/products/power-rack","verifiedStructure":"Newtech Power Rack으로 스쿼트·프레스용 풀 파워 랙입니다.","verifiedAdjustments":"제이훅, 세이프티 바, 풋 지지 스탠스","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '파워 랙';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ NEWTECH — Half Rack · Smith & Squat Racks
+
+🎯 ONE KEY CUE
+🔥 "하프 랙 세이프티 높이를 맞춘 뒤 스쿼트·프레스"
+
+Newtech Half Rack으로 오픈형 하프 랙. Newtech line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+제이훅, 세이프티, 풋 지지 스탠스를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+언랙 후 짧게 걸어나와 리프트하고 리랙.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 바가 랙에서 멀어지게 걷는 거리를 과도하게 잡는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"하프 랙 세이프티 높이를 맞춘 뒤 스쿼트·프레스. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ NEWTECH — Half Rack · Smith & Squat Racks
+
+🎯 ONE KEY CUE
+🔥 "Set half-rack safety height, then squat or press"
+
+Newtech Half Rack으로 오픈형 하프 랙입니다. Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 제이훅, 세이프티, 풋 지지 스탠스.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set half-rack safety height, then squat or press. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Half Rack","manufacturer":"Newtech Wellness","productSeries":"Smith & Squat Racks","sourceUrl":"https://newtechworldwide.com/products/half-rack","verifiedStructure":"Newtech Half Rack으로 오픈형 하프 랙입니다.","verifiedAdjustments":"제이훅, 세이프티, 풋 지지 스탠스","importedAt":"2026-08-20T04:44:49.200Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'NEWTECH'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하프 랙';
+
+
+DO $$
+DECLARE
+  updated_count INT;
+BEGIN
+  SELECT COUNT(*)::int INTO updated_count
+  FROM machines m
+  JOIN brands b ON b.id = m.brand_id
+  WHERE b.code = 'NEWTECH'
+    AND m.is_active = TRUE
+    AND m.pro_tips IS NOT NULL
+    AND m.pro_tips_meta IS NOT NULL
+    AND m.pro_tips_meta->>'verificationStatus' IS NOT NULL
+    AND (m.pro_tips->'ko'->>0) LIKE '%ONE KEY CUE%'
+    AND (m.pro_tips->'ko'->>0) LIKE '%MACHINE FIT PRO TIP%'
+    AND (m.pro_tips->'ko'->>0) NOT LIKE '%📋 검증 상태%';
+
+  IF updated_count < 80 THEN
+    RAISE EXCEPTION 'NEWTECH trainer PRO tips import incomplete: % / 80', updated_count;
+  END IF;
+END $$;

@@ -201,6 +201,50 @@ const BRAND_META = {
     rideKo: '짐레코 Selectorized·Plate Loaded 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Gymleco Selectorized / Plate Loaded path instead of fighting it.',
   },
+  WATSON: {
+    displayKo: '왓슨',
+    displayEn: 'WATSON',
+    manufacturerDefault: 'Watson Gym Equipment',
+    researchFile: 'watson_models.json',
+    csvFile: 'watson_pro_tips.csv',
+    noModelKo: '왓슨 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Watson SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '왓슨 Plate Loaded·Animal 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Watson Plate Loaded / Animal path instead of fighting it.',
+  },
+  TELJU: {
+    displayKo: '텔주',
+    displayEn: 'TELJU',
+    manufacturerDefault: 'Telju',
+    researchFile: 'telju_models.json',
+    csvFile: 'telju_pro_tips.csv',
+    noModelKo: '텔주 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Telju SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '텔주 SHOCK Selectorized·Plate-Loaded 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Telju SHOCK Selectorized / Plate-Loaded path instead of fighting it.',
+  },
+  NEWTECH: {
+    displayKo: '뉴텍웰니스',
+    displayEn: 'NEWTECH',
+    manufacturerDefault: 'Newtech Wellness',
+    researchFile: 'newtech_models.json',
+    csvFile: 'newtech_pro_tips.csv',
+    noModelKo: '뉴텍웰니스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Newtech SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '뉴텍 OnHim·M-Torture·Cable Motion 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Newtech OnHim / M-Torture / Cable Motion path instead of fighting it.',
+  },
+  DRAX: {
+    displayKo: '디랙스',
+    displayEn: 'DRAX',
+    manufacturerDefault: 'DRAX',
+    researchFile: 'drax_models.json',
+    csvFile: 'drax_pro_tips.csv',
+    noModelKo: '디랙스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated DRAX SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '디랙스 Welliv Pro·Pure Plate·Forge 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the DRAX Welliv Pro / Pure Plate / Forge path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -590,6 +634,30 @@ function introKo(entry, family, flags) {
     bits.push('Gymleco line');
   } else if (BRAND === 'GYM80') {
     bits.push('gym80 line');
+  } else if (/animal/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'WATSON') {
+    bits.push('Watson Animal');
+  } else if (BRAND === 'WATSON') {
+    bits.push('Watson PL');
+  } else if (/shock/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'TELJU') {
+    bits.push('Telju SHOCK');
+  } else if (BRAND === 'TELJU') {
+    bits.push('Telju line');
+  } else if (/onhim/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('OnHim');
+  } else if (/m-?torture|torture/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('M-Torture');
+  } else if (/cable motion/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Cable Motion');
+  } else if (BRAND === 'NEWTECH') {
+    bits.push('Newtech line');
+  } else if (/welliv/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Welliv Pro');
+  } else if (/pure plate/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pure Plate');
+  } else if (/forge/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Forge');
+  } else if (BRAND === 'DRAX') {
+    bits.push('DRAX line');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -687,6 +755,30 @@ function introEn(entry, family, flags) {
     bits.push('Gymleco line');
   } else if (BRAND === 'GYM80') {
     bits.push('gym80 line');
+  } else if (/animal/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'WATSON') {
+    bits.push('Watson Animal');
+  } else if (BRAND === 'WATSON') {
+    bits.push('Watson PL');
+  } else if (/shock/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'TELJU') {
+    bits.push('Telju SHOCK');
+  } else if (BRAND === 'TELJU') {
+    bits.push('Telju line');
+  } else if (/onhim/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('OnHim');
+  } else if (/m-?torture|torture/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('M-Torture');
+  } else if (/cable motion/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Cable Motion');
+  } else if (BRAND === 'NEWTECH') {
+    bits.push('Newtech line');
+  } else if (/welliv/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Welliv Pro');
+  } else if (/pure plate/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pure Plate');
+  } else if (/forge/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Forge');
+  } else if (BRAND === 'DRAX') {
+    bits.push('DRAX line');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
