@@ -1,20 +1,13 @@
-﻿# PRO tips OEM rollout handoff
+# PRO tips OEM rollout handoff
 
 ## Done (after HS on main)
-| Brand | V / P / N | Migration |
-|-------|-----------|-----------|
-| LIFE_FITNESS | 34 / 35 / 11 | 156 |
-| NAUTILUS | 24 / 45 / 11 | 157 |
-| CYBEX | 14 / 54 / 12 | 158 |
-| HOIST | 24 / 44 / 12 | 159 |
-| MATRIX | 20 / 48 / 12 | 160 |
-| PRECOR | 30 / 38 / 12 | 161 |
-| PRIME_FITNESS | 34 / 38 / 8 | 162 |
-| ARSENAL_STRENGTH | 44 / 27 / 9 | 163 |
-| FREEMOTION | 27 / 35 / 18 | 164 |
-| PARAMOUNT | 12 / 33 / 35 | 165 |
-| ROGERS_STRENGTH | 4 / 19 / 57 | 166 |
-| PANATTA | 11 / 59 / 10 | 167 |
+| Brand | V / P / N | Migration | Deploy |
+|-------|-----------|-----------|--------|
+| LIFE_FITNESS … PANATTA | … | 156–167 | main `ce262be` / Render live |
+| GYM80 | 29 / 45 / 6 | 168 | PR pending |
+| TECHNOGYM | 23 / 47 / 10 | 169 | PR pending |
+| ATLANTIS | 35 / 37 / 8 | 170 | PR pending |
+| GYMLECO | 33 / 41 / 6 | 171 | PR pending |
 
 ## Pipeline
 ```bash
@@ -23,14 +16,12 @@ npm run db:validate-pro-tips -- database/catalog/pro-tips/<slug>_pro_tips.csv --
 node database/scripts/export-oem-pro-tips-migration.mjs --brand=CODE --migration=NNN_<slug>_pro_tips.sql
 ```
 
-## Next (16 remaining)
-GYM80 → TECHNOGYM → ATLANTIS → GYMLECO → WATSON → TELJU → NEWTECH → DRAX → LEXCO → BODYSTONE → FOCUS → MIGANG → TGS_STRENGTH → IKK_SPORTS → STEX → EDITION80
+## Next (12 remaining)
+WATSON → TELJU → NEWTECH → DRAX → LEXCO → BODYSTONE → FOCUS → MIGANG → TGS_STRENGTH → IKK_SPORTS → STEX → EDITION80
 
 ## Notes
-- Branch/PR: `cursor/oem-pro-tips-freemotion-panatta-35b3` (includes ARSENAL 163 + batch 164–167; supersedes solo ARSENAL PR #270 when merged)
-- FREEMOTION: EPIC Selectorized ES / EPIC Plate Loaded / GENESIS
-- PARAMOUNT: Rotary FW / Total / FS / XFW Smith / XFT
-- ROGERS_STRENGTH: Pendulum Performance / racks (conservative; many NOT_FOUND)
-- PANATTA: Fit Evo 1FE
+- Branch: `cursor/oem-pro-tips-gym80-gymleco-35b3`
+- Research remapped to canonical 80 machine names (freemotion list)
+- GYM80: Pure Kraft / Sygnum · TECHNOGYM: Selection / Pure Strength · ATLANTIS: P/PW · GYMLECO: plate/selector
 - No API/UI/recommend changes; cross-brand tip identity = 0
 - Deploy via Render migrate after merge to main

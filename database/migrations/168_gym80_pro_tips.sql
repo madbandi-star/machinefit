@@ -1,0 +1,13035 @@
+-- Import GYM80 MachineFit PRO tips (trainer coaching style).
+-- Source: database/catalog/pro-tips/gym80_pro_tips.csv
+-- Backup previous pro_tips / pro_tips_meta before UPDATE.
+
+CREATE TABLE IF NOT EXISTS _backup_gym80_pro_tips_20260820 (
+  machine_id UUID PRIMARY KEY,
+  code TEXT,
+  machine_name_ko TEXT,
+  pro_tips JSONB,
+  pro_tips_meta JSONB,
+  backed_up_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO _backup_gym80_pro_tips_20260820 (machine_id, code, machine_name_ko, pro_tips, pro_tips_meta)
+SELECT m.id,
+       m.code,
+       COALESCE(st.name->>'ko', m.name->>'ko'),
+       m.pro_tips,
+       m.pro_tips_meta
+FROM machines m
+JOIN brands b ON b.id = m.brand_id
+LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
+WHERE b.code = 'GYM80'
+  AND m.is_active = TRUE
+ON CONFLICT (machine_id) DO NOTHING;
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3016 SEATED CHEST PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 궤적에서 견갑을 붙인 채 손잡이를 가슴 중앙으로 밀기"
+
+gym80 Sygnum 3016 Seated Chest Press 셀렉터 체스트 프레스. 셀렉터 스택 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 시작 위치, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 앞·안쪽으로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(3016 SEATED CHEST PRESS)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 궤적에서 견갑을 붙인 채 손잡이를 가슴 중앙으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3016 SEATED CHEST PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On the Sygnum path, brace scapulae and press handles through center chest"
+
+gym80 Sygnum 3016 Seated Chest Press 셀렉터 체스트 프레스입니다 Lean into the selectorized stack / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 시작 위치, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (3016 SEATED CHEST PRESS), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the Sygnum path, brace scapulae and press handles through center chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3016 SEATED CHEST PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3016 Seated Chest Press 셀렉터 체스트 프레스입니다","verifiedAdjustments":"시트, 손잡이, 시작 위치, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3023 INCLINE CHEST PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 인클라인에서 견갑을 고정하고 대각선 위로 밀기"
+
+gym80 Sygnum 3023 Incline Chest Press. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 시작 위치, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+인클라인 각도에서 손잡이를 위·앞으로 밀었다 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3023 INCLINE CHEST PRESS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 인클라인에서 견갑을 고정하고 대각선 위로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3023 INCLINE CHEST PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On the Sygnum incline, set the scapula and press upward on a diagonal"
+
+gym80 Sygnum 3023 Incline Chest Press입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 시작 위치, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3023 INCLINE CHEST PRESS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the Sygnum incline, set the scapula and press upward on a diagonal. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3023 INCLINE CHEST PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3023 Incline Chest Press입니다","verifiedAdjustments":"시트, 시작 위치, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '인클라인 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4346 PURE KRAFT DECLINE CHEST PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft 디클라인에서 하부 가슴을 향해 아래·앞으로 밀기"
+
+gym80 Pure Kraft 4346 Decline Chest Press Dual 플레이트로드. 플레이트 로딩 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 독립 암 시작, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+디클라인 각도에서 듀얼 암을 아래·앞으로 밀었다 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 과하게 벌리며 어깨에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4346 PURE KRAFT DECLINE CHEST PRESS DUAL은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft 디클라인에서 하부 가슴을 향해 아래·앞으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4346 PURE KRAFT DECLINE CHEST PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft decline, press down and forward toward the lower chest"
+
+gym80 Pure Kraft 4346 Decline Chest Press Dual 플레이트로드입니다 Lean into the plate-loaded / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 독립 암 시작, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4346 PURE KRAFT DECLINE CHEST PRESS DUAL is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft decline, press down and forward toward the lower chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4346 PURE KRAFT DECLINE CHEST PRESS DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4346 Decline Chest Press Dual 플레이트로드입니다","verifiedAdjustments":"시트, 독립 암 시작, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '디클라인 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3097 INNER CHEST PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Inner Chest로 넓은 시작에서 중앙으로 모으며 밀기"
+
+전용 Converging 명칭 SKU보다 Sygnum 3097 Inner Chest Press 수렴 궤적이 가깝습니다. 안쪽으로 모이는 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔이 바깥에서 안쪽으로 모이며 프레스.
+손잡이가 직선으로만 가는 게 아닙니다. 기구가 만들어 주는 안쪽 궤적을 그대로 타세요. 억지로 모으지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 평행으로만 밀어 수렴 궤적을 무시하는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 손잡이가 가운데로 모이는 궤적이 설계입니다. 평행으로만 밀려고 버티지 말고, 기구가 안내하는 수렴 경로를 그대로 타세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Inner Chest로 넓은 시작에서 중앙으로 모으며 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3097 INNER CHEST PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Inner Chest, start wide and press toward center"
+
+전용 Converging 명칭 SKU보다 Sygnum 3097 Inner Chest Press 수렴 궤적이 가깝습니다 Lean into the converging path / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+The handles are not a straight line — ride the converging path. Do not force them together.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 The machine is built to converge. Stop forcing a parallel press — ride the path it gives you.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Inner Chest, start wide and press toward center. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3097 INNER CHEST PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"전용 Converging 명칭 SKU보다 Sygnum 3097 Inner Chest Press 수렴 궤적이 가깝습니다","verifiedAdjustments":"시트, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '컨버징 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4328 PURE KRAFT SEATED CHEST PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Dual로 좌우를 같은 속도로 밀며 불균형 확인"
+
+공식 Iso-Lateral 체스트 SKU명은 없고 Pure Kraft Dual 독립 암이 해당 패턴. 좌우가 독립으로 움직이는 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 시작, 손잡이, 플레이트를 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 밀었다 천천히 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 밀어 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4328 PURE KRAFT SEATED CHEST PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "With Pure Kraft Dual arms, press both sides at the same speed"
+
+공식 Iso-Lateral 체스트 SKU명은 없고 Pure Kraft Dual 독립 암이 해당 패턴입니다 Lean into the independent arms / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 시작, 손잡이, 플레이트. Confirm both sides start from the same position.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Double-check both sides start at the same height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Press out on the machine path, then return under control. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4328 PURE KRAFT SEATED CHEST PRESS DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"공식 Iso-Lateral 체스트 SKU명은 없고 Pure Kraft Dual 독립 암이 해당 패턴입니다","verifiedAdjustments":"시트, 좌·우 시작, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4328 PURE KRAFT SEATED CHEST PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft 듀얼에서 견갑을 고정하고 안정적으로 밀기"
+
+gym80 Pure Kraft 4328 Seated Chest Press Dual 플레이트로드. 플레이트 로딩 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 시작 레버, 손잡이, 양쪽 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+듀얼 암을 앞으로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 엔트리 레버 없이 억지로 시작해 어깨가 뜨는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4328 PURE KRAFT SEATED CHEST PRESS DUAL은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft 듀얼에서 견갑을 고정하고 안정적으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4328 PURE KRAFT SEATED CHEST PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Dual, lock the scapulae and press smoothly"
+
+gym80 Pure Kraft 4328 Seated Chest Press Dual 플레이트로드입니다 Lean into the plate-loaded / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 시작 레버, 손잡이, 양쪽 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4328 PURE KRAFT SEATED CHEST PRESS DUAL is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft Dual, lock the scapulae and press smoothly. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4328 PURE KRAFT SEATED CHEST PRESS DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4328 Seated Chest Press Dual 플레이트로드입니다","verifiedAdjustments":"시트, 시작 레버, 손잡이, 양쪽 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3022 BUTTERFLY · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Butterfly에서 가슴을 모으며 팔을 앞으로 닫기"
+
+gym80 Sygnum 3022 Butterfly 펙덱형 머신. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 바깥에서 안쪽으로 호를 그리며 닫았다 열기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 으쓱하며 승모로 당기는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3022 BUTTERFLY의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Butterfly에서 가슴을 모으며 팔을 앞으로 닫기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3022 BUTTERFLY · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Butterfly, squeeze the chest as arms close forward"
+
+gym80 Sygnum 3022 Butterfly 펙덱형 머신입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3022 BUTTERFLY. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Butterfly, squeeze the chest as arms close forward. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3022 BUTTERFLY","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3022 Butterfly 펙덱형 머신입니다","verifiedAdjustments":"시트, 팔꿈치 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '펙덱';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3025 BUTTERFLY REVERSE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Reverse Butterfly에서 견갑을 모으며 팔을 뒤로 벌리기"
+
+gym80 Sygnum 3025 Butterfly Reverse 리어델트 머신 (카탈로그 '리어 델트 머신' → 카테고리 '리어 델트 / 리버스 펙덱' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 앞으로 모은 상태에서 뒤로 벌렸다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 흔들며 반동으로 벌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3025 BUTTERFLY REVERSE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Reverse Butterfly에서 견갑을 모으며 팔을 뒤로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3025 BUTTERFLY REVERSE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Reverse Butterfly, retract scapulae as arms open back"
+
+gym80 Sygnum 3025 Butterfly Reverse 리어델트 머신 (카탈로그 '리어 델트 머신' → 카테고리 '리어 델트 / 리버스 펙덱' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3025 BUTTERFLY REVERSE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Reverse Butterfly, retract scapulae as arms open back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3025 BUTTERFLY REVERSE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3025 Butterfly Reverse 리어델트 머신 (카탈로그 '리어 델트 머신' → 카테고리 '리어 델트 / 리버스 펙덱' 매핑)","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트 / 리버스 펙덱';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3014 CHEST CROSSOVER MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Crossover에서 팔꿈치를 살짝 굽힌 채 가슴 앞에서 모으기"
+
+gym80 Sygnum 3014 Chest Crossover Machine 플라이 패턴. Cable Motion · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔 위치, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 호를 그리며 모았다가 천천히 벌리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔을 완전히 펴 팔꿈치에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3014 CHEST CROSSOVER MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Crossover에서 팔꿈치를 살짝 굽힌 채 가슴 앞에서 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3014 CHEST CROSSOVER MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Crossover, keep a soft elbow and bring arms together in front"
+
+gym80 Sygnum 3014 Chest Crossover Machine 플라이 패턴입니다 Lean into the Cable Motion / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔 위치, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3014 CHEST CROSSOVER MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Crossover, keep a soft elbow and bring arms together in front. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3014 CHEST CROSSOVER MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3014 Chest Crossover Machine 플라이 패턴입니다","verifiedAdjustments":"시트, 팔 위치, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플라이 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3036 DIP MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Dip에서 어깨를 내린 채 몸을 수직으로 내렸다 밀기"
+
+gym80 Sygnum 3036 Dip Machine. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치/손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+팔꿈치를 굽혀 하강 후 삼두로 밀어 올리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 과도하게 숙여 어깨 앞쪽에 과부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3036 DIP MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Dip에서 어깨를 내린 채 몸을 수직으로 내렸다 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3036 DIP MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Dip, keep shoulders down and press the body up vertically"
+
+gym80 Sygnum 3036 Dip Machine입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치/손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3036 DIP MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Dip, keep shoulders down and press the body up vertically. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3036 DIP MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3036 Dip Machine입니다","verifiedAdjustments":"시트, 팔꿈치/손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3017 KNEELING / CHINNING-DIPPING MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 3017에서 무릎 보조로 딥 깊이를 통제하기"
+
+전용 Assisted Dip 명칭보다 Sygnum 3017 니링 친업·딥 어시스트가 해당합니다. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎 패드, 딥 핸들, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+무릎 지지로 하강 후 딥 핸들을 밀어 올리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 보조 무게를 과하게 줄여 어깨가 무너지는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3017 KNEELING / CHINNING-DIPPING MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 3017에서 무릎 보조로 딥 깊이를 통제하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3017 KNEELING / CHINNING-DIPPING MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum 3017, use the knee assist to control dip depth"
+
+전용 Assisted Dip 명칭보다 Sygnum 3017 니링 친업·딥 어시스트가 해당합니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎 패드, 딥 핸들, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3017 KNEELING / CHINNING-DIPPING MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum 3017, use the knee assist to control dip depth. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3017 KNEELING / CHINNING-DIPPING MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"전용 Assisted Dip 명칭보다 Sygnum 3017 니링 친업·딥 어시스트가 해당합니다","verifiedAdjustments":"무릎 패드, 딥 핸들, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 딥';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 슈퍼 인클라인 프레스
+
+🎯 ONE KEY CUE
+🔥 "높은 인클라인에서 상부 가슴을 향해 위·앞으로 밀기"
+
+짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+높은 인클라인 각도에서 프레스 후 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 각도를 무시한 채 수평처럼 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "슈퍼 인클라인 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"높은 인클라인에서 상부 가슴을 향해 위·앞으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — Super Incline Press
+
+🎯 ONE KEY CUE
+🔥 "On a steep incline, press up and forward for upper chest"
+
+There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Super Incline Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On a steep incline, press up and forward for upper chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"gym80","productSeries":null,"sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum/Pure Kraft 카탈로그에 Super Incline Press 전용 SKU가 없습니다","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '슈퍼 인클라인 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3020 LAT PULLDOWN MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 랫풀에서 가슴을 들어 바를 쇄골 쪽으로 당기기"
+
+gym80 Sygnum 3020 Lat Pulldown Machine. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 허벅지 패드, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+바를 위에서 아래로 당겨 가슴 앞으로 내린 뒤 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 크게 뒤로 눕히며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3020 LAT PULLDOWN MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 랫풀에서 가슴을 들어 바를 쇄골 쪽으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3020 LAT PULLDOWN MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum lat pulldown, lift the chest and pull the bar to the collarbone"
+
+gym80 Sygnum 3020 Lat Pulldown Machine입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 허벅지 패드, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3020 LAT PULLDOWN MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum lat pulldown, lift the chest and pull the bar to the collarbone. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3020 LAT PULLDOWN MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3020 Lat Pulldown Machine입니다","verifiedAdjustments":"시트, 허벅지 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3020 LAT PULLDOWN MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 와이드 그립으로 팔꿈치를 옆구리 쪽으로 내리며 당기기"
+
+Wide 전용 SKU명은 없고 Sygnum 3020에서 와이드 그립으로 수행합니다. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+그립 폭를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 허벅지 패드, 그립 폭, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+와이드 그립으로 바를 아래로 당겼다 천천히 올리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손만 넓히고 팔꿈치가 앞으로 나가는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3020 LAT PULLDOWN MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 와이드 그립으로 팔꿈치를 옆구리 쪽으로 내리며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3020 LAT PULLDOWN MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum wide grip, drive elbows down toward the ribs while pulling"
+
+Wide 전용 SKU명은 없고 Sygnum 3020에서 와이드 그립으로 수행합니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 허벅지 패드, 그립 폭, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3020 LAT PULLDOWN MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum wide grip, drive elbows down toward the ribs while pulling. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3020 LAT PULLDOWN MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"Wide 전용 SKU명은 없고 Sygnum 3020에서 와이드 그립으로 수행합니다","verifiedAdjustments":"시트, 허벅지 패드, 그립 폭, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '와이드 랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4116 LAT PULL STATION · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Lat Station에서 바를 얼굴 앞·가슴으로 당기기"
+
+Front Pulldown 단독 SKU보다 Sygnum Stations 4116 Lat Pull/Frontzug 패턴이 가깝습니다. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 허벅지 고정, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+프론트 경로로 바를 내렸다 저항을 느끼며 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 바를 목 뒤로 넘겨 어깨를 압박하는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4116 LAT PULL STATION의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Lat Station에서 바를 얼굴 앞·가슴으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4116 LAT PULL STATION · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "On the Sygnum Lat Station, pull the bar down in front to the chest"
+
+Front Pulldown 단독 SKU보다 Sygnum Stations 4116 Lat Pull/Frontzug 패턴이 가깝습니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 허벅지 고정, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4116 LAT PULL STATION. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the Sygnum Lat Station, pull the bar down in front to the chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4116 LAT PULL STATION","manufacturer":"gym80","productSeries":"Sygnum Stations","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"Front Pulldown 단독 SKU보다 Sygnum Stations 4116 Lat Pull/Frontzug 패턴이 가깝습니다","verifiedAdjustments":"시트, 허벅지 고정, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3047 ISO LAT · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum ISO LAT로 좌우를 균등하게 아래로 당기기"
+
+gym80 Sygnum 3047 ISO LAT 독립 암 랫풀. 좌우가 독립으로 움직이는 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 암, 손잡이, 중량 스택을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 아래로 당겼다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 강한 쪽만 먼저 당겨 비대칭을 키우는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3047 ISO LAT · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum ISO LAT, pull both sides down evenly"
+
+gym80 Sygnum 3047 ISO LAT 독립 암 랫풀입니다 Lean into the independent arms / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 암, 손잡이, 중량 스택. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3047 ISO LAT","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3047 ISO LAT 독립 암 랫풀입니다","verifiedAdjustments":"시트, 좌·우 암, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4340 PURE KRAFT HIGH ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft High Row에서 팔꿈치를 높게 유지하며 몸통으로 당기기"
+
+gym80 Pure Kraft 4340 High Row Dual. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 독립 암, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+높은 경로로 핸들을 몸통으로 당겼다 천천히 펴기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4340 PURE KRAFT HIGH ROW DUAL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft High Row에서 팔꿈치를 높게 유지하며 몸통으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4340 PURE KRAFT HIGH ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft High Row, keep elbows high and pull toward the torso"
+
+gym80 Pure Kraft 4340 High Row Dual입니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 독립 암, 플레이트.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4340 PURE KRAFT HIGH ROW DUAL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft High Row, keep elbows high and pull toward the torso. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4340 PURE KRAFT HIGH ROW DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4340 High Row Dual입니다","verifiedAdjustments":"시트, 손잡이, 독립 암, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하이로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4340 PURE KRAFT HIGH ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Dual High Row로 좌우 속도를 맞춰 당기기"
+
+Iso-Lateral 하이로우 전용명보다 Pure Kraft High Row Dual 독립 암이 해당합니다. 좌우가 독립으로 움직이는 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 암, 손잡이, 플레이트를 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+독립 암으로 하이로우 후 천천히 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 과도하게 당겨 몸통이 틀어지는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4340 PURE KRAFT HIGH ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "With Pure Kraft Dual High Row, match left-right pulling speed"
+
+Iso-Lateral 하이로우 전용명보다 Pure Kraft High Row Dual 독립 암이 해당합니다 Lean into the independent arms / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 암, 손잡이, 플레이트. Confirm both sides start from the same position.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4340 PURE KRAFT HIGH ROW DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"Iso-Lateral 하이로우 전용명보다 Pure Kraft High Row Dual 독립 암이 해당합니다","verifiedAdjustments":"시트, 좌·우 암, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 하이로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3040 SEATED ROW MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Seated Row에서 가슴을 패드에 붙이고 견갑을 모으며 당기기"
+
+gym80 Sygnum 3040 Seated Row Machine(체스트 서포트). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 몸통으로 당겼다 팔을 천천히 펴기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 뒤로 젖히며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3040 SEATED ROW MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Seated Row에서 가슴을 패드에 붙이고 견갑을 모으며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3040 SEATED ROW MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Seated Row, stay on the chest pad and retract the scapulae"
+
+gym80 Sygnum 3040 Seated Row Machine(체스트 서포트)입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3040 SEATED ROW MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Seated Row, stay on the chest pad and retract the scapulae. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3040 SEATED ROW MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3040 Seated Row Machine(체스트 서포트)입니다","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4322 PURE KRAFT SEATED ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Row에서 팔꿈치를 옆구리에 붙이며 당기기"
+
+gym80 Pure Kraft 4322 Seated Row Dual 로우 머신. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 독립 암, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+듀얼 핸들을 몸통으로 당겼다 천천히 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 어깨만 으쓱하며 승모로 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4322 PURE KRAFT SEATED ROW DUAL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft Row에서 팔꿈치를 옆구리에 붙이며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4322 PURE KRAFT SEATED ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Row, keep elbows close to the ribs while pulling"
+
+gym80 Pure Kraft 4322 Seated Row Dual 로우 머신입니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 독립 암, 플레이트.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4322 PURE KRAFT SEATED ROW DUAL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft Row, keep elbows close to the ribs while pulling. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4322 PURE KRAFT SEATED ROW DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4322 Seated Row Dual 로우 머신입니다","verifiedAdjustments":"시트, 가슴 패드, 독립 암, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4319 PURE KRAFT LOW ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Low Row에서 낮은 경로로 복부 쪽으로 당기기"
+
+gym80 Pure Kraft 4319 Low Row Dual. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트/풋 지지, 손잡이, 독립 암, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+낮은 각도에서 핸들을 당겼다 천천히 펴기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 과도하게 숙여 요추에 부하를 주는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4319 PURE KRAFT LOW ROW DUAL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft Low Row에서 낮은 경로로 복부 쪽으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4319 PURE KRAFT LOW ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Low Row, pull along a low path toward the abdomen"
+
+gym80 Pure Kraft 4319 Low Row Dual입니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트/풋 지지, 손잡이, 독립 암, 플레이트.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4319 PURE KRAFT LOW ROW DUAL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft Low Row, pull along a low path toward the abdomen. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4319 PURE KRAFT LOW ROW DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4319 Low Row Dual입니다","verifiedAdjustments":"시트/풋 지지, 손잡이, 독립 암, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4383 PURE KRAFT 55 DEGREE ROWING MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft 55° Row에서 몸통 각도를 고정하고 당기기"
+
+Mid Row 전용명보다 Pure Kraft 4383 55° Rowing Machine이 중간 각도 로우에 가깝습니다. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+가슴 패드, 풋 지지, 손잡이, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+55도 지지 자세에서 핸들을 당겼다 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 각도를 바꾸며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4383 PURE KRAFT 55 DEGREE ROWING MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft 55° Row에서 몸통 각도를 고정하고 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4383 PURE KRAFT 55 DEGREE ROWING MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft 55° Row, fix torso angle and pull cleanly"
+
+Mid Row 전용명보다 Pure Kraft 4383 55° Rowing Machine이 중간 각도 로우에 가깝습니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 가슴 패드, 풋 지지, 손잡이, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4383 PURE KRAFT 55 DEGREE ROWING MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft 55° Row, fix torso angle and pull cleanly. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4383 PURE KRAFT 55 DEGREE ROWING MACHINE","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://gym80.us/products/pure-kraft/pure-kraft-standard/","verifiedStructure":"Mid Row 전용명보다 Pure Kraft 4383 55° Rowing Machine이 중간 각도 로우에 가깝습니다","verifiedAdjustments":"가슴 패드, 풋 지지, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '미드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4322 PURE KRAFT SEATED ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Dual Row로 좌우를 균등하게 당기기"
+
+공식 Iso-Lateral Row 명칭보다 Pure Kraft Seated Row Dual이 독립 암 패턴. 좌우가 독립으로 움직이는 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 암, 손잡이, 플레이트를 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 로우 후 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 강한 쪽만 과사용해 회전하는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4322 PURE KRAFT SEATED ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "With Pure Kraft Dual Row, pull both sides evenly"
+
+공식 Iso-Lateral Row 명칭보다 Pure Kraft Seated Row Dual이 독립 암 패턴입니다 Lean into the independent arms / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 암, 손잡이, 플레이트. Confirm both sides start from the same position.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4322 PURE KRAFT SEATED ROW DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"공식 Iso-Lateral Row 명칭보다 Pure Kraft Seated Row Dual이 독립 암 패턴입니다","verifiedAdjustments":"시트, 좌·우 암, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4319 PURE KRAFT LOW ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Dual Low Row로 낮은 경로를 좌우 대칭으로 당기기"
+
+Iso-Lateral Low Row 전용명보다 Pure Kraft Low Row Dual이 해당합니다. 좌우가 독립으로 움직이는 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+풋 지지, 좌·우 암, 손잡이, 플레이트를 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+독립 암으로 로우 로우 후 천천히 펴기.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽 팔만 길게 뻗어 자세가 틀어지는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4319 PURE KRAFT LOW ROW DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Dual Low Row, pull low and keep sides symmetric"
+
+Iso-Lateral Low Row 전용명보다 Pure Kraft Low Row Dual이 해당합니다 Lean into the independent arms / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 풋 지지, 좌·우 암, 손잡이, 플레이트. Confirm both sides start from the same position.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4319 PURE KRAFT LOW ROW DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"Iso-Lateral Low Row 전용명보다 Pure Kraft Low Row Dual이 해당합니다","verifiedAdjustments":"풋 지지, 좌·우 암, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3040 SEATED ROW MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 가슴 패드에 밀착해 견갑만 모으며 당기기"
+
+gym80 Sygnum 3040은 가슴 패드 서포트 시티드 로우입니다(3039는 비서포트). 가슴 지지 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드 높이, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+가슴을 고정한 채 핸들을 당겼다 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 패드에서 몸을 떼며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 가슴 패드가 있는 이유가 반동을 끊기 위해서입니다. 패드를 밀고 일어서지 말고, 가슴을 붙인 채 팔꿈치만 움직이세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 가슴 → 패드에 고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴은 패드에, 팔꿈치는 뒤로, 끝에서 1초."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3040 SEATED ROW MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Stay glued to the Sygnum chest pad and row with scapular retraction"
+
+gym80 Sygnum 3040은 가슴 패드 서포트 시티드 로우입니다(3039는 비서포트) Lean into the chest-supported / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드 높이, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 The chest pad exists to kill momentum. Stay glued to it and move only through the elbows.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Chest → glued to pad
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Chest on the pad, elbows back, one-second squeeze."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3040 SEATED ROW MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3040은 가슴 패드 서포트 시티드 로우입니다(3039는 비서포트)","verifiedAdjustments":"시트, 가슴 패드 높이, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 서포티드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4018 PURE KRAFT T-BAR ROW · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft T-Bar에서 가슴을 붙이고 팔꿈치를 뒤로 보내며 당기기"
+
+gym80 Pure Kraft 4018 T-Bar Row. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+그립를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풋 지지, 가슴 패드, 그립, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+T바를 몸통으로 당겼다 천천히 내리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 둥글게 말고 들어 올리는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4018 PURE KRAFT T-BAR ROW의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft T-Bar에서 가슴을 붙이고 팔꿈치를 뒤로 보내며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4018 PURE KRAFT T-BAR ROW · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft T-Bar, stay on the pad and drive elbows back"
+
+gym80 Pure Kraft 4018 T-Bar Row입니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풋 지지, 가슴 패드, 그립, 플레이트.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4018 PURE KRAFT T-BAR ROW. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft T-Bar, stay on the pad and drive elbows back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4018 PURE KRAFT T-BAR ROW","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4018 T-Bar Row입니다","verifiedAdjustments":"풋 지지, 가슴 패드, 그립, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = 'T바 로우 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3012N PULL OVER MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Pullover에서 갈비뼈를 내린 채 아치를 그리며 당기기"
+
+gym80 Sygnum 3012N Pull Over Machine. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+팔을 머리 위에서 몸통 앞으로 호를 그리며 당기기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과하게 젖혀 요추로 당기는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3012N PULL OVER MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Pullover에서 갈비뼈를 내린 채 아치를 그리며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3012N PULL OVER MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Pullover, keep ribs down and pull through a long arc"
+
+gym80 Sygnum 3012N Pull Over Machine입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3012N PULL OVER MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Pullover, keep ribs down and pull through a long arc. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3012N PULL OVER MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3012N Pull Over Machine입니다","verifiedAdjustments":"시트, 팔꿈치 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '풀오버';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3017 KNEELING / CHINNING-DIPPING MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 3017에서 무릎 보조로 가슴을 바 쪽으로 당기기"
+
+gym80 Sygnum 3017 Kneeling Chinning-Dipping Machine 어시스트 친업 (카탈로그 '어시스트 친업' → 카테고리 '어시스트 풀업 / 친업' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎 패드, 친업 바, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+무릎 지지로 친업 후 천천히 내리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 보조를 과신해 반동 스윙으로 올라가는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3017 KNEELING / CHINNING-DIPPING MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 3017에서 무릎 보조로 가슴을 바 쪽으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3017 KNEELING / CHINNING-DIPPING MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum 3017, use knee assist and pull the chest toward the bar"
+
+gym80 Sygnum 3017 Kneeling Chinning-Dipping Machine 어시스트 친업 (카탈로그 '어시스트 친업' → 카테고리 '어시스트 풀업 / 친업' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎 패드, 친업 바, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3017 KNEELING / CHINNING-DIPPING MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum 3017, use knee assist and pull the chest toward the bar. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3017 KNEELING / CHINNING-DIPPING MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3017 Kneeling Chinning-Dipping Machine 어시스트 친업 (카탈로그 '어시스트 친업' → 카테고리 '어시스트 풀업 / 친업' 매핑)","verifiedAdjustments":"무릎 패드, 친업 바, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 친업';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3032 SHOULDER PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Shoulder Press에서 갈비뼈를 내리고 귀 옆 경로로 밀기"
+
+gym80 Sygnum 3032 Shoulder Press. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 등받침, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 위로 밀었다 천천히 어깨 높이로 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 반동으로 미는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3032 SHOULDER PRESS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Shoulder Press에서 갈비뼈를 내리고 귀 옆 경로로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3032 SHOULDER PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Shoulder Press, keep ribs down and press beside the ears"
+
+gym80 Sygnum 3032 Shoulder Press입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 등받침, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3032 SHOULDER PRESS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Shoulder Press, keep ribs down and press beside the ears. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3032 SHOULDER PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3032 Shoulder Press입니다","verifiedAdjustments":"시트, 등받침, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3096 NECK PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Neck Press에서 코어를 고정하고 수직으로 밀기"
+
+Military Press 전용명보다 Sygnum 3096 Neck Press 오버헤드 패턴이 가깝습니다 (카탈로그 '밀리터리 프레스' → 카테고리 '아이소래터럴 숄더 프레스' 매핑). 좌우가 독립으로 움직이는 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 등받침, 손잡이, 중량 스택을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 머리 위로 밀었다 천천히 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 고개를 과도하게 내밀며 경추에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3096 NECK PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Neck Press, brace the core and press vertically"
+
+Military Press 전용명보다 Sygnum 3096 Neck Press 오버헤드 패턴이 가깝습니다 (카탈로그 '밀리터리 프레스' → 카테고리 '아이소래터럴 숄더 프레스' 매핑) Lean into the independent arms / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 등받침, 손잡이, 중량 스택. Confirm both sides start from the same position.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Double-check both sides start at the same height.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Press or raise on the guided path, then lower without dumping the shoulders. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3096 NECK PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"Military Press 전용명보다 Sygnum 3096 Neck Press 오버헤드 패턴이 가깝습니다 (카탈로그 '밀리터리 프레스' → 카테고리 '아이소래터럴 숄더 프레스' 매핑)","verifiedAdjustments":"시트, 등받침, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4320 PURE KRAFT SHOULDER PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Dual로 머리 위 경로를 좌우 균형 있게 밀기"
+
+Overhead 전용 SKU명보다 Pure Kraft Shoulder Press Dual이 해당합니다 (카탈로그 '오버헤드 프레스' → 카테고리 '플레이트로드 숄더 프레스' 매핑). 플레이트 로딩 · Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 독립 암, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+듀얼 암을 위로 밀었다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치가 과도하게 벌어지며 어깨가 뜨는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4320 PURE KRAFT SHOULDER PRESS DUAL은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft Dual로 머리 위 경로를 좌우 균형 있게 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4320 PURE KRAFT SHOULDER PRESS DUAL · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "With Pure Kraft Dual, press overhead with left-right balance"
+
+Overhead 전용 SKU명보다 Pure Kraft Shoulder Press Dual이 해당합니다 (카탈로그 '오버헤드 프레스' → 카테고리 '플레이트로드 숄더 프레스' 매핑) Lean into the plate-loaded / Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 독립 암, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4320 PURE KRAFT SHOULDER PRESS DUAL is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"With Pure Kraft Dual, press overhead with left-right balance. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4320 PURE KRAFT SHOULDER PRESS DUAL","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"Overhead 전용 SKU명보다 Pure Kraft Shoulder Press Dual이 해당합니다 (카탈로그 '오버헤드 프레스' → 카테고리 '플레이트로드 숄더 프레스' 매핑)","verifiedAdjustments":"시트, 독립 암, 손잡이, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3050 SHOULDER LATERAL RAISE WITH GRIPS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Lateral Raise에서 팔꿈치를 살짝 굽힌 채 측면으로 들기"
+
+gym80 Sygnum 3050 Shoulder Lateral Raise with grips (카탈로그 '사이드 레터럴 레이즈' → 카테고리 '레터럴 레이즈' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이/패드, 가동 범위, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 옆으로 들어 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 승모를 으쓱하며 무게를 들어 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3050 SHOULDER LATERAL RAISE WITH GRIPS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Lateral Raise에서 팔꿈치를 살짝 굽힌 채 측면으로 들기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3050 SHOULDER LATERAL RAISE WITH GRIPS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Lateral Raise, keep a soft elbow and raise to the side"
+
+gym80 Sygnum 3050 Shoulder Lateral Raise with grips (카탈로그 '사이드 레터럴 레이즈' → 카테고리 '레터럴 레이즈' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이/패드, 가동 범위, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3050 SHOULDER LATERAL RAISE WITH GRIPS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Lateral Raise, keep a soft elbow and raise to the side. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3050 SHOULDER LATERAL RAISE WITH GRIPS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3050 Shoulder Lateral Raise with grips (카탈로그 '사이드 레터럴 레이즈' → 카테고리 '레터럴 레이즈' 매핑)","verifiedAdjustments":"시트, 손잡이/패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레터럴 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3050 SHOULDER LATERAL RAISE WITH GRIPS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Lateral Raise에서 팔꿈치를 살짝 굽힌 채 측면으로 들기"
+
+gym80 Sygnum 3050 Shoulder Lateral Raise with grips (카탈로그 '사이드 레터럴 레이즈' → 카테고리 '머신 레터럴 레이즈' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이/패드, 가동 범위, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 옆으로 들어 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 승모를 으쓱하며 무게를 들어 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3050 SHOULDER LATERAL RAISE WITH GRIPS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Lateral Raise에서 팔꿈치를 살짝 굽힌 채 측면으로 들기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3050 SHOULDER LATERAL RAISE WITH GRIPS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Lateral Raise, keep a soft elbow and raise to the side"
+
+gym80 Sygnum 3050 Shoulder Lateral Raise with grips (카탈로그 '사이드 레터럴 레이즈' → 카테고리 '머신 레터럴 레이즈' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이/패드, 가동 범위, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3050 SHOULDER LATERAL RAISE WITH GRIPS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Lateral Raise, keep a soft elbow and raise to the side. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3050 SHOULDER LATERAL RAISE WITH GRIPS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3050 Shoulder Lateral Raise with grips (카탈로그 '사이드 레터럴 레이즈' → 카테고리 '머신 레터럴 레이즈' 매핑)","verifiedAdjustments":"시트, 손잡이/패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '머신 레터럴 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3025 BUTTERFLY REVERSE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Reverse Butterfly에서 견갑을 모으며 팔을 뒤로 벌리기"
+
+gym80 Sygnum 3025 Butterfly Reverse 리어델트 머신 (카탈로그 '리어 델트 머신' → 카테고리 '리어 델트' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 앞으로 모은 상태에서 뒤로 벌렸다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 흔들며 반동으로 벌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3025 BUTTERFLY REVERSE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Reverse Butterfly에서 견갑을 모으며 팔을 뒤로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3025 BUTTERFLY REVERSE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Reverse Butterfly, retract scapulae as arms open back"
+
+gym80 Sygnum 3025 Butterfly Reverse 리어델트 머신 (카탈로그 '리어 델트 머신' → 카테고리 '리어 델트' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3025 BUTTERFLY REVERSE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Reverse Butterfly, retract scapulae as arms open back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3025 BUTTERFLY REVERSE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3025 Butterfly Reverse 리어델트 머신 (카탈로그 '리어 델트 머신' → 카테고리 '리어 델트' 매핑)","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 프론트 레이즈
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Lateral Raise에서 팔꿈치를 살짝 굽힌 채 측면으로 들기"
+
+짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이/패드, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 옆으로 들어 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 승모를 으쓱하며 무게를 들어 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "프론트 레이즈"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Lateral Raise에서 팔꿈치를 살짝 굽힌 채 측면으로 들기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — Front Raise
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Lateral Raise, keep a soft elbow and raise to the side"
+
+There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이/패드, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Front Raise", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Lateral Raise, keep a soft elbow and raise to the side. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"gym80","productSeries":null,"sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 카탈로그에서 프론트 레이즈 전용 SKU를 확인하지 못했습니다","verifiedAdjustments":"시트, 손잡이/패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 업라이트 로우
+
+🎯 ONE KEY CUE
+🔥 "헬스장 실물 기구의 패드·레버를 확인한 뒤 목표 근육 패턴으로 움직이기"
+
+짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+해당 카테고리의 표준 가동 범위로 천천히 반복.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 확인되지 않은 모델명에 맞춰 억지로 세팅하는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "업라이트 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"헬스장 실물 기구의 패드·레버를 확인한 뒤 목표 근육 패턴으로 움직이기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — Upright Row
+
+🎯 ONE KEY CUE
+🔥 "Confirm pads and levers on the unit in your gym, then follow the movement pattern"
+
+There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Upright Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Confirm pads and levers on the unit in your gym, then follow the movement pattern. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"gym80","productSeries":null,"sourceUrl":"https://www.gym80.co.uk/","verifiedStructure":"gym80 카탈로그에서 이 카테고리 전용 SKU를 확인하지 못했습니다","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '업라이트 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 로테이터 머신
+
+🎯 ONE KEY CUE
+🔥 "헬스장 실물 기구의 패드·레버를 확인한 뒤 목표 근육 패턴으로 움직이기"
+
+짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+해당 카테고리의 표준 가동 범위로 천천히 반복.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 확인되지 않은 모델명에 맞춰 억지로 세팅하는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "로테이터 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"헬스장 실물 기구의 패드·레버를 확인한 뒤 목표 근육 패턴으로 움직이기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — Rotator Machine
+
+🎯 ONE KEY CUE
+🔥 "Confirm pads and levers on the unit in your gym, then follow the movement pattern"
+
+There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Rotator Machine", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Confirm pads and levers on the unit in your gym, then follow the movement pattern. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"gym80","productSeries":null,"sourceUrl":"https://www.gym80.co.uk/","verifiedStructure":"gym80 카탈로그에서 이 카테고리 전용 SKU를 확인하지 못했습니다","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로테이터 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4036 MULTIPRESS STATION · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Multipress에서 가이드 경로로 체스트·숄더 프레스를 전환하기"
+
+gym80 Sygnum Stations 4036 Multipress Station (카탈로그 '멀티 프레스' → 카테고리 '숄더 프레스 / 레터럴 복합 머신' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+바/슬레드 높이, 안전 스토퍼, 양측 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+멀티프레스 바를 밀어 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 높이 미설정 상태로 억지 각도에서 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4036 MULTIPRESS STATION의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Multipress에서 가이드 경로로 체스트·숄더 프레스를 전환하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4036 MULTIPRESS STATION · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Multipress, switch chest and shoulder presses on the guided path"
+
+gym80 Sygnum Stations 4036 Multipress Station (카탈로그 '멀티 프레스' → 카테고리 '숄더 프레스 / 레터럴 복합 머신' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 바/슬레드 높이, 안전 스토퍼, 양측 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4036 MULTIPRESS STATION. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Multipress, switch chest and shoulder presses on the guided path. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4036 MULTIPRESS STATION","manufacturer":"gym80","productSeries":"Sygnum Stations","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"gym80 Sygnum Stations 4036 Multipress Station (카탈로그 '멀티 프레스' → 카테고리 '숄더 프레스 / 레터럴 복합 머신' 매핑)","verifiedAdjustments":"바/슬레드 높이, 안전 스토퍼, 양측 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스 / 레터럴 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3030 SEATED LEG PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Leg Press에서 무릎이 발끝 방향을 유지한 채 밀기"
+
+gym80 Sygnum 3030 Seated Leg Press. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 발판 위치, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+발판을 밀어 무릎을 펴고 천천히 접기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들리고 허리가 둥글게 말리는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3030 SEATED LEG PRESS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3030 SEATED LEG PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Leg Press, keep knees tracking over the toes while pressing"
+
+gym80 Sygnum 3030 Seated Leg Press입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 발판 위치, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3030 SEATED LEG PRESS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3030 SEATED LEG PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3030 Seated Leg Press입니다","verifiedAdjustments":"시트, 발판 위치, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4038 PURE KRAFT SQUAT MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Squat에서 V형 발판 감각으로 힙을 뒤로 보내며 앉기"
+
+V-Squat 전용명 SKU는 없고 Pure Kraft 4038 Squat Machine이 유사 패턴 (카탈로그 '브이 스쿼트' → 카테고리 '45도 레그 프레스' 매핑). Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+어깨 패드, 발판, 등받침, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+스쿼트 머신 궤적으로 하강 후 상승.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎만 앞으로 과도하게 내미는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4038 PURE KRAFT SQUAT MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4038 PURE KRAFT SQUAT MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Squat, sit the hips back as on a V-squat path"
+
+V-Squat 전용명 SKU는 없고 Pure Kraft 4038 Squat Machine이 유사 패턴 (카탈로그 '브이 스쿼트' → 카테고리 '45도 레그 프레스' 매핑) Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 어깨 패드, 발판, 등받침, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4038 PURE KRAFT SQUAT MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4038 PURE KRAFT SQUAT MACHINE","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"V-Squat 전용명 SKU는 없고 Pure Kraft 4038 Squat Machine이 유사 패턴 (카탈로그 '브이 스쿼트' → 카테고리 '45도 레그 프레스' 매핑)","verifiedAdjustments":"어깨 패드, 발판, 등받침, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '45도 레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4353N PURE KRAFT PENDULUM SQUAT · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Pendulum에서 진자 궤적을 따라 깊게 앉았다 일어서기"
+
+gym80 Pure Kraft 4353N Pendulum Squat (카탈로그 '펜듈럼 스쿼트' → 카테고리 '수평 레그 프레스' 매핑). Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+수평 궤적에 맞춰 발판 중앙에 발을 안정적으로 두세요. 무릎·발끝 방향을 맞춥니다.
+⚙️ 조절 포인트
+어깨 패드, 발판, 진자 암, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+펜듈럼 암을 따라 하강 후 밀어 상승.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 발판에서 뒤꿈치가 들며 앞으로 쏠리는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 수평(리니어) 궤적은 45° 레그 프레스와 골반 느낌이 다릅니다. 시트에 골반을 붙인 채 수평으로 민다는 감각을 먼저 만드세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반은 시트에, 발 전체로 수평으로 밀고, 복귀는 2~3초."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4353N PURE KRAFT PENDULUM SQUAT · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Pendulum, follow the pendulum arc into a deep squat"
+
+gym80 Pure Kraft 4353N Pendulum Squat (카탈로그 '펜듈럼 스쿼트' → 카테고리 '수평 레그 프레스' 매핑) Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet on the horizontal path and keep knees tracking with toes.
+⚙️ Adjustments
+Check 어깨 패드, 발판, 진자 암, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Linear/horizontal paths feel different from a 45° sled. Keep the pelvis glued and press on the horizontal line.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pelvis glued, whole-foot horizontal drive, 2–3 sec return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4353N PURE KRAFT PENDULUM SQUAT","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4353N Pendulum Squat (카탈로그 '펜듈럼 스쿼트' → 카테고리 '수평 레그 프레스' 매핑)","verifiedAdjustments":"어깨 패드, 발판, 진자 암, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '수평 레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4159 PURE KRAFT HACK SQUAT · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Hack에서 발판을 안정적으로 디딘 채 깊게 앉았다 일어서기"
+
+gym80 Pure Kraft 4159 Hack Squat (카탈로그 '해크 스쿼트' → 카테고리 '핵 스쿼트' 매핑). Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+어깨 패드, 발판 위치, 안전 스토퍼, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+sled를 내려 앉았다가 밀어 올리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎만 과도하게 앞으로 내밀어 슬개건에 부하를 주는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4159 PURE KRAFT HACK SQUAT의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4159 PURE KRAFT HACK SQUAT · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Hack, plant the feet and sit deep before standing"
+
+gym80 Pure Kraft 4159 Hack Squat (카탈로그 '해크 스쿼트' → 카테고리 '핵 스쿼트' 매핑) Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 어깨 패드, 발판 위치, 안전 스토퍼, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4159 PURE KRAFT HACK SQUAT. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4159 PURE KRAFT HACK SQUAT","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4159 Hack Squat (카탈로그 '해크 스쿼트' → 카테고리 '핵 스쿼트' 매핑)","verifiedAdjustments":"어깨 패드, 발판 위치, 안전 스토퍼, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '핵 스쿼트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4038 PURE KRAFT SQUAT MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Squat에서 발판을 넓게 잡고 힙을 뒤로 보내며 앉기"
+
+gym80 Pure Kraft 4038 Squat Machine (카탈로그 '스쿼트 머신' → 카테고리 '스쿼트 프레스' 매핑). Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+어깨 패드, 발판 각도, 등받침, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+스쿼트 궤적으로 하강한 뒤 발로 밀어 상승.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체가 앞으로 무너지며 무릎만 접는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4038 PURE KRAFT SQUAT MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4038 PURE KRAFT SQUAT MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Squat, set a wide foot stance and sit the hips back"
+
+gym80 Pure Kraft 4038 Squat Machine (카탈로그 '스쿼트 머신' → 카테고리 '스쿼트 프레스' 매핑) Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 어깨 패드, 발판 각도, 등받침, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4038 PURE KRAFT SQUAT MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4038 PURE KRAFT SQUAT MACHINE","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4038 Squat Machine (카탈로그 '스쿼트 머신' → 카테고리 '스쿼트 프레스' 매핑)","verifiedAdjustments":"어깨 패드, 발판 각도, 등받침, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스쿼트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4360 PURE KRAFT BELT SQUAT · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Belt Squat에서 벨트로 부하를 받고 척추 중립 스쿼트하기"
+
+gym80 Pure Kraft 4360 Belt Squat. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+벨트 높이, 발판 위치, 플레이트를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+벨트를 찬 채 앉았다 일어서기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 벨트가 느슨해 힙이 흔들리는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4360 PURE KRAFT BELT SQUAT의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4360 PURE KRAFT BELT SQUAT · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Belt Squat, load via the belt and squat with a neutral spine"
+
+gym80 Pure Kraft 4360 Belt Squat입니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 벨트 높이, 발판 위치, 플레이트.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4360 PURE KRAFT BELT SQUAT. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4360 PURE KRAFT BELT SQUAT","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4360 Belt Squat입니다","verifiedAdjustments":"벨트 높이, 발판 위치, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '벨트 스쿼트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3001 LEG EXTENSION · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Leg Extension에서 무릎 축을 맞추고 끝까지 펴기"
+
+gym80 Sygnum 3001 Leg Extension. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 등받침, 발목 패드, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+발목 패드를 위로 펴 올렸다 천천히 내리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 골반이 들린 채 반동으로 차는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3001 LEG EXTENSION의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3001 LEG EXTENSION · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Leg Extension, align the knee axis and extend fully"
+
+gym80 Sygnum 3001 Leg Extension입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 등받침, 발목 패드, 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3001 LEG EXTENSION. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3001 LEG EXTENSION","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3001 Leg Extension입니다","verifiedAdjustments":"시트, 등받침, 발목 패드, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3003 SEATED LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Seated Curl에서 허벅지를 누르고 천천히 컬하기"
+
+gym80 Sygnum 3003 Seated Leg Curl. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 허벅지 고정, 발목 롤러, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+앉은 자세에서 무릎을 굽혔다 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎이 벌어지며 힙이 회전하는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3003 SEATED LEG CURL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3003 SEATED LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Seated Curl, press the thighs down and curl slowly"
+
+gym80 Sygnum 3003 Seated Leg Curl입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 허벅지 고정, 발목 롤러, 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3003 SEATED LEG CURL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3003 SEATED LEG CURL","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3003 Seated Leg Curl입니다","verifiedAdjustments":"시트, 허벅지 고정, 발목 롤러, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3002 LYING LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Lying Curl에서 골반을 패드에 붙인 채 컬하기"
+
+gym80 Sygnum 3002 Lying Leg Curl. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+배 패드, 발목 롤러, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+엎드린 채 발뒤꿈치를 엉덩이로 당겼다 복귀.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들며 요추로 당기는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3002 LYING LEG CURL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3002 LYING LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Lying Curl, keep the pelvis on the pad while curling"
+
+gym80 Sygnum 3002 Lying Leg Curl입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 배 패드, 발목 롤러, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3002 LYING LEG CURL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3002 LYING LEG CURL","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3002 Lying Leg Curl입니다","verifiedAdjustments":"배 패드, 발목 롤러, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '라잉 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3003 SEATED LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Leg Curl에서 힙을 고정하고 발뒤꿈치를 엉덩이로 당기기"
+
+gym80 Sygnum 3003 Seated Leg Curl (카탈로그 '레그 컬' → 카테고리 '스탠딩 레그 컬' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 허벅지 패드, 발목 롤러, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+무릎을 굽혀 컬한 뒤 천천히 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리가 뜨며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3003 SEATED LEG CURL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3003 SEATED LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Leg Curl, lock the hips and curl heels toward the glutes"
+
+gym80 Sygnum 3003 Seated Leg Curl (카탈로그 '레그 컬' → 카테고리 '스탠딩 레그 컬' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 허벅지 패드, 발목 롤러, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3003 SEATED LEG CURL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3003 SEATED LEG CURL","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3003 Seated Leg Curl (카탈로그 '레그 컬' → 카테고리 '스탠딩 레그 컬' 매핑)","verifiedAdjustments":"시트, 허벅지 패드, 발목 롤러, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3003 SEATED LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Seated Curl에서 허벅지를 누르고 천천히 컬하기"
+
+gym80 Sygnum 3003 Seated Leg Curl (단측 레그 컬 패턴 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 허벅지 고정, 발목 롤러, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+앉은 자세에서 무릎을 굽혔다 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎이 벌어지며 힙이 회전하는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3003 SEATED LEG CURL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3003 SEATED LEG CURL · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Seated Curl, press the thighs down and curl slowly"
+
+gym80 Sygnum 3003 Seated Leg Curl (단측 레그 컬 패턴 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 허벅지 고정, 발목 롤러, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3003 SEATED LEG CURL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3003 SEATED LEG CURL","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3003 Seated Leg Curl (단측 레그 컬 패턴 매핑)","verifiedAdjustments":"시트, 허벅지 고정, 발목 롤러, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '싱글 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4352 PURE KRAFT BOOTY BOOSTER · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Booty Booster에서 골반을 위로 밀어 둔근을 수축하기"
+
+Hip Thrust 전용명보다 Pure Kraft 4352 Booty Booster 힙·둔근 패턴이 가깝습니다 (카탈로그 '힙 쓰러스트 머신' → 카테고리 '힙 쓰러스트' 매핑). Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+등/골반 패드, 발판, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+힙을 위로 밀어 올렸다 천천히 내리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과하게 젖혀 요추로 올리는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4352 PURE KRAFT BOOTY BOOSTER의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft Booty Booster에서 골반을 위로 밀어 둔근을 수축하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4352 PURE KRAFT BOOTY BOOSTER · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Booty Booster, drive the hips up and squeeze the glutes"
+
+Hip Thrust 전용명보다 Pure Kraft 4352 Booty Booster 힙·둔근 패턴이 가깝습니다 (카탈로그 '힙 쓰러스트 머신' → 카테고리 '힙 쓰러스트' 매핑) Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 등/골반 패드, 발판, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4352 PURE KRAFT BOOTY BOOSTER. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft Booty Booster, drive the hips up and squeeze the glutes. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4352 PURE KRAFT BOOTY BOOSTER","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"Hip Thrust 전용명보다 Pure Kraft 4352 Booty Booster 힙·둔근 패턴이 가깝습니다 (카탈로그 '힙 쓰러스트 머신' → 카테고리 '힙 쓰러스트' 매핑)","verifiedAdjustments":"등/골반 패드, 발판, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 쓰러스트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4434 GLUTE HAM DEVELOPER · 80Athletics
+
+🎯 ONE KEY CUE
+🔥 "GHD에서 둔근으로 몸통을 일으켜 햄스트링으로 버티기"
+
+gym80 80Athletics 4434 Glute Ham Developer (카탈로그 '글루트 햄 레이즈' → 카테고리 '글루트 드라이브' 매핑). gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+발목 롤러, 허벅지 패드, 힙 위치를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+상체를 내려 신전했다 무릎 굴곡으로 복귀.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 꺾어 반동으로 올라오는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4434 GLUTE HAM DEVELOPER의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"GHD에서 둔근으로 몸통을 일으켜 햄스트링으로 버티기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4434 GLUTE HAM DEVELOPER · 80Athletics
+
+🎯 ONE KEY CUE
+🔥 "On the GHD, raise the torso with the glutes and hold with the hamstrings"
+
+gym80 80Athletics 4434 Glute Ham Developer (카탈로그 '글루트 햄 레이즈' → 카테고리 '글루트 드라이브' 매핑) Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 발목 롤러, 허벅지 패드, 힙 위치.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4434 GLUTE HAM DEVELOPER. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the GHD, raise the torso with the glutes and hold with the hamstrings. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4434 GLUTE HAM DEVELOPER","manufacturer":"gym80","productSeries":"80Athletics","sourceUrl":"https://gym80.us/products/80athletics/","verifiedStructure":"gym80 80Athletics 4434 Glute Ham Developer (카탈로그 '글루트 햄 레이즈' → 카테고리 '글루트 드라이브' 매핑)","verifiedAdjustments":"발목 롤러, 허벅지 패드, 힙 위치","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 드라이브';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 글루트 킥백
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정한 채 엉덩이로 뒤로 차기"
+
+짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+패드, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+무릎을 약간 굽힌 채 다리를 뒤로 뻗었다 천천히 복귀.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 반동으로 차는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "글루트 킥백"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반을 고정한 채 엉덩이로 뒤로 차기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — Glute Kickback
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis and kick back with the glute"
+
+There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 패드, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Glute Kickback", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the pelvis and kick back with the glute. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"gym80","productSeries":null,"sourceUrl":"https://www.gym80.co.uk/","verifiedStructure":"gym80 카탈로그에서 글루트 킥백 전용 SKU를 확인하지 못했습니다","verifiedAdjustments":"패드, 가동 범위, 중량","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 킥백';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3028 ABDUCTION MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Abduction에서 상체를 고정하고 무릎을 바깥으로 벌리기"
+
+gym80 Sygnum 3028 Abduction Machine. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 무릎/허벅지 패드, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+다리를 외측으로 벌렸다 천천히 모으기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 흔들며 반동으로 벌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3028 ABDUCTION MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Abduction에서 상체를 고정하고 무릎을 바깥으로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3028 ABDUCTION MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Abduction, brace the torso and open the knees outward"
+
+gym80 Sygnum 3028 Abduction Machine입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 무릎/허벅지 패드, 중량 스택.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3028 ABDUCTION MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Abduction, brace the torso and open the knees outward. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3028 ABDUCTION MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3028 Abduction Machine입니다","verifiedAdjustments":"시트, 무릎/허벅지 패드, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어브덕션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3029 ADDUCTION MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Adduction에서 내전근으로 무릎을 모으며 조이기"
+
+gym80 Sygnum 3029 Adduction Machine. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 허벅지 패드, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+다리를 안쪽으로 모았다 천천히 벌리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 비틀며 무게를 던지는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3029 ADDUCTION MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Adduction에서 내전근으로 무릎을 모으며 조이기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3029 ADDUCTION MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Adduction, squeeze the knees together with the adductors"
+
+gym80 Sygnum 3029 Adduction Machine입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 허벅지 패드, 중량 스택.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3029 ADDUCTION MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Adduction, squeeze the knees together with the adductors. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3029 ADDUCTION MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3029 Adduction Machine입니다","verifiedAdjustments":"시트, 허벅지 패드, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어덕션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4321 PURE KRAFT GLUTEUS KICK MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Glute Kick에서 골반을 고정하고 다리를 뒤로 차기"
+
+gym80 Pure Kraft 4321 Gluteus Kick Machine (카탈로그 '글루트 머신' → 카테고리 '글루트 / 힙 머신' 매핑). Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+골반 패드, 무릎/발 패드, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+다리를 뒤로 펴 올렸다 천천히 복귀.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 치는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4321 PURE KRAFT GLUTEUS KICK MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Pure Kraft Glute Kick에서 골반을 고정하고 다리를 뒤로 차기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4321 PURE KRAFT GLUTEUS KICK MACHINE · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Glute Kick, lock the pelvis and kick the leg back"
+
+gym80 Pure Kraft 4321 Gluteus Kick Machine (카탈로그 '글루트 머신' → 카테고리 '글루트 / 힙 머신' 매핑) Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 골반 패드, 무릎/발 패드, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4321 PURE KRAFT GLUTEUS KICK MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Pure Kraft Glute Kick, lock the pelvis and kick the leg back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4321 PURE KRAFT GLUTEUS KICK MACHINE","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"gym80 Pure Kraft 4321 Gluteus Kick Machine (카탈로그 '글루트 머신' → 카테고리 '글루트 / 힙 머신' 매핑)","verifiedAdjustments":"골반 패드, 무릎/발 패드, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 / 힙 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3018 STANDING CALF RAISE MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Standing Calf에서 발볼로 밀어 발뒤꿈치를 최대로 들기"
+
+gym80 Sygnum 3018 Standing Calf Raise Machine (카탈로그 '카프 레이즈' → 카테고리 '스탠딩 카프' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+어깨 패드, 발판 위치, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+발뒤꿈치를 내렸다 올리며 카프 수축.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 굽힌 채 반동으로 튀는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3018 STANDING CALF RAISE MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3018 STANDING CALF RAISE MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Standing Calf, drive through the balls of the feet to full rise"
+
+gym80 Sygnum 3018 Standing Calf Raise Machine (카탈로그 '카프 레이즈' → 카테고리 '스탠딩 카프' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 어깨 패드, 발판 위치, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3018 STANDING CALF RAISE MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3018 STANDING CALF RAISE MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3018 Standing Calf Raise Machine (카탈로그 '카프 레이즈' → 카테고리 '스탠딩 카프' 매핑)","verifiedAdjustments":"어깨 패드, 발판 위치, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3027 SEATED CALF PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Seated Calf에서 무릎을 고정하고 발볼로만 밀기"
+
+gym80 Sygnum 3027 Seated Calf Press. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+시트, 무릎 패드, 발판, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앉아서 발뒤꿈치를 올렸다 깊게 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎으로 밀며 대퇴가 개입하는
+자세가 무너지면 무게를 낮추세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3027 SEATED CALF PRESS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3027 SEATED CALF PRESS · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Seated Calf, lock the knees and press only with the forefoot"
+
+gym80 Sygnum 3027 Seated Calf Press입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 시트, 무릎 패드, 발판, 중량 스택.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3027 SEATED CALF PRESS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3027 SEATED CALF PRESS","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3027 Seated Calf Press입니다","verifiedAdjustments":"시트, 무릎 패드, 발판, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4023 PURE KRAFT 45 DEGREES LINEAR LEG PRESS · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "Pure Kraft Leg Press 발판 하단에서 무릎을 펴고 카프만 밀기"
+
+Leg Press Calf 전용 콤보 SKU는 없고 45° Leg Press 발판에서 카프 변형이 가능합니다. Pure Kraft 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+발판 위치, 무릎 각도, 플레이트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+레그프레스 자세에서 발뒤꿈치를 올렸다 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 굽힌 채 카프를 해 슬개건에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 수평(리니어) 궤적은 45° 레그 프레스와 골반 느낌이 다릅니다. 시트에 골반을 붙인 채 수평으로 민다는 감각을 먼저 만드세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4023 PURE KRAFT 45 DEGREES LINEAR LEG PRESS · Pure Kraft
+
+🎯 ONE KEY CUE
+🔥 "On Pure Kraft Leg Press, straighten the knees and calf-press from the lower plate"
+
+Leg Press Calf 전용 콤보 SKU는 없고 45° Leg Press 발판에서 카프 변형이 가능합니다 Lean into the Pure Kraft design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 발판 위치, 무릎 각도, 플레이트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Linear/horizontal paths feel different from a 45° sled. Keep the pelvis glued and press on the horizontal line.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4023 PURE KRAFT 45 DEGREES LINEAR LEG PRESS","manufacturer":"gym80","productSeries":"Pure Kraft","sourceUrl":"https://www.gym80.co.uk/product-ranges/pure-kraft","verifiedStructure":"Leg Press Calf 전용 콤보 SKU는 없고 45° Leg Press 발판에서 카프 변형이 가능합니다","verifiedAdjustments":"발판 위치, 무릎 각도, 플레이트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3010 BICEPS MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Biceps에서 팔꿈치를 패드에 고정하고 손목을 중립으로 컬하기"
+
+gym80 Sygnum 3010 Biceps Machine (카탈로그 '바이셉스 컬' → 카테고리 '바이셉 컬' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 어깨 쪽으로 컬했다 천천히 펴기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 들어 올리며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3010 BICEPS MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Biceps에서 팔꿈치를 패드에 고정하고 손목을 중립으로 컬하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3010 BICEPS MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Biceps, pin elbows to the pad and curl with neutral wrists"
+
+gym80 Sygnum 3010 Biceps Machine (카탈로그 '바이셉스 컬' → 카테고리 '바이셉 컬' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3010 BICEPS MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Biceps, pin elbows to the pad and curl with neutral wrists. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3010 BICEPS MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3010 Biceps Machine (카탈로그 '바이셉스 컬' → 카테고리 '바이셉 컬' 매핑)","verifiedAdjustments":"시트, 팔꿈치 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4093 BASIC SEATED SCOTT CURL · Basics
+
+🎯 ONE KEY CUE
+🔥 "Scott Curl 패드에 상완을 붙이고 하단에서 힘을 주어 컬하기"
+
+gym80 Basics 4093 Seated Scott Curl(프리처). gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 암 패드 높이, 바/손잡이를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+프리처 패드에서 바를 컬했다 천천히 펴기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 패드에서 떼며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4093 BASIC SEATED SCOTT CURL의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Scott Curl 패드에 상완을 붙이고 하단에서 힘을 주어 컬하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4093 BASIC SEATED SCOTT CURL · Basics
+
+🎯 ONE KEY CUE
+🔥 "On the Scott Curl pad, keep upper arms glued and curl from the bottom"
+
+gym80 Basics 4093 Seated Scott Curl(프리처)입니다 Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 암 패드 높이, 바/손잡이.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4093 BASIC SEATED SCOTT CURL. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the Scott Curl pad, keep upper arms glued and curl from the bottom. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4093 BASIC SEATED SCOTT CURL","manufacturer":"gym80","productSeries":"Basics","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"gym80 Basics 4093 Seated Scott Curl(프리처)입니다","verifiedAdjustments":"시트, 암 패드 높이, 바/손잡이","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프리처 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3010 BICEPS MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Biceps에서 팔꿈치를 패드에 고정하고 손목을 중립으로 컬하기"
+
+gym80 Sygnum 3010 Biceps Machine (바이셉 → 아이소 바이셉 매핑). 좌우가 독립으로 움직이는 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 손잡이, 중량 스택을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 어깨 쪽으로 컬했다 천천히 펴기.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 들어 올리며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 기구는 좌우 암이 독립적으로 움직이는 게 장점입니다. 무게를 올리기 전에 양쪽이 같은 속도로 가는지 확인하세요. 한쪽이 먼저 끝까지 가 버리면 중량보다 밸런스가 먼저입니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3010 BICEPS MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Biceps, pin elbows to the pad and curl with neutral wrists"
+
+gym80 Sygnum 3010 Biceps Machine (바이셉 → 아이소 바이셉 매핑) Lean into the independent arms / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 손잡이, 중량 스택. Confirm both sides start from the same position.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Double-check both sides start at the same height.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Curl or extend only at the elbow, then reverse slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Independent arms are the point. Before you load up, confirm both sides move at the same speed. If one side finishes early, fix balance before adding plates or pins.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3010 BICEPS MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3010 Biceps Machine (바이셉 → 아이소 바이셉 매핑)","verifiedAdjustments":"시트, 팔꿈치 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 바이셉 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 5104 CABLE ART NO. 4 – BICEPS & TRICEPS · Sygnum Cable Art
+
+🎯 ONE KEY CUE
+🔥 "Cable Art 5104에서 팔꿈치를 고정하고 케이블 컬하기"
+
+전용 Cable Curl SKU보다 Cable Art 5104 바이셉스 패턴이 해당합니다 (카탈로그 '케이블 컬' → 카테고리 '암 컬' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+케이블 높이, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+케이블을 어깨 쪽으로 컬했다 천천히 펴기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동 컬하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 5104 CABLE ART NO. 4 – BICEPS & TRICEPS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Cable Art 5104에서 팔꿈치를 고정하고 케이블 컬하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 5104 CABLE ART NO. 4 – BICEPS & TRICEPS · Sygnum Cable Art
+
+🎯 ONE KEY CUE
+🔥 "On Cable Art 5104, fix the elbows and curl the cable"
+
+전용 Cable Curl SKU보다 Cable Art 5104 바이셉스 패턴이 해당합니다 (카탈로그 '케이블 컬' → 카테고리 '암 컬' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 케이블 높이, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 5104 CABLE ART NO. 4 – BICEPS & TRICEPS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Cable Art 5104, fix the elbows and curl the cable. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"5104 CABLE ART NO. 4 – BICEPS & TRICEPS","manufacturer":"gym80","productSeries":"Sygnum Cable Art","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum-cable-art","verifiedStructure":"전용 Cable Curl SKU보다 Cable Art 5104 바이셉스 패턴이 해당합니다 (카탈로그 '케이블 컬' → 카테고리 '암 컬' 매핑)","verifiedAdjustments":"케이블 높이, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '암 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3011 TRICEPS EXTENSION · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Triceps Extension에서 팔꿈치를 고정하고 전완만 펴기"
+
+gym80 Sygnum 3011 Triceps Extension. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 아래로/앞으로 펴 올렸다 복귀.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치가 벌어지며 어깨가 개입하는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3011 TRICEPS EXTENSION의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Triceps Extension에서 팔꿈치를 고정하고 전완만 펴기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3011 TRICEPS EXTENSION · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Triceps Extension, fix the elbows and extend only the forearms"
+
+gym80 Sygnum 3011 Triceps Extension입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3011 TRICEPS EXTENSION. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Triceps Extension, fix the elbows and extend only the forearms. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3011 TRICEPS EXTENSION","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3011 Triceps Extension입니다","verifiedAdjustments":"시트, 팔꿈치 패드, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 5104 CABLE ART NO. 4 – BICEPS & TRICEPS · Sygnum Cable Art
+
+🎯 ONE KEY CUE
+🔥 "Cable Art 5104에서 팔꿈치를 옆구리에 붙이고 아래로 누르기"
+
+전용 Pushdown SKU보다 Sygnum Cable Art 5104에서 푸시다운을 수행합니다 (카탈로그 '트라이셉스 푸시다운' → 카테고리 '트라이셉스 프레스' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+케이블 높이, 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+케이블을 아래로 푸시다운했다 천천히 올리기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 숙여 체중으로 누르는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 5104 CABLE ART NO. 4 – BICEPS & TRICEPS의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Cable Art 5104에서 팔꿈치를 옆구리에 붙이고 아래로 누르기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 5104 CABLE ART NO. 4 – BICEPS & TRICEPS · Sygnum Cable Art
+
+🎯 ONE KEY CUE
+🔥 "On Cable Art 5104, pin elbows to the ribs and press the cable down"
+
+전용 Pushdown SKU보다 Sygnum Cable Art 5104에서 푸시다운을 수행합니다 (카탈로그 '트라이셉스 푸시다운' → 카테고리 '트라이셉스 프레스' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 케이블 높이, 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 5104 CABLE ART NO. 4 – BICEPS & TRICEPS. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Cable Art 5104, pin elbows to the ribs and press the cable down. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"5104 CABLE ART NO. 4 – BICEPS & TRICEPS","manufacturer":"gym80","productSeries":"Sygnum Cable Art","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum-cable-art","verifiedStructure":"전용 Pushdown SKU보다 Sygnum Cable Art 5104에서 푸시다운을 수행합니다 (카탈로그 '트라이셉스 푸시다운' → 카테고리 '트라이셉스 프레스' 매핑)","verifiedAdjustments":"케이블 높이, 손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3036 DIP MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Dip에서 어깨를 내린 채 몸을 수직으로 내렸다 밀기"
+
+gym80 Sygnum 3036 Dip Machine (카탈로그 '딥 머신' → 카테고리 '딥 / 트라이셉스 머신' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치/손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+팔꿈치를 굽혀 하강 후 삼두로 밀어 올리기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 과도하게 숙여 어깨 앞쪽에 과부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3036 DIP MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Dip에서 어깨를 내린 채 몸을 수직으로 내렸다 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3036 DIP MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Dip, keep shoulders down and press the body up vertically"
+
+gym80 Sygnum 3036 Dip Machine (카탈로그 '딥 머신' → 카테고리 '딥 / 트라이셉스 머신' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치/손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3036 DIP MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Dip, keep shoulders down and press the body up vertically. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3036 DIP MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3036 Dip Machine (카탈로그 '딥 머신' → 카테고리 '딥 / 트라이셉스 머신' 매핑)","verifiedAdjustments":"시트, 팔꿈치/손잡이, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 / 트라이셉스 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 5104 CABLE ART NO. 4 – BICEPS & TRICEPS · Sygnum Cable Art
+
+🎯 ONE KEY CUE
+🔥 "Cable Art 5104에서 컬과 익스텐션을 같은 스테이션에서 전환하기"
+
+전용 Bi/Tri 셀렉터 콤보보다 Cable Art 5104가 바이·트라이 통합 스테이션 (카탈로그 '바이셉 트라이셉 콤보' → 카테고리 '바이셉스 / 트라이셉스 복합 머신' 매핑). 셀렉터 스택 · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+케이블 높이, 손잡이, 양측 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+바이셉 컬 또는 트라이셉 푸시다운 경로로 수행.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 전환 후 팔꿈치 고정 위치를 무시하는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Select 라인(5104 CABLE ART NO. 4 – BICEPS & TRICEPS)은 스택 핀 위치가 곧 시작 난이도입니다. 시트부터 맞춘 뒤 핀을 고르고, 첫 세트에서 궤적이 어깨·관절에 맞는지 확인하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Cable Art 5104에서 컬과 익스텐션을 같은 스테이션에서 전환하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 5104 CABLE ART NO. 4 – BICEPS & TRICEPS · Sygnum Cable Art
+
+🎯 ONE KEY CUE
+🔥 "On Cable Art 5104, switch curls and extensions on the same station"
+
+전용 Bi/Tri 셀렉터 콤보보다 Cable Art 5104가 바이·트라이 통합 스테이션 (카탈로그 '바이셉 트라이셉 콤보' → 카테고리 '바이셉스 / 트라이셉스 복합 머신' 매핑) Lean into the selectorized stack / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 케이블 높이, 손잡이, 양측 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 On Select (5104 CABLE ART NO. 4 – BICEPS & TRICEPS), the pin is your difficulty. Fit the seat first, choose the pin second, and confirm the path on set one.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Cable Art 5104, switch curls and extensions on the same station. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"5104 CABLE ART NO. 4 – BICEPS & TRICEPS","manufacturer":"gym80","productSeries":"Sygnum Cable Art","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum-cable-art","verifiedStructure":"전용 Bi/Tri 셀렉터 콤보보다 Cable Art 5104가 바이·트라이 통합 스테이션 (카탈로그 '바이셉 트라이셉 콤보' → 카테고리 '바이셉스 / 트라이셉스 복합 머신' 매핑)","verifiedAdjustments":"케이블 높이, 손잡이, 양측 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉스 / 트라이셉스 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3037 SPECIAL ABDOMINAL MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Abdominal에서 골반을 고정하고 갈비뼈를 아래로 말아 크런치하기"
+
+gym80 Sygnum 3037 Special Abdominal Machine (카탈로그 '복근 머신' → 카테고리 '앱 크런치' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+시트, 가슴/어깨 패드, 가동 범위, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 앞으로 말아 당겼다 천천히 펴기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이를 들며 고관절 굴곡만으로 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3037 SPECIAL ABDOMINAL MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3037 SPECIAL ABDOMINAL MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Abdominal, lock the pelvis and crunch by curling the ribs down"
+
+gym80 Sygnum 3037 Special Abdominal Machine (카탈로그 '복근 머신' → 카테고리 '앱 크런치' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 시트, 가슴/어깨 패드, 가동 범위, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3037 SPECIAL ABDOMINAL MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3037 SPECIAL ABDOMINAL MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3037 Special Abdominal Machine (카탈로그 '복근 머신' → 카테고리 '앱 크런치' 매핑)","verifiedAdjustments":"시트, 가슴/어깨 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '앱 크런치';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3037 SPECIAL ABDOMINAL MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Abdominal에서 골반을 고정하고 갈비뼈를 아래로 말아 크런치하기"
+
+gym80 Sygnum 3037 Special Abdominal Machine (카탈로그 '복근 머신' → 카테고리 '어브도미널' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+시트, 가슴/어깨 패드, 가동 범위, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 앞으로 말아 당겼다 천천히 펴기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이를 들며 고관절 굴곡만으로 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3037 SPECIAL ABDOMINAL MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3037 SPECIAL ABDOMINAL MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Abdominal, lock the pelvis and crunch by curling the ribs down"
+
+gym80 Sygnum 3037 Special Abdominal Machine (카탈로그 '복근 머신' → 카테고리 '어브도미널' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 시트, 가슴/어깨 패드, 가동 범위, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3037 SPECIAL ABDOMINAL MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3037 SPECIAL ABDOMINAL MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3037 Special Abdominal Machine (카탈로그 '복근 머신' → 카테고리 '어브도미널' 매핑)","verifiedAdjustments":"시트, 가슴/어깨 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어브도미널';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3225 TWISTER MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Twister에서 골반을 고정하고 흉추만 회전하기"
+
+gym80 Sygnum 3225 Twister Machine 토르소 로테이션 (카탈로그 '토르소 로테이션' → 카테고리 '로터리 토르소' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이/패드, 회전 범위, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+몸통을 좌우로 회전했다 중앙으로 복귀.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎과 골반까지 함께 돌려 버리는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3225 TWISTER MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3225 TWISTER MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Twister, lock the pelvis and rotate through the thoracic spine"
+
+gym80 Sygnum 3225 Twister Machine 토르소 로테이션 (카탈로그 '토르소 로테이션' → 카테고리 '로터리 토르소' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이/패드, 회전 범위, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3225 TWISTER MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3225 TWISTER MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3225 Twister Machine 토르소 로테이션 (카탈로그 '토르소 로테이션' → 카테고리 '로터리 토르소' 매핑)","verifiedAdjustments":"시트, 손잡이/패드, 회전 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로터리 토르소';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 사이드 밴드
+
+🎯 ONE KEY CUE
+🔥 "옆구리를 길게 늘린 뒤 측면으로 말아 올리기"
+
+짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+측면으로 숙였다 옆구리로 일으켜 세우기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리만 꺾어 요추에 과부하를 주는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "사이드 밴드"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — Side Bend
+
+🎯 ONE KEY CUE
+🔥 "Lengthen the side body then curl upward in a side bend"
+
+There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Side Bend", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"gym80","productSeries":null,"sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 카탈로그에 Side Bend 전용 머신 SKU가 없습니다","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '사이드 밴드';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3007 LOWER BACK MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Lower Back에서 힙을 힌지하고 중립 척추로 신전하기"
+
+gym80 Sygnum 3007 Lower Back Machine. Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+시트, 등/엉덩이 패드, 가동 범위, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 앞으로 숙였다 뒤로 신전.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전하며 끝에서 튕기는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3007 LOWER BACK MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3007 LOWER BACK MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Lower Back, hip-hinge and extend with a neutral spine"
+
+gym80 Sygnum 3007 Lower Back Machine입니다 Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 시트, 등/엉덩이 패드, 가동 범위, 중량 스택.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3007 LOWER BACK MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3007 LOWER BACK MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3007 Lower Back Machine입니다","verifiedAdjustments":"시트, 등/엉덩이 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '백 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4119 BASIC 45-BACK EXTENSION · Basics
+
+🎯 ONE KEY CUE
+🔥 "45° 하이퍼에서 둔근·햄으로 몸을 일직선까지 올리기"
+
+gym80 Basics 4119 45° Back Extension(하이퍼) (카탈로그 '하이퍼 익스텐션' → 카테고리 '힙 익스텐션' 매핑). gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+허벅지 패드, 발 고정, 손 위치를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+상체를 내려 접었다 일직선으로 올리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 목을 젖히며 요추만 과신전하는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4119 BASIC 45-BACK EXTENSION의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"45° 하이퍼에서 둔근·햄으로 몸을 일직선까지 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4119 BASIC 45-BACK EXTENSION · Basics
+
+🎯 ONE KEY CUE
+🔥 "On the 45° hyper, drive with glutes and hamstrings to a straight line"
+
+gym80 Basics 4119 45° Back Extension(하이퍼) (카탈로그 '하이퍼 익스텐션' → 카테고리 '힙 익스텐션' 매핑) Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 허벅지 패드, 발 고정, 손 위치.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4119 BASIC 45-BACK EXTENSION. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the 45° hyper, drive with glutes and hamstrings to a straight line. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4119 BASIC 45-BACK EXTENSION","manufacturer":"gym80","productSeries":"Basics","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"gym80 Basics 4119 45° Back Extension(하이퍼) (카탈로그 '하이퍼 익스텐션' → 카테고리 '힙 익스텐션' 매핑)","verifiedAdjustments":"허벅지 패드, 발 고정, 손 위치","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3037 SPECIAL ABDOMINAL MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Abdominal에서 골반을 고정하고 갈비뼈를 아래로 말아 크런치하기"
+
+gym80 Sygnum 3037 Special Abdominal Machine (복근/백 익스텐션 복합 패턴 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+시트, 가슴/어깨 패드, 가동 범위, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 앞으로 말아 당겼다 천천히 펴기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이를 들며 고관절 굴곡만으로 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3037 SPECIAL ABDOMINAL MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3037 SPECIAL ABDOMINAL MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Abdominal, lock the pelvis and crunch by curling the ribs down"
+
+gym80 Sygnum 3037 Special Abdominal Machine (복근/백 익스텐션 복합 패턴 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 시트, 가슴/어깨 패드, 가동 범위, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3037 SPECIAL ABDOMINAL MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3037 SPECIAL ABDOMINAL MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3037 Special Abdominal Machine (복근/백 익스텐션 복합 패턴 매핑)","verifiedAdjustments":"시트, 가슴/어깨 패드, 가동 범위, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '복근 / 허리 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4004 CABLE CROSSOVER STATION · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "Sygnum Crossover에서 양 케이블을 가슴 앞에서 호를 그리며 모으기"
+
+gym80 Sygnum Stations 4004 Cable Crossover Station. Cable Motion · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풀리 높이, 손잡이, 양측 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양손을 바깥에서 중앙으로 모았다 천천히 벌리기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔을 과신전한 채 어깨만 흔드는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4004 CABLE CROSSOVER STATION의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum Crossover에서 양 케이블을 가슴 앞에서 호를 그리며 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4004 CABLE CROSSOVER STATION · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum Crossover, arc both cables together in front of the chest"
+
+gym80 Sygnum Stations 4004 Cable Crossover Station입니다 Lean into the Cable Motion / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풀리 높이, 손잡이, 양측 중량 스택.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4004 CABLE CROSSOVER STATION. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum Crossover, arc both cables together in front of the chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"4004 CABLE CROSSOVER STATION","manufacturer":"gym80","productSeries":"Sygnum Stations","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"gym80 Sygnum Stations 4004 Cable Crossover Station입니다","verifiedAdjustments":"풀리 높이, 손잡이, 양측 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '케이블 크로스오버';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4034 DUAL ADJUSTABLE PULLEY · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "Sygnum DAP에서 풀리 높이를 맞춘 뒤 대칭으로 당기거나 밀기"
+
+gym80 Sygnum Stations 4034 Dual Adjustable Pulley 펑셔널 트레이너 (카탈로그 '펑셔널 트레이너' → 카테고리 '듀얼 어저스터블 풀리' 매핑). Cable Motion · Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풀리 높이, 양측 스택, 손잡이/어태치먼트를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양 케이블을 원하는 궤적으로 당기거나 밀어 복귀.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽으로만 기울어 케이블이 비대칭이 되는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4034 DUAL ADJUSTABLE PULLEY의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum DAP에서 풀리 높이를 맞춘 뒤 대칭으로 당기거나 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4034 DUAL ADJUSTABLE PULLEY · Sygnum Stations
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum DAP, set pulley height then pull or press symmetrically"
+
+gym80 Sygnum Stations 4034 Dual Adjustable Pulley 펑셔널 트레이너 (카탈로그 '펑셔널 트레이너' → 카테고리 '듀얼 어저스터블 풀리' 매핑) Lean into the Cable Motion / Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풀리 높이, 양측 스택, 손잡이/어태치먼트.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4034 DUAL ADJUSTABLE PULLEY. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum DAP, set pulley height then pull or press symmetrically. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4034 DUAL ADJUSTABLE PULLEY","manufacturer":"gym80","productSeries":"Sygnum Stations","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"gym80 Sygnum Stations 4034 Dual Adjustable Pulley 펑셔널 트레이너 (카탈로그 '펑셔널 트레이너' → 카테고리 '듀얼 어저스터블 풀리' 매핑)","verifiedAdjustments":"풀리 높이, 양측 스택, 손잡이/어태치먼트","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '듀얼 어저스터블 풀리';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4040 BASIC MAX RACK · Basics
+
+🎯 ONE KEY CUE
+🔥 "Max Rack에서 원하는 프레스·스쿼트 높이를 고정하고 수행하기"
+
+Multi Rack 전용명보다 Basics 4040 Max Rack 다기능 랙이 가깝습니다 (카탈로그 '멀티랙' → 카테고리 '멀티 정글짐' 매핑). gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+바 위치, 세이프티, 스토리지 핀을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+멀티 포지션 랙에서 바를 들어 올렸다 복귀.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 높이 미조정 상태로 억지 자세를 취하는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 4040 BASIC MAX RACK의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Max Rack에서 원하는 프레스·스쿼트 높이를 고정하고 수행하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4040 BASIC MAX RACK · Basics
+
+🎯 ONE KEY CUE
+🔥 "On Max Rack, lock the desired press or squat height before lifting"
+
+Multi Rack 전용명보다 Basics 4040 Max Rack 다기능 랙이 가깝습니다 (카탈로그 '멀티랙' → 카테고리 '멀티 정글짐' 매핑) Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 바 위치, 세이프티, 스토리지 핀.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 4040 BASIC MAX RACK. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Max Rack, lock the desired press or squat height before lifting. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4040 BASIC MAX RACK","manufacturer":"gym80","productSeries":"Basics","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"Multi Rack 전용명보다 Basics 4040 Max Rack 다기능 랙이 가깝습니다 (카탈로그 '멀티랙' → 카테고리 '멀티 정글짐' 매핑)","verifiedAdjustments":"바 위치, 세이프티, 스토리지 핀","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '멀티 정글짐';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 3017 KNEELING / CHINNING-DIPPING MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "Sygnum 3017에서 친업과 딥을 같은 보조 설정으로 전환하기"
+
+gym80 Sygnum 3017은 친업·딥 콤보 스테이션 (카탈로그 '친업 딥 콤보' → 카테고리 '어시스트 풀업 / 딥' 매핑). Sygnum 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+⚙️ 조절 포인트
+무릎 패드, 친업 바, 딥 핸들, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+친업 또는 딥 핸들로 상체 당김·밀기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 전환 시 보조 무게를 재확인하지 않는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3017 KNEELING / CHINNING-DIPPING MACHINE의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Sygnum 3017에서 친업과 딥을 같은 보조 설정으로 전환하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 3017 KNEELING / CHINNING-DIPPING MACHINE · Sygnum
+
+🎯 ONE KEY CUE
+🔥 "On Sygnum 3017, switch between chin-up and dip with the same assist setting"
+
+gym80 Sygnum 3017은 친업·딥 콤보 스테이션 (카탈로그 '친업 딥 콤보' → 카테고리 '어시스트 풀업 / 딥' 매핑) Lean into the Sygnum design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 무릎 패드, 친업 바, 딥 핸들, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 3017 KNEELING / CHINNING-DIPPING MACHINE. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On Sygnum 3017, switch between chin-up and dip with the same assist setting. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3017 KNEELING / CHINNING-DIPPING MACHINE","manufacturer":"gym80","productSeries":"Sygnum","sourceUrl":"https://www.gym80.co.uk/product-ranges/sygnum","verifiedStructure":"gym80 Sygnum 3017은 친업·딥 콤보 스테이션 (카탈로그 '친업 딥 콤보' → 카테고리 '어시스트 풀업 / 딥' 매핑)","verifiedAdjustments":"무릎 패드, 친업 바, 딥 핸들, 중량 스택","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 딥';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 4002 BASIC MULTI PRESS STATION · Basics
+
+🎯 ONE KEY CUE
+🔥 "Multi Press 가이드 경로에서 바가 수직으로만 움직이게 밀기"
+
+공식 Smith 명칭 SKU는 없고 Basics 4002 Multi Press(가이드 바벨 슬레드)가 유사합니다. gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+바 높이, 안전 스토퍼, 발 위치를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+가이드 바를 밀어 올렸다 천천히 내리기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 가이드에 기대 반동으로 튕기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"Multi Press 가이드 경로에서 바가 수직으로만 움직이게 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 4002 BASIC MULTI PRESS STATION · Basics
+
+🎯 ONE KEY CUE
+🔥 "On the Multi Press guided path, press so the bar travels vertically"
+
+공식 Smith 명칭 SKU는 없고 Basics 4002 Multi Press(가이드 바벨 슬레드)가 유사합니다 Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 바 높이, 안전 스토퍼, 발 위치.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the Multi Press guided path, press so the bar travels vertically. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"4002 BASIC MULTI PRESS STATION","manufacturer":"gym80","productSeries":"Basics","sourceUrl":"https://fitnessengros.dk/media/b8/8a/8b/1745391488/Gym80-produktkatalog-2025.pdf","verifiedStructure":"공식 Smith 명칭 SKU는 없고 Basics 4002 Multi Press(가이드 바벨 슬레드)가 유사합니다","verifiedAdjustments":"바 높이, 안전 스토퍼, 발 위치","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스미스 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 80A00005 POWER RACK · 80Athletics
+
+🎯 ONE KEY CUE
+🔥 "80Athletics Power Rack에서 세이프티를 맞춘 뒤 바벨을 안정적으로 랙아웃하기"
+
+gym80 80Athletics 80A00005 Power Rack (카탈로그 '파워랙' → 카테고리 '파워 랙' 매핑). gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+J-훅 높이, 세이프티, 바벨 위치를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+랙에서 바를 들어 리프트 후 다시 랙.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 세이프티 없이 고중량을 다루는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"80Athletics Power Rack에서 세이프티를 맞춘 뒤 바벨을 안정적으로 랙아웃하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 80A00005 POWER RACK · 80Athletics
+
+🎯 ONE KEY CUE
+🔥 "On the 80Athletics Power Rack, set safeties then rack out the bar cleanly"
+
+gym80 80Athletics 80A00005 Power Rack (카탈로그 '파워랙' → 카테고리 '파워 랙' 매핑) Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check J-훅 높이, 세이프티, 바벨 위치.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the 80Athletics Power Rack, set safeties then rack out the bar cleanly. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"80A00005 POWER RACK","manufacturer":"gym80","productSeries":"80Athletics","sourceUrl":"https://gym80.us/products/80athletics/","verifiedStructure":"gym80 80Athletics 80A00005 Power Rack (카탈로그 '파워랙' → 카테고리 '파워 랙' 매핑)","verifiedAdjustments":"J-훅 높이, 세이프티, 바벨 위치","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '파워 랙';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ GYM80 — 80A00001 HALF RACK · 80Athletics
+
+🎯 ONE KEY CUE
+🔥 "80Athletics Half Rack에서 훅 높이를 맞추고 안정적으로 언랙하기"
+
+gym80 80Athletics 80A00001 Half Rack (카탈로그 '하프랙' → 카테고리 '하프 랙' 매핑). gym80 line 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+J-훅, 세이프티 암, 바벨 높이를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+하프랙에서 바를 들어 올리고 다시 걸기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 바가 훅에서 미끄러지게 놓는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"80Athletics Half Rack에서 훅 높이를 맞추고 안정적으로 언랙하기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ GYM80 — 80A00001 HALF RACK · 80Athletics
+
+🎯 ONE KEY CUE
+🔥 "On the 80Athletics Half Rack, set hook height and unrack with control"
+
+gym80 80Athletics 80A00001 Half Rack (카탈로그 '하프랙' → 카테고리 '하프 랙' 매핑) Lean into the gym80 line design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check J-훅, 세이프티 암, 바벨 높이.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"On the 80Athletics Half Rack, set hook height and unrack with control. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"80A00001 HALF RACK","manufacturer":"gym80","productSeries":"80Athletics","sourceUrl":"https://gym80.us/products/80athletics/","verifiedStructure":"gym80 80Athletics 80A00001 Half Rack (카탈로그 '하프랙' → 카테고리 '하프 랙' 매핑)","verifiedAdjustments":"J-훅, 세이프티 암, 바벨 높이","importedAt":"2026-08-20T04:32:22.305Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'GYM80'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하프 랙';
+
+
+DO $$
+DECLARE
+  updated_count INT;
+BEGIN
+  SELECT COUNT(*)::int INTO updated_count
+  FROM machines m
+  JOIN brands b ON b.id = m.brand_id
+  WHERE b.code = 'GYM80'
+    AND m.is_active = TRUE
+    AND m.pro_tips IS NOT NULL
+    AND m.pro_tips_meta IS NOT NULL
+    AND m.pro_tips_meta->>'verificationStatus' IS NOT NULL
+    AND (m.pro_tips->'ko'->>0) LIKE '%ONE KEY CUE%'
+    AND (m.pro_tips->'ko'->>0) LIKE '%MACHINE FIT PRO TIP%'
+    AND (m.pro_tips->'ko'->>0) NOT LIKE '%📋 검증 상태%';
+
+  IF updated_count < 80 THEN
+    RAISE EXCEPTION 'GYM80 trainer PRO tips import incomplete: % / 80', updated_count;
+  END IF;
+END $$;

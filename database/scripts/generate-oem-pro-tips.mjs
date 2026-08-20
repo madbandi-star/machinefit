@@ -157,6 +157,50 @@ const BRAND_META = {
     rideKo: '파나타 Fit Evo(1FE) 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Panatta Fit Evo (1FE) path instead of fighting it.',
   },
+  GYM80: {
+    displayKo: '짐80',
+    displayEn: 'GYM80',
+    manufacturerDefault: 'gym80',
+    researchFile: 'gym80_models.json',
+    csvFile: 'gym80_pro_tips.csv',
+    noModelKo: '짐80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated gym80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '짐80 Pure Kraft·Sygnum 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the gym80 Pure Kraft / Sygnum path instead of fighting it.',
+  },
+  TECHNOGYM: {
+    displayKo: '테크노짐',
+    displayEn: 'TECHNOGYM',
+    manufacturerDefault: 'Technogym',
+    researchFile: 'technogym_models.json',
+    csvFile: 'technogym_pro_tips.csv',
+    noModelKo: '테크노짐 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Technogym SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '테크노짐 Selection·Pure Strength·Element 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Technogym Selection / Pure Strength / Element path instead of fighting it.',
+  },
+  ATLANTIS: {
+    displayKo: '아틀란티스',
+    displayEn: 'ATLANTIS',
+    manufacturerDefault: 'Atlantis Strength',
+    researchFile: 'atlantis_models.json',
+    csvFile: 'atlantis_pro_tips.csv',
+    noModelKo: '아틀란티스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Atlantis SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '아틀란티스 Plate Loaded(P)·Selectorized 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Atlantis Plate Loaded (P) / Selectorized path instead of fighting it.',
+  },
+  GYMLECO: {
+    displayKo: '짐레코',
+    displayEn: 'GYMLECO',
+    manufacturerDefault: 'Gymleco',
+    researchFile: 'gymleco_models.json',
+    csvFile: 'gymleco_pro_tips.csv',
+    noModelKo: '짐레코 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Gymleco SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '짐레코 Selectorized·Plate Loaded 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Gymleco Selectorized / Plate Loaded path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -496,13 +540,13 @@ function introKo(entry, family, flags) {
     bits.push('Vitality');
   } else if (/fts\s*glide|queenax/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('FTS/Queenax');
-  } else if (/evolution|e-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/evolution|e-\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('Evolution SmartCam');
-  } else if (/hybrid|h-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/hybrid|h-\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('Hybrid SmartCam');
-  } else if (/plate loaded|p-\d+|xp-\d+|3-peg|smartstrength/i.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' '))) {
+  } else if (/plate loaded|p-\d+|xp-\d+|3-peg|smartstrength/i.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('Plate Loaded 3-peg');
-  } else if (/prodigy|functional trainer|ft-123|chin\s*\|\s*dip|l-130|assist/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/prodigy|functional trainer|ft-123|chin\s*\|\s*dip|l-130|assist/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('PRODIGY/FT/Assist');
   } else if (/reloaded|ar-[a-z]+/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Reloaded ISO/plate');
@@ -520,16 +564,32 @@ function introKo(entry, family, flags) {
     bits.push('Paramount Rotary FW');
   } else if (/total chest|total shoulder|total leg|fw-8\d{3}|fw-9\d{3}/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Paramount Total');
-  } else if (/xfw|smith/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/xfw|smith/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PARAMOUNT') {
     bits.push('XFW Smith');
   } else if (/xft|extreme functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('XFT Functional');
   } else if (/fs-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Paramount FS');
-  } else if (/pendulum/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/pendulum/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'ROGERS_STRENGTH') {
     bits.push('Pendulum Performance');
   } else if (/fit\s*evo|1fe\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Fit Evo 1FE');
+  } else if (/pure kraft/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pure Kraft');
+  } else if (/sygnum/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Sygnum');
+  } else if (/pure strength/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pure Strength');
+  } else if (/selection/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'TECHNOGYM') {
+    bits.push('Selection');
+  } else if (/element|biostrength/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Element/Biostrength');
+  } else if (BRAND === 'ATLANTIS' && /\bP\d{2,4}\b|PW\d+|NM\d+|plate.?loaded|selectorized/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Atlantis plate/selector');
+  } else if (BRAND === 'GYMLECO') {
+    bits.push('Gymleco line');
+  } else if (BRAND === 'GYM80') {
+    bits.push('gym80 line');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -577,13 +637,13 @@ function introEn(entry, family, flags) {
     bits.push('Vitality');
   } else if (/fts\s*glide|queenax/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('FTS/Queenax');
-  } else if (/evolution|e-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/evolution|e-\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('Evolution SmartCam');
-  } else if (/hybrid|h-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/hybrid|h-\d+/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('Hybrid SmartCam');
-  } else if (/plate loaded|p-\d+|xp-\d+|3-peg|smartstrength/i.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' '))) {
+  } else if (/plate loaded|p-\d+|xp-\d+|3-peg|smartstrength/i.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('Plate Loaded 3-peg');
-  } else if (/prodigy|functional trainer|ft-123|chin\s*\|\s*dip|l-130|assist/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/prodigy|functional trainer|ft-123|chin\s*\|\s*dip|l-130|assist/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PRIME_FITNESS') {
     bits.push('PRODIGY/FT/Assist');
   } else if (/reloaded|ar-[a-z]+/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Reloaded ISO/plate');
@@ -601,16 +661,32 @@ function introEn(entry, family, flags) {
     bits.push('Paramount Rotary FW');
   } else if (/total chest|total shoulder|total leg|fw-8\d{3}|fw-9\d{3}/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Paramount Total');
-  } else if (/xfw|smith/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/xfw|smith/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'PARAMOUNT') {
     bits.push('XFW Smith');
   } else if (/xft|extreme functional/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('XFT Functional');
   } else if (/fs-\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Paramount FS');
-  } else if (/pendulum/i.test([entry.product_series, entry.verified_model].join(' '))) {
+  } else if (/pendulum/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'ROGERS_STRENGTH') {
     bits.push('Pendulum Performance');
   } else if (/fit\s*evo|1fe\d+/i.test([entry.product_series, entry.verified_model].join(' '))) {
     bits.push('Fit Evo 1FE');
+  } else if (/pure kraft/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pure Kraft');
+  } else if (/sygnum/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Sygnum');
+  } else if (/pure strength/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Pure Strength');
+  } else if (/selection/i.test([entry.product_series, entry.verified_model].join(' ')) && BRAND === 'TECHNOGYM') {
+    bits.push('Selection');
+  } else if (/element|biostrength/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Element/Biostrength');
+  } else if (BRAND === 'ATLANTIS' && /\bP\d{2,4}\b|PW\d+|NM\d+|plate.?loaded|selectorized/i.test([entry.product_series, entry.verified_model].join(' '))) {
+    bits.push('Atlantis plate/selector');
+  } else if (BRAND === 'GYMLECO') {
+    bits.push('Gymleco line');
+  } else if (BRAND === 'GYM80') {
+    bits.push('gym80 line');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
@@ -667,9 +743,12 @@ function setupKo(entry, family, flags, adj) {
     }
   }
   lines.push('⚙️ 조절 포인트');
-  const adjustText =
+  let adjustText =
     entry.verified_adjustments?.trim() ||
     (family === 'rack' ? '안전바, J컵, 바 높이' : '시트, 패드, 시작 위치, 중량');
+  if (family === 'back' || family === 'shoulders' || family === 'arms' || family === 'chest') {
+    adjustText = adjustText.replace(/발판/g, '풋 지지');
+  }
   const last = [...adjustText].reverse().find((ch) => /[가-힣]/.test(ch));
   const hasBatchim = last ? (last.charCodeAt(0) - 0xac00) % 28 !== 0 : true;
   const obj = hasBatchim ? '을' : '를';
