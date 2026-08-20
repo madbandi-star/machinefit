@@ -12653,3 +12653,5 @@ BEGIN
     RAISE EXCEPTION 'HAMMER_STRENGTH trainer PRO tips rewrite incomplete: % / 80', updated_count;
   END IF;
 END $$;
+
+-- redeploy trigger 2026-08-20T01:27:43Z
