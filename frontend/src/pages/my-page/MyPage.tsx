@@ -214,7 +214,9 @@ export function MyPage() {
         <h3 className="my-page-section__title">{t('myPage.quickLinks')}</h3>
         <nav className="list-nav" aria-label={t('myPage.quickLinks')}>
           <ListNavLink to={ROUTES.FORTUNE_TODAY} label={tf('title')} icon="flame" />
-          <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
+          {showAboveMember ? (
+            <ListNavLink to={ROUTES.LIFTER_DNA} label={t('myPage.lifterDna')} icon="dna" />
+          ) : null}
           {showAboveMember ? (
             <>
               <ListNavLink
@@ -249,12 +251,14 @@ export function MyPage() {
           {showPhotoBoardAndBackup ? (
             <ListNavLink to={ROUTES.PHOTO_BOARD} label={tc('photoBoard')} icon="camera" />
           ) : null}
-          <ListNavLink
-            to={ROUTES.TEMPLATE_SHARE}
-            label={tc('templateShare.title')}
-            icon="share"
-          />
-          {showPhotoBoardAndBackup ? (
+          {showAboveMember ? (
+            <ListNavLink
+              to={ROUTES.TEMPLATE_SHARE}
+              label={tc('templateShare.title')}
+              icon="share"
+            />
+          ) : null}
+          {showAboveMember ? (
             <ListNavLink to={ROUTES.MACHINE_SHOWCASE} label={t('myPage.machineDexBoard')} icon="dumbbell" />
           ) : null}
         </nav>
@@ -263,16 +267,20 @@ export function MyPage() {
       <section className="my-page-section">
         <h3 className="my-page-section__title">{t('myPage.personalSettings')}</h3>
         <nav className="list-nav" aria-label={t('myPage.personalSettings')}>
-          <ListNavLink
-            to={ROUTES.MY_TEMPLATES}
-            label={tc('templateShare.myTemplates')}
-            icon="history"
-          />
-          <ListNavLink
-            to={ROUTES.MACHINE_DEX}
-            label={t('myPage.machineDex')}
-            icon="machines"
-          />
+          {showAboveMember ? (
+            <>
+              <ListNavLink
+                to={ROUTES.MY_TEMPLATES}
+                label={tc('templateShare.myTemplates')}
+                icon="history"
+              />
+              <ListNavLink
+                to={ROUTES.MACHINE_DEX}
+                label={t('myPage.machineDex')}
+                icon="machines"
+              />
+            </>
+          ) : null}
           <ListNavLink
             to={ROUTES.BRAND_FAVORITES}
             label={t('myPage.brandFavorites')}
