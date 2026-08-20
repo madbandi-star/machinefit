@@ -32,6 +32,7 @@
     "db:import-pro-tips": "tsx database/scripts/import-pro-tips-csv.ts",
     "db:validate-pro-tips": "node database/scripts/validate-pro-tips-csv.mjs",
     "db:generate-hammer-pro-tips": "node database/scripts/generate-hammer-strength-pro-tips.mjs",
+    "db:export-hs-pro-tips-sql": "node database/scripts/export-hs-pro-tips-migration.mjs",
     "db:setup": "npm run db:migrate && npm run db:seed",
     "db:migrate:verify": "npm run db:migrate && npm run db:verify",
     "media:migrate-storage": "node --import tsx scripts/migrate-bytea-to-storage.mjs",

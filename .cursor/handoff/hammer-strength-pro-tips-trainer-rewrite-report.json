@@ -1,0 +1,32 @@
+{
+  "brand": "HAMMER_STRENGTH",
+  "completedAt": "2026-08-20T01:08:00.000Z",
+  "totalMachines": 80,
+  "verified": 52,
+  "partiallyVerified": 16,
+  "modelNotFound": 12,
+  "contentRewriteKo": 80,
+  "contentRewriteEn": 80,
+  "duplicateContent": 0,
+  "muscleGroupMismatch": 0,
+  "modelStructureMismatch": 0,
+  "over5000Bytes": 0,
+  "proTipMissing": 0,
+  "style": "trainer-coaching-v2",
+  "maxKoBytes": 3282,
+  "maxEnBytes": 2629,
+  "proTipUniqueFingerprints": 49,
+  "artifacts": {
+    "csv": "database/catalog/pro-tips/hammer_strength_pro_tips.csv",
+    "research": "database/catalog/pro-tips/research/hammer_strength_models.json",
+    "generator": "database/scripts/generate-hammer-strength-pro-tips.mjs",
+    "migration": "database/migrations/155_hammer_strength_pro_tips_trainer_rewrite.sql",
+    "backupTable": "_backup_hs_pro_tips_20260820"
+  },
+  "dbUpdate": "via migration 155 on Render boot (local DATABASE_URL auth failed)",
+  "notes": [
+    "Removed verification-report dumps (📋 검증 상태 / Status: VERIFIED) from user-facing tips.",
+    "Meta remains in machines.pro_tips_meta columns.",
+    "45° Leg Press and other leg machines use lower-body cues only."
+  ]
+}

@@ -1,13 +1,17 @@
 {
   "brand": "HAMMER_STRENGTH",
-  "generatedAt": "2026-08-19T22:57:09.290Z",
-  "outPath": "C:\\Users\\Human\\Desktop\\project_1\\machinefit\\database\\catalog\\pro-tips\\hammer_strength_pro_tips.csv",
+  "generatedAt": "2026-08-20T01:06:28.757Z",
+  "outPath": "/workspace/database/catalog/pro-tips/hammer_strength_pro_tips.csv",
   "rowCount": 80,
   "stats": {
     "VERIFIED": 52,
     "PARTIALLY_VERIFIED": 16,
     "BRAND_MODEL_NOT_FOUND": 12
   },
-  "maxKoBytes": 967,
-  "maxEnBytes": 845
+  "maxKoBytes": 3282,
+  "maxEnBytes": 2629,
+  "proTipUniqueFingerprints": 49,
+  "contaminationIssues": 0,
+  "overBytes": 0,
+  "style": "trainer-coaching-v2"
 }

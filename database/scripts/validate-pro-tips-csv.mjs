@@ -176,8 +176,8 @@ async function tryLoadDbCatalog() {
 
 function main() {
   const csvPath = process.argv.find((a) => !a.startsWith('--') && a.endsWith('.csv')) ?? process.argv[2];
-  const singleBrand = process.argv.includes('--single-brand');
   const brandFilter = parseFlagValue('--brand=')?.trim().toUpperCase();
+  const singleBrand = process.argv.includes('--single-brand') || Boolean(brandFilter);
   const expectedRows = singleBrand ? EXPECTED_MACHINES_PER_BRAND : EXPECTED_ROWS;
 
   if (!csvPath) {
