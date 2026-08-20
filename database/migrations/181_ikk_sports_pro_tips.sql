@@ -1,0 +1,13057 @@
+-- Import IKK_SPORTS MachineFit PRO tips (trainer coaching style).
+-- Source: database/catalog/pro-tips/ikk_sports_pro_tips.csv
+-- Backup previous pro_tips / pro_tips_meta before UPDATE.
+
+CREATE TABLE IF NOT EXISTS _backup_ikk_sports_pro_tips_20260820 (
+  machine_id UUID PRIMARY KEY,
+  code TEXT,
+  machine_name_ko TEXT,
+  pro_tips JSONB,
+  pro_tips_meta JSONB,
+  backed_up_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO _backup_ikk_sports_pro_tips_20260820 (machine_id, code, machine_name_ko, pro_tips, pro_tips_meta)
+SELECT m.id,
+       m.code,
+       COALESCE(st.name->>'ko', m.name->>'ko'),
+       m.pro_tips,
+       m.pro_tips_meta
+FROM machines m
+JOIN brands b ON b.id = m.brand_id
+LEFT JOIN standard_machine_types st ON st.id = m.standard_type_id
+WHERE b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+ON CONFLICT (machine_id) DO NOTHING;
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스댕체스트프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "견갑을 붙인 채 손잡이를 가슴 중앙으로 밀기"
+
+IKK Sports 공식몰 스댕체스트프레스(스탠딩 체스트 프레스) 플레이트로드 머신으로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이 높이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+스탠스, 손잡이 높이, 시작용 로드 추출 풋 지지, 양쪽 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 앞으로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스댕체스트프레스는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"견갑을 붙인 채 손잡이를 가슴 중앙으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스댕체스트프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Brace scapulae and press the handles through center chest"
+
+IKK Sports 공식몰 스댕체스트프레스(스탠딩 체스트 프레스) 플레이트로드 머신으로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 스탠스, 손잡이 높이, 시작용 로드 추출 풋 지지, 양쪽 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스댕체스트프레스 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace scapulae and press the handles through center chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"스댕체스트프레스","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/스댕체스트프레스/104/","verifiedStructure":"IKK Sports 공식몰 스댕체스트프레스(스탠딩 체스트 프레스) 플레이트로드 머신으로 확인됩니다","verifiedAdjustments":"스탠스, 손잡이 높이, 시작용 로드 추출 풋 지지, 양쪽 플레이트","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 인클라인 체스트 프레스
+
+🎯 ONE KEY CUE
+🔥 "인클라인 궤적에서 쇄골·상부 가슴 방향으로 밀기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 등판 각도, 시작용 로드 추출 풋 지지, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+대각선 위·앞으로 밀었다 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과아치해 요추에 힘을 주는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "인클라인 체스트 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"인클라인 궤적에서 쇄골·상부 가슴 방향으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Incline Chest Press
+
+🎯 ONE KEY CUE
+🔥 "Press along the incline path toward upper chest"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 등판 각도, 시작용 로드 추출 풋 지지, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Incline Chest Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Press along the incline path toward upper chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports(ikksports.com) 공개 웨이트기구 카탈로그에서 '인클라인 체스트 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 등판 각도, 시작용 로드 추출 풋 지지, 중량","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '인클라인 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 디클라인 체스트 프레스
+
+🎯 ONE KEY CUE
+🔥 "하부 가슴을 향해 아래·앞으로 통제하며 밀기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이 시작를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트/등판, 손잡이 시작, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+디클라인 각도로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 과벌려 어깨에 부하를 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "디클라인 체스트 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"하부 가슴을 향해 아래·앞으로 통제하며 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Decline Chest Press
+
+🎯 ONE KEY CUE
+🔥 "Press down and forward toward the lower chest with control"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트/등판, 손잡이 시작, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Decline Chest Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Press down and forward toward the lower chest with control. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '디클라인 체스트 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트/등판, 손잡이 시작, 중량","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '디클라인 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 컨버징 체스트 프레스
+
+🎯 ONE KEY CUE
+🔥 "넓은 시작에서 중앙으로 모으며 밀기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 암 시작 폭, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔이 바깥에서 안쪽으로 모이며 프레스.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 평행으로만 밀어 수렴 궤적을 무시하는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "컨버징 체스트 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"넓은 시작에서 중앙으로 모으며 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Converging Chest Press
+
+🎯 ONE KEY CUE
+🔥 "Start wide and press while converging toward center"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 암 시작 폭, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Converging Chest Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Start wide and press while converging toward center. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '컨버징 체스트 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 암 시작 폭, 중량","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '컨버징 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 체스트 프레스
+
+🎯 ONE KEY CUE
+🔥 "좌우 암을 같은 속도로 밀며 불균형을 확인"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 시작용 풋 지지, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 밀었다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 밀어 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 체스트 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral Chest Press
+
+🎯 ONE KEY CUE
+🔥 "Press both independent arms at the same speed and check balance"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 시작용 풋 지지, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Double-check both sides start at the same height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Press out on the machine path, then return under control. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Chest Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 체스트 프레스' 전용 독립암 SKU가 확인되지 않습니다(햄머벤치는 프리웨이트 벤치)","verifiedAdjustments":"시트, 좌·우 독립 암, 시작용 풋 지지, 중량","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스탠딩체스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "견갑을 고정한 채 양팔을 고르게 밀기"
+
+IKK Sports 공식몰 스탠딩체스트 플레이트로드 체스트 프레스로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+스탠스, 손잡이, 시작용 로드 추출 풋 지지, 양쪽 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+플레이트를 싣고 프레스 후 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 원판만 늘리고 궤적을 통제하지 않는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스탠딩체스트는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"견갑을 고정한 채 양팔을 고르게 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스탠딩체스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep scapulae set and press both arms evenly"
+
+IKK Sports 공식몰 스탠딩체스트 플레이트로드 체스트 프레스로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 스탠스, 손잡이, 시작용 로드 추출 풋 지지, 양쪽 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스탠딩체스트 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep scapulae set and press both arms evenly. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"스탠딩체스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/스탠딩체스트/86/","verifiedStructure":"IKK Sports 공식몰 스탠딩체스트 플레이트로드 체스트 프레스로 확인됩니다","verifiedAdjustments":"스탠스, 손잡이, 시작용 로드 추출 풋 지지, 양쪽 플레이트","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 체스트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 펙덱
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 패드에 붙인 채 가슴 앞에서 모으기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+팔 패드 높이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔 패드 높이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 벌린 상태에서 앞으로 모았다 벌리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 으쓱하며 승모로 당기는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "펙덱"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 패드에 붙인 채 가슴 앞에서 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Pec Deck
+
+🎯 ONE KEY CUE
+🔥 "Keep elbows on the pads and bring the arms together in front of the chest"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔 패드 높이, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Pec Deck", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep elbows on the pads and bring the arms together in front of the chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '펙덱' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 팔 패드 높이, 중량","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '펙덱';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 리어 델트 / 리버스 펙덱
+
+🎯 ONE KEY CUE
+🔥 "가슴을 패드에 붙이고 견갑을 모으며 팔을 뒤로 벌리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이/암, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앞으로 모은 손잡이를 뒤로 벌렸다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 흔들며 반동으로 벌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "리어 델트 / 리버스 펙덱"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 패드에 붙이고 견갑을 모으며 팔을 뒤로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Rear Delt / Reverse Pec Deck
+
+🎯 ONE KEY CUE
+🔥 "Keep the chest on the pad and open the arms back while retracting scapulae"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이/암, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Rear Delt / Reverse Pec Deck", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the chest on the pad and open the arms back while retracting scapulae. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '리어 델트 / 리버스 펙덱' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 손잡이/암, 중량","importedAt":"2026-08-20T05:10:23.476Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트 / 리버스 펙덱';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 플라이 머신
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 약간 굽힌 채 가슴 앞에서 호를 그리며 모으기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 암 시작 위치, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 벌렸다 앞으로 모으며 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 펴고 어깨만으로 모으는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "플라이 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 약간 굽힌 채 가슴 앞에서 호를 그리며 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Fly Machine
+
+🎯 ONE KEY CUE
+🔥 "With soft elbows, arc the arms together in front of the chest"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 암 시작 위치, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Fly Machine", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"With soft elbows, arc the arms together in front of the chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '플라이 머신' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 암 시작 위치, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플라이 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 딥 머신
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 몸통 가까이 두고 손잡이를 아래로 밀기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이 폭를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이 폭, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앉은 채 딥 궤적으로 밀었다 천천히 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "딥 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 몸통 가까이 두고 손잡이를 아래로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Dip Machine
+
+🎯 ONE KEY CUE
+🔥 "Keep elbows close to the torso and press the handles down"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이 폭, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Dip Machine", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep elbows close to the torso and press the handles down. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '딥 머신' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 손잡이 폭, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스탠딩어시스트 · IKKSPORTS Assist
+
+🎯 ONE KEY CUE
+🔥 "보조 무게로 깊이를 통제하며 딥 핸들을 밀기"
+
+IKK Sports 스탠딩어시스트는 어시스트 친업/딥 계열이나 딥 전용 모델명으로 표기되지는 않습니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎/보조 패드, 손잡이, 보조 중량을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+보조 패드로 하강 후 딥 핸들을 밀어 올리기.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 보조를 과도히 줄여 어깨가 무너지는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스탠딩어시스트의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"보조 무게로 깊이를 통제하며 딥 핸들을 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스탠딩어시스트 · IKKSPORTS Assist
+
+🎯 ONE KEY CUE
+🔥 "Use assist load to control depth while pressing the dip handles"
+
+IKK Sports 스탠딩어시스트는 어시스트 친업/딥 계열이나 딥 전용 모델명으로 표기되지는 않습니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎/보조 패드, 손잡이, 보조 중량.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 스탠딩어시스트. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Use assist load to control depth while pressing the dip handles. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"스탠딩어시스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Assist","sourceUrl":"https://ikksports.com/product/스탠딩어시스트/90/","verifiedStructure":"IKK Sports 스탠딩어시스트는 어시스트 친업/딥 계열이나 딥 전용 모델명으로 표기되지는 않습니다","verifiedAdjustments":"무릎/보조 패드, 손잡이, 보조 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 딥';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 슈퍼 인클라인 프레스
+
+🎯 ONE KEY CUE
+🔥 "가파른 인클라인에서 상부 가슴·전면 삼각으로 밀기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 고각도 등판, 시작용 풋 지지, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+등과 골반을 패드에 붙이고, 손잡이가 가슴 높이에 오게 잡습니다.
+이 자세에서 이것만 확인하세요.
+👉 등이 패드에서 뜨지 않는지
+
+---
+
+🔥 ③ 운동 방법
+가파른 대각선으로 밀었다 복귀.
+손보다 팔꿈치를 앞(또는 위)으로 보내는 느낌으로 미세요. 끝에서 어깨를 앞으로 밀어 넣지 마세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 앞으로 나가 가슴이 수축되는 지점에서 멈춥니다. 어깨를 더 밀지 마세요.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 각도를 무시하고 수평 프레스처럼 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 앞으로 말며 반동으로 미는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 과하게 아치해 가슴 대신 요추로 미는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 끝에서 어깨를 더 밀어 넣는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "슈퍼 인클라인 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가파른 인클라인에서 상부 가슴·전면 삼각으로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Super Incline Press
+
+🎯 ONE KEY CUE
+🔥 "Press on a steep incline toward upper chest and front delts"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 고각도 등판, 시작용 풋 지지, 중량.
+
+---
+
+💪 ② Start position
+Pin back and pelvis to the pad with the handles at chest height.
+Check only this:
+👉 Back still on the pad
+
+---
+
+🔥 ③ Execution
+Press by driving the elbows forward/up. Do not dump the shoulders forward at lockout.
+Press out on the machine path, then return under control.
+
+---
+
+💥 ④ Peak contraction
+Stop where the chest is contracted — do not dump the shoulders farther forward.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Dumping the shoulders forward and bouncing the press
+Slow the tempo and repeat one clean path.
+❌ Over-arching so the low back takes over
+If position breaks, cut the load.
+❌ Shoving the shoulders farther at lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Super Incline Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Press on a steep incline toward upper chest and front delts. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '슈퍼 인클라인 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 고각도 등판, 시작용 풋 지지, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '슈퍼 인클라인 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 랫풀다운 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "가슴을 열고 팔꿈치를 옆구리로 내리며 바를 당기기"
+
+IKK Sports 공식몰 랫풀다운 머신으로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+그립를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+허벅지 고정 패드, 시트, 그립, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+바를 쇄골 쪽으로 당겼다 천천히 올리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 크게 젖히며 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 랫풀다운은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 열고 팔꿈치를 옆구리로 내리며 바를 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 랫풀다운 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Open the chest and drive elbows to the ribs while pulling the bar down"
+
+IKK Sports 공식몰 랫풀다운 머신으로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 허벅지 고정 패드, 시트, 그립, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 랫풀다운 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Open the chest and drive elbows to the ribs while pulling the bar down. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"랫풀다운","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/랫풀다운/105/","verifiedStructure":"IKK Sports 공식몰 랫풀다운 머신으로 확인됩니다","verifiedAdjustments":"허벅지 고정 패드, 시트, 그립, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 롱풀다운 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "와이드 그립으로 팔꿈치를 아래로 내리며 당기기"
+
+IKK Sports 롱풀다운으로 와이드/롱 풀다운 궤적을 제공하나 와이드 전용 모델명은 별도 표기되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+허벅지 고정 패드, 와이드 바, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+와이드 그립으로 바를 내렸다 올리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손만 넓히고 팔꿈치가 앞으로 나가는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 롱풀다운은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"와이드 그립으로 팔꿈치를 아래로 내리며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 롱풀다운 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "With a wide grip, drive the elbows down while pulling"
+
+IKK Sports 롱풀다운으로 와이드/롱 풀다운 궤적을 제공하나 와이드 전용 모델명은 별도 표기되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 허벅지 고정 패드, 와이드 바, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 롱풀다운 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"With a wide grip, drive the elbows down while pulling. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"롱풀다운","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/롱풀다운/75/","verifiedStructure":"IKK Sports 롱풀다운으로 와이드/롱 풀다운 궤적을 제공하나 와이드 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"허벅지 고정 패드, 와이드 바, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '와이드 랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 롱풀다운 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "바를 쇄골 앞쪽으로 당기며 광배를 수축"
+
+IKK Sports 롱풀다운이 프론트 풀다운 계열로 매핑되나 프론트 전용 SKU명은 별도 확인되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+허벅지 고정 패드, 시트, 바, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앞에서 아래로 당겼다 천천히 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 바를 목 뒤로 넘겨 어깨를 위험하게 하는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 롱풀다운은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"바를 쇄골 앞쪽으로 당기며 광배를 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 롱풀다운 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Pull the bar to the front of the collarbone and squeeze the lats"
+
+IKK Sports 롱풀다운이 프론트 풀다운 계열로 매핑되나 프론트 전용 SKU명은 별도 확인되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 허벅지 고정 패드, 시트, 바, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 롱풀다운 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pull the bar to the front of the collarbone and squeeze the lats. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"롱풀다운","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/롱풀다운/75/","verifiedStructure":"IKK Sports 롱풀다운이 프론트 풀다운 계열로 매핑되나 프론트 전용 SKU명은 별도 확인되지 않습니다","verifiedAdjustments":"허벅지 고정 패드, 시트, 바, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 랫풀다운
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 깊이로 당기며 광배 균형을 확인"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 허벅지 패드, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 아래로 당겼다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 깊게 당겨 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 랫풀다운"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral Lat Pulldown
+
+🎯 ONE KEY CUE
+🔥 "Pull both sides to the same depth and check lat balance"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 허벅지 패드, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Lat Pulldown", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 랫풀다운' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 허벅지 패드, 좌·우 독립 암, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 랫풀다운';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 하이로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "높은 시작에서 팔꿈치를 옆구리로 당기며 광배·후면 수축"
+
+IKK Sports 공식몰 하이로우 머신으로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+위에서 아래로·뒤로 당겼다 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손을 얼굴 쪽으로만 당겨 승모만 쓰는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 하이로우는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"높은 시작에서 팔꿈치를 옆구리로 당기며 광배·후면 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 하이로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "From a high start, pull elbows to the ribs and squeeze mid-back"
+
+IKK Sports 공식몰 하이로우 머신으로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 하이로우 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"From a high start, pull elbows to the ribs and squeeze mid-back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"하이로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/하이로우/85/","verifiedStructure":"IKK Sports 공식몰 하이로우 머신으로 확인됩니다","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하이로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 하이로우
+
+🎯 ONE KEY CUE
+🔥 "독립 암으로 높은 궤적 로우를 좌우 균등하게"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 높은 궤적으로 당겼다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 당겨 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 하이로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral High Row
+
+🎯 ONE KEY CUE
+🔥 "Row both independent high-path arms evenly"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral High Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 하이로우' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 좌·우 독립 암, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 하이로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 리니어로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "가슴을 패드에 붙이고 팔꿈치로 당기며 견갑을 모으기"
+
+IKK Sports 공식몰 리니어로우(시티드/리니어 로우)로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 풋 지지, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 몸통으로 당겼다 천천히 뻗기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 뒤로 젖혀 반동으로 당기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 리니어로우는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 패드에 붙이고 팔꿈치로 당기며 견갑을 모으기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 리니어로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep the chest on the pad and row with the elbows while retracting scapulae"
+
+IKK Sports 공식몰 리니어로우(시티드/리니어 로우)로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 풋 지지, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 리니어로우 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the chest on the pad and row with the elbows while retracting scapulae. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"리니어로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/리니어로우/107/","verifiedStructure":"IKK Sports 공식몰 리니어로우(시티드/리니어 로우)로 확인됩니다","verifiedAdjustments":"시트, 가슴 패드, 풋 지지, 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 로터리로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "중립 자세에서 팔꿈치로 당기며 중부 등을 수축"
+
+IKK Sports 로터리로우가 로우 머신 계열로 매핑되나 일반 로우 전용 단일 모델명은 별도. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 풋 지지, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 당겼다 통제하며 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손만 당겨 전완만 피로해지는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 로터리로우는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"중립 자세에서 팔꿈치로 당기며 중부 등을 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 로터리로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "From a neutral setup, row with the elbows and squeeze mid-back"
+
+IKK Sports 로터리로우가 로우 머신 계열로 매핑되나 일반 로우 전용 단일 모델명은 별도입니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 풋 지지, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 로터리로우 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"From a neutral setup, row with the elbows and squeeze mid-back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"로터리로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/로터리로우/74/","verifiedStructure":"IKK Sports 로터리로우가 로우 머신 계열로 매핑되나 일반 로우 전용 단일 모델명은 별도입니다","verifiedAdjustments":"시트, 가슴 패드, 풋 지지, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 리니어로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "낮은 케이블에서 팔꿈치를 뒤로 보내며 당기기"
+
+IKK Sports 리니어로우가 낮은 궤적 로우에 해당하나 Low Row 전용 모델명은 별도 표기되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+낮은 손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 낮은 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+낮은 위치에서 당겼다 천천히 뻗기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과도히 젖혀 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 리니어로우는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"낮은 케이블에서 팔꿈치를 뒤로 보내며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 리니어로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "From the low cable, drive the elbows back while rowing"
+
+IKK Sports 리니어로우가 낮은 궤적 로우에 해당하나 Low Row 전용 모델명은 별도 표기되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 낮은 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 리니어로우 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"From the low cable, drive the elbows back while rowing. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"리니어로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/리니어로우/107/","verifiedStructure":"IKK Sports 리니어로우가 낮은 궤적 로우에 해당하나 Low Row 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 낮은 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로우 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 레터럴로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "중간 높이 궤적으로 팔꿈치를 뒤로 보내며 당기기"
+
+IKK Sports 레터럴로우가 미드/측면 로우 계열로 매핑되나 Mid Row 전용 SKU명은 별도 확인되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+미드 손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 미드 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+중간 높이에서 당겼다 복귀.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 손잡이만 올리고 견갑이 안 모이는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 레터럴로우는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"중간 높이 궤적으로 팔꿈치를 뒤로 보내며 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 레터럴로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Row on a mid-height path by driving the elbows back"
+
+IKK Sports 레터럴로우가 미드/측면 로우 계열로 매핑되나 Mid Row 전용 SKU명은 별도 확인되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 미드 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 레터럴로우 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Row on a mid-height path by driving the elbows back. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"레터럴로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/레터럴로우/83/","verifiedStructure":"IKK Sports 레터럴로우가 미드/측면 로우 계열로 매핑되나 Mid Row 전용 SKU명은 별도 확인되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 미드 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '미드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 로우
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 속도로 당기며 등 균형을 확인"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 당겼다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 강한 쪽만 깊게 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral Row
+
+🎯 ONE KEY CUE
+🔥 "Row both sides at the same speed and check back balance"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 로우' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 좌·우 독립 암, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 로우 로우
+
+🎯 ONE KEY CUE
+🔥 "낮은 독립 암 로우로 좌우를 균등히 당기기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 좌·우 낮은 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 낮은 궤적으로 당겼다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 당겨 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 로우 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral Low Row
+
+🎯 ONE KEY CUE
+🔥 "Row both independent low-path arms evenly"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 좌·우 낮은 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Double-check both sides start at the same height.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Low Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 로우 로우' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 좌·우 낮은 암, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 로우 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 레터럴로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "가슴 패드를 유지한 채 팔꿈치로만 당기기"
+
+IKK Sports 레터럴로우·로터리로우가 가슴 지지형 로우 계열이나 Chest Supported Row 전용 모델명은 별도 표기되지 않습니다. 플레이트 로딩 · 가슴 지지 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+가슴 패드 높이, 시트, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+가슴 지지 상태에서 당겼다 뻗기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 패드를 떼고 상체로 당기는
+자세가 무너지면 무게를 낮추세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 가슴 패드가 있는 이유가 반동을 끊기 위해서입니다. 패드를 밀고 일어서지 말고, 가슴을 붙인 채 팔꿈치만 움직이세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 가슴 → 패드에 고정
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴은 패드에, 팔꿈치는 뒤로, 끝에서 1초."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 레터럴로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep contact with the chest pad and row only with the elbows"
+
+IKK Sports 레터럴로우·로터리로우가 가슴 지지형 로우 계열이나 Chest Supported Row 전용 모델명은 별도 표기되지 않습니다 Lean into the plate-loaded / chest-supported / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 가슴 패드 높이, 시트, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 The chest pad exists to kill momentum. Stay glued to it and move only through the elbows.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Chest → glued to pad
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Chest on the pad, elbows back, one-second squeeze."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"레터럴로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/레터럴로우/83/","verifiedStructure":"IKK Sports 레터럴로우·로터리로우가 가슴 지지형 로우 계열이나 Chest Supported Row 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"가슴 패드 높이, 시트, 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '체스트 서포티드 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 티바로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "상체를 고정하고 팔꿈치로 바를 몸통으로 당기기"
+
+IKK Sports 공식몰 티바로우(T바 로우) 머신으로 확인됩니다(티바로우2 변형 포함). 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+가슴 패드, 스탠스, 플레이트, 손잡이를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+T바를 몸통으로 당겼다 천천히 내리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과도히 말며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 티바로우는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상체를 고정하고 팔꿈치로 바를 몸통으로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 티바로우 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Brace the torso and row the bar to the body with the elbows"
+
+IKK Sports 공식몰 티바로우(T바 로우) 머신으로 확인됩니다(티바로우2 변형 포함) Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 가슴 패드, 스탠스, 플레이트, 손잡이. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 티바로우 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the torso and row the bar to the body with the elbows. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"티바로우","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/티바로우/124/","verifiedStructure":"IKK Sports 공식몰 티바로우(T바 로우) 머신으로 확인됩니다(티바로우2 변형 포함)","verifiedAdjustments":"가슴 패드, 스탠스, 플레이트, 손잡이","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = 'T바 로우 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 풀오버
+
+🎯 ONE KEY CUE
+🔥 "갈비뼈를 내린 채 팔꿈치를 큰 호로 당기기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+팔 패드를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔 패드, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+머리 위쪽에서 옆구리 쪽으로 호를 그리며 당기기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과아치해 요추로 버티는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "풀오버"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"갈비뼈를 내린 채 팔꿈치를 큰 호로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Pullover
+
+🎯 ONE KEY CUE
+🔥 "Keep the ribs down and sweep the elbows through a large arc"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔 패드, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Pullover", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the ribs down and sweep the elbows through a large arc. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '풀오버' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 팔 패드, 가동 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '풀오버';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 친업어시스트 · IKKSPORTS Assist
+
+🎯 ONE KEY CUE
+🔥 "보조 무게로 턱걸이 깊이를 통제하며 가슴을 바 쪽으로"
+
+IKK Sports 공식몰 친업어시스트 머신으로 확인됩니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+가슴/등 패드에 몸을 안정적으로 붙이세요. 패드에서 몸이 들리면 반동이 들어갑니다.
+🤲 그립 / 손 위치
+그립를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎/보조 패드, 그립, 보조 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+가슴을 세우고 어깨를 귀에서 멀리 둡니다. 팔보다 등부터 준비합니다.
+이 자세에서 이것만 확인하세요.
+👉 어깨가 귀 쪽으로 올라가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+보조 패드로 매달린 채 바를 당겼다 내리기.
+손잡이를 당긴다고 생각하지 말고, 팔꿈치를 목표 지점으로 보내세요.
+
+---
+
+💥 ④ 최고 수축
+팔꿈치가 목표에 도착해 등이 조여지는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+팔이 펴질 때까지 등을 놓지 말고, 어깨가 앞으로 말리지 않게 버팁니다.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 몸을 흔들며 올라가는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 몸을 뒤로 젖혀 반동으로 당기는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 어깨를 으쓱하며 승모근만 쓰는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 손잡이만 당기고 팔꿈치는 안 움직이는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 친업어시스트의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 당김 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"보조 무게로 턱걸이 깊이를 통제하며 가슴을 바 쪽으로. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 친업어시스트 · IKKSPORTS Assist
+
+🎯 ONE KEY CUE
+🔥 "Use assist load to control chin-up depth and pull the chest to the bar"
+
+IKK Sports 공식몰 친업어시스트 머신으로 확인됩니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Pin yourself to the chest/back pad. If you lift off the pad, you are cheating with momentum.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎/보조 패드, 그립, 보조 중량.
+
+---
+
+💪 ② Start position
+Lift the chest and keep the shoulders away from the ears. Prepare the back before the arms.
+Check only this:
+👉 Shoulders not shrugged
+
+---
+
+🔥 ③ Execution
+Do not think “pull the handle.” Drive the elbows to the target.
+Drive the elbows back/down on the row or pulldown path, then lengthen slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the elbows arrive and the back is squeezed.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Keep the back set as the arms lengthen — do not let the shoulders dump forward.
+
+---
+
+❌ Common mistakes
+❌ Leaning back for momentum
+Slow the tempo and repeat one clean path.
+❌ Shrugging and turning it into an upper-trap pull
+Keep the shoulders away from the ears and restart.
+❌ Yank the handles without moving the elbows
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 친업어시스트. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → pull direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Use assist load to control chin-up depth and pull the chest to the bar. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"친업어시스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Assist","sourceUrl":"https://ikksports.com/product/친업어시스트/19/","verifiedStructure":"IKK Sports 공식몰 친업어시스트 머신으로 확인됩니다","verifiedAdjustments":"무릎/보조 패드, 그립, 보조 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 친업';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스댕숄더프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "코어를 고정한 채 손잡이를 귀 옆에서 위로 밀기"
+
+IKK Sports 공식몰 스댕숄더프레스(스탠딩 숄더 프레스)로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이 시작를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+스탠스, 손잡이 시작, 시작용 로드 추출 풋 지지, 양쪽 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+위로 밀었다 천천히 귀 옆까지 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과아치해 요추로 미는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스댕숄더프레스는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"코어를 고정한 채 손잡이를 귀 옆에서 위로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스댕숄더프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Brace the core and press the handles up from beside the ears"
+
+IKK Sports 공식몰 스댕숄더프레스(스탠딩 숄더 프레스)로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 스탠스, 손잡이 시작, 시작용 로드 추출 풋 지지, 양쪽 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스댕숄더프레스 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the core and press the handles up from beside the ears. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"스댕숄더프레스","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/스댕숄더프레스/103/","verifiedStructure":"IKK Sports 공식몰 스댕숄더프레스(스탠딩 숄더 프레스)로 확인됩니다","verifiedAdjustments":"스탠스, 손잡이 시작, 시작용 로드 추출 풋 지지, 양쪽 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 숄더 프레스
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 높이로 밀며 어깨 균형을 확인"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 위로 밀었다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한쪽만 먼저 밀어 비대칭을 키우는
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 숄더 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral Shoulder Press
+
+🎯 ONE KEY CUE
+🔥 "Press both sides to the same height and check shoulder balance"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Double-check both sides start at the same height.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Press or raise on the guided path, then lower without dumping the shoulders. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Shoulder Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 숄더 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 좌·우 독립 암, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스탠딩숄더 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 앞으로 과도히 보내지 않고 위로 밀기"
+
+IKK Sports 공식몰 스탠딩숄더 플레이트로드 숄더 프레스로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+스탠스, 양쪽 플레이트, 손잡이, 시작용 로드 추출 풋 지지를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+플레이트를 싣고 위로 밀었다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 원판만 늘리고 가동범위를 줄이는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스탠딩숄더는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 앞으로 과도히 보내지 않고 위로 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스탠딩숄더 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Press upward without letting the elbows drift too far forward"
+
+IKK Sports 공식몰 스탠딩숄더 플레이트로드 숄더 프레스로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 스탠스, 양쪽 플레이트, 손잡이, 시작용 로드 추출 풋 지지. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스탠딩숄더 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Press upward without letting the elbows drift too far forward. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"스탠딩숄더","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/스탠딩숄더/67/","verifiedStructure":"IKK Sports 공식몰 스탠딩숄더 플레이트로드 숄더 프레스로 확인됩니다","verifiedAdjustments":"스탠스, 양쪽 플레이트, 손잡이, 시작용 로드 추출 풋 지지","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '플레이트로드 숄더 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 레터럴 레이즈
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 약간 굽힌 채 측면으로 어깨 높이까지 올리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+팔 패드 높이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔 패드 높이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양팔을 옆으로 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 승모로 으쓱하며 올리는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "레터럴 레이즈"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 약간 굽힌 채 측면으로 어깨 높이까지 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Lateral Raise
+
+🎯 ONE KEY CUE
+🔥 "With soft elbows, raise the arms laterally to shoulder height"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔 패드 높이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Lateral Raise", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"With soft elbows, raise the arms laterally to shoulder height. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '레터럴 레이즈' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 팔 패드 높이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레터럴 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 머신 레터럴 레이즈
+
+🎯 ONE KEY CUE
+🔥 "덤벨처럼 흔들지 말고 패드 궤적을 따라 올리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 암 패드, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+패드를 따라 측면으로 올렸다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 팔을 튕겨 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "머신 레터럴 레이즈"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"덤벨처럼 흔들지 말고 패드 궤적을 따라 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Machine Lateral Raise
+
+🎯 ONE KEY CUE
+🔥 "Follow the pad path and avoid swinging like dumbbells"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 암 패드, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Machine Lateral Raise", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Follow the pad path and avoid swinging like dumbbells. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '머신 레터럴 레이즈' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 암 패드, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '머신 레터럴 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 리어 델트
+
+🎯 ONE KEY CUE
+🔥 "가슴을 고정하고 후면 삼각으로 팔을 뒤로 벌리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 가슴 패드, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앞으로 모은 팔을 뒤로 벌렸다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리 힘으로 상체를 돌리는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "리어 델트"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가슴을 고정하고 후면 삼각으로 팔을 뒤로 벌리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Rear Delt
+
+🎯 ONE KEY CUE
+🔥 "Brace the chest and open the arms back with the rear delts"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 가슴 패드, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Rear Delt", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the chest and open the arms back with the rear delts. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '리어 델트' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 가슴 패드, 손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '리어 델트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 프론트 레이즈
+
+🎯 ONE KEY CUE
+🔥 "전면 삼각으로 팔을 앞으로 어깨 높이까지 올리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트/스탠스, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+앞으로 올렸다 천천히 내리기.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "프론트 레이즈"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"전면 삼각으로 팔을 앞으로 어깨 높이까지 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Front Raise
+
+🎯 ONE KEY CUE
+🔥 "Raise the arms forward to shoulder height with the front delts"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트/스탠스, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Front Raise", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Raise the arms forward to shoulder height with the front delts. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '프론트 레이즈' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트/스탠스, 손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프론트 레이즈';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 업라이트 로우
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 위로 리드하며 바를 가슴 높이로 당기기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+그립 폭를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+스탠스, 그립 폭, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+아래에서 가슴 높이로 당겼다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 손목만 구부려 전완만 쓰는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "업라이트 로우"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 위로 리드하며 바를 가슴 높이로 당기기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Upright Row
+
+🎯 ONE KEY CUE
+🔥 "Lead with the elbows and pull the bar to chest height"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 스탠스, 그립 폭, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Upright Row", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Lead with the elbows and pull the bar to chest height. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '업라이트 로우' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"스탠스, 그립 폭, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '업라이트 로우';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 로테이터 머신
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 옆구리에 고정한 채 천천히 외·내회전"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+고정된 팔꿈치로 회전했다 복귀.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무거운 무게로 빠르게 회전하는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "로테이터 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 옆구리에 고정한 채 천천히 외·내회전. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Rotator Machine
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbow fixed at the side and rotate slowly in and out"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Rotator Machine", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbow fixed at the side and rotate slowly in and out. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '로테이터 머신' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 팔꿈치 패드, 가동 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로테이터 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 숄더 프레스 / 레터럴 복합 머신
+
+🎯 ONE KEY CUE
+🔥 "선택한 모드에 맞춰 프레스 또는 측면 거상을 분리 수행"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 모드 전환, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+갈비뼈를 내리고 허리를 과하게 아치하지 않습니다. 팔꿈치를 시작 궤적에 올립니다.
+이 자세에서 이것만 확인하세요.
+👉 허리가 과하게 꺾이지 않는지
+
+---
+
+🔥 ③ 운동 방법
+프레스 궤적과 레터럴 궤적을 구분해 수행.
+반동으로 올리지 마세요. 팔꿈치가 궤적을 주도하게 둡니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 모드를 혼용해 궤적을 흐리는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리를 꺾어 프레스하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 어깨를 귀 쪽으로 으쓱하는 것
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 반동으로 들어 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "숄더 프레스 / 레터럴 복합 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"선택한 모드에 맞춰 프레스 또는 측면 거상을 분리 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Shoulder Press / Lateral Combo
+
+🎯 ONE KEY CUE
+🔥 "Perform press or lateral raise separately according to the selected mode"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 모드 전환, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Drop the ribs — do not over-arch. Set the elbows on the press path.
+Check only this:
+👉 Low back not over-arched
+
+---
+
+🔥 ③ Execution
+No bounce. Let the elbows own the path.
+Press or raise on the guided path, then lower without dumping the shoulders.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pressing with an over-arched low back
+If position breaks, cut the load.
+❌ Shrugging the shoulders into the ears
+Keep the shoulders away from the ears and restart.
+❌ Bouncing the weight up
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Shoulder Press / Lateral Combo", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Perform press or lateral raise separately according to the selected mode. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '숄더 프레스 / 레터럴 복합 머신' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 모드 전환, 손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '숄더 프레스 / 레터럴 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 파워레그프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "허리를 등판에 붙인 채 발바닥 전체로 밀기"
+
+IKK Sports 공식몰 파워레그프레스로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트/등판 각도, 풋 플랫폼, 안전 스토퍼, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+플랫폼을 밀었다 통제하며 접기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 안쪽으로 모으며 미는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 파워레그프레스는 플레이트 로딩 레그 프레스입니다. 양쪽 원판을 맞춘 뒤, 안전 스톱을 내 가동범위에 먼저 걸고 시작하세요. 첫 2세트는 템포를 늦춰 골반이 뜨는지 확인합니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 파워레그프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep the low back on the pad and drive through the whole foot"
+
+IKK Sports 공식몰 파워레그프레스로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트/등판 각도, 풋 플랫폼, 안전 스토퍼, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 파워레그프레스 is plate-loaded. Match both sides, set the safety stops to your range first, and use the first two sets to confirm the pelvis stays down.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"파워레그프레스","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/파워레그프레스/110/","verifiedStructure":"IKK Sports 공식몰 파워레그프레스로 확인됩니다","verifiedAdjustments":"시트/등판 각도, 풋 플랫폼, 안전 스토퍼, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 파워레그프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "발 위치를 안정히 두고 무릎이 발끝 방향으로 움직이게"
+
+IKK Sports 파워레그프레스가 경사 레그프레스 계열이나 45도 전용 모델명은 별도 표기되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+등판, 풋 플랫폼 위치, 안전 스토퍼, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+45도 슬레드를 밀었다 천천히 내리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들뜨며 허리가 뜨는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 파워레그프레스는 플레이트 로딩 레그 프레스입니다. 양쪽 원판을 맞춘 뒤, 안전 스톱을 내 가동범위에 먼저 걸고 시작하세요. 첫 2세트는 템포를 늦춰 골반이 뜨는지 확인합니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 파워레그프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Set a stable foot position and track the knees over the toes"
+
+IKK Sports 파워레그프레스가 경사 레그프레스 계열이나 45도 전용 모델명은 별도 표기되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 등판, 풋 플랫폼 위치, 안전 스토퍼, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 파워레그프레스 is plate-loaded. Match both sides, set the safety stops to your range first, and use the first two sets to confirm the pelvis stays down.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"파워레그프레스","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/파워레그프레스/110/","verifiedStructure":"IKK Sports 파워레그프레스가 경사 레그프레스 계열이나 45도 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"등판, 풋 플랫폼 위치, 안전 스토퍼, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '45도 레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 수평 레그 프레스
+
+🎯 ONE KEY CUE
+🔥 "발 전체를 붙인 채 수평으로 밀고 무릎을 완전히 잠그지 않기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+수평 궤적에 맞춰 발판 중앙에 발을 안정적으로 두세요. 무릎·발끝 방향을 맞춥니다.
+⚙️ 조절 포인트
+시트, 풋 플랫폼, 안전 스토퍼, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+수평으로 밀었다 천천히 접기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 발뒤꿈치만으로 밀어 무릎에 충격을 주는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "수평 레그 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반은 시트에, 발 전체로 수평으로 밀고, 복귀는 2~3초."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Horizontal Leg Press
+
+🎯 ONE KEY CUE
+🔥 "Keep the whole foot planted, press horizontally, and avoid locking the knees"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet on the horizontal path and keep knees tracking with toes.
+⚙️ Adjustments
+Check 시트, 풋 플랫폼, 안전 스토퍼, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Horizontal Leg Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Pelvis glued, whole-foot horizontal drive, 2–3 sec return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '수평 레그 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 풋 플랫폼, 안전 스토퍼, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '수평 레그 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 핵스쿼트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "발 위치를 고정하고 무릎이 발끝과 같은 방향으로 앉았다 일어나기"
+
+IKK Sports 공식몰 핵스쿼트로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+어깨 패드, 등판, 풋 플랫폼, 안전 스토퍼, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+슬레드를 내려 앉았다 밀어 올리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎만 과도히 앞으로 보내 뒤꿈치가 뜨는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 핵스쿼트는 플레이트 로딩 레그 프레스입니다. 양쪽 원판을 맞춘 뒤, 안전 스톱을 내 가동범위에 먼저 걸고 시작하세요. 첫 2세트는 템포를 늦춰 골반이 뜨는지 확인합니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 핵스쿼트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Fix foot placement and squat with knees tracking over the toes"
+
+IKK Sports 공식몰 핵스쿼트로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 어깨 패드, 등판, 풋 플랫폼, 안전 스토퍼, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 핵스쿼트 is plate-loaded. Match both sides, set the safety stops to your range first, and use the first two sets to confirm the pelvis stays down.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"핵스쿼트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/핵스쿼트/91/","verifiedStructure":"IKK Sports 공식몰 핵스쿼트로 확인됩니다","verifiedAdjustments":"어깨 패드, 등판, 풋 플랫폼, 안전 스토퍼, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '핵 스쿼트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 브이스쿼트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "상체를 패드에 붙인 채 스쿼트 궤적으로 밀어 올리기"
+
+IKK Sports 공식몰 브이스쿼트(V스쿼트/스쿼트 프레스 계열)로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+어깨/등 패드, 풋 플랫폼, 안전 스토퍼, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+내려 앉았다 밀어 올리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 무릎을 튕기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 브이스쿼트는 플레이트 로딩 레그 프레스입니다. 양쪽 원판을 맞춘 뒤, 안전 스톱을 내 가동범위에 먼저 걸고 시작하세요. 첫 2세트는 템포를 늦춰 골반이 뜨는지 확인합니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 브이스쿼트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep the torso on the pads and drive up through a squat path"
+
+IKK Sports 공식몰 브이스쿼트(V스쿼트/스쿼트 프레스 계열)로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 어깨/등 패드, 풋 플랫폼, 안전 스토퍼, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 브이스쿼트 is plate-loaded. Match both sides, set the safety stops to your range first, and use the first two sets to confirm the pelvis stays down.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"브이스쿼트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/브이스쿼트/18/","verifiedStructure":"IKK Sports 공식몰 브이스쿼트(V스쿼트/스쿼트 프레스 계열)로 확인됩니다","verifiedAdjustments":"어깨/등 패드, 풋 플랫폼, 안전 스토퍼, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스쿼트 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 벨트 스쿼트
+
+🎯 ONE KEY CUE
+🔥 "벨트로 하중을 받고 상체 부담을 줄인 채 스쿼트"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+벨트 높이, 풋 스탠스, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+벨트를 찬 채 앉았다 일어나기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 벨트가 헐거워 하중이 흔들리는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "벨트 스쿼트"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Belt Squat
+
+🎯 ONE KEY CUE
+🔥 "Load through the belt and squat with less axial spine load"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 벨트 높이, 풋 스탠스, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Belt Squat", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '벨트 스쿼트' 전용 SKU가 확인되지 않습니다(팬듈럼스쿼트는 별도 스쿼트 머신)","verifiedAdjustments":"벨트 높이, 풋 스탠스, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '벨트 스쿼트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 레그 익스텐션
+
+🎯 ONE KEY CUE
+🔥 "엉덩이를 시트에 붙인 채 무릎을 펴 대퇴사두 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 무릎 축 정렬, 발목 롤러, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+무릎을 펴 올렸다 천천히 접기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 뒤로 젖혀 반동으로 펴는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "레그 익스텐션"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Leg Extension
+
+🎯 ONE KEY CUE
+🔥 "Keep the hips on the seat and extend the knees to squeeze the quads"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 무릎 축 정렬, 발목 롤러, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Leg Extension", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '레그 익스텐션' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 무릎 축 정렬, 발목 롤러, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 시티드 레그 컬
+
+🎯 ONE KEY CUE
+🔥 "앉은 채 발뒤꿈치를 엉덩이 쪽으로 당기기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트, 무릎 축, 발목 롤러, 허벅지 패드, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+무릎을 굽혀 당겼다 천천히 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 엉덩이가 들뜨며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "시티드 레그 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Seated Leg Curl
+
+🎯 ONE KEY CUE
+🔥 "From a seated position, curl the heels toward the glutes"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트, 무릎 축, 발목 롤러, 허벅지 패드, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Seated Leg Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '시티드 레그 컬' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 무릎 축, 발목 롤러, 허벅지 패드, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 라잉 레그 컬
+
+🎯 ONE KEY CUE
+🔥 "골반을 패드에 붙인 채 발뒤꿈치를 엉덩이로 당기기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+골반 패드, 발목 롤러, 무릎 축, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+엎드린 채 컬했다 천천히 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과아치해 요추로 당기는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "라잉 레그 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Lying Leg Curl
+
+🎯 ONE KEY CUE
+🔥 "Keep the hips on the pad and curl the heels toward the glutes"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 골반 패드, 발목 롤러, 무릎 축, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Lying Leg Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '라잉 레그 컬' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"골반 패드, 발목 롤러, 무릎 축, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '라잉 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스탠딩 레그 컬
+
+🎯 ONE KEY CUE
+🔥 "지지 다리를 고정하고 한쪽씩 발뒤꿈치를 위로 컬"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+골반/허벅지 지지, 발목 롤러, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+한쪽 무릎을 굽혀 올렸다 내리기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 앞으로 과도히 숙이며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "스탠딩 레그 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Standing Leg Curl
+
+🎯 ONE KEY CUE
+🔥 "Brace the support leg and curl one heel up at a time"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 골반/허벅지 지지, 발목 롤러, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Standing Leg Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '스탠딩 레그 컬' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"골반/허벅지 지지, 발목 롤러, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 싱글 레그 컬
+
+🎯 ONE KEY CUE
+🔥 "한쪽에 집중해 슬굴곡근을 끝까지 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+발판 중앙에 발을 두고, 무릎이 발끝 방향으로 가게 맞추세요. 너무 높거나 낮으면 골반이 먼저 뜹니다.
+⚙️ 조절 포인트
+시트/지지, 발목 롤러, 무릎 축, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 시트/패드에 붙이고 발 전체로 발판을 느낍니다. 무릎·발끝 방향을 맞춥니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 말리지 않는 깊이인지
+
+---
+
+🔥 ③ 운동 방법
+한쪽씩 컬했다 천천히 펴기.
+발판을 “발로 차듯” 밀지 말고, 발 전체로 멀리 보낸다는 느낌으로 밀어요. 무릎은 발끝 방향을 따라갑니다.
+
+---
+
+💥 ④ 최고 수축
+무릎을 완전히 잠그기 직전, 허벅지·둔근이 일을 받는 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+내려올 때 골반이 말리는 깊이 직전에서 방향을 바꾸세요.
+
+---
+
+❌ 흔한 실수
+❌ 양다리를 동시에 흔들며 통제를 잃는
+자세가 무너지면 깊이·무게를 줄이세요.
+❌ 무릎이 안쪽으로 무너지는 것
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 하부 범위에서 요추가 뜨거나 골반이 말리는 것
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 무릎을 강하게 잠그며 튕기는 것
+자세가 무너지면 깊이·무게를 줄이세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "싱글 레그 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 골반 고정
+🟢 발 → 발판 중앙·방향 정렬
+🟢 무릎 → 발끝 방향
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발 전체로 밀고, 골반은 끝까지 안정적으로."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Single Leg Curl
+
+🎯 ONE KEY CUE
+🔥 "Focus on one side and fully contract the hamstring"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Center the feet. If placement is too high or low, the pelvis lifts first.
+⚙️ Adjustments
+Check 시트/지지, 발목 롤러, 무릎 축, 중량.
+
+---
+
+💪 ② Start position
+Plant the pelvis and feel the whole foot on the platform. Align knees with toes.
+Check only this:
+👉 Pelvis not curling under
+
+---
+
+🔥 ③ Execution
+Do not kick the platform. Drive it away through the whole foot and let the knees track the toes.
+Bend, press through the mid-foot, and return without bouncing the knees.
+
+---
+
+💥 ④ Peak contraction
+Stop just short of hard lockout where quads/glutes still own the load.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Reverse before the pelvis curls under.
+
+---
+
+❌ Common mistakes
+❌ Knees collapsing inward
+Drive knees with the toes. Reduce load immediately if they cave.
+❌ Pelvis curling / low back peeling at the bottom
+Own pelvis position before depth.
+❌ Snapping into a hard knee lockout
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Single Leg Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → pelvis planted
+🟢 Feet → centered and aligned
+🟢 Knees → track toes
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Whole-foot drive, pelvis stays honest."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '싱글 레그 컬' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트/지지, 발목 롤러, 무릎 축, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '싱글 레그 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 3D힙쓰러스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "턱을 살짝 당긴 채 엉덩이를 천장으로 밀어 올리기"
+
+IKK Sports 공식몰 3D힙쓰러스트로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+등/어깨 패드, 벨트/패드, 풋 스탠스, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+엉덩이를 올려 수축했다 천천히 내리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전해 요추로 올리는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3D힙쓰러스트는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"턱을 살짝 당긴 채 엉덩이를 천장으로 밀어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 3D힙쓰러스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Tuck the chin slightly and drive the hips up toward the ceiling"
+
+IKK Sports 공식몰 3D힙쓰러스트로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 등/어깨 패드, 벨트/패드, 풋 스탠스, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3D힙쓰러스트 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Tuck the chin slightly and drive the hips up toward the ceiling. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"3D힙쓰러스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/3d힙쓰러스트/97/","verifiedStructure":"IKK Sports 공식몰 3D힙쓰러스트로 확인됩니다","verifiedAdjustments":"등/어깨 패드, 벨트/패드, 풋 스탠스, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 쓰러스트';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 3D힙쓰러스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "발뒤꿈치로 밀며 엉덩이만 들어 올리기"
+
+IKK Sports 3D힙쓰러스트가 글루트 드라이브 계열 동작에 쓰이나 Glute Drive 전용 모델명은 별도 표기되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+등판, 풋 플랫폼, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+힙을 밀어 올렸다 통제하며 내리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎이 안쪽으로 무너지는
+발끝 방향으로 무릎을 보내세요. 안쪽으로 모이면 바로 중량을 낮춥니다.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3D힙쓰러스트는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발뒤꿈치로 밀며 엉덩이만 들어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 3D힙쓰러스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Drive through the heels and lift only with the glutes"
+
+IKK Sports 3D힙쓰러스트가 글루트 드라이브 계열 동작에 쓰이나 Glute Drive 전용 모델명은 별도 표기되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 등판, 풋 플랫폼, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3D힙쓰러스트 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Drive through the heels and lift only with the glutes. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3D힙쓰러스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/3d힙쓰러스트/97/","verifiedStructure":"IKK Sports 3D힙쓰러스트가 글루트 드라이브 계열 동작에 쓰이나 Glute Drive 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"등판, 풋 플랫폼, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 드라이브';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 글루트 킥백
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정한 채 다리를 뒤로 차며 둔근 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+패드 높이, 스탠스, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+뒤로 찼다 천천히 복귀.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과도히 젖혀 요추로 차는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "글루트 킥백"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반을 고정한 채 다리를 뒤로 차며 둔근 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Glute Kickback
+
+🎯 ONE KEY CUE
+🔥 "Keep the pelvis stable and kick the leg back to squeeze the glute"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 패드 높이, 스탠스, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Glute Kickback", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the pelvis stable and kick the leg back to squeeze the glute. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '글루트 킥백' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"패드 높이, 스탠스, 가동 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 킥백';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 힙 어브덕션
+
+🎯 ONE KEY CUE
+🔥 "상체를 고정하고 무릎을 바깥으로 벌리며 둔근 중부 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 무릎/허벅지 패드, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+바깥으로 벌렸다 천천히 모으기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 다리를 튕겨 벌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "힙 어브덕션"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상체를 고정하고 무릎을 바깥으로 벌리며 둔근 중부 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Hip Abduction
+
+🎯 ONE KEY CUE
+🔥 "Brace the torso and open the knees outward to squeeze the glute medius"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 무릎/허벅지 패드, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Hip Abduction", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the torso and open the knees outward to squeeze the glute medius. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '힙 어브덕션' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 무릎/허벅지 패드, 가동 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어브덕션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 힙 어덕션
+
+🎯 ONE KEY CUE
+🔥 "무릎을 천천히 모으며 내전근을 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 무릎/허벅지 패드, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+바깥에서 안쪽으로 모았다 벌리기.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 다리를 세게 부딪치듯 모으는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "힙 어덕션"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"무릎을 천천히 모으며 내전근을 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Hip Adduction
+
+🎯 ONE KEY CUE
+🔥 "Slowly bring the knees together and squeeze the adductors"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 무릎/허벅지 패드, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Hip Adduction", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Slowly bring the knees together and squeeze the adductors. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '힙 어덕션' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 무릎/허벅지 패드, 가동 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 어덕션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 3D힙쓰러스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "선택한 동작(어브덕션/어덕션/킥백)에 맞춰 골반을 고정"
+
+IKK Sports 3D힙쓰러스트가 글루트/힙 계열 대표 머신이지만 복합 글루트 전용 SKU명은 별도 확인되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트부터 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+시트, 패드, 가동 범위, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+설정한 힙 동작의 궤적을 따라 수행.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 모드와 다른 궤적으로 억지로 움직이는
+자세가 무너지면 무게를 낮추세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3D힙쓰러스트는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"선택한 동작(어브덕션/어덕션/킥백)에 맞춰 골반을 고정. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 3D힙쓰러스트 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis for the selected move (abduction/adduction/kickback)"
+
+IKK Sports 3D힙쓰러스트가 글루트/힙 계열 대표 머신이지만 복합 글루트 전용 SKU명은 별도 확인되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 시트, 패드, 가동 범위, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 3D힙쓰러스트 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the pelvis for the selected move (abduction/adduction/kickback). One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"3D힙쓰러스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/3d힙쓰러스트/97/","verifiedStructure":"IKK Sports 3D힙쓰러스트가 글루트/힙 계열 대표 머신이지만 복합 글루트 전용 SKU명은 별도 확인되지 않습니다","verifiedAdjustments":"시트, 패드, 가동 범위, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '글루트 / 힙 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스탠딩 카프
+
+🎯 ONE KEY CUE
+🔥 "발볼로 밀어 올리며 종아리를 끝까지 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+어깨 패드, 풋 플랫폼 위치, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+발뒤꿈치를 올렸다 천천히 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 굽혀 반동으로 튀는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "스탠딩 카프"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Standing Calf
+
+🎯 ONE KEY CUE
+🔥 "Drive through the balls of the feet and fully squeeze the calves"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 어깨 패드, 풋 플랫폼 위치, 중량.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Standing Calf", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '스탠딩 카프' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"어깨 패드, 풋 플랫폼 위치, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스탠딩 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 시티드 카프
+
+🎯 ONE KEY CUE
+🔥 "무릎 아래 패드를 유지한 채 발볼로 뒤꿈치를 올리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+무릎 패드, 풋 플랫폼, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+뒤꿈치를 올렸다 깊게 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 가동범위 없이 짧게만 튕기는
+자세가 무너지면 무게를 낮추세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "시티드 카프"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Seated Calf
+
+🎯 ONE KEY CUE
+🔥 "Keep the pads on the thighs and raise the heels through the balls of the feet"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 무릎 패드, 풋 플랫폼, 중량.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Seated Calf", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '시티드 카프' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"무릎 패드, 풋 플랫폼, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '시티드 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 파워레그프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "레그 프레스 플랫폼에서 무릎을 펴고 카프만 올리기"
+
+IKK Sports 파워레그프레스 플랫폼에서 카프 수행이 가능하나 카프 전용 SKU는 확인되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🦶 발 위치
+발볼만 발판에 올리고 발뒤꿈치는 아래로 떨어질 여유를 남기세요.
+⚙️ 조절 포인트
+풋 플랫폼 위치, 무릎 잠금, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+무릎 각도를 고정한 채 발볼로만 움직일 준비를 합니다.
+이 자세에서 이것만 확인하세요.
+👉 무릎이 같이 굽혀지지 않는지
+
+---
+
+🔥 ③ 운동 방법
+발볼로 밀어 뒤꿈치를 올렸다 내리기.
+무릎으로 밀지 말고 발목 가동범위로만 위아래를 만듭니다.
+
+---
+
+💥 ④ 최고 수축
+발볼로 최대한 올린 꼭대기에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 무릎을 굽혔다 펴며 프레스로 바꾸는
+자세가 무너지면 무게를 낮추세요.
+❌ 무릎을 같이 굽혀 카프가 아닌 다리로 미는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 발뒤꿈치를 튕기는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 가동범위를 너무 짧게 가져가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 파워레그프레스는 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"발볼로만, 꼭대기 1초, 튕기지 않기."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 파워레그프레스 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "On a leg-press platform, keep the knees soft-locked and raise only with the calves"
+
+IKK Sports 파워레그프레스 플랫폼에서 카프 수행이 가능하나 카프 전용 SKU는 확인되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🦶 Feet
+Balls of the feet on the platform; leave room for the heels to drop.
+⚙️ Adjustments
+Check 풋 플랫폼 위치, 무릎 잠금, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Lock the knee angle and prepare to move only through the ankles.
+Check only this:
+👉 Knees not bending with the calves
+
+---
+
+🔥 ③ Execution
+Do not press with the knees. Use ankle range only.
+Lower the heels, rise through the balls of the feet, pause, then lower.
+
+---
+
+💥 ④ Peak contraction
+Stop at the top of the rise through the balls of the feet.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Bending the knees and turning it into a leg press
+If position breaks, cut the load.
+❌ Bouncing the heels
+Slow the tempo and repeat one clean path.
+❌ Cutting the range too short
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 파워레그프레스 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Balls of the feet only, pause on top, no bounce."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"파워레그프레스","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/파워레그프레스/110/","verifiedStructure":"IKK Sports 파워레그프레스 플랫폼에서 카프 수행이 가능하나 카프 전용 SKU는 확인되지 않습니다","verifiedAdjustments":"풋 플랫폼 위치, 무릎 잠금, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '레그 프레스 카프';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 프리체컬 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 패드에 고정한 채 손잡이를 어깨 쪽으로 컬"
+
+IKK Sports 프리체컬이 바이셉 컬 계열로 매핑되나 일반 바이셉 컬 전용 모델명은 별도 표기되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 프리처 패드 높이, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+아래에서 위로 컬했다 천천히 내리기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치를 들며 반동으로 올리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 프리체컬은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 패드에 고정한 채 손잡이를 어깨 쪽으로 컬. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 프리체컬 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbows on the pad and curl the handles toward the shoulders"
+
+IKK Sports 프리체컬이 바이셉 컬 계열로 매핑되나 일반 바이셉 컬 전용 모델명은 별도 표기되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 프리처 패드 높이, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 프리체컬 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbows on the pad and curl the handles toward the shoulders. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"프리체컬","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/프리체컬/122/","verifiedStructure":"IKK Sports 프리체컬이 바이셉 컬 계열로 매핑되나 일반 바이셉 컬 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"시트, 프리처 패드 높이, 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 프리체컬 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "상완을 패드에 붙인 채 하단에서 통제하며 컬"
+
+IKK Sports 공식몰 프리체컬(프리처 컬)로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 프리처 패드 높이, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+프리처 패드에서 컬했다 천천히 펴기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 패드를 떼고 상체로 들어 올리는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 프리체컬은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"상완을 패드에 붙인 채 하단에서 통제하며 컬. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 프리체컬 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep the upper arms on the pad and curl with control from the bottom"
+
+IKK Sports 공식몰 프리체컬(프리처 컬)로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 프리처 패드 높이, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 프리체컬 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the upper arms on the pad and curl with control from the bottom. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"프리체컬","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/프리체컬/122/","verifiedStructure":"IKK Sports 공식몰 프리체컬(프리처 컬)로 확인됩니다","verifiedAdjustments":"시트, 프리처 패드 높이, 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '프리처 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 아이소래터럴 바이셉 컬
+
+🎯 ONE KEY CUE
+🔥 "좌우를 같은 속도로 컬하며 힘 차이를 확인"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+양손잡이 높이가 좌우 같은지 먼저 보세요. 독립 암이라 한쪽만 어긋나도 바로 느껴집니다.
+⚙️ 조절 포인트
+시트, 좌·우 독립 암, 팔꿈치 패드, 중량을 확인하세요. 좌우 시작 위치가 같은지도 같이 봅니다.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+좌우가 같은 높이에서 시작하는지 한 번 더 보세요.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+각 팔을 독립적으로 컬했다 복귀.
+양쪽을 같은 속도로 움직이세요. 한쪽이 먼저 끝나면 무게를 더 올리기 전에 밸런스부터 잡습니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 강한 쪽만 먼저 올리는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 한쪽만 먼저 끝내고 반대쪽을 따라가게 하는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "아이소래터럴 바이셉 컬"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 좌우 → 같은 속도
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"좌우 같은 속도, 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Iso-Lateral Biceps Curl
+
+🎯 ONE KEY CUE
+🔥 "Curl both sides at the same speed and notice strength differences"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Match left and right handle height first — independent arms expose any mismatch immediately.
+⚙️ Adjustments
+Check 시트, 좌·우 독립 암, 팔꿈치 패드, 중량. Confirm both sides start from the same position.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Double-check both sides start at the same height.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Match left-right speed. If one side finishes early, fix balance before adding load.
+Curl or extend only at the elbow, then reverse slowly. Keep both sides honest.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Letting one side finish early
+Match the stronger side to the weaker side’s speed.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Iso-Lateral Biceps Curl", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Left/right → same speed
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Match sides, one-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '아이소래터럴 바이셉 컬' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 좌·우 독립 암, 팔꿈치 패드, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '아이소래터럴 바이셉 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 프리체컬 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "어깨를 고정하고 전완만 들어 올리기"
+
+IKK Sports 프리체컬이 암 컬 계열로 매핑되나 Arm Curl 전용 SKU명은 별도 확인되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 지지, 손잡이, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 컬했다 천천히 펴기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 흔들며 치팅하는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 프리체컬은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"어깨를 고정하고 전완만 들어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 프리체컬 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep the shoulders still and lift only with the forearms"
+
+IKK Sports 프리체컬이 암 컬 계열로 매핑되나 Arm Curl 전용 SKU명은 별도 확인되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 지지, 손잡이, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 프리체컬 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the shoulders still and lift only with the forearms. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"프리체컬","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/프리체컬/122/","verifiedStructure":"IKK Sports 프리체컬이 암 컬 계열로 매핑되나 Arm Curl 전용 SKU명은 별도 확인되지 않습니다","verifiedAdjustments":"시트, 팔꿈치 지지, 손잡이, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '암 컬';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 트라이셉스 익스텐션
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 고정한 채 전완만 펴 삼두 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 팔꿈치 패드, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+팔을 펴 올렸다 천천히 접기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔꿈치가 벌어지며 어깨가 개입하는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "트라이셉스 익스텐션"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 고정한 채 전완만 펴 삼두 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Triceps Extension
+
+🎯 ONE KEY CUE
+🔥 "Keep the elbows fixed and extend only the forearms to squeeze the triceps"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 팔꿈치 패드, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Triceps Extension", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the elbows fixed and extend only the forearms to squeeze the triceps. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '트라이셉스 익스텐션' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 팔꿈치 패드, 손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 트라이셉스 프레스
+
+🎯 ONE KEY CUE
+🔥 "팔꿈치를 몸통 가까이 두고 아래로 밀어 삼두 수축"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+손잡이를 아래로 밀었다 복귀.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 어깨를 으쓱하며 승모로 미는
+어깨를 귀에서 멀리 두고 다시 시작하세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "트라이셉스 프레스"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"팔꿈치를 몸통 가까이 두고 아래로 밀어 삼두 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Triceps Press
+
+🎯 ONE KEY CUE
+🔥 "Keep elbows close and press down to squeeze the triceps"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Triceps Press", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep elbows close and press down to squeeze the triceps. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '트라이셉스 프레스' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '트라이셉스 프레스';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 딥 / 트라이셉스 머신
+
+🎯 ONE KEY CUE
+🔥 "가동범위 하단에서 어깨를 보호하며 밀어 올리기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+딥 궤적으로 내렸다 밀어 올리기.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 너무 깊게 내려 어깨 앞쪽이 아픈
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "딥 / 트라이셉스 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"가동범위 하단에서 어깨를 보호하며 밀어 올리기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Dip / Triceps Machine
+
+🎯 ONE KEY CUE
+🔥 "Protect the shoulders at the bottom and press back up through the range"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 손잡이, 중량.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Dip / Triceps Machine", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Protect the shoulders at the bottom and press back up through the range. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '딥 / 트라이셉스 머신' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '딥 / 트라이셉스 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 바이셉스 / 트라이셉스 복합 머신
+
+🎯 ONE KEY CUE
+🔥 "컬과 익스텐션을 모드별로 분리해 팔꿈치만 움직이기"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+시트, 모드 전환, 패드/손잡이, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+팔꿈치 위치를 패드나 몸 옆에 고정합니다. 몸통 반동은 끕니다.
+이 자세에서 이것만 확인하세요.
+👉 팔꿈치가 앞으로 흘러가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+선택한 팔 동작 궤적만 수행.
+몸통은 고정, 팔꿈치 아래만 움직입니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 모드를 혼용해 어깨까지 흔드는
+자세가 무너지면 무게를 낮추세요.
+❌ 팔꿈치가 앞으로 흘러가며 어깨가 개입하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 몸통 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 손목을 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "바이셉스 / 트라이셉스 복합 머신"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 팔꿈치 → 미는/드는 방향
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"컬과 익스텐션을 모드별로 분리해 팔꿈치만 움직이기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Biceps / Triceps Combo
+
+🎯 ONE KEY CUE
+🔥 "Separate curl and extension modes and move only at the elbow"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 시트, 모드 전환, 패드/손잡이, 중량.
+
+---
+
+💪 ② Start position
+Fix the elbows on the pad or at your sides. Kill torso swing.
+Check only this:
+👉 Elbows not drifting forward
+
+---
+
+🔥 ③ Execution
+Torso stays quiet. Move only below the elbows.
+Curl or extend only at the elbow, then reverse slowly.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the elbows drift so the shoulders take over
+If position breaks, cut the load.
+❌ Swinging the torso
+If position breaks, cut the load.
+❌ Over-bending the wrists
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Biceps / Triceps Combo", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Elbows → press/raise direction
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Separate curl and extension modes and move only at the elbow. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '바이셉스 / 트라이셉스 복합 머신' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 모드 전환, 패드/손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '바이셉스 / 트라이셉스 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 싯업보드 · IKKSPORTS
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정하고 갈비뼈를 아래로 말며 크런치"
+
+IKK Sports 싯업보드가 복근/싯업 계열이나 앱 크런치 전용 웨이트 머신 SKU는 별도 확인되지 않습니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+보드 각도, 풋 고정, 가동 범위를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 말아 수축했다 천천히 펴기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 목만 앞으로 당겨 경추에 부담을 주는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 싯업보드의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 싯업보드 · IKKSPORTS
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis and crunch by curling the ribs down"
+
+IKK Sports 싯업보드가 복근/싯업 계열이나 앱 크런치 전용 웨이트 머신 SKU는 별도 확인되지 않습니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 보드 각도, 풋 고정, 가동 범위.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 싯업보드. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"싯업보드","manufacturer":"IKK Sports","productSeries":"IKKSPORTS","sourceUrl":"https://ikksports.com/product/싯업보드/112/","verifiedStructure":"IKK Sports 싯업보드가 복근/싯업 계열이나 앱 크런치 전용 웨이트 머신 SKU는 별도 확인되지 않습니다","verifiedAdjustments":"보드 각도, 풋 고정, 가동 범위","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '앱 크런치';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 레그레이즈 · IKKSPORTS
+
+🎯 ONE KEY CUE
+🔥 "복압을 유지한 채 짧게 수축하기"
+
+IKK Sports 레그레이즈가 어브도미널/행잉 레그레이즈 계열로 매핑되나 Abdominal Crunch 전용 SKU는 별도. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+등/팔꿈치 지지, 풋 지지, 가동 범위를 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+말아 올렸다 통제하며 복귀.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 반동으로 상체를 튕기는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 레그레이즈의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 레그레이즈 · IKKSPORTS
+
+🎯 ONE KEY CUE
+🔥 "Keep abdominal pressure and use a short controlled crunch"
+
+IKK Sports 레그레이즈가 어브도미널/행잉 레그레이즈 계열로 매핑되나 Abdominal Crunch 전용 SKU는 별도입니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 등/팔꿈치 지지, 풋 지지, 가동 범위.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 레그레이즈. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"레그레이즈","manufacturer":"IKK Sports","productSeries":"IKKSPORTS","sourceUrl":"https://ikksports.com/product/레그레이즈/108/","verifiedStructure":"IKK Sports 레그레이즈가 어브도미널/행잉 레그레이즈 계열로 매핑되나 Abdominal Crunch 전용 SKU는 별도입니다","verifiedAdjustments":"등/팔꿈치 지지, 풋 지지, 가동 범위","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어브도미널';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 로터리 토르소
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정한 채 갈비뼈만 천천히 회전"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+시트, 무릎/골반 고정, 회전 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+좌우로 회전했다 중앙으로 복귀.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 팔을 흔들어 반동으로 돌리는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "로터리 토르소"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Rotary Torso
+
+🎯 ONE KEY CUE
+🔥 "Keep the pelvis fixed and rotate only the ribcage slowly"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 시트, 무릎/골반 고정, 회전 범위, 중량.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Rotary Torso", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '로터리 토르소' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트, 무릎/골반 고정, 회전 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '로터리 토르소';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 사이드 밴드
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정하고 옆구리를 짧게 측굴"
+
+IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 어깨·관절에 자연스럽게 오는지 확인합니다.
+⚙️ 조절 포인트
+시트/힙 패드, 가동 범위, 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+옆으로 숙였다 중앙으로 복귀.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 크게 흔들며 요추를 비트는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 이 항목은 해머 스트렝스 전용 SKU가 없습니다. "사이드 밴드"로 분류된 실제 기구의 패드·레버·안전장치만 믿고, 가벼운 무게로 5회 리허설 후 본 세트를 시작하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Side Bend
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis and side-bend briefly through the obliques"
+
+There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 시트/힙 패드, 가동 범위, 중량.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 No dedicated Hammer Strength SKU for this slot. Trust the pads/levers/safeties on the unit labeled like "Side Bend", rehearse five light reps, then start working sets.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"BRAND_MODEL_NOT_FOUND","verifiedModel":null,"manufacturer":"IKK Sports","productSeries":null,"sourceUrl":"https://ikksports.com/category/%EC%9B%A8%EC%9D%B4%ED%8A%B8%EA%B8%B0%EA%B5%AC/42/","verifiedStructure":"IKK Sports 공개 카탈로그에서 '사이드 밴드' 전용 SKU가 확인되지 않습니다","verifiedAdjustments":"시트/힙 패드, 가동 범위, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '사이드 밴드';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — Loaded 백익스텐션 V2 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "중립 척추를 유지한 채 힙 힌지로 상체를 펴기"
+
+IKK Sports 공식몰 Loaded 백익스텐션 V2(플레이트로드 백 익스텐션)로 확인됩니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+⚙️ 조절 포인트
+골반 패드, 풋 지지, 가동 범위, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+상체를 내려 접었다 중립까지 펴기.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 과신전해 끝을 튕기는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Loaded 백익스텐션 V2은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Loaded 백익스텐션 V2 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Keep a neutral spine and extend through a hip hinge"
+
+IKK Sports 공식몰 Loaded 백익스텐션 V2(플레이트로드 백 익스텐션)로 확인됩니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 골반 패드, 풋 지지, 가동 범위, 플레이트. Match plates on both sides — do not load one arm first.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Loaded 백익스텐션 V2 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"Loaded 백익스텐션 V2","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/loaded-백익스텐션-v2/111/","verifiedStructure":"IKK Sports 공식몰 Loaded 백익스텐션 V2(플레이트로드 백 익스텐션)로 확인됩니다","verifiedAdjustments":"골반 패드, 풋 지지, 가동 범위, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '백 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — Loaded 백익스텐션 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "골반을 고정하고 다리를 뒤로 펴 둔근·햄스트링 수축"
+
+IKK Sports Loaded 백익스텐션이 힙 힌지/익스텐션 계열이나 Hip Extension 전용 SKU명은 별도 표기되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트·백패드를 먼저 맞추세요. 밀었을 때 골반이 말리거나 허리가 뜨지 않는 깊이가 시작점입니다.
+🦶 발 위치
+지지하는 발을 먼저 고정하세요. 흔들리면 중량을 낮춥니다.
+⚙️ 조절 포인트
+골반 패드, 풋 지지, 가동 범위, 플레이트를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반 위치를 먼저 고정합니다. 허리로 높이 만들 준비를 하지 마세요.
+이 자세에서 이것만 확인하세요.
+👉 허리가 아니라 엉덩이가 일을 받을 준비인지
+
+---
+
+🔥 ③ 운동 방법
+뒤로 펴 올렸다 천천히 복귀.
+허리로 높이를 만들지 말고 골반·엉덩이로 밀어 마무리하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 허리를 젖혀 요추로 펴는
+깊이보다 골반 고정이 먼저입니다. 허리가 뜨면 범위를 줄이세요.
+❌ 허리로 높이 만드는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 골반이 돌아가며 한쪽만 미는 것
+약한 쪽 속도에 강한 쪽을 맞추세요.
+❌ 반동으로 올리는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Loaded 백익스텐션은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 발 → 발판 중앙·방향 정렬
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"골반을 고정하고 다리를 뒤로 펴 둔근·햄스트링 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Loaded 백익스텐션 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Brace the pelvis and extend the leg back to squeeze glute and hamstring"
+
+IKK Sports Loaded 백익스텐션이 힙 힌지/익스텐션 계열이나 Hip Extension 전용 SKU명은 별도 표기되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Set the seat/back pad first. Your start depth is where the pelvis stays planted and the low back does not peel up.
+🦶 Feet
+Lock in the support foot before you move. Reduce load if you wobble.
+⚙️ Adjustments
+Check 골반 패드, 풋 지지, 가동 범위, 플레이트. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the pelvis first. Do not plan to create height with the lower back.
+Check only this:
+👉 Glutes ready to drive, not the lumbar spine
+
+---
+
+🔥 ③ Execution
+Finish with the hips/glutes — do not manufacture height with the lumbar spine.
+Drive the hips, squeeze, then lower without lumbar snap.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Creating height with the lumbar spine
+If position breaks, cut the load.
+❌ Rotating the pelvis and favoring one side
+If position breaks, cut the load.
+❌ Bouncing the lockout
+Slow the tempo and repeat one clean path.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Loaded 백익스텐션 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Feet → centered and aligned
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Brace the pelvis and extend the leg back to squeeze glute and hamstring. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Loaded 백익스텐션","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/loaded-백익스텐션/89/","verifiedStructure":"IKK Sports Loaded 백익스텐션이 힙 힌지/익스텐션 계열이나 Hip Extension 전용 SKU명은 별도 표기되지 않습니다","verifiedAdjustments":"골반 패드, 풋 지지, 가동 범위, 플레이트","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '힙 익스텐션';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — Loaded 백익스텐션 V2 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "크런치와 백 익스텐션을 모드별로 분리 수행"
+
+IKK Sports는 싯업보드·레그레이즈·백익스텐션을 분리 판매하며 복근/허리 복합 단일 SKU는 확인되지 않습니다. 플레이트 로딩 · IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+⚙️ 조절 포인트
+패드, 풋 지지, 가동 범위를 확인하세요. 양쪽 플레이트를 동일하게 맞추고, 한쪽만 먼저 올리지 마세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+골반을 안정시키고 목으로 당길 생각을 지웁니다.
+이 자세에서 이것만 확인하세요.
+👉 골반이 고정돼 있는지
+
+---
+
+🔥 ③ 운동 방법
+선택한 코어 동작만 수행.
+갈비뼈를 골반 쪽으로 말아 올리는 느낌으로 수축하세요.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 한 궤적으로 복근과 허리를 동시에 과부하하는
+자세가 무너지면 무게를 낮추세요.
+❌ 목으로 당겨 몸통을 접는 것
+갈비뼈를 골반 쪽으로 만다는 느낌으로 바꾸세요.
+❌ 골반이 뜨며 반동을 쓰는 것
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 너무 큰 범위로 과하게 꺾는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 양쪽 플레이트 무게를 다르게 올리는 것
+양쪽을 맞춘 뒤 가벼운 세트로 좌우를 확인하세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Loaded 백익스텐션 V2은 플레이트 로딩입니다. 좌우 원판을 동일하게 맞추고, 첫 세트는 궤적·좌우 대칭만 확인한 다음 무게를 올리세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 시트/패드 → 몸에 맞춤
+🟢 몸통 → 브레스·고정
+🟢 원판 → 좌우 동일
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"목 말고 몸통으로, 끝에서 조이고 천천히."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — Loaded 백익스텐션 V2 · IKKSPORTS Plate-Loaded
+
+🎯 ONE KEY CUE
+🔥 "Perform crunch and back extension separately by mode"
+
+IKK Sports는 싯업보드·레그레이즈·백익스텐션을 분리 판매하며 복근/허리 복합 단일 SKU는 확인되지 않습니다 Lean into the plate-loaded / IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+⚙️ Adjustments
+Check 패드, 풋 지지, 가동 범위. Match plates on both sides — do not load one arm first.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Stabilize the pelvis and stop thinking about pulling with the neck.
+Check only this:
+👉 Pelvis locked
+
+---
+
+🔥 ③ Execution
+Curl the ribcage toward the pelvis.
+Curl or rotate through the torso, then return without momentum.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Pulling with the neck
+Curl ribs toward the pelvis instead.
+❌ Lifting the pelvis and using momentum
+Slow the tempo and repeat one clean path.
+❌ Forcing an excessive range
+If position breaks, cut the load.
+❌ Loading unequal plates
+Match both sides, then confirm with a light set.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Loaded 백익스텐션 V2 is plate-loaded. Match plates, confirm path and left-right symmetry on set one, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Seat/pad → fitted
+🟢 Torso → braced
+🟢 Plates → matched
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Torso curl, squeeze, slow return — not the neck."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"Loaded 백익스텐션 V2","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Plate-Loaded","sourceUrl":"https://ikksports.com/product/loaded-백익스텐션-v2/111/","verifiedStructure":"IKK Sports는 싯업보드·레그레이즈·백익스텐션을 분리 판매하며 복근/허리 복합 단일 SKU는 확인되지 않습니다","verifiedAdjustments":"패드, 풋 지지, 가동 범위","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '복근 / 허리 복합 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 롱케이블 · IKKSPORTS Cable
+
+🎯 ONE KEY CUE
+🔥 "갈비뼈를 내린 채 양손을 몸 앞에서 모아 가슴 수축"
+
+IKK Sports 롱케이블·듀얼케이블이 케이블 스테이션 계열이나 케이블 크로스오버 전용 모델명은 별도 표기되지 않습니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+케이블 손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+풀리 높이, 케이블 손잡이, 중량 스택을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+양옆에서 중앙으로 모았다 천천히 벌리기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 상체를 앞으로 쓰러뜨리며 반동하는
+템포를 늦추고 같은 궤적만 반복하세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 롱케이블의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"갈비뼈를 내린 채 양손을 몸 앞에서 모아 가슴 수축. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 롱케이블 · IKKSPORTS Cable
+
+🎯 ONE KEY CUE
+🔥 "Keep the ribs down and bring both hands together in front to squeeze the chest"
+
+IKK Sports 롱케이블·듀얼케이블이 케이블 스테이션 계열이나 케이블 크로스오버 전용 모델명은 별도 표기되지 않습니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 풀리 높이, 케이블 손잡이, 중량 스택.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 롱케이블. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Keep the ribs down and bring both hands together in front to squeeze the chest. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"롱케이블","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Cable","sourceUrl":"https://ikksports.com/product/롱케이블/9/","verifiedStructure":"IKK Sports 롱케이블·듀얼케이블이 케이블 스테이션 계열이나 케이블 크로스오버 전용 모델명은 별도 표기되지 않습니다","verifiedAdjustments":"풀리 높이, 케이블 손잡이, 중량 스택","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '케이블 크로스오버';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 듀얼케이블 · IKKSPORTS Cable
+
+🎯 ONE KEY CUE
+🔥 "풀리 높이를 동작에 맞춘 뒤 코어를 고정하고 당기거나 밀기"
+
+IKK Sports 공식몰 듀얼케이블(듀얼 어저스터블 풀리)로 확인됩니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+좌·우 풀리 높이, 손잡이, 중량 스택을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+설정한 높이에서 밀거나 당겼다 복귀.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 케이블이 몸에서 멀어져 궤적이 흔들리는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 듀얼케이블의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"풀리 높이를 동작에 맞춘 뒤 코어를 고정하고 당기거나 밀기. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 듀얼케이블 · IKKSPORTS Cable
+
+🎯 ONE KEY CUE
+🔥 "Set pulley height for the move, brace the core, then pull or press"
+
+IKK Sports 공식몰 듀얼케이블(듀얼 어저스터블 풀리)로 확인됩니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 좌·우 풀리 높이, 손잡이, 중량 스택.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 듀얼케이블. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set pulley height for the move, brace the core, then pull or press. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"듀얼케이블","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Cable","sourceUrl":"https://ikksports.com/product/듀얼케이블/16/","verifiedStructure":"IKK Sports 공식몰 듀얼케이블(듀얼 어저스터블 풀리)로 확인됩니다","verifiedAdjustments":"좌·우 풀리 높이, 손잡이, 중량 스택","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '듀얼 어저스터블 풀리';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 롱케이블 · IKKSPORTS Cable
+
+🎯 ONE KEY CUE
+🔥 "사용 스테이션만 잡고 동선이 겹치지 않게 수행"
+
+IKK Sports 롱케이블이 멀티 케이블 스테이션 계열이나 멀티 정글짐 전용 SKU명은 별도 확인되지 않습니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🤲 그립 / 손 위치
+손잡이를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+스테이션 선택, 풀리/손잡이, 중량을 확인하세요.
+이 카테고리는 공식 명칭이 겹칠 수 있으니, 헬스장 기구의 실제 레버·패드 배치를 우선하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+선택한 스테이션 궤적만 수행.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 여러 스택 케이블을 동시에 잡아 꼬는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 롱케이블의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"사용 스테이션만 잡고 동선이 겹치지 않게 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 롱케이블 · IKKSPORTS Cable
+
+🎯 ONE KEY CUE
+🔥 "Use only your station and keep the movement path clear of others"
+
+IKK Sports 롱케이블이 멀티 케이블 스테이션 계열이나 멀티 정글짐 전용 SKU명은 별도 확인되지 않습니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 스테이션 선택, 풀리/손잡이, 중량.
+Naming can overlap in this category — trust the levers and pads on the unit in front of you.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 롱케이블. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Use only your station and keep the movement path clear of others. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"PARTIALLY_VERIFIED","verifiedModel":"롱케이블","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Cable","sourceUrl":"https://ikksports.com/product/롱케이블/9/","verifiedStructure":"IKK Sports 롱케이블이 멀티 케이블 스테이션 계열이나 멀티 정글짐 전용 SKU명은 별도 확인되지 않습니다","verifiedAdjustments":"스테이션 선택, 풀리/손잡이, 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '멀티 정글짐';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스탠딩어시스트 · IKKSPORTS Assist
+
+🎯 ONE KEY CUE
+🔥 "보조 무게로 풀업 또는 딥을 통제된 깊이로 수행"
+
+IKK Sports 공식몰 스탠딩어시스트(어시스트 풀업/딥)로 확인됩니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+🪑 좌석 / 패드
+시트를 몸에 맞추세요. 시작 위치가 목표 관절 높이에 오는지 확인합니다.
+🤲 그립 / 손 위치
+그립를 편안한 너비로 잡으세요. 손목이 꺾이지 않게 합니다.
+⚙️ 조절 포인트
+무릎/보조 패드, 그립, 보조 중량을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+발 위치를 잡고 몸통을 브레스한 뒤, 케이블 높이부터 확인합니다.
+이 자세에서 이것만 확인하세요.
+👉 몸이 케이블에 끌려가지 않는지
+
+---
+
+🔥 ③ 운동 방법
+선택한 핸들로 오르내리기.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 보조를 과하게 줄여 형태가 무너지는
+자세가 무너지면 무게를 낮추세요.
+❌ 케이블에 몸이 끌려가는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 높이 설정을 대충 하고 시작하는 것
+자세가 무너지면 무게를 낮추세요.
+❌ 스택을 놓듯 되돌리는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 스탠딩어시스트의 가이드 궤적을 이용하세요. 첫 2세트는 천천히, 대칭이 확인된 뒤에만 무게를 올립니다.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 몸통 → 브레스·고정
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"보조 무게로 풀업 또는 딥을 통제된 깊이로 수행. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스탠딩어시스트 · IKKSPORTS Assist
+
+🎯 ONE KEY CUE
+🔥 "Use assist load to perform pull-ups or dips with controlled depth"
+
+IKK Sports 공식몰 스탠딩어시스트(어시스트 풀업/딥)로 확인됩니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+🪑 Seat / pads
+Fit the seat to your body so the start position sits naturally on the working joint.
+🤲 Grip / hands
+Take a comfortable grip width and keep the wrists stacked, not bent.
+⚙️ Adjustments
+Check 무릎/보조 패드, 그립, 보조 중량.
+
+---
+
+💪 ② Start position
+Set the stance, brace, then confirm cable height.
+Check only this:
+👉 Cable is not towing your torso
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Set the line of pull, move through the elbows, return without letting the stack yank you.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Letting the cable tow the torso
+If position breaks, cut the load.
+❌ Skipping height setup
+If position breaks, cut the load.
+❌ Dumping the stack on the return
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Use the guided path on 스탠딩어시스트. Slow the first two sets, confirm symmetry, then add load.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Torso → braced
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Use assist load to perform pull-ups or dips with controlled depth. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"스탠딩어시스트","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Assist","sourceUrl":"https://ikksports.com/product/스탠딩어시스트/90/","verifiedStructure":"IKK Sports 공식몰 스탠딩어시스트(어시스트 풀업/딥)로 확인됩니다","verifiedAdjustments":"무릎/보조 패드, 그립, 보조 중량","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '어시스트 풀업 / 딥';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 스미스머신 · IKKSPORTS Rack
+
+🎯 ONE KEY CUE
+🔥 "바가 레일을 따라가게 두고 발 위치만 안정히 조정"
+
+IKK Sports 공식몰 스미스머신으로 확인됩니다(렉스미스 변형 포함). IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+바 훅, 안전 스토퍼, 바 경로를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+레일을 따라 올렸다 내려 훅 고정.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 훅을 완전히 안 풀고 억지로 미는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"바가 레일을 따라가게 두고 발 위치만 안정히 조정. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 스미스머신 · IKKSPORTS Rack
+
+🎯 ONE KEY CUE
+🔥 "Let the bar follow the rails and only adjust a stable foot stance"
+
+IKK Sports 공식몰 스미스머신으로 확인됩니다(렉스미스 변형 포함) Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check 바 훅, 안전 스토퍼, 바 경로.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Let the bar follow the rails and only adjust a stable foot stance. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"스미스머신","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Rack","sourceUrl":"https://ikksports.com/product/스미스머신/12/","verifiedStructure":"IKK Sports 공식몰 스미스머신으로 확인됩니다(렉스미스 변형 포함)","verifiedAdjustments":"바 훅, 안전 스토퍼, 바 경로","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '스미스 머신';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 파워렉 · IKKSPORTS Rack
+
+🎯 ONE KEY CUE
+🔥 "세이프티를 가동범위 바로 아래에 두고 스쿼트·프레스"
+
+IKK Sports 공식몰 파워렉으로 확인됩니다. IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+J-훅, 안전 바, 스팟터 암을 확인하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+랙에서 언랙 후 수행하고 다시 훅.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 세이프티 없이 고중량을 시도하는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"세이프티를 가동범위 바로 아래에 두고 스쿼트·프레스. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 파워렉 · IKKSPORTS Rack
+
+🎯 ONE KEY CUE
+🔥 "Set safeties just below your range and squat or press"
+
+IKK Sports 공식몰 파워렉으로 확인됩니다 Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check J-훅, 안전 바, 스팟터 암.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set safeties just below your range and squat or press. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"파워렉","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Rack","sourceUrl":"https://ikksports.com/product/파워렉/120/","verifiedStructure":"IKK Sports 공식몰 파워렉으로 확인됩니다","verifiedAdjustments":"J-훅, 안전 바, 스팟터 암","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '파워 랙';
+
+
+UPDATE machines m
+SET
+  pro_tips = jsonb_build_object(
+    'ko', jsonb_build_array($k$🏋️ IKK SPORTS — 하프렉 · IKKSPORTS Rack
+
+🎯 ONE KEY CUE
+🔥 "오픈 랙에서 바 높이를 맞춘 뒤 안정적으로 언랙"
+
+IKK Sports 공식몰 하프렉으로 확인됩니다(하프렉슬링 변형 포함). IKK Sports 구조입니다. 처음부터 무게 올리지 말고, 세팅부터 잡으세요.
+
+---
+
+⚙️ ① 기구 세팅
+⚙️ 조절 포인트
+J-훅, 안전 바, 스탠스를 확인하세요.
+
+---
+
+💪 ② 시작 자세
+바·안전 높이를 맞춘 뒤 랙 중앙에 몸을 정렬합니다.
+이 자세에서 이것만 확인하세요.
+👉 안전바가 내 가동범위에 맞는지
+
+---
+
+🔥 ③ 운동 방법
+언랙 후 동작하고 다시 랙.
+반동 없이 같은 궤적을 반복하세요. 흔들리면 중량을 낮춥니다.
+
+---
+
+💥 ④ 최고 수축
+목표 근육이 가장 조여지는 끝 지점에서 멈춥니다.
+⏱️ 1초 STOP
+튕기지 말고 그 지점에서 1초만 소유하세요. 무게를 놓는 순간이 아닙니다.
+
+---
+
+🐌 ⑤ 천천히 돌아오기
+중량을 그냥 놓지 마세요.
+2~3초 동안 통제하면서 복귀합니다.
+시작 자세로 돌아갈 때도 같은 궤적을 유지하세요.
+
+---
+
+❌ 흔한 실수
+❌ 바가 한쪽으로 기울게 언랙하는
+자세가 무너지면 무게를 낮추세요.
+❌ 안전바 높이를 안 맞추고 올리는 것
+세트 전에 안전 위치부터 다시 맞추세요.
+❌ 좌우 원판 불균형
+자세가 무너지면 무게를 낮추세요.
+❌ 바 경로와 발 위치가 어긋나는 것
+자세가 무너지면 무게를 낮추세요.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 해머 스트렝스 랙/스미스는 “바 경로에 몸을 맞추는” 장비입니다. 중량보다 안전바·시작 높이·발 위치를 먼저 고정하세요.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 안전바 → 가동범위에 맞춤
+🟢 어깨 → 으쓱하지 않기
+🟢 복귀 → 2~3초 통제
+
+### 🔥 이것만 기억하세요
+
+"오픈 랙에서 바 높이를 맞춘 뒤 안정적으로 언랙. 끝에서 1초, 복귀는 통제."$k$),
+    'en', jsonb_build_array($e$🏋️ IKK SPORTS — 하프렉 · IKKSPORTS Rack
+
+🎯 ONE KEY CUE
+🔥 "Set bar height on the open rack and unrack with a stable stance"
+
+IKK Sports 공식몰 하프렉으로 확인됩니다(하프렉슬링 변형 포함) Lean into the IKK Sports design. Do not chase load until the setup feels locked in.
+
+---
+
+⚙️ ① Setup
+⚙️ Adjustments
+Check J-훅, 안전 바, 스탠스.
+
+---
+
+💪 ② Start position
+Set bar and safety height, then center yourself in the rack.
+Check only this:
+👉 Safeties match your range
+
+---
+
+🔥 ③ Execution
+Repeat the same path without momentum. Reduce load if you wobble.
+Stay centered on the bar path and control every rep into the safeties.
+
+---
+
+💥 ④ Peak contraction
+Stop where the target muscle is most shortened.
+⏱️ 1-second STOP
+Own that position for one second. This is not where you dump the weight.
+
+---
+
+🐌 ⑤ Controlled return
+Do not dump the load.
+Take 2–3 seconds on the way back.
+Return on the same path you pressed or pulled.
+
+---
+
+❌ Common mistakes
+❌ Loading before setting safeties
+Reset safety height before the set.
+❌ Uneven plates
+Match both sides, then confirm with a light set.
+❌ Feet fighting the bar path
+If position breaks, cut the load.
+
+---
+
+💡 MACHINE FIT PRO TIP
+🔥 Hammer Strength racks/Smith units reward lining your body up to the bar path. Safeties and foot placement beat ego loading.
+
+---
+
+🎯 MACHINE FIT CHECK
+🟢 Safeties → match your range
+🟢 Shoulders → not shrugged
+🟢 Return → 2–3 sec control
+
+### 🔥 Remember this
+
+"Set bar height on the open rack and unrack with a stable stance. One-second peak, controlled return."$e$)
+  ),
+  pro_tips_meta = $meta${"verificationStatus":"VERIFIED","verifiedModel":"하프렉","manufacturer":"IKK Sports","productSeries":"IKKSPORTS Rack","sourceUrl":"https://ikksports.com/product/하프렉/119/","verifiedStructure":"IKK Sports 공식몰 하프렉으로 확인됩니다(하프렉슬링 변형 포함)","verifiedAdjustments":"J-훅, 안전 바, 스탠스","importedAt":"2026-08-20T05:10:23.477Z"}$meta$::jsonb,
+  updated_at = NOW()
+FROM brands b
+WHERE b.id = m.brand_id
+  AND b.code = 'IKK_SPORTS'
+  AND m.is_active = TRUE
+  AND COALESCE(
+    (
+      SELECT st.name->>'ko'
+      FROM standard_machine_types st
+      WHERE st.id = m.standard_type_id
+    ),
+    m.name->>'ko'
+  ) = '하프 랙';
+
+
+DO $$
+DECLARE
+  updated_count INT;
+BEGIN
+  SELECT COUNT(*)::int INTO updated_count
+  FROM machines m
+  JOIN brands b ON b.id = m.brand_id
+  WHERE b.code = 'IKK_SPORTS'
+    AND m.is_active = TRUE
+    AND m.pro_tips IS NOT NULL
+    AND m.pro_tips_meta IS NOT NULL
+    AND m.pro_tips_meta->>'verificationStatus' IS NOT NULL
+    AND (m.pro_tips->'ko'->>0) LIKE '%ONE KEY CUE%'
+    AND (m.pro_tips->'ko'->>0) LIKE '%MACHINE FIT PRO TIP%'
+    AND (m.pro_tips->'ko'->>0) NOT LIKE '%📋 검증 상태%';
+
+  IF updated_count < 80 THEN
+    RAISE EXCEPTION 'IKK_SPORTS trainer PRO tips import incomplete: % / 80', updated_count;
+  END IF;
+END $$;

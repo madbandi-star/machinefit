@@ -289,6 +289,50 @@ const BRAND_META = {
     rideKo: '미강 Power Gym 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Migang Power Gym path instead of fighting it.',
   },
+  TGS_STRENGTH: {
+    displayKo: 'TGS 스트렝스',
+    displayEn: 'TGS STRENGTH',
+    manufacturerDefault: 'TGS Strength',
+    researchFile: 'tgs_strength_models.json',
+    csvFile: 'tgs_strength_pro_tips.csv',
+    noModelKo: 'TGS 스트렝스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated TGS Strength SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: 'TGS 스트렝스 기구 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the TGS Strength path instead of fighting it.',
+  },
+  IKK_SPORTS: {
+    displayKo: 'IKK 스포츠',
+    displayEn: 'IKK SPORTS',
+    manufacturerDefault: 'IKK Sports',
+    researchFile: 'ikk_sports_models.json',
+    csvFile: 'ikk_sports_pro_tips.csv',
+    noModelKo: 'IKK 스포츠 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated IKK Sports SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: 'IKK 스포츠 플레이트로드·케이블 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the IKK Sports plate-loaded / cable path instead of fighting it.',
+  },
+  STEX: {
+    displayKo: '스택스',
+    displayEn: 'STEX',
+    manufacturerDefault: 'STEX',
+    researchFile: 'stex_models.json',
+    csvFile: 'stex_pro_tips.csv',
+    noModelKo: '스택스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated STEX SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '스택스 기구 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the STEX machine path instead of fighting it.',
+  },
+  EDITION80: {
+    displayKo: '에디션80',
+    displayEn: 'EDITION80',
+    manufacturerDefault: 'Edition80',
+    researchFile: 'edition80_models.json',
+    csvFile: 'edition80_pro_tips.csv',
+    noModelKo: '에디션80 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Edition80 SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '에디션80 기구 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Edition80 path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -722,6 +766,14 @@ function introKo(entry, family, flags) {
     bits.push('Power Gym');
   } else if (BRAND === 'MIGANG') {
     bits.push('Migang line');
+  } else if (BRAND === 'TGS_STRENGTH') {
+    bits.push('TGS Strength');
+  } else if (BRAND === 'IKK_SPORTS') {
+    bits.push('IKK Sports');
+  } else if (BRAND === 'STEX') {
+    bits.push('STEX line');
+  } else if (BRAND === 'EDITION80') {
+    bits.push('Edition80');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -863,6 +915,14 @@ function introEn(entry, family, flags) {
     bits.push('Power Gym');
   } else if (BRAND === 'MIGANG') {
     bits.push('Migang line');
+  } else if (BRAND === 'TGS_STRENGTH') {
+    bits.push('TGS Strength');
+  } else if (BRAND === 'IKK_SPORTS') {
+    bits.push('IKK Sports');
+  } else if (BRAND === 'STEX') {
+    bits.push('STEX line');
+  } else if (BRAND === 'EDITION80') {
+    bits.push('Edition80');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
