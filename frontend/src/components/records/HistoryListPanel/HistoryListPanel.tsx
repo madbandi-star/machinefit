@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownUp, ArrowUpDown } from 'lucide-react';
 import { Icon } from '@/components/icons/Icon';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
@@ -73,6 +73,7 @@ import { hapticTap } from '@/utils/haptic';
 import {
   applyWorkoutCardOrderMove,
   buildWorkoutCardOrderKey,
+  reorderItemsByIndex,
   sortCardsByDisplayOrder,
   toReorderPayloadItems,
   type WorkoutCardOrderMove,
@@ -214,6 +215,13 @@ export function HistoryListPanel() {
   });
   const [orderOverrides, setOrderOverrides] = useState<Record<string, string[]>>({});
   const [animatingCardId, setAnimatingCardId] = useState<string | null>(null);
+  const [dragReorder, setDragReorder] = useState<{
+    dateKey: string;
+    fromIndex: number;
+    overIndex: number;
+  } | null>(null);
+  const dragReorderRef = useRef(dragReorder);
+  dragReorderRef.current = dragReorder;
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get('date') ?? '';
   const focusId = searchParams.get('focus') ?? '';
@@ -937,6 +945,29 @@ export function HistoryListPanel() {
     [allRecordCards, displayOrders, orderOverrides]
   );
 
+  const persistDayOrder = useCallback(
+    (logDate: string, nextItems: HistoryRecordCardData[], animatedCardId?: string) => {
+      if (!canPersistOrder || nextItems.length === 0) return;
+      const previousOverride = orderOverrides[logDate];
+      if (animatedCardId) {
+        setAnimatingCardId(animatedCardId);
+        window.setTimeout(() => setAnimatingCardId(null), 420);
+      }
+      const overrideKeys = nextItems.map((item) =>
+        buildWorkoutCardOrderKey(item.machineCode, item.logDate, item.targetMuscleGroup)
+      );
+      setOrderOverrides((prev) => ({ ...prev, [logDate]: overrideKeys }));
+      hapticTap();
+      // Send full day order; repository updates only rows whose display_order changed.
+      reorderMutation.mutate({
+        logDate,
+        items: toReorderPayloadItems(nextItems),
+        previousOverride,
+      });
+    },
+    [canPersistOrder, orderOverrides, reorderMutation]
+  );
+
   const handleOrderMove = useCallback(
     (logDate: string, card: HistoryRecordCardData, move: WorkoutCardOrderMove) => {
       if (!canPersistOrder) return;
@@ -949,28 +980,81 @@ export function HistoryListPanel() {
       );
       if (index < 0) return;
 
-      const previousOverride = orderOverrides[logDate];
       const nextItems = applyWorkoutCardOrderMove(dayItems, index, move);
       if (nextItems === dayItems) return;
-
-      setAnimatingCardId(card.cardId);
-      window.setTimeout(() => setAnimatingCardId(null), 420);
-
-      const overrideKeys = nextItems.map((item) =>
-        buildWorkoutCardOrderKey(item.machineCode, item.logDate, item.targetMuscleGroup)
-      );
-      setOrderOverrides((prev) => ({ ...prev, [logDate]: overrideKeys }));
-      hapticTap();
-
-      // Send full day order; repository updates only rows whose display_order changed.
-      reorderMutation.mutate({
-        logDate,
-        items: toReorderPayloadItems(nextItems),
-        previousOverride,
-      });
+      persistDayOrder(logDate, nextItems, card.cardId);
     },
-    [canPersistOrder, orderedCardsForDate, orderOverrides, reorderMutation]
+    [canPersistOrder, orderedCardsForDate, persistDayOrder]
   );
+
+  const handleOrderDropByIndex = useCallback(
+    (logDate: string, fromIndex: number, toIndex: number) => {
+      if (!canPersistOrder) return;
+      const dayItems = orderedCardsForDate(logDate);
+      const nextItems = reorderItemsByIndex(dayItems, fromIndex, toIndex);
+      if (nextItems === dayItems) return;
+      const moved = dayItems[fromIndex];
+      persistDayOrder(logDate, nextItems, moved?.cardId);
+    },
+    [canPersistOrder, orderedCardsForDate, persistDayOrder]
+  );
+
+  const isDragReorderActive = dragReorder != null;
+
+  useEffect(() => {
+    if (!isDragReorderActive) {
+      document.body.classList.remove('history-reorder-dragging');
+      return;
+    }
+    document.body.classList.add('history-reorder-dragging');
+
+    const resolveOverIndex = (clientY: number) => {
+      const current = dragReorderRef.current;
+      if (!current) return 0;
+      const nodes = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          `[data-history-reorder-date="${CSS.escape(current.dateKey)}"]`
+        )
+      );
+      if (nodes.length === 0) return current.fromIndex;
+      let overIndex = current.fromIndex;
+      for (const node of nodes) {
+        const idx = Number(node.dataset.historyReorderIndex);
+        if (Number.isNaN(idx)) continue;
+        const rect = node.getBoundingClientRect();
+        if (clientY < rect.top + rect.height / 2) {
+          overIndex = idx;
+          break;
+        }
+        overIndex = idx;
+      }
+      return overIndex;
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const overIndex = resolveOverIndex(event.clientY);
+      setDragReorder((prev) =>
+        prev && prev.overIndex !== overIndex ? { ...prev, overIndex } : prev
+      );
+    };
+
+    const endDrag = () => {
+      const current = dragReorderRef.current;
+      setDragReorder(null);
+      if (!current || current.fromIndex === current.overIndex) return;
+      handleOrderDropByIndex(current.dateKey, current.fromIndex, current.overIndex);
+    };
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    return () => {
+      document.body.classList.remove('history-reorder-dragging');
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', endDrag);
+      window.removeEventListener('pointercancel', endDrag);
+    };
+  }, [isDragReorderActive, handleOrderDropByIndex]);
 
   const requestDelete = useCallback(
     (card: HistoryRecordCardData) => {
@@ -1444,6 +1528,26 @@ export function HistoryListPanel() {
                       canPersistOrder
                         ? (move) => handleOrderMove(group.dateKey, card, move)
                         : undefined
+                    }
+                    reorderDateKey={canPersistOrder ? group.dateKey : undefined}
+                    onReorderDragStart={
+                      canPersistOrder
+                        ? (fromIndex) =>
+                            setDragReorder({
+                              dateKey: group.dateKey,
+                              fromIndex,
+                              overIndex: fromIndex,
+                            })
+                        : undefined
+                    }
+                    isDragSource={
+                      dragReorder?.dateKey === group.dateKey &&
+                      dragReorder.fromIndex === orderIndex
+                    }
+                    isDragOver={
+                      dragReorder?.dateKey === group.dateKey &&
+                      dragReorder.overIndex === orderIndex &&
+                      dragReorder.fromIndex !== orderIndex
                     }
                     isReordering={animatingCardId === card.cardId}
                     onCopyPlan={

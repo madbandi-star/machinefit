@@ -38,6 +38,24 @@ export function applyWorkoutCardOrderMove<T>(
   return next;
 }
 
+/** Move item from one index to another (for drag-and-drop). */
+export function reorderItemsByIndex<T>(items: T[], fromIndex: number, toIndex: number): T[] {
+  if (
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    fromIndex >= items.length ||
+    toIndex >= items.length ||
+    fromIndex === toIndex
+  ) {
+    return items;
+  }
+  const next = items.slice();
+  const [item] = next.splice(fromIndex, 1);
+  if (!item) return items;
+  next.splice(toIndex, 0, item);
+  return next;
+}
+
 /** Sort cards within a day: saved display_order first, then viewedAt DESC fallback. */
 export function sortCardsByDisplayOrder<
   T extends {

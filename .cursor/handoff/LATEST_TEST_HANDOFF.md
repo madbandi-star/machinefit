@@ -1,14 +1,30 @@
-# Test handoff — Home plan / fortune spacing
+# Test handoff: Records order menu + drag reorder
 
 ## Summary
+Order-move panel is fixed to the trigger and clamped inside the viewport (no left-edge overflow). Same-day cards can also be reordered by dragging the grip handle.
 
-`.home-fortune-card` now has `margin-top: 0.85rem` so “오늘의 운동계획” and “오늘의 헬창운세” are not flush.
+## Git
+- Branch: `main`
+- Commit: pending (update after push)
+
+## Changed files
+- `frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx`
+- `frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx`
+- `frontend/src/styles/records.css`
+- `frontend/src/styles/history-premium.css`
+- `frontend/src/utils/workoutCardOrder.ts`
+- `frontend/src/utils/workoutCardOrder.test.ts`
+- `frontend/src/i18n/locales/*/machines.json` (orderDragAria)
+
+## Test focus
+1. Records → open ↑↓ order button → menu fully visible (not past left screen edge)
+2. Records → drag grip (⋮⋮) within same day → drop → order updates and persists
+
+## Fast checks
+- `grep createPortal HistoryRecordCard.tsx`
+- `grep history-record-card__drag-handle HistoryRecordCard.tsx`
+- `cd frontend && npx vitest run src/utils/workoutCardOrder.test.ts`
 
 ## As-is → To-be
-
-- **As-is:** Cards stacked with 0 vertical gap.
-- **To-be:** Clear gap above the fortune card.
-
-## Fast check
-
-Open home while today’s plan is visible → visual gap between the two blocks.
+- **As-is:** Order menu overflowed left; reorder only via buttons.
+- **To-be:** Viewport-clamped portal menu; grip drag-and-drop for same-day reorder.

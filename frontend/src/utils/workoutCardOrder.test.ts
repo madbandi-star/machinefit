@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyWorkoutCardOrderMove,
   buildWorkoutCardOrderKey,
+  reorderItemsByIndex,
   sortCardsByDisplayOrder,
 } from './workoutCardOrder';
 
@@ -20,6 +21,13 @@ describe('workoutCardOrder', () => {
     expect(applyWorkoutCardOrderMove(items, 0, 'top')).toBe(items);
     expect(applyWorkoutCardOrderMove(items, 1, 'down')).toBe(items);
     expect(applyWorkoutCardOrderMove(items, 1, 'bottom')).toBe(items);
+  });
+
+  it('reorders by index for drag-and-drop', () => {
+    const items = ['a', 'b', 'c', 'd'];
+    expect(reorderItemsByIndex(items, 0, 2)).toEqual(['b', 'c', 'a', 'd']);
+    expect(reorderItemsByIndex(items, 3, 1)).toEqual(['a', 'd', 'b', 'c']);
+    expect(reorderItemsByIndex(items, 1, 1)).toBe(items);
   });
 
   it('sorts by display_order then viewedAt', () => {

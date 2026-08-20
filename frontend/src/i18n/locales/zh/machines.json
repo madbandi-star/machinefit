@@ -326,6 +326,7 @@
     "deleteDayRemoved": "Workout records were deleted.",
     "orderControlsLabel": "调整顺序",
     "orderMenuAria": "运动顺序菜单",
+    "orderDragAria": "拖动以调整顺序",
     "orderMoveUp": "上移",
     "orderMoveDown": "下移",
     "orderMoveTop": "移到最上",

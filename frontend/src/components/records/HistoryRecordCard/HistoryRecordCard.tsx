@@ -1,5 +1,15 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect, useCallback, useRef, memo, type MouseEvent } from 'react';
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  useRef,
+  memo,
+  type CSSProperties,
+  type MouseEvent,
+} from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -8,6 +18,7 @@ import {
   ChevronDown,
   ChevronRight,
   Clock3,
+  GripVertical,
   Heart,
   Settings,
   Target,
@@ -77,6 +88,11 @@ interface HistoryRecordCardProps {
   orderDisabled?: boolean;
   onOrderMove?: (move: WorkoutCardOrderMove) => void;
   isReordering?: boolean;
+  /** Same-day calendar key for pointer drag-and-drop reorder. */
+  reorderDateKey?: string;
+  onReorderDragStart?: (index: number) => void;
+  isDragSource?: boolean;
+  isDragOver?: boolean;
   onCopyPlan?: () => void;
   onMovePlan?: () => void;
   planActionsDisabled?: boolean;
@@ -115,11 +131,18 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
   orderDisabled = false,
   onOrderMove,
   isReordering = false,
+  reorderDateKey,
+  onReorderDragStart,
+  isDragSource = false,
+  isDragOver = false,
   onCopyPlan,
   onMovePlan,
   planActionsDisabled = false,
 }: HistoryRecordCardProps) {
-  const orderMenuRef = useRef<HTMLDetailsElement>(null);
+  const orderTriggerRef = useRef<HTMLButtonElement>(null);
+  const orderPanelRef = useRef<HTMLDivElement>(null);
+  const [orderMenuOpen, setOrderMenuOpen] = useState(false);
+  const [orderPanelStyle, setOrderPanelStyle] = useState<CSSProperties>({});
   const planRecEnsureRef = useRef<string | null>(null);
   const queryClient = useQueryClient();
   const { createRecommendationAsync } = useRecommendMachine(card.machineCode);
@@ -128,6 +151,64 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     typeof orderTotal === 'number' &&
     orderTotal > 1 &&
     Boolean(onOrderMove);
+  const canDragReorder = canReorder && Boolean(onReorderDragStart) && Boolean(reorderDateKey);
+
+  const updateOrderPanelPosition = useCallback(() => {
+    const trigger = orderTriggerRef.current;
+    if (!trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    const margin = 12;
+    const gap = 6;
+    const panelWidth = Math.min(232, window.innerWidth - margin * 2);
+    let left = rect.right - panelWidth;
+    left = Math.max(margin, Math.min(left, window.innerWidth - panelWidth - margin));
+    let top = rect.bottom + gap;
+    const panelHeight = orderPanelRef.current?.offsetHeight ?? 196;
+    if (top + panelHeight > window.innerHeight - margin) {
+      top = Math.max(margin, rect.top - gap - panelHeight);
+    }
+    setOrderPanelStyle({
+      position: 'fixed',
+      top,
+      left,
+      width: panelWidth,
+      zIndex: 260,
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!orderMenuOpen) return;
+    updateOrderPanelPosition();
+    const frame = window.requestAnimationFrame(updateOrderPanelPosition);
+    window.addEventListener('resize', updateOrderPanelPosition);
+    window.addEventListener('scroll', updateOrderPanelPosition, true);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', updateOrderPanelPosition);
+      window.removeEventListener('scroll', updateOrderPanelPosition, true);
+    };
+  }, [orderMenuOpen, updateOrderPanelPosition]);
+
+  useEffect(() => {
+    if (!orderMenuOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      if (orderTriggerRef.current?.contains(target)) return;
+      if (orderPanelRef.current?.contains(target)) return;
+      setOrderMenuOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOrderMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [orderMenuOpen]);
+
   const { t, i18n } = useTranslation(['machines', 'common']);
   const [expanded, setExpanded] = useState(isFocused);
   const [planActionsOpen, setPlanActionsOpen] = useState(false);
@@ -330,7 +411,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
         isTodayDay ? ' history-record-card--today' : ''
       }${expanded ? '' : ' history-record-card--collapsed'}${
         isReordering ? ' history-record-card--reordering' : ''
+      }${isDragSource ? ' history-record-card--dragging' : ''}${
+        isDragOver ? ' history-record-card--drag-over' : ''
       }`}
+      data-history-reorder-date={canDragReorder ? reorderDateKey : undefined}
+      data-history-reorder-index={canDragReorder ? orderIndex : undefined}
       onPointerUp={doubleTapCollapse.onPointerUp}
       onDoubleClick={doubleTapCollapse.onDoubleClick}
     >
@@ -359,27 +444,67 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
             <div className="history-record-card__hero-aside">
               <div className="history-record-card__header-actions">
+                {canDragReorder ? (
+                  <button
+                    type="button"
+                    className="history-record-card__drag-handle"
+                    aria-label={t('machines:history.orderDragAria')}
+                    disabled={orderDisabled}
+                    onPointerDown={(event) => {
+                      if (orderDisabled || typeof orderIndex !== 'number') return;
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setOrderMenuOpen(false);
+                      onReorderDragStart?.(orderIndex);
+                    }}
+                  >
+                    <GripVertical size={16} strokeWidth={2.25} aria-hidden />
+                  </button>
+                ) : null}
                 {canReorder ? (
-                  <details ref={orderMenuRef} className="history-record-card__order-menu">
-                    <summary
-                      className="history-record-card__order-trigger"
+                  <>
+                    <button
+                      type="button"
+                      ref={orderTriggerRef}
+                      className={`history-record-card__order-trigger${
+                        orderMenuOpen ? ' is-open' : ''
+                      }`}
                       aria-label={t('machines:history.orderMenuAria')}
+                      aria-haspopup="menu"
+                      aria-expanded={orderMenuOpen}
+                      disabled={orderDisabled}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setOrderMenuOpen((open) => !open);
+                      }}
                     >
                       <ArrowUpDown size={16} strokeWidth={2.25} aria-hidden />
-                    </summary>
-                    <div className="history-record-card__order-panel">
-                      <WorkoutCardOrderControl
-                        variant="menu"
-                        index={orderIndex!}
-                        total={orderTotal!}
-                        disabled={orderDisabled}
-                        onMove={(move) => {
-                          if (orderMenuRef.current) orderMenuRef.current.open = false;
-                          onOrderMove?.(move);
-                        }}
-                      />
-                    </div>
-                  </details>
+                    </button>
+                    {orderMenuOpen
+                      ? createPortal(
+                          <div
+                            ref={orderPanelRef}
+                            className="history-record-card__order-panel"
+                            style={orderPanelStyle}
+                            role="menu"
+                            aria-label={t('machines:history.orderControlsLabel')}
+                          >
+                            <WorkoutCardOrderControl
+                              variant="menu"
+                              index={orderIndex!}
+                              total={orderTotal!}
+                              disabled={orderDisabled}
+                              onMove={(move) => {
+                                setOrderMenuOpen(false);
+                                onOrderMove?.(move);
+                              }}
+                            />
+                          </div>,
+                          document.body
+                        )
+                      : null}
+                  </>
                 ) : null}
                 {showPlanMenu ? (
                   <button

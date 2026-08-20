@@ -820,13 +820,13 @@
 }
 
 /* Absolute order menu escapes the card; overflow-x:clip forces y-clip too. */
-.history-page-premium .history-record-card:has(.history-record-card__order-menu[open]) {
+.history-page-premium .history-record-card:has(.history-record-card__order-trigger.is-open) {
   overflow: visible;
   z-index: 60;
 }
 
 .history-page-premium
-  .records-list__date-group:has(.history-record-card__order-menu[open]) {
+  .records-list__date-group:has(.history-record-card__order-trigger.is-open) {
   position: relative;
   z-index: 55;
   overflow: visible;

@@ -1,30 +1,51 @@
 {
-  "title": "Home: space between plan and fortune cards",
-  "summary": "Add top margin on HomeFortuneCard so today’s workout plan and 헬창운세 are not flush.",
+  "title": "Records: fix order menu position + touch drag reorder",
+  "summary": "Order-move panel is now fixed to the trigger and clamped inside the viewport (no left-edge overflow). Same-day cards can also be reordered by dragging the grip handle.",
   "git": {
     "branch": "main",
-    "commit": "a016beb0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/styles/fortune.css"
+    "frontend/src/components/records/HistoryListPanel/HistoryListPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/styles/records.css",
+    "frontend/src/styles/history-premium.css",
+    "frontend/src/utils/workoutCardOrder.ts",
+    "frontend/src/utils/workoutCardOrder.test.ts",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Home (logged in, with today’s plan visible) → plan card and fortune card have clear vertical gap (~0.85rem)"
+    "Records → open ↑↓ order button on a card → menu stays fully on screen (not past left edge)",
+    "Records → drag grip (⋮⋮) on a same-day card → drop on another card → order persists after refresh"
   ],
   "fastChecks": [
     {
-      "id": "fortune-margin",
+      "id": "order-panel-portal",
       "type": "grep",
-      "path": "frontend/src/styles/fortune.css",
-      "pattern": "margin: 0\\.85rem 0 0"
+      "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+      "pattern": "createPortal"
+    },
+    {
+      "id": "drag-handle",
+      "type": "grep",
+      "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+      "pattern": "history-record-card__drag-handle"
+    },
+    {
+      "id": "reorder-by-index",
+      "type": "shell",
+      "command": "cd frontend && npx vitest run src/utils/workoutCardOrder.test.ts"
     }
   ],
   "productionChecks": [
-    "GitHub Pages deploy only (CSS)"
+    "GitHub Pages after Deploy Frontend success"
   ],
   "deploy": {
     "expected": "Frontend Pages"
   },
-  "asIs": "Plan and fortune cards sat flush with no gap.",
-  "toBe": "Fortune card has 0.85rem top margin (matches home-section rhythm)."
+  "asIs": "Order menu panel overflowed off the left of the viewport; reorder only via button menu.",
+  "toBe": "Order menu is viewport-clamped under the trigger; grip drag-and-drop reorders same-day cards."
 }
