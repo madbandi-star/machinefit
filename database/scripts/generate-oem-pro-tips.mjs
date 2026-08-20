@@ -58,6 +58,17 @@ const BRAND_META = {
     rideKo: '사이벡스(Eagle NX·Prestige·VR3) 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Cybex (Eagle NX / Prestige / VR3) path instead of fighting it.',
   },
+  HOIST: {
+    displayKo: '호이스트',
+    displayEn: 'HOIST',
+    manufacturerDefault: 'Hoist Fitness',
+    researchFile: 'hoist_models.json',
+    csvFile: 'hoist_pro_tips.csv',
+    noModelKo: '호이스트 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Hoist SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '호이스트 ROC-IT(ROX™) 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Hoist ROC-IT (ROX™) path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -381,6 +392,8 @@ function introKo(entry, family, flags) {
     bits.push('Eagle NX Dual Axis');
   } else if (/prestige|vr3/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
     bits.push('Prestige/VR3');
+  } else if (/roc-?it|rox/.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ').toLowerCase())) {
+    bits.push('ROC-IT ROX');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -412,6 +425,8 @@ function introEn(entry, family, flags) {
     bits.push('Eagle NX Dual Axis');
   } else if (/prestige|vr3/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
     bits.push('Prestige/VR3');
+  } else if (/roc-?it|rox/.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ').toLowerCase())) {
+    bits.push('ROC-IT ROX');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
