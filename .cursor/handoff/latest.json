@@ -3,7 +3,7 @@
   "summary": "Remove markdown --- horizontal rules from PRO tip display and stored catalog (shared util, API mapping, migration 184, CSV cleanup).",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "53a76764"
   },
   "changedFiles": [
     "shared/src/utils/pro-tips-format.ts",
