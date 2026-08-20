@@ -24,7 +24,6 @@ import { brandApi, historyApi, machineApi, workoutCardApi, workoutLogApi } from 
 import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useAuthStore } from '@/store/auth.store';
-import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useDeferredQueryEnabled } from '@/hooks/useDeferredQueryEnabled';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useBrandFavorites } from '@/hooks/useBrandFavorites';
@@ -68,8 +67,10 @@ function planMachineKey(machineCode: string, targetMuscleGroup?: string | null):
 export function MachineSearchPage() {
   const { t } = useTranslation('machines');
   const [searchParams, setSearchParams] = useSearchParams();
+  /** Draft text in the search field (does not hit the API while typing). */
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
-  const debouncedQuery = useDebouncedValue(query, 250);
+  /** Applied search term — updated only on Enter / search button / recent select. */
+  const [appliedQuery, setAppliedQuery] = useState(() => searchParams.get('q') ?? '');
   const [muscleGroup, setMuscleGroup] = useState<string | null>(() =>
     resolveMuscleParam(searchParams.get('muscle'))
   );
@@ -97,10 +98,16 @@ export function MachineSearchPage() {
   const dayMarksReady = useDeferredQueryEnabled(canLoadDayMarks, 220);
 
   useEffect(() => {
-    setQuery(searchParams.get('q') ?? '');
     setMuscleGroup(resolveMuscleParam(searchParams.get('muscle')));
     setBrandCode(resolveBrandParam(searchParams.get('brand')));
   }, [searchParams]);
+
+  // Back/forward or shared URL: sync applied + draft from `q` only (not on muscle/brand edits).
+  const urlQuery = searchParams.get('q') ?? '';
+  useEffect(() => {
+    setAppliedQuery(urlQuery);
+    setQuery(urlQuery);
+  }, [urlQuery]);
 
   // Default entry: muscle=전체 (omit), brand=전체 (`brand=all`).
   useEffect(() => {
@@ -123,27 +130,27 @@ export function MachineSearchPage() {
     );
   }, [setSearchParams]);
 
-  useEffect(() => {
+  const applySearchQuery = (raw: string) => {
+    const trimmed = raw.trim();
+    setQuery(trimmed);
+    setAppliedQuery(trimmed);
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        if (debouncedQuery.trim()) next.set('q', debouncedQuery.trim());
+        if (trimmed) next.set('q', trimmed);
         else next.delete('q');
         next.delete('scope');
         return next;
       },
       { replace: true }
     );
-  }, [debouncedQuery, setSearchParams]);
-
-  useEffect(() => {
-    const trimmed = debouncedQuery.trim();
-    if (trimmed.length < 2) return;
-    setRecentSearches(pushRecentMachineSearch(trimmed));
-    void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
-      trackFeature('machine_search')
-    );
-  }, [debouncedQuery]);
+    if (trimmed.length >= 2) {
+      setRecentSearches(pushRecentMachineSearch(trimmed));
+      void import('@/utils/opsTelemetry').then(({ trackFeature }) =>
+        trackFeature('machine_search')
+      );
+    }
+  };
 
   const writeSearchParams = (patch: { muscle?: string | null; brand?: string | null }) => {
     setSearchParams(
@@ -168,6 +175,10 @@ export function MachineSearchPage() {
     setQuery(value);
   };
 
+  const handleSearchSubmit = () => {
+    applySearchQuery(query);
+  };
+
   const handleMuscleChange = (value: string | null) => {
     setMuscleGroup(value);
     writeSearchParams({ muscle: value });
@@ -179,7 +190,7 @@ export function MachineSearchPage() {
   };
 
   const handleRecentSelect = (value: string) => {
-    setQuery(value);
+    applySearchQuery(value);
   };
 
   const handleRecentRemove = (value: string) => {
@@ -364,14 +375,14 @@ export function MachineSearchPage() {
     isSuccess: machinesSuccess,
     refetch: refetchMachines,
   } = useQuery({
-    queryKey: [...QUERY_KEYS.machines, 'search', debouncedQuery, muscleGroup, brandCode],
+    queryKey: [...QUERY_KEYS.machines, 'search', appliedQuery, muscleGroup, brandCode],
     queryFn: async (): Promise<Machine[]> => {
       const params: Record<string, string | number> = {
         limit: 100,
       };
       if (muscleGroup) params.muscleGroup = muscleGroup;
       if (brandCode) params.brandCode = brandCode;
-      if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
+      if (appliedQuery.trim()) params.q = appliedQuery.trim();
       const res = await machineApi.list(params);
       const items = res.data.data?.items;
       return Array.isArray(items) ? items : [];
@@ -385,9 +396,9 @@ export function MachineSearchPage() {
     if (!machinesError) return;
     const timer = window.setTimeout(() => void refetchMachines(), 1_500);
     return () => window.clearTimeout(timer);
-  }, [machinesError, refetchMachines, debouncedQuery, muscleGroup, brandCode]);
+  }, [machinesError, refetchMachines, appliedQuery, muscleGroup, brandCode]);
 
-  const hasFilters = !!debouncedQuery.trim() || !!muscleGroup || !!brandCode;
+  const hasFilters = !!appliedQuery.trim() || !!muscleGroup || !!brandCode;
   // No error banners/buttons — keep skeletons until a successful list arrives.
   const showMachineSkeleton =
     brandChipsLoading ||
@@ -457,7 +468,12 @@ export function MachineSearchPage() {
             </Link>
           </div>
         ) : null}
-        <SearchBar value={query} onChange={handleQueryChange} placeholder={t('searchPlaceholder')} />
+        <SearchBar
+          value={query}
+          onChange={handleQueryChange}
+          onSubmit={handleSearchSubmit}
+          placeholder={t('searchPlaceholder')}
+        />
         <RecentMachineSearches
           items={recentSearches}
           onSelect={handleRecentSelect}
