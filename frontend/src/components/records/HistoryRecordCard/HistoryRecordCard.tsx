@@ -46,6 +46,7 @@ import { useDoubleTapAction } from '@/hooks/useDoubleTapAction';
 import { getWorkoutLogQueryTargetMuscle } from '@/utils/workoutLogCache';
 import { getHistoryMuscleGroup } from '@/utils/freeWeightDisplay';
 import { HistoryCardPlanActionsSheet } from '@/components/records/HistoryCardPlanActionsSheet/HistoryCardPlanActionsSheet';
+import { HistoryCardGuideIcons } from '@/components/records/HistoryCardGuideIcons/HistoryCardGuideIcons';
 import '@/styles/history-premium.css';
 import '@/styles/recommendation.css';
 
@@ -358,6 +359,11 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
 
             <div className="history-record-card__hero-aside">
               <div className="history-record-card__header-actions">
+                <HistoryCardGuideIcons
+                  machineCode={card.machineCode}
+                  recommendationId={card.recommendationId}
+                  enabled={isAuthenticated}
+                />
                 {canReorder ? (
                   <details ref={orderMenuRef} className="history-record-card__order-menu">
                     <summary
