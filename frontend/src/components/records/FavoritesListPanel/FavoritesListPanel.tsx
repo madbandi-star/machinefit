@@ -114,6 +114,7 @@ export function FavoritesListPanel() {
         context?.favoriteCheckKey ??
         QUERY_KEYS.favoriteCheck(activeGymId ?? '', item.machineCode, memberKey);
       queryClient.setQueryData(favoriteCheckKey, { favorited: false, favoriteId: undefined });
+      await queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] });
       showToast(t('machines:recommendation.removedFavorite'), 'success');
     },
     onError: (_error, _item, context) => {
@@ -144,7 +145,10 @@ export function FavoritesListPanel() {
     },
     onSuccess: async (res, ids) => {
       const removed = res.data.data?.removed ?? ids.length;
-      await queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['favorites'] }),
+        queryClient.invalidateQueries({ queryKey: ['user', 'home-bootstrap'] }),
+      ]);
       showToast(t('machines:favorites.bulkRemoved', { count: removed }), 'success');
     },
     onError: (_error, _ids, context) => {

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { apiClient } from '@/services/http/axios-client';
 import type {
   ApiResponse,
@@ -376,10 +377,24 @@ export const favoriteApi = {
       recommendationId,
     }),
   remove: (id: string) => apiClient.delete(`/favorites/${id}`),
-  removeBulk: (ids: string[]) =>
-    apiClient.delete<ApiResponse<{ removed: number }>>('/favorites/bulk', {
-      data: { ids },
-    }),
+  /**
+   * Bulk remove via POST body (DELETE-with-body is unreliable across proxies).
+   * Falls back to per-id DELETE if bulk-delete is not deployed yet (404).
+   */
+  removeBulk: async (ids: string[]) => {
+    try {
+      return await apiClient.post<ApiResponse<{ removed: number }>>('/favorites/bulk-delete', {
+        ids,
+      });
+    } catch (error) {
+      const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+      if (status !== 404) throw error;
+      await Promise.all(ids.map((id) => apiClient.delete(`/favorites/${id}`)));
+      return {
+        data: { success: true, data: { removed: ids.length } },
+      } as Awaited<ReturnType<typeof apiClient.post<ApiResponse<{ removed: number }>>>>;
+    }
+  },
   check: (gymId: string, machineCode: string, memberId?: string) =>
     apiClient.get<ApiResponse<{ favorited: boolean; favoriteId?: string }>>(
       `/favorites/check/${machineCode}`,

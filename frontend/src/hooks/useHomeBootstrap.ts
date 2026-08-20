@@ -75,14 +75,15 @@ export function useHomeBootstrap() {
 
   useEffect(() => {
     if (!query.data) return;
-    seedHomeBootstrapCache(queryClient, query.data);
+    // Do not re-seed favorites/history here — queryFn already seeds on fetch.
+    // Re-seeding from stale bootstrap overwrites fresher data after deletes.
     if (query.data.activeGymId) {
       setActiveGymId(query.data.activeGymId);
     }
     if (query.data.activeMemberId) {
       setActiveMemberId(query.data.activeMemberId);
     }
-  }, [query.data, queryClient, setActiveGymId, setActiveMemberId]);
+  }, [query.data, setActiveGymId, setActiveMemberId]);
 
   return {
     isBootstrapping: query.isLoading || query.isFetching,

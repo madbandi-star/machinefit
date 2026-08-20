@@ -24,6 +24,8 @@ const favoriteIdParamsSchema = z.object({
 favoriteRouter.use(authMiddleware);
 favoriteRouter.get('/', validateQuery(favoriteListQuerySchema), favoriteController.listFavorites);
 favoriteRouter.post('/', favoriteController.addFavorite);
+/** Prefer POST — DELETE-with-body is dropped by some clients/proxies. */
+favoriteRouter.post('/bulk-delete', favoriteController.removeFavoritesBulk);
 favoriteRouter.delete('/bulk', favoriteController.removeFavoritesBulk);
 favoriteRouter.delete(
   '/:id',
