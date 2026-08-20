@@ -3,7 +3,7 @@
   "summary": "↑↓ order button: short tap opens the order menu; long-press then drag reorders same-day cards. Card-body long-press removed.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "297c72d5"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
