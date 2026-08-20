@@ -5,7 +5,7 @@ Grip handle removed. Same-day reorder: long-press card (~420ms) → drag to anot
 
 ## Git
 - Branch: `main`
-- Commit: pending
+- Commit: `1568c2b4`
 
 ## Test focus
 1. Long-press card body (not buttons/links) → drag → drop on another same-day card → order updates

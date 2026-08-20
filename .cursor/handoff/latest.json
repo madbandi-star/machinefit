@@ -3,7 +3,7 @@
   "summary": "Remove the grip handle. Same-day reorder starts by long-pressing the card (~420ms), then dragging onto another card.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "1568c2b4"
   },
   "changedFiles": [
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
