@@ -604,6 +604,15 @@
   color: var(--color-text);
 }
 
+.recommendation-pro-tips__dot {
+  flex-shrink: 0;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+
 .recommendation-pro-tips__body {
   margin: 0.5rem 0 0;
   padding-top: 0.5rem;
@@ -613,6 +622,68 @@
   color: var(--color-text-muted);
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* 1) Collapsed unread: soft border/icon pulse */
+.recommendation-pro-tips--unread:not([open]) {
+  animation: recommendation-pro-tips-pulse 2.4s ease-in-out infinite;
+}
+
+.recommendation-pro-tips--unread:not([open]) .recommendation-pro-tips__dot {
+  animation: recommendation-pro-tips-dot 2.4s ease-in-out infinite;
+}
+
+.recommendation-pro-tips--unread:not([open]) .recommendation-collapsible__chevron {
+  color: var(--color-primary);
+  opacity: 0.9;
+}
+
+/* 3) Expand: body fades + slides up */
+.recommendation-pro-tips[open] .recommendation-pro-tips__body {
+  animation: recommendation-pro-tips-reveal 0.28s ease-out both;
+}
+
+@keyframes recommendation-pro-tips-pulse {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--color-accent, #33eb91) 35%, var(--glass-border));
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--color-primary) 55%, var(--glass-border));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+}
+
+@keyframes recommendation-pro-tips-dot {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 40%, transparent);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 0%, transparent);
+  }
+}
+
+@keyframes recommendation-pro-tips-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recommendation-pro-tips--unread:not([open]),
+  .recommendation-pro-tips--unread:not([open]) .recommendation-pro-tips__dot,
+  .recommendation-pro-tips[open] .recommendation-pro-tips__body {
+    animation: none;
+  }
 }
 
 .recommendation-workout-log {

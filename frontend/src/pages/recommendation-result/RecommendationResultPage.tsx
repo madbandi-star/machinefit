@@ -540,7 +540,10 @@ export function RecommendationResultPage() {
           {bodyExpanded ? (
             <>
               <RecommendationTips tips={result.tips} />
-              <RecommendationProTips proTips={result.proTips ?? []} />
+              <RecommendationProTips
+                proTips={result.proTips ?? []}
+                machineCode={result.machineCode}
+              />
               <button
                 type="button"
                 className="history-record-card__body-toggle"
