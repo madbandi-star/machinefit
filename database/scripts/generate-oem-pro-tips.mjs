@@ -69,6 +69,17 @@ const BRAND_META = {
     rideKo: '호이스트 ROC-IT(ROX™) 궤적을 그대로 타는 게 핵심입니다.',
     rideEn: 'Ride the Hoist ROC-IT (ROX™) path instead of fighting it.',
   },
+  MATRIX: {
+    displayKo: '매트릭스',
+    displayEn: 'MATRIX',
+    manufacturerDefault: 'Matrix Fitness',
+    researchFile: 'matrix_models.json',
+    csvFile: 'matrix_pro_tips.csv',
+    noModelKo: '매트릭스 전용 모델이 없는 카테고리입니다. 헬스장에 있는 실제 기구의 패드·레버·안전장치를 먼저 확인한 뒤, 아래 패턴으로 움직이세요.',
+    noModelEn: 'There is no dedicated Matrix SKU for this category. Confirm pads, levers, and safeties on the unit in your gym, then follow the movement pattern below.',
+    rideKo: '매트릭스 Ultra(G7)·Versa·Magnum 궤적을 그대로 타는 게 핵심입니다.',
+    rideEn: 'Ride the Matrix Ultra (G7) / Versa / Magnum path instead of fighting it.',
+  },
 };
 
 function parseArg(prefix) {
@@ -394,6 +405,10 @@ function introKo(entry, family, flags) {
     bits.push('Prestige/VR3');
   } else if (/roc-?it|rox/.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ').toLowerCase())) {
     bits.push('ROC-IT ROX');
+  } else if (/ultra|g7-s/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Ultra G7');
+  } else if (/versa|magnum|aura/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Versa/Magnum/Aura');
   }
   const flavor = bits.length ? `${bits.join(' · ')} 구조입니다.` : brandMeta.rideKo;
   const structure = String(entry.verified_structure ?? '')
@@ -427,6 +442,10 @@ function introEn(entry, family, flags) {
     bits.push('Prestige/VR3');
   } else if (/roc-?it|rox/.test([entry.product_series, entry.verified_model, entry.verified_structure].join(' ').toLowerCase())) {
     bits.push('ROC-IT ROX');
+  } else if (/ultra|g7-s/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Ultra G7');
+  } else if (/versa|magnum|aura/.test([entry.product_series, entry.verified_model].join(' ').toLowerCase())) {
+    bits.push('Versa/Magnum/Aura');
   }
   const flavor = bits.length
     ? `Lean into the ${bits.join(' / ')} design.`
