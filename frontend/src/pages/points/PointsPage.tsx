@@ -1,10 +1,14 @@
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { PointTransaction } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Icon } from '@/components/icons/Icon';
+import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
 import { pointsApi } from '@/api/points.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import './PointsPage.css';
 
 function formatTxWhen(iso: string, locale: string): string {
@@ -19,10 +23,25 @@ function formatTxWhen(iso: string, locale: string): string {
   }).format(d);
 }
 
+function txSearchHaystack(tx: PointTransaction, locale: string): string {
+  return [
+    tx.description,
+    tx.actionCode,
+    tx.transactionType,
+    String(tx.points),
+    formatTxWhen(tx.createdAt, locale),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
+
 export function PointsPage() {
   const { t, i18n } = useTranslation();
   const unit = t('points.unit');
   const locale = i18n.language?.startsWith('ko') ? 'ko-KR' : i18n.language || 'en';
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedQuery = useDebouncedValue(searchQuery, 200);
 
   const summaryQuery = useQuery({
     queryKey: QUERY_KEYS.pointsBalance,
@@ -31,8 +50,15 @@ export function PointsPage() {
 
   const ledgerQuery = useQuery({
     queryKey: QUERY_KEYS.pointsLedger(0),
-    queryFn: async () => (await pointsApi.ledger({ limit: 50, offset: 0 })).data.data,
+    queryFn: async () => (await pointsApi.ledger({ limit: 100, offset: 0 })).data.data,
   });
+
+  const items = ledgerQuery.data?.items ?? [];
+  const filteredItems = useMemo(() => {
+    const q = debouncedQuery.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((tx) => txSearchHaystack(tx, locale).includes(q));
+  }, [items, debouncedQuery, locale]);
 
   if (summaryQuery.isLoading || ledgerQuery.isLoading) {
     return (
@@ -46,9 +72,11 @@ export function PointsPage() {
   }
 
   const summary = summaryQuery.data;
-  const items = ledgerQuery.data?.items ?? [];
   const balance = summary?.balance ?? 0;
   const earned = summary?.lifetimeEarned ?? 0;
+  const hasHistory = items.length > 0;
+  const hasQuery = debouncedQuery.trim().length > 0;
+  const visibleCount = filteredItems.length;
 
   return (
     <PageShell title={t('points.title')}>
@@ -73,18 +101,34 @@ export function PointsPage() {
             <h2 id="points-ledger-title" className="points-ledger__title">
               {t('points.historyTitle')}
             </h2>
-            {items.length > 0 ? (
-              <span className="points-ledger__count">{items.length}</span>
+            {hasHistory ? (
+              <span className="points-ledger__count">
+                {hasQuery ? `${visibleCount}/${items.length}` : items.length}
+              </span>
             ) : null}
           </div>
 
-          {items.length === 0 ? (
+          {hasHistory ? (
+            <div className="points-ledger__search">
+              <SearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder={t('points.searchPlaceholder')}
+              />
+            </div>
+          ) : null}
+
+          {!hasHistory ? (
             <div className="points-empty" role="status">
               <p className="points-empty__title">{t('points.empty')}</p>
             </div>
+          ) : visibleCount === 0 ? (
+            <div className="points-empty" role="status">
+              <p className="points-empty__title">{t('points.emptySearch')}</p>
+            </div>
           ) : (
             <ul className="points-ledger__list">
-              {items.map((tx) => {
+              {filteredItems.map((tx) => {
                 const positive = tx.points > 0;
                 const label = tx.description || tx.actionCode || tx.transactionType;
                 return (

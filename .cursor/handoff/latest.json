@@ -1,23 +1,30 @@
 ﻿{
-  "title": "Easy mode picker: show favorite hearts",
-  "summary": "이지모드 기구찾기 목록에 검색 페이지와 동일한 ♥ 즐겨찾기 버튼을 표시합니다.",
-  "git": { "branch": "main", "commit": "d92272c5" },
-  "changedFiles": ["frontend/src/components/easy-mode/EasyMachinePicker.tsx"],
+  "title": "Points history search on My Hellchang Power",
+  "summary": "내 헬창력 페이지 헬창력 내역에 검색창을 추가해 설명·날짜·포인트로 필터링합니다.",
+  "git": { "branch": "main", "commit": "pending" },
+  "changedFiles": [
+    "frontend/src/pages/points/PointsPage.tsx",
+    "frontend/src/pages/points/PointsPage.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
+  ],
   "testFocus": [
-    "이지모드 → 기구찾기 → 목록 각 행에 ♥ 표시",
-    "♥ 탭 시 즐겨찾기 추가/해제",
-    "♥ 눌러도 상세로 들어가지 않음"
+    "내 헬창력 → 헬창력 내역 검색창 표시",
+    "설명/날짜/포인트 키워드로 목록 필터",
+    "결과 없음 메시지 / 카운트 N/M"
   ],
   "fastChecks": [
     {
-      "id": "easy-picker-show-favorite",
+      "id": "points-search",
       "type": "grep",
-      "path": "frontend/src/components/easy-mode/EasyMachinePicker.tsx",
-      "pattern": "showFavorite|useFavoritesList|favoriteByCode"
+      "path": "frontend/src/pages/points/PointsPage.tsx",
+      "pattern": "searchPlaceholder|filteredItems|SearchBar"
     }
   ],
   "productionChecks": [],
   "deploy": { "expected": "Frontend Pages" },
-  "asIs": "이지모드 기구찾기 목록에 하트(즐겨찾기) 아이콘 없음",
-  "toBe": "검색 추천머신과 같이 각 기구에 ♥ 표시·토글"
+  "asIs": "헬창력 내역 검색 없음",
+  "toBe": "내역 상단 검색으로 필터링"
 }

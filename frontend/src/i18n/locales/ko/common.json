@@ -2113,7 +2113,9 @@
     "balanceLabel": "현재 헬창력",
     "lifetime": "누적 적립 {{earned}}Power",
     "historyTitle": "헬창력 내역",
+    "searchPlaceholder": "내역 검색 (설명·날짜·포인트)",
     "empty": "아직 헬창력 내역이 없어요.",
+    "emptySearch": "검색 결과가 없어요. 다른 단어로 다시 찾아 보세요.",
     "earnedToast": "+{{points}}Power 적립!",
     "unit": "Power",
     "powerBox": {

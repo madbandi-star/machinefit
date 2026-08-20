@@ -2163,7 +2163,9 @@
     "balanceLabel": "Current Power",
     "lifetime": "Lifetime earned {{earned}}Power",
     "historyTitle": "Power history",
+    "searchPlaceholder": "Search history (description, date, points)",
     "empty": "No Power history yet.",
+    "emptySearch": "No matching history. Try a different search.",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power",
     "powerBox": {

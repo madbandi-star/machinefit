@@ -2115,7 +2115,9 @@
     "balanceLabel": "Current Power",
     "lifetime": "Lifetime earned {{earned}}Power",
     "historyTitle": "Power history",
+    "searchPlaceholder": "搜索记录（说明、日期、积分）",
     "empty": "No Power history yet.",
+    "emptySearch": "没有匹配的记录，请换个关键词试试。",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power",
     "powerBox": {

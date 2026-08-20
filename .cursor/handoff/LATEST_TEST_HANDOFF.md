@@ -1,22 +1,22 @@
-# Test handoff — Easy mode picker favorite hearts
+﻿# Test handoff — Points history search
 
 ## Summary
-이지모드 「기구찾기」 목록에 검색 페이지 추천머신과 동일한 ♥ 즐겨찾기 버튼을 표시.
+내 헬창력 → 헬창력 내역에 검색창 추가. 설명·액션·날짜·포인트로 클라이언트 필터.
 
 ## Test focus
-1. 이지모드 → 기구찾기
-2. 목록 각 행 오른쪽에 ♥ 표시
-3. ♥ 탭 → 추가/해제 (행 클릭과 분리)
-4. 행 본문 탭 → 상세는 기존과 동일
+1. 마이/내 헬창력 페이지 열기
+2. 내역 위 검색창 입력
+3. 매칭 행만 표시, 카운트 `N/전체`
+4. 결과 없으면 emptySearch 문구
 
 ## Fast checks
 ```
-rg -n "showFavorite|useFavoritesList|favoriteByCode" frontend/src/components/easy-mode/EasyMachinePicker.tsx
+rg -n "searchPlaceholder|filteredItems|SearchBar" frontend/src/pages/points/PointsPage.tsx
 ```
 
 ## As-is → To-be
-- **as-is**: 이지모드 기구찾기 목록에 하트 없음 (`onSelect` 시 `showFavorite` 기본 false)
-- **to-be**: `showFavorite` + favorites 시드로 검색과 동일 UX
+- **as-is**: 내역 전체만 스크롤
+- **to-be**: 검색으로 필터
 
 ## Deploy note
 Frontend only (Pages).

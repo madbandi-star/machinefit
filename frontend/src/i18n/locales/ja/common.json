@@ -2115,7 +2115,9 @@
     "balanceLabel": "Current Power",
     "lifetime": "Lifetime earned {{earned}}Power",
     "historyTitle": "Power history",
+    "searchPlaceholder": "履歴を検索（説明・日付・ポイント）",
     "empty": "No Power history yet.",
+    "emptySearch": "一致する履歴がありません。別のキーワードで検索してください。",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power",
     "powerBox": {
