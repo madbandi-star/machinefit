@@ -472,6 +472,7 @@ export function MachineSearchPage() {
           value={query}
           onChange={handleQueryChange}
           onSubmit={handleSearchSubmit}
+          onClear={() => applySearchQuery('')}
           placeholder={t('searchPlaceholder')}
         />
         <RecentMachineSearches

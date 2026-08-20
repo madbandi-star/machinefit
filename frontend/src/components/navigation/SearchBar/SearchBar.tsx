@@ -6,12 +6,20 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit?: () => void;
+  /** Called after the field is cleared (e.g. reset applied search). */
+  onClear?: () => void;
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarProps) {
+export function SearchBar({ value, onChange, onSubmit, onClear, placeholder }: SearchBarProps) {
   const { t } = useTranslation();
   const label = placeholder ?? t('actions.search');
+  const hasValue = value.trim().length > 0;
+
+  const handleClear = () => {
+    onChange('');
+    onClear?.();
+  };
 
   return (
     <form
@@ -21,7 +29,7 @@ export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarP
         onSubmit?.();
       }}
     >
-      <div className="search-bar__field">
+      <div className={`search-bar__field${hasValue ? ' search-bar__field--clearable' : ''}`}>
         <span className="search-bar__leading" aria-hidden>
           <Icon name="search" size={18} className="search-bar__leading-icon" />
         </span>
@@ -34,6 +42,16 @@ export function SearchBar({ value, onChange, onSubmit, placeholder }: SearchBarP
           placeholder={label}
           aria-label={label}
         />
+        {hasValue ? (
+          <button
+            type="button"
+            className="search-bar__clear"
+            onClick={handleClear}
+            aria-label={t('actions.close')}
+          >
+            <Icon name="close" size={16} />
+          </button>
+        ) : null}
       </div>
       {onSubmit ? (
         <button
