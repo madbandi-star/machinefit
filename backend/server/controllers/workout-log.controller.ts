@@ -35,7 +35,8 @@ export async function upsertWorkoutLog(req: Request, res: Response): Promise<voi
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   // Body already validated by validateBody(upsertWorkoutLogSchema) middleware.
   const body = req.body as UpsertWorkoutLogInput;
-  const item = await workoutLogService.upsert(req.user.userId, body);
+  const locale = resolveRequestLocale(req);
+  const item = await workoutLogService.upsert(req.user.userId, body, locale);
   res.json({ success: true, data: item });
 }
 

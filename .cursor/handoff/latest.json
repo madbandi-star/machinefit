@@ -1,31 +1,35 @@
 {
-  "title": "Easy mode step 2: PRO tips under workout tips",
-  "summary": "Easy wizard 2/3 recommendation confirm shows RecommendationGuideSegments (PRO tip chip) below the tips card.",
+  "title": "Fix English machine names after all-sets complete/undo",
+  "summary": "Workout log upsert now respects Accept-Language. Silent all-sets complete/undo no longer overwrites card titles with English names.",
   "git": {
     "branch": "main",
     "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-    "frontend/src/styles/easy-mode.css"
+    "backend/server/controllers/workout-log.controller.ts",
+    "backend/server/services/workout-log.service.ts",
+    "backend/server/repositories/workout-log.repository.ts",
+    "frontend/src/components/recommendation/WorkoutLogPanel/WorkoutLogPanel.tsx",
+    "frontend/src/utils/historyRecordsDisplay.ts",
+    "frontend/src/utils/workoutPlanCards.ts"
   ],
   "testFocus": [
-    "Easy mode → pick machine → step 2 → below 운동팁, PRO팁 chip appears when machine has pro tips; tap expands content"
+    "Records → all-sets complete → all-sets undo → machine title stays Korean (not English)"
   ],
   "fastChecks": [
     {
-      "id": "easy-pro-tips",
+      "id": "upsert-locale",
       "type": "grep",
-      "path": "frontend/src/pages/easy-mode/EasyWizardPage.tsx",
-      "pattern": "easy-s2-coach__pro"
+      "path": "backend/server/controllers/workout-log.controller.ts",
+      "pattern": "resolveRequestLocale\\(req\\)"
     }
   ],
   "productionChecks": [
-    "GitHub Pages after Deploy Frontend success"
+    "Render backend redeploy required"
   ],
   "deploy": {
-    "expected": "Frontend Pages"
+    "expected": "Frontend Pages + Render backend"
   },
-  "asIs": "Easy step 2 showed warnings/tips only.",
-  "toBe": "PRO tip chip under tips, same segment UI as records/result."
+  "asIs": "After complete then undo all sets, machine names flipped to English.",
+  "toBe": "Upsert returns locale-correct names; cache keeps prior localized labels."
 }

@@ -1132,19 +1132,36 @@ export function WorkoutLogPanel({
 
   const patchWorkoutLogCaches = useCallback(
     (log: WorkoutLog) => {
-      queryClient.setQueryData(workoutLogQueryKey, [log]);
+      const previous =
+        queryClient.getQueryData<WorkoutLog[]>(workoutLogQueryKey)?.[0] ??
+        queryClient
+          .getQueryData<WorkoutLog[]>(workoutLogsAllKey)
+          ?.find(
+            (item) =>
+              item.machineCode === log.machineCode &&
+              normalizeDateKey(item.logDate) === normalizeDateKey(log.logDate) &&
+              (item.targetMuscleGroup ?? '') === (log.targetMuscleGroup ?? '')
+          );
+      // Upsert used to return English names when locale was omitted — keep a prior
+      // localized label so silent all-sets complete/undo does not flip the card title.
+      const merged: WorkoutLog = {
+        ...log,
+        machineName: previous?.machineName?.trim() || log.machineName,
+        brandName: previous?.brandName?.trim() || log.brandName,
+      };
+      queryClient.setQueryData(workoutLogQueryKey, [merged]);
       onSavedChange?.(true);
       queryClient.setQueryData(
         workoutLogsAllKey,
         upsertWorkoutLogInCache(
           queryClient.getQueryData<WorkoutLog[]>(workoutLogsAllKey),
-          log,
+          merged,
           removeLogParams
         )
       );
       queryClient.setQueriesData<WorkoutLog[]>(
         { queryKey: QUERY_KEYS.workoutLogs },
-        (old) => upsertWorkoutLogInListQueryData(old, log, removeLogParams)
+        (old) => upsertWorkoutLogInListQueryData(old, merged, removeLogParams)
       );
     },
     [onSavedChange, queryClient, removeLogParams, workoutLogQueryKey, workoutLogsAllKey]

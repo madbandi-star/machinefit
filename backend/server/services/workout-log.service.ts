@@ -6,6 +6,7 @@ import type {
   Locale,
 } from '@machinefit/shared';
 import {
+  DEFAULT_LOCALE,
   isBodyweightExercise,
   isFreeWeightMachineCode,
   isUsableBodyWeightKg,
@@ -92,7 +93,7 @@ export const workoutLogService = {
     );
   },
 
-  async upsert(userId: string, input: UpsertWorkoutLogInput) {
+  async upsert(userId: string, input: UpsertWorkoutLogInput, locale: Locale = DEFAULT_LOCALE) {
     await gymScopeService.resolveMemberForWrite(userId, input.gymId, input.memberId);
 
     const machine = await machineRepository.findByCode(input.machineCode);
@@ -154,18 +155,25 @@ export const workoutLogService = {
     }
 
     try {
-      const saved = await workoutLogRepository.upsert(userId, input.gymId, input.memberId, machineId, {
-        recommendationId: input.recommendationId,
-        logDate,
-        targetMuscleGroup: targetMuscleKey,
-        setCount: input.setCount,
-        setWeightsKg: input.setWeightsKg,
-        setCompleted: input.setCompleted,
-        diary: input.diary,
-        bodyweightKgAtRecord,
-        appliedLoadFactor,
-        loadType,
-      });
+      const saved = await workoutLogRepository.upsert(
+        userId,
+        input.gymId,
+        input.memberId,
+        machineId,
+        {
+          recommendationId: input.recommendationId,
+          logDate,
+          targetMuscleGroup: targetMuscleKey,
+          setCount: input.setCount,
+          setWeightsKg: input.setWeightsKg,
+          setCompleted: input.setCompleted,
+          diary: input.diary,
+          bodyweightKgAtRecord,
+          appliedLoadFactor,
+          loadType,
+        },
+        locale
+      );
 
       // Best-effort: mirror diary/sets onto matching workout_card for date-copy.
       try {

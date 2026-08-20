@@ -79,6 +79,7 @@ function linkPlanOntoCard(existing: HistoryRecordCard, plan: WorkoutCard): Histo
     muscleGroup: existing.muscleGroup ?? fromPlan.muscleGroup,
     brandName: existing.brandName ?? fromPlan.brandName,
     primaryImageUrl: existing.primaryImageUrl ?? fromPlan.primaryImageUrl,
+    // Prefer existing (history/list locale) over plan when both present; fall back to plan.
     machineName: existing.machineName || fromPlan.machineName,
     planSetCount: fromPlan.planSetCount ?? existing.planSetCount,
     planSetWeightsKg: fromPlan.planSetWeightsKg ?? existing.planSetWeightsKg,

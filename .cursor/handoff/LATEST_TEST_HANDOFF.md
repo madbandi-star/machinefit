@@ -1,8 +1,7 @@
-# Test handoff: Easy mode step 2 PRO tips
+# Test handoff: Machine name locale after all-sets toggle
 
 ## Summary
-Easy wizard recommendation confirm (2/3) shows PRO tip chip under 운동팁.
+All-sets complete/undo no longer switches machine titles to English.
 
 ## Test focus
-1. Easy mode → machine with PRO tips → step 2 → PRO팁 under tips
-2. Tap chip → content expands
+1. Records (Korean UI) → 일괄완료 → 일괄취소 → title stays Korean

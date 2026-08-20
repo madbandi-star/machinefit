@@ -1,4 +1,5 @@
 import type { Locale, TargetMuscleGroup, WorkoutLog } from '@machinefit/shared';
+import { DEFAULT_LOCALE } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { pickLocalized } from '../utils/localize.util.js';
 
@@ -50,7 +51,7 @@ function formatLogDate(value: string | Date): string {
   return `${y}-${m}-${d}`;
 }
 
-function mapRow(row: WorkoutLogRow, locale: Locale = 'en'): WorkoutLog {
+function mapRow(row: WorkoutLogRow, locale: Locale = DEFAULT_LOCALE): WorkoutLog {
   const logDate = formatLogDate(row.log_date);
 
   return {
@@ -248,7 +249,8 @@ export const workoutLogRepository = {
       bodyweightKgAtRecord?: number | null;
       appliedLoadFactor?: number | null;
       loadType?: 'external_weight' | 'bodyweight_estimated';
-    }
+    },
+    locale: Locale = DEFAULT_LOCALE
   ): Promise<WorkoutLog> {
     const pool = getPool();
     if (!pool) throw new Error('Database not configured');
@@ -287,7 +289,8 @@ export const workoutLogRepository = {
                  bodyweight_kg_at_record, applied_load_factor, load_type,
                  created_at, updated_at,
                  (SELECT code FROM machines WHERE id = $4) AS machine_code,
-                 (SELECT name FROM machines WHERE id = $4) AS machine_name`,
+                 (SELECT name FROM machines WHERE id = $4) AS machine_name,
+                 (SELECT b.name FROM machines m JOIN brands b ON b.id = m.brand_id WHERE m.id = $4) AS brand_name`,
       [
         userId,
         gymId,
@@ -308,7 +311,7 @@ export const workoutLogRepository = {
 
     const row = result.rows[0];
     if (!row) throw new Error('Failed to upsert workout log');
-    return mapRow(row);
+    return mapRow(row, locale);
   },
 
   async deleteByUserMachineDate(
