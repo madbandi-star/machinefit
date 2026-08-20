@@ -1,41 +1,32 @@
 {
-  "title": "Records: guide chips at card bottom like result page",
-  "summary": "Remove header ⚠️/💡/★ icons. History cards now show [주의][운동팁][PRO팁] chip row under the workout log, same UI as the recommendation result card.",
+  "title": "Tips: remove ACSM/Schoenfeld, explain RIR/ROM",
+  "summary": "Goal tip copy no longer cites ACSM/Schoenfeld. RIR and ROM keep beginner-friendly inline explanations.",
   "git": {
     "branch": "main",
-    "commit": "74a2f514"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/components/records/HistoryCardGuideSegments/HistoryCardGuideSegments.tsx",
-    "frontend/src/components/records/HistoryCardGuideIcons/HistoryCardGuideIcons.tsx",
-    "frontend/src/styles/history-premium.css"
+    "shared/src/utils/recommendation-personalization.ts"
   ],
   "testFocus": [
-    "Records → individual machine card: no guide icons in header",
-    "Below workout log: [주의]/[운동팁]/[PRO팁] chips when content exists; tap expands panel like result page"
+    "New recommendation tips: no ACSM/Schoenfeld wording",
+    "Hypertrophy tip explains RIR; rehab/posture tips explain ROM"
   ],
   "fastChecks": [
     {
-      "id": "no-header-icons",
+      "id": "no-acsm-in-tips",
       "type": "grep",
-      "path": "frontend/src/components/records",
-      "pattern": "HistoryCardGuideIcons",
-      "expect": "absent"
-    },
-    {
-      "id": "bottom-segments",
-      "type": "grep",
-      "path": "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-      "pattern": "HistoryCardGuideSegments"
+      "path": "shared/src/utils/recommendation-personalization.ts",
+      "pattern": "ACSM 근력|Schoenfeld 등"
     }
   ],
   "productionChecks": [
-    "GitHub Pages after Deploy Frontend success"
+    "Render backend redeploy needed (shared tip generation)",
+    "Existing saved tips in history may still show old wording until re-recommended"
   ],
   "deploy": {
-    "expected": "Frontend Pages"
+    "expected": "Frontend Pages + Render backend (shared)"
   },
-  "asIs": "Guide content opened from header icon trio.",
-  "toBe": "Same chip row as result page under the log section."
+  "asIs": "Tips cited ACSM/Schoenfeld; RIR/ROM had little explanation.",
+  "toBe": "No ACSM/Schoenfeld in tip strings; RIR/ROM explained in plain language."
 }

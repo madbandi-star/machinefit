@@ -1,16 +1,11 @@
-# Test handoff: History guide chips at bottom
+# Test handoff: Simpler tip wording (no ACSM/Schoenfeld)
 
 ## Summary
-Header ⚠️/💡/★ removed. History cards use the same `[주의][운동팁][PRO팁]` chips as the result page, under the workout log.
+Goal tips drop ACSM/Schoenfeld. RIR and ROM include beginner explanations.
 
-## Git
-- Branch: `main`
-- Commit: `74a2f514`
+## Note
+Already-saved tips on old recommendations may still show previous text until a new recommendation is created.
 
 ## Test focus
-1. No guide icons in card header
-2. Chips under workout log; tap to expand content
-
-## As-is → To-be
-- **As-is:** Header icon trio
-- **To-be:** Bottom chip segments (result-page UI)
+1. New recommend → tips have no ACSM/Schoenfeld
+2. Hypertrophy tip explains RIR; rehab/posture explain ROM

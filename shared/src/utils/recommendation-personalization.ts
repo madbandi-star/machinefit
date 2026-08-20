@@ -182,35 +182,35 @@ function buildGoalTip(
   if (localeKo) {
     switch (goal) {
       case 'strength':
-        return `목표: 근력 — ${repLabel}, 여유 있는 휴식, 폼 우선 (ACSM 근력 구간).`;
+        return `목표: 근력 — ${repLabel}, 여유 있는 휴식, 폼을 우선하세요.`;
       case 'diet':
         return `목표: 다이어트 — ${repLabel}, 중량은 무리 없이·볼륨을 관리하세요.`;
       case 'conditioning':
         return `목표: 컨디셔닝 — ${repLabel}, 짧은 휴식으로 전신 펌핑.`;
       case 'rehab':
-        return `목표: 가벼운 적응 — ${repLabel}, 가벼운 중량·편안한 가동범위(참고).`;
+        return `목표: 가벼운 적응 — ${repLabel}, 가벼운 중량으로, 관절이 불편하지 않은 가동범위(ROM) 안에서 움직이세요.`;
       case 'posture':
-        return `목표: 자세·가동 중심 — ${repLabel}, 가동범위와 안정적인 자세를 우선해 보세요(참고).`;
+        return `목표: 자세·가동 중심 — ${repLabel}, 가동범위(ROM, 관절이 움직이는 폭)와 안정적인 자세를 우선해 보세요.`;
       case 'hypertrophy':
       default:
-        return `목표: 근비대 — ${repLabel}, 마지막 세트 RIR 1~2 (Schoenfeld 등).`;
+        return `목표: 근비대 — ${repLabel}, 마지막 세트는 RIR 1~2로 끝내세요(RIR=실패까지 남은 횟수. 1~2번 더 할 수 있을 때 멈춤).`;
     }
   }
 
   switch (goal) {
     case 'strength':
-      return `Goal: strength — ${repLabel}, longer rest, form first (ACSM strength zone).`;
+      return `Goal: strength — ${repLabel}, longer rest, prioritize form.`;
     case 'diet':
       return `Goal: fat loss — ${repLabel}, keep load manageable and watch volume.`;
     case 'conditioning':
       return `Goal: conditioning — ${repLabel}, shorter rest, full-body pump.`;
     case 'rehab':
-      return `Goal: easy adaptation — ${repLabel}, light load, comfortable ROM (reference).`;
+      return `Goal: easy adaptation — ${repLabel}, light load, stay in a comfortable ROM (range of motion — how far the joint moves without pain).`;
     case 'posture':
-      return `Goal: form & mobility focus — ${repLabel}, prioritize ROM and stable form (reference).`;
+      return `Goal: form & mobility focus — ${repLabel}, prioritize ROM (range of motion — joint travel) and stable form.`;
     case 'hypertrophy':
     default:
-      return `Goal: hypertrophy — ${repLabel}, last sets near RIR 1–2 (Schoenfeld et al.).`;
+      return `Goal: hypertrophy — ${repLabel}, finish last sets at RIR 1–2 (RIR = reps left before failure; stop when you could do only 1–2 more).`;
   }
 }
 
