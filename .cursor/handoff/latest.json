@@ -1,7 +1,7 @@
 ﻿{
   "title": "Author role emoji badges on UGC",
   "summary": "게시글·댓글·대댓글 작성자 이름 옆에 권한 등급을 텍스트 없이 이모지로만 표시합니다. API에 authorRoleCode를 추가했습니다.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "c948eb0d" },
   "changedFiles": [
     "shared/src/constants/roles.ts",
     "shared/src/types/community.types.ts",

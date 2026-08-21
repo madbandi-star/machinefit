@@ -7,7 +7,7 @@
 
 ## Git
 - branch: `main`
-- commit: pending (push 후 갱신)
+- commit: `c948eb0d`
 
 ## Changed surfaces
 - Free board list/detail + comments/replies
