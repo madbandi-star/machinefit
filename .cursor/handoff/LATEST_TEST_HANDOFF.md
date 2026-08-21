@@ -1,17 +1,17 @@
-﻿# Test handoff — Disable soft-launch construction gate
+﻿# Test handoff — Pin pickers locks target reps
 
 ## Summary
-소프트 런치 허용목록 게이트 기본 OFF. 로그인 사용자가 공사중으로 가지 않음.
+세부 피커 고정 시 기본목표횟수까지 잠금 (간격·하나더·버텨와 동일).
 
 ## Test focus
-1. 허용목록에 없는 계정으로 로그인 → 홈
-2. 공사중 페이지로 강제 리다이렉트 없음
+1. 홈/기록 음성카운트 → 세부 피커 고정 ON
+2. 목표횟수 스크롤 불가
+3. 고정 OFF → 조절 가능
 
 ## Fast checks
 ```
-rg -n "return raw === '1'" shared/src/constants/active-service-access.ts
-rg -n "isSoftLaunchAccessEnforced" frontend/src/routes/guards/AuthGuard.tsx
+rg -n "lock every picker including" frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx
 ```
 
 ## Deploy note
-shared 변경 → Frontend Pages + Render backend 재배포.
+Frontend only (Pages).

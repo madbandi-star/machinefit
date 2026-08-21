@@ -1,30 +1,22 @@
 ﻿{
-  "title": "Disable soft-launch under-construction gate",
-  "summary": "소프트 런치 허용목록 게이트 기본 OFF. 로그인 사용자가 공사중으로 강제 이동되지 않음.",
+  "title": "Pin pickers locks target reps too",
+  "summary": "세부 피커 고정 시 기본목표횟수까지 포함해 모든 피커를 잠급니다.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": [
-    "shared/src/constants/active-service-access.ts",
-    "frontend/src/utils/activeServiceAccess.ts",
-    "frontend/src/routes/guards/AuthGuard.tsx",
-    "frontend/src/routes/guards/GuestGuard.tsx",
-    "frontend/src/components/auth/ConsentRedirect/ConsentRedirect.tsx",
-    "frontend/src/utils/handleOAuthLoginResult.ts",
-    "frontend/src/pages/auth/terms/TermsAgreementPage.tsx"
-  ],
+  "changedFiles": ["frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx"],
   "testFocus": [
-    "허용목록 밖 계정 로그인 → 홈 진입 (공사중 아님)",
-    "약관 동의 후 홈 진입"
+    "세부 피커 고정 ON → 목표횟수/간격/하나더/버텨 모두 스크롤 불가",
+    "고정 OFF → 다시 조절 가능"
   ],
   "fastChecks": [
     {
-      "id": "default-off",
+      "id": "all-pickers-locked",
       "type": "grep",
-      "path": "shared/src/constants/active-service-access.ts",
-      "pattern": "return raw === '1'"
+      "path": "frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx",
+      "pattern": "lock every picker including"
     }
   ],
-  "productionChecks": ["Render backend redeploy (shared change)"],
-  "deploy": { "expected": "Frontend Pages + Render backend" },
-  "asIs": "허용목록 밖 로그인 사용자 → /under-construction",
-  "toBe": "기본 게이트 OFF, 전원 정상 이용"
+  "productionChecks": [],
+  "deploy": { "expected": "Frontend Pages" },
+  "asIs": "세부 피커 고정해도 목표횟수는 조절됨",
+  "toBe": "고정 시 목표횟수 포함 전부 잠금"
 }
