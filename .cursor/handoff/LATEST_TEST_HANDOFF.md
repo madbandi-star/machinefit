@@ -26,4 +26,5 @@
 - **To-be:** `⚔️ Alice` 형태로 이모지 + 이름만 (등급 텍스트 없음)
 
 ## Deploy
-Frontend Pages + Render (backend/shared changed)
+- Frontend Pages: success — https://github.com/madbandi-star/machinefit/actions/runs/32490596614
+- Backend Render: success — https://github.com/madbandi-star/machinefit/actions/runs/32490596179

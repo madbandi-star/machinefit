@@ -55,7 +55,13 @@
   "productionChecks": [
     "자유게시판 글/댓글에 권한 이모지 표시 (Pages + Render 배포 후)"
   ],
-  "deploy": { "expected": "Frontend Pages + Render backend/shared" },
+  "deploy": {
+    "expected": "Frontend Pages + Render backend/shared",
+    "frontend": "https://github.com/madbandi-star/machinefit/actions/runs/32490596614",
+    "frontendStatus": "success",
+    "backend": "https://github.com/madbandi-star/machinefit/actions/runs/32490596179",
+    "backendStatus": "success"
+  },
   "asIs": "작성자 이름만 표시",
   "toBe": "작성자 이름 앞에 권한 이모지만 표시 (텍스트 등급명 없음)"
 }
