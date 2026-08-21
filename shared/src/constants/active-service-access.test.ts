@@ -13,8 +13,11 @@ assert.equal(isActiveServiceUsername('짐메이트0587'), true);
 assert.equal(isActiveServiceUsername('다른유저'), false);
 assert.equal(isActiveServiceUsername(''), false);
 assert.equal(isActiveServiceUsername(null), false);
-assert.equal(isActiveServiceAccessEnforced(undefined), true);
+assert.equal(isActiveServiceAccessEnforced(undefined), false);
 assert.equal(isActiveServiceAccessEnforced('0'), false);
 assert.equal(isActiveServiceAccessEnforced('false'), false);
+assert.equal(isActiveServiceAccessEnforced('1'), true);
+assert.equal(isActiveServiceAccessEnforced('true'), true);
+assert.equal(isActiveServiceAccessEnforced('on'), true);
 
 console.log('active-service-access tests ok');

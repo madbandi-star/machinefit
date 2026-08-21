@@ -26,6 +26,7 @@ import { GuideProse } from '@/components/content/GuideProse/GuideProse';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { isSoftLaunchAccessEnforced } from '@/utils/activeServiceAccess';
 import { syncGymScopeAfterAuth } from '@/utils/syncGymScope';
 import { syncUserSettings } from '@/utils/syncUserSettings';
 import {
@@ -179,7 +180,9 @@ export function TermsAgreementPage() {
     }
     showToast(t('auth.consentUpdated'), 'success');
     navigate(
-      isActiveServiceUsername(next.displayName) ? ROUTES.HOME : ROUTES.UNDER_CONSTRUCTION,
+      isSoftLaunchAccessEnforced() && !isActiveServiceUsername(next.displayName)
+        ? ROUTES.UNDER_CONSTRUCTION
+        : ROUTES.HOME,
       { replace: true }
     );
   };

@@ -3,6 +3,7 @@ import { isActiveServiceUsername } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { ROUTES } from '@/constants/routes';
+import { isSoftLaunchAccessEnforced } from '@/utils/activeServiceAccess';
 
 const LEGAL_PREFIXES = [
   ROUTES.TERMS,
@@ -30,8 +31,11 @@ export function ConsentRedirect() {
   const displayName = useAuthStore((s) => s.user?.displayName);
 
   if (!hydrated || !isAuthenticated || !needsConsent) return null;
-  // Soft-launch: non-invited accounts skip consent UI → construction.
-  if (displayName && !isActiveServiceUsername(displayName)) {
+  if (
+    isSoftLaunchAccessEnforced() &&
+    displayName &&
+    !isActiveServiceUsername(displayName)
+  ) {
     if (location.pathname === ROUTES.UNDER_CONSTRUCTION) return null;
     return <Navigate to={ROUTES.UNDER_CONSTRUCTION} replace />;
   }

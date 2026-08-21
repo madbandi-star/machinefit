@@ -9,6 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { isSoftLaunchAccessEnforced } from '@/utils/activeServiceAccess';
 
 interface AuthGuardProps {
   children?: ReactNode;
@@ -79,6 +80,7 @@ export function AuthGuard({ children, minRole = Role.MEMBER }: AuthGuardProps) {
 
   const liveUser = meQuery.data ?? user;
   if (
+    isSoftLaunchAccessEnforced() &&
     liveUser &&
     !isActiveServiceUsername(liveUser.displayName) &&
     location.pathname !== ROUTES.AUTH_SIGNUP_COMPLETE &&

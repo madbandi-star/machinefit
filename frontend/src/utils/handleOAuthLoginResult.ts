@@ -1,6 +1,7 @@
 import type { AuthTokens, OAuthLoginResult, User } from '@machinefit/shared';
 import { isActiveServiceUsername } from '@machinefit/shared';
 import { clearOAuthPending, saveOAuthPending } from '@/utils/oauthPending';
+import { isSoftLaunchAccessEnforced } from '@/utils/activeServiceAccess';
 import { ROUTES } from '@/constants/routes';
 
 type NavigateFn = (to: string, opts?: { replace?: boolean }) => void;
@@ -47,7 +48,7 @@ export function normalizeOAuthLoginResult(
 }
 
 function postAuthDestination(user: User, from?: string): string {
-  if (!isActiveServiceUsername(user.displayName)) {
+  if (isSoftLaunchAccessEnforced() && !isActiveServiceUsername(user.displayName)) {
     return ROUTES.UNDER_CONSTRUCTION;
   }
   return from ?? ROUTES.HOME;
@@ -69,7 +70,7 @@ export function handleOAuthLoginResult(opts: HandleOAuthOptions): void {
     clearOAuthPending();
     opts.setAuth(result.user, result.tokens);
     opts.syncUser(result.user);
-    if (!isActiveServiceUsername(result.user.displayName)) {
+    if (isSoftLaunchAccessEnforced() && !isActiveServiceUsername(result.user.displayName)) {
       opts.navigate(ROUTES.UNDER_CONSTRUCTION, { replace: true });
       return;
     }

@@ -1,19 +1,17 @@
-﻿# Test handoff — Timer history today label + spacing
+﻿# Test handoff — Disable soft-launch construction gate
 
 ## Summary
-타이머 기록 페이지에서 선택일이 오늘이면 「오늘 · 날짜」로 표시. 달력과 날짜 헤더 사이 여백 추가.
+소프트 런치 허용목록 게이트 기본 OFF. 로그인 사용자가 공사중으로 가지 않음.
 
 ## Test focus
-1. 타이머 기록 열기 (기본 오늘)
-2. 헤더가 「오늘 · …」인지
-3. 다른 날짜 선택 → 일반 날짜만
-4. 달력과 날짜 헤더 간격이 넉넉한지
+1. 허용목록에 없는 계정으로 로그인 → 홈
+2. 공사중 페이지로 강제 리다이렉트 없음
 
 ## Fast checks
 ```
-rg -n "selectedToday" frontend/src/pages/timer-history/TimerHistoryPage.tsx
-rg -n "margin-top: 0.85rem" frontend/src/styles/timer-history.css
+rg -n "return raw === '1'" shared/src/constants/active-service-access.ts
+rg -n "isSoftLaunchAccessEnforced" frontend/src/routes/guards/AuthGuard.tsx
 ```
 
 ## Deploy note
-Frontend only (Pages).
+shared 변경 → Frontend Pages + Render backend 재배포.

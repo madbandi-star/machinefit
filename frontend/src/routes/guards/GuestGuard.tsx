@@ -4,6 +4,7 @@ import { isActiveServiceUsername } from '@machinefit/shared';
 import { useAuthStore } from '@/store/auth.store';
 import { ROUTES } from '@/constants/routes';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { isSoftLaunchAccessEnforced } from '@/utils/activeServiceAccess';
 
 interface GuestGuardProps {
   children: ReactNode;
@@ -17,7 +18,7 @@ export function GuestGuard({ children }: GuestGuardProps) {
   if (!hydrated) return null;
 
   if (isAuthenticated && user) {
-    if (!isActiveServiceUsername(user.displayName)) {
+    if (isSoftLaunchAccessEnforced() && !isActiveServiceUsername(user.displayName)) {
       return <Navigate to={ROUTES.UNDER_CONSTRUCTION} replace />;
     }
     if (user.needsConsent) {
