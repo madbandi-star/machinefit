@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { ConfirmDialog } from '@/components/feedback/ConfirmDialog/ConfirmDialog';
 import { Icon } from '@/components/icons/Icon';
 import { RarityBadge } from '@/components/machine-showcase/RarityBadge';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { machineShowcaseApi } from '@/api/machine-showcase.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -272,7 +273,7 @@ export function MachineShowcaseDetailPage() {
               </div>
             )}
             <p className="showcase-detail__byline">
-              <span>{post.authorName || '—'}</span>
+              <AuthorWithRole name={post.authorName} roleCode={post.authorRoleCode} />
               <span aria-hidden>·</span>
               <time dateTime={post.createdAt}>
                 {formatPostedAt(post.createdAt, i18n.language)}
@@ -383,7 +384,11 @@ export function MachineShowcaseDetailPage() {
                 {comments.map((item) => (
                   <li key={item.id} className="showcase-comments__item">
                     <div className="showcase-comments__meta">
-                      <strong>{item.authorName || '—'}</strong>
+                      <AuthorWithRole
+                        as="strong"
+                        name={item.authorName}
+                        roleCode={item.authorRoleCode}
+                      />
                       <time dateTime={item.createdAt}>
                         {formatPostedAt(item.createdAt, i18n.language)}
                       </time>

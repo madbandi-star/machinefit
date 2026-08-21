@@ -1,3 +1,4 @@
+import type { RoleCode } from './api.types.js';
 import type { MachineRarityGrade } from '../utils/machine-rarity.js';
 
 export type MachineShowcaseSort = 'latest' | 'popular';
@@ -46,6 +47,7 @@ export interface MachineShowcasePost {
   id: string;
   userId: string;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   machineId: string;
   machineCode: string;
   machineName: string;
@@ -80,6 +82,7 @@ export interface MachineShowcaseComment {
   parentId?: string;
   content: string;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   createdAt: string;
   updatedAt: string;
 }

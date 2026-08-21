@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { Post } from '@machinefit/shared';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/community.css';
@@ -57,9 +58,11 @@ export function PostCard({ post, seq, showDelete, onDelete, isDeleting }: PostCa
           <h3 className="board-post-card__title">{post.title}</h3>
         </div>
         <div className="board-post-card__meta">
-          <span className="board-post-card__author" title={authorLabel(post)}>
-            {authorLabel(post)}
-          </span>
+          <AuthorWithRole
+            className="board-post-card__author"
+            name={authorLabel(post)}
+            roleCode={post.authorRoleCode}
+          />
           <time className="board-post-card__date" dateTime={post.createdAt}>
             {formatDate(post.createdAt)}
           </time>

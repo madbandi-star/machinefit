@@ -1,4 +1,4 @@
-import type { RequestStatus } from './api.types.js';
+import type { RequestStatus, RoleCode } from './api.types.js';
 import type {
   MachineRequestGymChoiceMode,
   MachineRequestImage,
@@ -35,6 +35,7 @@ export interface AdminMachineRequestCommentPreview {
   id: string;
   requestId: string;
   authorName: string;
+  authorRoleCode?: RoleCode;
   content: string;
   createdAt: string;
 }
@@ -43,6 +44,7 @@ export interface AdminMachineRequestRequester {
   requestId: string;
   userId: string;
   authorName: string;
+  authorRoleCode?: RoleCode;
   description: string;
   gymChoiceMode?: MachineRequestGymChoiceMode;
   gymName?: string | null;

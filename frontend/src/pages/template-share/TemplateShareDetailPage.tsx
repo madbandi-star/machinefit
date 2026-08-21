@@ -14,10 +14,11 @@ import {
   Video,
 } from 'lucide-react';
 import type { TemplateShareReportReason } from '@machinefit/shared';
-import { TEMPLATE_SHARE_REPORT_REASONS, isFreeWeightMachineCode } from '@machinefit/shared';
+import { TEMPLATE_SHARE_REPORT_REASONS, isFreeWeightMachineCode, getRoleEmoji } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/QueryErrorMessage';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { templateShareApi } from '@/api/template-share.api';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
@@ -207,7 +208,7 @@ export function TemplateShareDetailPage() {
   return (
     <PageShell
       title={post.title}
-      subtitle={`${t('templateShare.author')}: ${post.authorName}`}
+      subtitle={`${t('templateShare.author')}: ${getRoleEmoji(post.authorRoleCode)} ${post.authorName}`}
       action={
         <Link to={ROUTES.TEMPLATE_SHARE} className="tpl-share-back-top">
           {t('templateShare.backToHub')}
@@ -550,7 +551,7 @@ export function TemplateShareDetailPage() {
                   <div className="tpl-share-comment__content">
                     <div className="tpl-share-comment__meta">
                       <span className="tpl-share-comment__author">
-                        {c.authorName}
+                        <AuthorWithRole name={c.authorName} roleCode={c.authorRoleCode} />
                         {c.userId === userId ? (
                           <span className="tpl-share-comment__me">{t('templateShare.me')}</span>
                         ) : null}

@@ -11,6 +11,7 @@ import type {
   UpdateMachineRequestAdminInput,
   PaginatedResponse,
 } from '@machinefit/shared';
+import { isRoleCode } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { AppError } from '../middlewares/error.middleware.js';
 import { buildPaginationMeta } from '../utils/pagination.util.js';
@@ -141,6 +142,7 @@ function mockGroups(): AdminMachineRequestGroupDetail[] {
         id: c.id,
         requestId: c.requestId,
         authorName: c.authorName ?? 'User',
+        authorRoleCode: c.authorRoleCode,
         content: c.content,
         createdAt: c.createdAt,
       }));
@@ -167,6 +169,7 @@ function mockGroups(): AdminMachineRequestGroupDetail[] {
         requestId: r.id,
         userId: r.userId,
         authorName: r.authorName ?? 'User',
+        authorRoleCode: r.authorRoleCode,
         description: r.description,
         gymChoiceMode: r.gymChoiceMode,
         gymName: r.gymName,
@@ -577,6 +580,7 @@ export const machineRequestAdminRepository = {
       id: string;
       user_id: string;
       author_name: string;
+      author_role_code: string | null;
       description: string;
       gym_choice_mode: string | null;
       gym_name: string | null;
@@ -592,7 +596,8 @@ export const machineRequestAdminRepository = {
       created_at: string;
       status: string;
     }>(
-      `SELECT mr.id, mr.user_id, u.display_name AS author_name, mr.description,
+      `SELECT mr.id, mr.user_id, u.display_name AS author_name, r.code AS author_role_code,
+              mr.description,
               mr.gym_choice_mode, mr.gym_name, mr.commercial_use_consent,
               mr.like_count, mr.comment_count, mr.view_count,
               mr.vote_count, mr.priority, mr.assignee_user_id,
@@ -600,6 +605,7 @@ export const machineRequestAdminRepository = {
               mr.is_hidden, mr.created_at, mr.status
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
+       JOIN roles r ON r.id = u.role_id
        LEFT JOIN users au ON au.id = mr.assignee_user_id
        WHERE lower(trim(mr.brand_name)) = lower(trim($1))
          AND lower(trim(mr.machine_name)) = lower(trim($2))
@@ -636,6 +642,7 @@ export const machineRequestAdminRepository = {
         requestId: r.id,
         userId: r.user_id,
         authorName: r.author_name,
+        authorRoleCode: isRoleCode(r.author_role_code) ? r.author_role_code : undefined,
         description: r.description,
         gymChoiceMode:
           (r.gym_choice_mode as AdminMachineRequestRequester['gymChoiceMode']) ?? undefined,
@@ -660,12 +667,15 @@ export const machineRequestAdminRepository = {
       id: string;
       request_id: string;
       author_name: string;
+      author_role_code: string | null;
       content: string;
       created_at: string;
     }>(
-      `SELECT c.id, c.request_id, u.display_name AS author_name, c.content, c.created_at
+      `SELECT c.id, c.request_id, u.display_name AS author_name, r.code AS author_role_code,
+              c.content, c.created_at
        FROM machine_request_comments c
        JOIN users u ON u.id = c.user_id
+       JOIN roles r ON r.id = u.role_id
        JOIN machine_requests mr ON mr.id = c.request_id
        WHERE lower(trim(mr.brand_name)) = lower(trim($1))
          AND lower(trim(mr.machine_name)) = lower(trim($2))
@@ -678,6 +688,7 @@ export const machineRequestAdminRepository = {
       id: c.id,
       requestId: c.request_id,
       authorName: c.author_name,
+      authorRoleCode: isRoleCode(c.author_role_code) ? c.author_role_code : undefined,
       content: c.content,
       createdAt: c.created_at,
     }));

@@ -1,22 +1,61 @@
 ﻿{
-  "title": "Pin pickers locks target reps too",
-  "summary": "세부 피커 고정 시 기본목표횟수까지 포함해 모든 피커를 잠급니다.",
+  "title": "Author role emoji badges on UGC",
+  "summary": "게시글·댓글·대댓글 작성자 이름 옆에 권한 등급을 텍스트 없이 이모지로만 표시합니다. API에 authorRoleCode를 추가했습니다.",
   "git": { "branch": "main", "commit": "pending" },
-  "changedFiles": ["frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx"],
+  "changedFiles": [
+    "shared/src/constants/roles.ts",
+    "shared/src/types/community.types.ts",
+    "shared/src/types/photo-board.types.ts",
+    "shared/src/types/machine-showcase.types.ts",
+    "shared/src/types/template-share.types.ts",
+    "shared/src/types/machine-request-admin.types.ts",
+    "backend/server/repositories/community.repository.ts",
+    "backend/server/repositories/photo-board.repository.ts",
+    "backend/server/repositories/machine-showcase.repository.ts",
+    "backend/server/repositories/template-share.repository.ts",
+    "backend/server/repositories/machine-request-admin.repository.ts",
+    "backend/server/services/community.service.ts",
+    "frontend/src/components/common/AuthorWithRole.tsx",
+    "frontend/src/components/cards/PostCard/PostCard.tsx",
+    "frontend/src/pages/community/PostDetailPage.tsx",
+    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
+    "frontend/src/pages/photo-board/PhotoPostDetailPage.tsx",
+    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
+    "frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx",
+    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
+    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
+    "frontend/src/components/community/BoardRequestRow.tsx"
+  ],
   "testFocus": [
-    "세부 피커 고정 ON → 목표횟수/간격/하나더/버텨 모두 스크롤 불가",
-    "고정 OFF → 다시 조절 가능"
+    "자유게시판 목록/상세·댓글·대댓글 작성자 옆 이모지",
+    "포토보드·기구요청·쇼케이스·템플릿공유 동일",
+    "등급별: 게스트🧑‍🌾 회원⚔️ 프리미엄🔱 VIP👑 트레이너🧙 오너🏰 관리자🔮"
   ],
   "fastChecks": [
     {
-      "id": "all-pickers-locked",
+      "id": "role-emoji-map",
       "type": "grep",
-      "path": "frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx",
-      "pattern": "lock every picker including"
+      "path": "shared/src/constants/roles.ts",
+      "pattern": "ROLE_EMOJI"
+    },
+    {
+      "id": "author-with-role",
+      "type": "grep",
+      "path": "frontend/src/components/common/AuthorWithRole.tsx",
+      "pattern": "getRoleEmoji"
+    },
+    {
+      "id": "author-role-api",
+      "type": "grep",
+      "path": "shared/src/types/community.types.ts",
+      "pattern": "authorRoleCode"
     }
   ],
-  "productionChecks": [],
-  "deploy": { "expected": "Frontend Pages" },
-  "asIs": "세부 피커 고정해도 목표횟수는 조절됨",
-  "toBe": "고정 시 목표횟수 포함 전부 잠금"
+  "productionChecks": [
+    "자유게시판 글/댓글에 권한 이모지 표시 (Pages + Render 배포 후)"
+  ],
+  "deploy": { "expected": "Frontend Pages + Render backend/shared" },
+  "asIs": "작성자 이름만 표시",
+  "toBe": "작성자 이름 앞에 권한 이모지만 표시 (텍스트 등급명 없음)"
 }

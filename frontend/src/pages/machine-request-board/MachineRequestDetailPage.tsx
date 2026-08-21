@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MACHINE_REQUEST_UNKNOWN_VALUE, Role, hasMinRole } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { machineRequestApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -267,7 +268,9 @@ export function MachineRequestDetailPage() {
 
         <div style={{ display: 'grid', gap: '0.35rem' }}>
           <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-            {t('photoAuthor')}: {request.authorName || '—'} · {t('status')}: {statusLabel}
+            {t('photoAuthor')}:{' '}
+            <AuthorWithRole name={request.authorName} roleCode={request.authorRoleCode} /> ·{' '}
+            {t('status')}: {statusLabel}
             {gymLabel ? ` · ${t('requestGymLabel')}: ${gymLabel}` : ''}
           </div>
           <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
@@ -338,7 +341,11 @@ export function MachineRequestDetailPage() {
               className={`photo-comment${item.parentId ? ' photo-comment--reply' : ''}`}
             >
               <div className="photo-comment__meta">
-                <strong>{item.authorName || '—'}</strong>
+                <AuthorWithRole
+                  as="strong"
+                  name={item.authorName}
+                  roleCode={item.authorRoleCode}
+                />
                 <span>{new Date(item.createdAt).toLocaleString()}</span>
               </div>
               <p style={{ margin: '0 0 0.35rem', whiteSpace: 'pre-wrap' }}>{item.content}</p>

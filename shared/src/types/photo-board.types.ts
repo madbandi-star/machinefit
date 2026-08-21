@@ -1,4 +1,4 @@
-import type { ReportStatus } from './api.types.js';
+import type { ReportStatus, RoleCode } from './api.types.js';
 
 export type PhotoBoardSort = 'latest' | 'popular' | 'views' | 'comments';
 
@@ -23,6 +23,7 @@ export interface PhotoPost {
   commentCount: number;
   isHidden: boolean;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   tags: string[];
   coverImage?: PhotoPostImageMeta;
   images?: PhotoPostImageMeta[];
@@ -39,6 +40,7 @@ export interface PhotoPostComment {
   content: string;
   isHidden: boolean;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   createdAt: string;
   updatedAt: string;
 }

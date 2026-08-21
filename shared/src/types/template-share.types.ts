@@ -1,3 +1,4 @@
+import type { RoleCode } from './api.types.js';
 import type { WorkoutCardTemplateItem } from './workout-card.types.js';
 import type {
   TemplateShareCategory,
@@ -26,6 +27,7 @@ export interface TemplateShareListItem {
   instagramId?: string | null;
   authorUserId: string;
   authorName: string;
+  authorRoleCode?: RoleCode;
   status: TemplateShareStatus;
   viewCount: number;
   downloadCount: number;
@@ -63,6 +65,7 @@ export interface TemplateShareComment {
   postId: string;
   userId: string;
   authorName: string;
+  authorRoleCode?: RoleCode;
   content: string;
   createdAt: string;
   updatedAt: string;

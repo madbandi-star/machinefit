@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Role, hasMinRole, type Comment } from '@machinefit/shared';
+import { Role, hasMinRole, getRoleEmoji, type Comment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { communityApi } from '@/api';
@@ -11,6 +11,7 @@ import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { buildCommentThreads, resolveReplyRootId } from '@/utils/commentThreads';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { Icon } from '@/components/icons/Icon';
 import '@/styles/components.css';
 import '@/styles/community.css';
@@ -191,7 +192,11 @@ export function PostDetailPage() {
     return (
       <div className={`comment-item${replyClass ? ` ${replyClass}` : ''}`}>
         <div className="comment-item__top">
-          <span className="comment-item__author">{item.authorName}</span>
+          <AuthorWithRole
+            className="comment-item__author"
+            name={item.authorName}
+            roleCode={item.authorRoleCode}
+          />
           <time className="comment-item__date" dateTime={item.createdAt}>
             {formatDateTime(item.createdAt)}
           </time>
@@ -313,7 +318,11 @@ export function PostDetailPage() {
           ) : null}
           <h2 className="post-detail__title">{post.title}</h2>
           <p className="post-detail__meta">
-            <span className="post-detail__author">{post.authorName}</span>
+            <AuthorWithRole
+              className="post-detail__author"
+              name={post.authorName}
+              roleCode={post.authorRoleCode}
+            />
             <span className="post-detail__sep" aria-hidden>
               ·
             </span>
@@ -399,7 +408,11 @@ export function PostDetailPage() {
           <form ref={commentFormRef} onSubmit={handleComment} className="post-detail__comment-form">
             {replyTarget ? (
               <div className="post-detail__replying">
-                <span>{t('replyingTo', { name: replyTarget.authorName || '—' })}</span>
+                <span>
+                  {t('replyingTo', {
+                    name: `${getRoleEmoji(replyTarget.authorRoleCode)} ${replyTarget.authorName || '—'}`.trim(),
+                  })}
+                </span>
                 <button
                   type="button"
                   className="btn btn--secondary btn--sm"

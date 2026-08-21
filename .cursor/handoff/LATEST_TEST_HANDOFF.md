@@ -1,17 +1,29 @@
-﻿# Test handoff — Pin pickers locks target reps
+﻿# Test handoff — Author role emoji badges
 
 ## Summary
-세부 피커 고정 시 기본목표횟수까지 잠금 (간격·하나더·버텨와 동일).
+게시글·댓글·대댓글 작성자 이름 옆에 권한 등급을 **이모지만** 표시합니다 (텍스트 등급명 없음).
 
-## Test focus
-1. 홈/기록 음성카운트 → 세부 피커 고정 ON
-2. 목표횟수 스크롤 불가
-3. 고정 OFF → 조절 가능
+매핑: 🧑‍🌾 게스트 · ⚔️ 회원 · 🔱 프리미엄 · 👑 VIP · 🧙 트레이너 · 🏰 오너 · 🔮 관리자
+
+## Git
+- branch: `main`
+- commit: pending (push 후 갱신)
+
+## Changed surfaces
+- Free board list/detail + comments/replies
+- Photo board list/detail + comments/replies
+- Machine request list/detail + comments
+- Machine showcase detail + comments
+- Template share hub/detail + comments
 
 ## Fast checks
-```
-rg -n "lock every picker including" frontend/src/components/recommendation/VoiceCoachPickerGrid/VoiceCoachPickerGrid.tsx
-```
+- `shared/src/constants/roles.ts` has `ROLE_EMOJI`
+- `frontend/src/components/common/AuthorWithRole.tsx` uses `getRoleEmoji`
+- types expose `authorRoleCode`
 
-## Deploy note
-Frontend only (Pages).
+## As-is → To-be
+- **As-is:** 작성자 이름만 표시
+- **To-be:** `⚔️ Alice` 형태로 이모지 + 이름만 (등급 텍스트 없음)
+
+## Deploy
+Frontend Pages + Render (backend/shared changed)

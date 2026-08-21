@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MACHINE_REQUEST_UNKNOWN_VALUE, type MachineRequest } from '@machinefit/shared';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { Icon } from '@/components/icons/Icon';
 import { ROUTES } from '@/constants/routes';
 import { resolveMachineRequestMediaUrl } from '@/utils/machineRequestMediaUrl';
@@ -66,7 +67,11 @@ export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestR
             <span className="board-index-row__title">{requestTitle(request, unknownLabel)}</span>
             <span className="board-index-row__request-sub">
               {request.authorName ? (
-                <span className="board-index-row__author">{request.authorName}</span>
+                <AuthorWithRole
+                  className="board-index-row__author"
+                  name={request.authorName}
+                  roleCode={request.authorRoleCode}
+                />
               ) : null}
               {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}
             </span>

@@ -53,6 +53,17 @@ export const ROLES = {
   admin: Role.ADMIN,
 } as const satisfies Record<RoleCode, RoleCode>;
 
+/** Role badge glyphs shown next to UGC author names. */
+export const ROLE_EMOJI = {
+  guest: '🧑‍🌾',
+  member: '⚔️',
+  premium_member: '🔱',
+  vip_member: '👑',
+  trainer: '🧙',
+  owner: '🏰',
+  admin: '🔮',
+} as const satisfies Record<RoleCode, string>;
+
 /** Roles an admin may assign in the admin UI / API (includes guest). */
 export const ASSIGNABLE_ROLE_CODES = ROLE_CODES;
 
@@ -71,6 +82,12 @@ export function isRoleCode(value: unknown): value is RoleCode {
 export function getRoleLevel(role: string | null | undefined): number {
   if (isRoleCode(role)) return ROLE_LEVEL[role];
   return ROLE_LEVEL[Role.GUEST];
+}
+
+/** Display-only: unknown roles fall back to member so UGC never renders a bare name. */
+export function getRoleEmoji(role: string | null | undefined): string {
+  if (isRoleCode(role)) return ROLE_EMOJI[role];
+  return ROLE_EMOJI[Role.MEMBER];
 }
 
 /**

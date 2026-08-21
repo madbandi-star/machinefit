@@ -6,6 +6,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { Icon } from '@/components/icons/Icon';
 import { photoBoardApi } from '@/api/photo-board.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -61,7 +62,11 @@ function PhotoCard({ post }: { post: PhotoPost }) {
       <div className="photo-card__body">
         <h3 className="photo-card__title">{post.title}</h3>
         <div className="photo-card__meta">
-          <span className="photo-card__author">{post.authorName ?? '—'}</span>
+          <AuthorWithRole
+            className="photo-card__author"
+            name={post.authorName}
+            roleCode={post.authorRoleCode}
+          />
           <span className="photo-card__stats">
             <span>♥ {post.likeCount}</span>
             <span>💬 {post.commentCount}</span>

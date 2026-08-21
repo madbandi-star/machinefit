@@ -12,9 +12,10 @@ import {
   Share2,
   Trash2,
 } from 'lucide-react';
-import { Role, hasMinRole, type PhotoPostComment } from '@machinefit/shared';
+import { Role, hasMinRole, getRoleEmoji, type PhotoPostComment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { photoBoardApi } from '@/api/photo-board.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { ROUTES } from '@/constants/routes';
@@ -223,7 +224,7 @@ export function PhotoPostDetailPage() {
         key={item.id}
       >
         <div className="photo-comment__meta">
-          <strong>{item.authorName || '—'}</strong>
+          <AuthorWithRole as="strong" name={item.authorName} roleCode={item.authorRoleCode} />
           <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
         </div>
         {isEditing ? (
@@ -391,7 +392,7 @@ export function PhotoPostDetailPage() {
               to={`${ROUTES.PHOTO_BOARD}?authorId=${post.userId}`}
               className="photo-detail__author"
             >
-              {post.authorName || '—'}
+              <AuthorWithRole name={post.authorName} roleCode={post.authorRoleCode} />
             </Link>
             <span className="photo-detail__sep" aria-hidden>
               ·
@@ -516,7 +517,11 @@ export function PhotoPostDetailPage() {
           >
             {replyTarget ? (
               <div className="photo-detail__replying">
-                <span>{t('replyingTo', { name: replyTarget.authorName || '—' })}</span>
+                <span>
+                  {t('replyingTo', {
+                    name: `${getRoleEmoji(replyTarget.authorRoleCode)} ${replyTarget.authorName || '—'}`.trim(),
+                  })}
+                </span>
                 <button type="button" className="photo-comment__action" onClick={() => setReplyTo(null)}>
                   {t('cancel')}
                 </button>

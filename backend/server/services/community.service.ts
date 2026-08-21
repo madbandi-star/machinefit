@@ -86,7 +86,8 @@ export const communityService = {
     const post = await communityRepository.createPost(
       userId,
       user?.displayName ?? 'User',
-      input
+      input,
+      user?.roleCode
     );
     awardPointsSafe({
       userId,
@@ -109,7 +110,8 @@ export const communityService = {
       postId,
       userId,
       user?.displayName ?? 'User',
-      input
+      input,
+      user?.roleCode
     );
     awardPointsSafe({
       userId,
@@ -188,7 +190,8 @@ export const communityService = {
       requestId,
       userId,
       user?.displayName ?? 'User',
-      input
+      input,
+      user?.roleCode
     );
     if (result.authorId && result.authorId !== userId) {
       const isReply = Boolean(input.parentId);
@@ -282,7 +285,8 @@ export const communityService = {
       userId,
       user?.displayName ?? 'User',
       input,
-      processed
+      processed,
+      user?.roleCode
     );
   },
 

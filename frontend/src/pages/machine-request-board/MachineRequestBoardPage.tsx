@@ -10,6 +10,7 @@ import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { Icon } from '@/components/icons/Icon';
 import { machineRequestApi } from '@/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -80,7 +81,11 @@ function RequestCard({ request }: { request: MachineRequest }) {
         <span className="photo-card__brand">{brand}</span>
         <h3 className="photo-card__title">{machine}</h3>
         <div className="photo-card__meta">
-          <span className="photo-card__author">{request.authorName ?? '—'}</span>
+          <AuthorWithRole
+            className="photo-card__author"
+            name={request.authorName}
+            roleCode={request.authorRoleCode}
+          />
         </div>
       </div>
     </Link>

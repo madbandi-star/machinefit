@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import {
   hasMinRole,
+  isRoleCode,
   Role,
   type CreatePhotoCommentInput,
   type CreatePhotoPostInput,
@@ -50,6 +51,7 @@ type PostRow = {
   comment_count: number;
   is_hidden: boolean;
   display_name: string | null;
+  role_code: string | null;
   created_at: string;
   updated_at: string;
   liked_by_me?: boolean | null;
@@ -79,6 +81,7 @@ function mapPost(row: PostRow, tags: string[], cover?: PhotoPostImageMeta, image
     commentCount: row.comment_count,
     isHidden: row.is_hidden,
     authorName: row.display_name ?? undefined,
+    authorRoleCode: isRoleCode(row.role_code) ? row.role_code : undefined,
     tags,
     coverImage: cover,
     images,
@@ -298,10 +301,11 @@ export const photoBoardRepository = {
       ),
       pool.query<PostRow>(
         `SELECT p.id, p.user_id, p.title, p.content, p.view_count, p.like_count, p.comment_count,
-                p.is_hidden, p.created_at, p.updated_at, u.display_name
+                p.is_hidden, p.created_at, p.updated_at, u.display_name, r.code AS role_code
                 ${likedSelect}
          FROM photo_posts p
          JOIN users u ON u.id = p.user_id
+         JOIN roles r ON r.id = u.role_id
          ${where}
          ORDER BY ${sortSql(query.sort)}
          LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
@@ -340,7 +344,7 @@ export const photoBoardRepository = {
 
     const postResult = await pool.query<PostRow>(
       `SELECT p.id, p.user_id, p.title, p.content, p.view_count, p.like_count, p.comment_count,
-              p.is_hidden, p.created_at, p.updated_at, u.display_name,
+              p.is_hidden, p.created_at, p.updated_at, u.display_name, r.code AS role_code,
               ${
                 viewerId
                   ? `EXISTS (
@@ -351,6 +355,7 @@ export const photoBoardRepository = {
               }
        FROM photo_posts p
        JOIN users u ON u.id = p.user_id
+       JOIN roles r ON r.id = u.role_id
        WHERE p.id = $1 AND p.is_hidden = FALSE`,
       viewerId ? [postId, viewerId] : [postId]
     );
@@ -374,13 +379,15 @@ export const photoBoardRepository = {
         content: string;
         is_hidden: boolean;
         display_name: string | null;
+        role_code: string | null;
         created_at: string;
         updated_at: string;
       }>(
         `SELECT c.id, c.post_id, c.user_id, c.parent_id, c.content, c.is_hidden,
-                c.created_at, c.updated_at, u.display_name
+                c.created_at, c.updated_at, u.display_name, r.code AS role_code
          FROM photo_post_comments c
          JOIN users u ON u.id = c.user_id
+         JOIN roles r ON r.id = u.role_id
          WHERE c.post_id = $1 AND c.is_hidden = FALSE
          ORDER BY c.created_at ASC`,
         [postId]
@@ -396,6 +403,7 @@ export const photoBoardRepository = {
       content: c.content,
       isHidden: c.is_hidden,
       authorName: c.display_name ?? undefined,
+      authorRoleCode: isRoleCode(c.role_code) ? c.role_code : undefined,
       createdAt: c.created_at,
       updatedAt: c.updated_at,
     }));
@@ -782,15 +790,17 @@ export const photoBoardRepository = {
       created_at: string;
       updated_at: string;
       display_name: string | null;
+      role_code: string | null;
     }>(
       `WITH inserted AS (
          INSERT INTO photo_post_comments (post_id, user_id, parent_id, content)
          VALUES ($1, $2, $3, $4)
          RETURNING *
        )
-       SELECT i.*, u.display_name
+       SELECT i.*, u.display_name, r.code AS role_code
        FROM inserted i
-       JOIN users u ON u.id = i.user_id`,
+       JOIN users u ON u.id = i.user_id
+       JOIN roles r ON r.id = u.role_id`,
       [postId, userId, parentId, input.content]
     );
     await pool.query(`UPDATE photo_posts SET comment_count = comment_count + 1 WHERE id = $1`, [
@@ -806,6 +816,7 @@ export const photoBoardRepository = {
         content: row.content,
         isHidden: row.is_hidden,
         authorName: row.display_name ?? undefined,
+        authorRoleCode: isRoleCode(row.role_code) ? row.role_code : undefined,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       } satisfies PhotoPostComment,
@@ -844,7 +855,12 @@ export const photoBoardRepository = {
     const result = await pool.query(
       `UPDATE photo_post_comments SET content = $1 WHERE id = $2
        RETURNING *,
-         (SELECT display_name FROM users WHERE id = photo_post_comments.user_id) AS display_name`,
+         (SELECT display_name FROM users WHERE id = photo_post_comments.user_id) AS display_name,
+         (
+           SELECT r.code FROM users u
+           JOIN roles r ON r.id = u.role_id
+           WHERE u.id = photo_post_comments.user_id
+         ) AS role_code`,
       [input.content, commentId]
     );
     const updated = result.rows[0];
@@ -856,6 +872,7 @@ export const photoBoardRepository = {
       content: updated.content,
       isHidden: updated.is_hidden,
       authorName: updated.display_name ?? undefined,
+      authorRoleCode: isRoleCode(updated.role_code) ? updated.role_code : undefined,
       createdAt: updated.created_at,
       updatedAt: updated.updated_at,
     };

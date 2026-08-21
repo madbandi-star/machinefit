@@ -1,4 +1,4 @@
-import type { BoardType, ReportStatus } from './api.types.js';
+import type { BoardType, ReportStatus, RoleCode } from './api.types.js';
 
 export interface Post {
   id: string;
@@ -13,6 +13,7 @@ export interface Post {
   likeCount?: number;
   commentCount?: number;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +26,7 @@ export interface Comment {
   content: string;
   isHidden: boolean;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   createdAt: string;
   updatedAt: string;
 }
@@ -61,6 +63,7 @@ export interface MachineRequestComment {
   content: string;
   isHidden: boolean;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   createdAt: string;
   updatedAt: string;
 }
@@ -77,6 +80,7 @@ export interface MachineRequest {
   linkedMachineId?: string;
   linkedMachineCode?: string | null;
   authorName?: string;
+  authorRoleCode?: RoleCode;
   commercialUseConsent?: boolean;
   gymChoiceMode?: MachineRequestGymChoiceMode;
   gymName?: string | null;

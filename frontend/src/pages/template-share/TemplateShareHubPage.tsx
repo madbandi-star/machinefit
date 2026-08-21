@@ -11,6 +11,7 @@ import { QueryErrorMessage } from '@/components/feedback/QueryErrorMessage/Query
 import { Pagination } from '@/components/feedback/Pagination/Pagination';
 import { Icon } from '@/components/icons/Icon';
 import { CommunityBottomBanner } from '@/components/community/CommunityBottomBanner';
+import { AuthorWithRole } from '@/components/common/AuthorWithRole';
 import { templateShareApi } from '@/api/template-share.api';
 import { ROUTES } from '@/constants/routes';
 import '@/styles/components.css';
@@ -196,7 +197,7 @@ export function TemplateShareHubPage() {
                       <div className="tpl-share-card__body">
                         <h3 className="tpl-share-card__title">{item.title}</h3>
                         <p className="tpl-share-card__meta">
-                          <span>{item.authorName || '—'}</span>
+                          <AuthorWithRole name={item.authorName} roleCode={item.authorRoleCode} />
                           <span aria-hidden>·</span>
                           <span>{t(`templateShare.difficulty.${item.difficulty}`)}</span>
                           <span aria-hidden>·</span>
