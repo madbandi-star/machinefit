@@ -3,7 +3,7 @@
   "summary": "STD_ASSISTED_PULLUP_DIP 공통·브랜드 표시명을 「어시스트 풀업 / 딥」→「어시스트 풀업」(en: Assisted Pull-Up)으로 변경. 근육군 back 유지. 프로덕션에 migration 186 적용 완료.",
   "git": {
     "branch": "main",
-    "commit": "(pending)"
+    "commit": "f321a4db487c3f89f6e611446c03ef597a0cde9a"
   },
   "changedFiles": [
     "database/migrations/186_rename_assisted_pullup.sql",

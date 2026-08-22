@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: (pending)
+- commit: `f321a4db487c3f89f6e611446c03ef597a0cde9a`
 
 ## Changed files
 - `database/migrations/186_rename_assisted_pullup.sql`
