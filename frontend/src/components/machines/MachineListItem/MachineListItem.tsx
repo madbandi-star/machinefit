@@ -15,10 +15,7 @@ import {
   stripBrandFromMachineName,
 } from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
-import {
-  StandardMachineImageBadge,
-  StandardMachineImageCaption,
-} from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
 import {
   isStandardMachineImageUrl,
   machinePlaceholderUrl,
@@ -191,7 +188,6 @@ export function MachineListItem({
             <span className="machine-list-item__planned-badge">{t('history.planAlreadyAdded')}</span>
           ) : null}
         </p>
-        {showStandardImageBadge ? <StandardMachineImageCaption /> : null}
         {showAllFreeWeightMuscles ? (
           <div className="machine-list-item__muscle-list" aria-label={t('targetMuscleLabel')}>
             {MUSCLE_GROUPS.map((group) => (

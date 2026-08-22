@@ -19,9 +19,10 @@
   "notFound": "Machine not found",
   "error": "Error",
   "images": {
-    "standardBadge": "Common",
+    "standardBadge": "Common · may differ from real unit",
     "standardHint": "Shared catalog photo for this machine type — may differ from this brand’s unit.",
     "standardCaption": "Common photo · may differ from the real unit",
+    "standardOnboardingEyebrow": "Common",
     "standardOnboardingTitle": "About common machine photos",
     "standardOnboardingBody": "This photo is a shared catalog image for the machine type. It may look different from the unit at your gym.",
     "standardOnboardingConfirm": "Got it"

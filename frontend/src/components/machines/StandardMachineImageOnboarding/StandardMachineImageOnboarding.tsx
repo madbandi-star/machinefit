@@ -31,7 +31,7 @@ export function StandardMachineImageOnboarding() {
         aria-labelledby="std-machine-image-onboarding-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="std-machine-image-onboarding__eyebrow">{t('images.standardBadge')}</p>
+        <p className="std-machine-image-onboarding__eyebrow">{t('images.standardOnboardingEyebrow')}</p>
         <h2 id="std-machine-image-onboarding-title" className="std-machine-image-onboarding__title">
           {t('images.standardOnboardingTitle')}
         </h2>

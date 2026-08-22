@@ -1,18 +1,13 @@
 ﻿{
-  "title": "Standard image caption + first-time onboarding",
-  "summary": "Always-visible caption under common-photo thumbs (공통 사진 · 실물과 다를 수 있음). First time a standard photo appears, show a one-time bottom dialog; dismiss stores machinefit.seenStandardImageHint.",
+  "title": "Merge common-photo caption into thumb badge",
+  "summary": "External caption removed. Thumb bottom bar now shows full text e.g. 공통 · 실물과 다를 수 있음.",
   "git": {
     "branch": "main",
-    "commit": "3e2b0317de2c0bc2de66466711b75fe7d28091a1"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/utils/standardMachineImageOnboarding.ts",
-    "frontend/src/utils/standardMachineImageOnboarding.test.ts",
     "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.tsx",
     "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.css",
-    "frontend/src/components/machines/StandardMachineImageOnboarding/StandardMachineImageOnboarding.tsx",
-    "frontend/src/components/machines/StandardMachineImageOnboarding/StandardMachineImageOnboarding.css",
-    "frontend/src/app/providers/AppProviders.tsx",
     "frontend/src/components/home/MachineMiniCard/MachineMiniCard.tsx",
     "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
@@ -23,20 +18,17 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Clear localStorage key machinefit.seenStandardImageHint → open home/search with standard photo → dialog once",
-    "Caption visible under thumbs without long-press",
-    "Confirm dismiss → dialog never returns"
+    "Standard-image thumbs show bottom bar text 공통 · 실물과 다를 수 있음",
+    "No separate caption line under/outside the thumb"
   ],
-  "fastChecks": [
-    "cd frontend && npx vitest run src/utils/standardMachineImageOnboarding.test.ts src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
-  ],
+  "fastChecks": [],
   "productionChecks": [
-    "After Pages deploy: first visit shows onboarding; caption always on standard thumbs"
+    "After Pages deploy: home/favorites/records/search thumbs"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backend": "not required"
   },
-  "asIs": "Badge only; tooltip needed long-press",
-  "toBe": "Always-visible caption + one-time onboarding dialog"
+  "asIs": "Badge said 공통; caption was outside the image",
+  "toBe": "Full notice inside image bottom badge bar"
 }

@@ -1,48 +1,27 @@
 .std-machine-image-badge {
   position: absolute;
-  left: 0.28rem;
-  bottom: 0.28rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
-  max-width: calc(100% - 0.56rem);
-  padding: 0.12rem 0.28rem;
-  border-radius: 4px;
+  max-width: none;
+  padding: 0.22rem 0.35rem;
+  border-radius: 0;
   font-size: 0.625rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  text-align: center;
   color: #fff;
-  background: color-mix(in srgb, #111 72%, transparent);
+  background: color-mix(in srgb, #111 78%, transparent);
   backdrop-filter: blur(4px);
   pointer-events: none;
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.std-machine-image-caption {
-  margin: 0.2rem 0 0;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
-  color: var(--color-text-muted, #8b919c);
-}
-
-.machine-mini-card__thumb + .std-machine-image-caption {
-  margin: 0 0 0.28rem;
-  max-width: 8.5rem;
-}
-
-.favorite-row__main .std-machine-image-caption {
-  margin: 0.05rem 0 0.1rem;
-}
-
-.machine-list-item__body .std-machine-image-caption {
-  margin: 0.15rem 0 0;
-}
-
-.history-record-card__hero-aside .std-machine-image-caption {
-  margin: 0.15rem 0 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: keep-all;
 }
 
 /* Ensure absolute badge anchors on known thumbs */
@@ -54,12 +33,20 @@
 }
 
 .machine-mini-card__thumb .std-machine-image-badge,
-.favorite-row__thumb .std-machine-image-badge {
-  font-size: 0.5625rem;
-  padding: 0.08rem 0.22rem;
+.favorite-row__thumb .std-machine-image-badge,
+.machine-list-item__thumb .std-machine-image-badge {
+  font-size: 0.5rem;
+  padding: 0.14rem 0.22rem;
+  letter-spacing: -0.04em;
 }
 
-.favorite-row__thumb .std-machine-image-badge {
-  left: 0.18rem;
-  bottom: 0.18rem;
+.history-record-card__thumb .std-machine-image-badge {
+  font-size: 0.5625rem;
+  padding: 0.18rem 0.28rem;
+}
+
+/* Keep detail cue above the badge bar when present */
+.history-record-card__thumb:has(.std-machine-image-badge) .history-record-card__thumb-cue,
+.history-page-premium .history-record-card__thumb:has(.std-machine-image-badge) .history-record-card__thumb-cue {
+  bottom: 1.55rem;
 }

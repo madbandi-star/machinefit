@@ -19,9 +19,10 @@
   "notFound": "머신을 찾을 수 없습니다",
   "error": "오류",
   "images": {
-    "standardBadge": "공통",
+    "standardBadge": "공통 · 실물과 다를 수 있음",
     "standardHint": "공통 유형 사진입니다. 브랜드 실물과 다를 수 있어요.",
     "standardCaption": "공통 사진 · 실물과 다를 수 있음",
+    "standardOnboardingEyebrow": "공통",
     "standardOnboardingTitle": "공통 유형 사진 안내",
     "standardOnboardingBody": "표시된 사진은 브랜드 공통 유형 이미지입니다. 헬스장에 있는 실물과 생김새가 다를 수 있어요.",
     "standardOnboardingConfirm": "확인"
