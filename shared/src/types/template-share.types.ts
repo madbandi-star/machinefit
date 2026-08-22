@@ -28,6 +28,8 @@ export interface TemplateShareListItem {
   authorUserId: string;
   authorName: string;
   authorRoleCode?: RoleCode;
+  /** MEMBER 헬창력 balance for badge emoji (hidden in UI). */
+  authorHellpowerScore?: number;
   status: TemplateShareStatus;
   viewCount: number;
   downloadCount: number;
@@ -66,6 +68,7 @@ export interface TemplateShareComment {
   userId: string;
   authorName: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   content: string;
   createdAt: string;
   updatedAt: string;

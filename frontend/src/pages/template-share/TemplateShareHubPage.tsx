@@ -197,7 +197,11 @@ export function TemplateShareHubPage() {
                       <div className="tpl-share-card__body">
                         <h3 className="tpl-share-card__title">{item.title}</h3>
                         <p className="tpl-share-card__meta">
-                          <AuthorWithRole name={item.authorName} roleCode={item.authorRoleCode} />
+                          <AuthorWithRole
+                            name={item.authorName}
+                            roleCode={item.authorRoleCode}
+                            hellpowerScore={item.authorHellpowerScore}
+                          />
                           <span aria-hidden>·</span>
                           <span>{t(`templateShare.difficulty.${item.difficulty}`)}</span>
                           <span aria-hidden>·</span>

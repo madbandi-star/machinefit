@@ -12,7 +12,7 @@ import {
   Share2,
   Trash2,
 } from 'lucide-react';
-import { Role, hasMinRole, getRoleEmoji, type PhotoPostComment } from '@machinefit/shared';
+import { Role, hasMinRole, getAuthorBadgeEmoji, type PhotoPostComment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { AuthorWithRole } from '@/components/common/AuthorWithRole';
@@ -224,7 +224,12 @@ export function PhotoPostDetailPage() {
         key={item.id}
       >
         <div className="photo-comment__meta">
-          <AuthorWithRole as="strong" name={item.authorName} roleCode={item.authorRoleCode} />
+          <AuthorWithRole
+            as="strong"
+            name={item.authorName}
+            roleCode={item.authorRoleCode}
+            hellpowerScore={item.authorHellpowerScore}
+          />
           <time dateTime={item.createdAt}>{formatDateTime(item.createdAt)}</time>
         </div>
         {isEditing ? (
@@ -392,7 +397,11 @@ export function PhotoPostDetailPage() {
               to={`${ROUTES.PHOTO_BOARD}?authorId=${post.userId}`}
               className="photo-detail__author"
             >
-              <AuthorWithRole name={post.authorName} roleCode={post.authorRoleCode} />
+              <AuthorWithRole
+                name={post.authorName}
+                roleCode={post.authorRoleCode}
+                hellpowerScore={post.authorHellpowerScore}
+              />
             </Link>
             <span className="photo-detail__sep" aria-hidden>
               ·
@@ -519,7 +528,7 @@ export function PhotoPostDetailPage() {
               <div className="photo-detail__replying">
                 <span>
                   {t('replyingTo', {
-                    name: `${getRoleEmoji(replyTarget.authorRoleCode)} ${replyTarget.authorName || '—'}`.trim(),
+                    name: `${replyTarget.authorName || '—'} ${getAuthorBadgeEmoji(replyTarget.authorRoleCode, replyTarget.authorHellpowerScore)}`.trim(),
                   })}
                 </span>
                 <button type="button" className="photo-comment__action" onClick={() => setReplyTo(null)}>

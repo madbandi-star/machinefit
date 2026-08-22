@@ -1,0 +1,73 @@
+.author-with-role {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  max-width: 100%;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.author-with-role__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.author-with-role__badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1em;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.author-with-role__badge:hover,
+.author-with-role__badge:focus-visible,
+.author-with-role__badge.is-open {
+  transform: scale(1.12);
+  outline: none;
+  background: color-mix(in srgb, var(--color-text, #111) 8%, transparent);
+}
+
+.author-with-role__badge--static {
+  cursor: default;
+  pointer-events: none;
+}
+
+.author-with-role__popover {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 40;
+  min-width: 9.5rem;
+  max-width: min(16rem, calc(100vw - 1.5rem));
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.55rem;
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #111);
+  border: 1px solid color-mix(in srgb, var(--color-text, #111) 12%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, #000 18%, transparent);
+  white-space: normal;
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.author-with-role__popover-title {
+  font-weight: 650;
+}
+
+.author-with-role__popover-meta {
+  color: var(--color-text-muted, #666);
+}

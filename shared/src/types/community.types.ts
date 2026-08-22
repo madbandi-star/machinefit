@@ -14,6 +14,8 @@ export interface Post {
   commentCount?: number;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  /** MEMBER 헬창력 balance for badge emoji (hidden in UI). */
+  authorHellpowerScore?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -27,6 +29,7 @@ export interface Comment {
   isHidden: boolean;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -64,6 +67,7 @@ export interface MachineRequestComment {
   isHidden: boolean;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -81,6 +85,7 @@ export interface MachineRequest {
   linkedMachineCode?: string | null;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   commercialUseConsent?: boolean;
   gymChoiceMode?: MachineRequestGymChoiceMode;
   gymName?: string | null;

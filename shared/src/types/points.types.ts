@@ -22,6 +22,18 @@ export interface UserPointsSummary {
   lifetimeEarned: number;
   lifetimeSpent: number;
   updatedAt: string;
+  /** MEMBER 헬창력 ladder snapshot (omitted / null for non-members). */
+  hellpower?: HellpowerSummary | null;
+}
+
+export interface HellpowerSummary {
+  level: number;
+  title: string;
+  emoji: string;
+  /** Top percentile among active MEMBER balances (1–100); null if unavailable. */
+  topPercent: number | null;
+  /** Points needed for next level; null at max. */
+  pointsToNext: number | null;
 }
 
 export interface PointTransaction {

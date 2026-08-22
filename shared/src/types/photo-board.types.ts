@@ -24,6 +24,8 @@ export interface PhotoPost {
   isHidden: boolean;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  /** MEMBER 헬창력 balance for badge emoji (hidden in UI). */
+  authorHellpowerScore?: number;
   tags: string[];
   coverImage?: PhotoPostImageMeta;
   images?: PhotoPostImageMeta[];
@@ -41,6 +43,7 @@ export interface PhotoPostComment {
   isHidden: boolean;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -26,6 +26,16 @@ export async function getMyLedger(req: Request, res: Response): Promise<void> {
   res.json({ success: true, data: { items, limit: query.limit, offset: query.offset } });
 }
 
+/** Ladder + percentile for a given 헬창력 score (author badge popover). */
+export async function getHellpowerLookup(req: Request, res: Response): Promise<void> {
+  const score = Number(req.query.score ?? 0);
+  if (!Number.isFinite(score) || score < 0) {
+    throw new AppError(400, 'VALIDATION_ERROR', 'score must be a non-negative number');
+  }
+  const data = await pointsService.hellpowerLookup(score);
+  res.json({ success: true, data });
+}
+
 export async function trackClientAction(req: Request, res: Response): Promise<void> {
   if (!req.user) throw new AppError(401, 'UNAUTHORIZED', 'Authentication required');
   const body = pointClientTrackSchema.parse(req.body);

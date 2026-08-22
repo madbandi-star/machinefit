@@ -81,6 +81,7 @@ function mapPublicMachineRequest(
     linkedMachineCode: (r.linked_machine_code as string | null | undefined) ?? null,
     authorName: (r.author_name as string | null | undefined) ?? undefined,
     authorRoleCode: isRoleCode(r.author_role_code) ? r.author_role_code : undefined,
+    authorHellpowerScore: Number(r.author_hellpower_score ?? 0),
     gymChoiceMode: ((r.gym_choice_mode as string | null | undefined) ??
       'unknown') as MachineRequest['gymChoiceMode'],
     gymName: (r.gym_name as string | null | undefined) ?? null,
@@ -161,6 +162,7 @@ export const communityRepository = {
       view_count: number;
       display_name: string;
       role_code: string | null;
+      hellpower_score: number;
       like_count: string;
       comment_count: string;
       created_at: string;
@@ -169,11 +171,13 @@ export const communityRepository = {
       `SELECT p.id, p.user_id, p.board_type, p.title, p.content, p.language_code,
               p.is_pinned, p.is_hidden, p.view_count, p.created_at, p.updated_at,
               u.display_name, r.code AS role_code,
+              COALESCE(up.balance, 0)::int AS hellpower_score,
               COALESCE(lc.cnt, 0)::text AS like_count,
               COALESCE(cc.cnt, 0)::text AS comment_count
        FROM posts p
        JOIN users u ON u.id = p.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        LEFT JOIN (
          SELECT post_id, COUNT(*)::bigint AS cnt FROM likes GROUP BY post_id
        ) lc ON lc.post_id = p.id
@@ -206,6 +210,7 @@ export const communityRepository = {
       commentCount: parseInt(r.comment_count, 10),
       authorName: r.display_name,
       authorRoleCode: isRoleCode(r.role_code) ? r.role_code : undefined,
+      authorHellpowerScore: Number(r.hellpower_score ?? 0),
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     }));
@@ -227,11 +232,13 @@ export const communityRepository = {
 
     const result = await pool.query(
       `SELECT p.*, u.display_name, r.code AS role_code,
+        COALESCE(up.balance, 0)::int AS hellpower_score,
         (SELECT COUNT(*)::text FROM likes l WHERE l.post_id = p.id) AS like_count,
         (SELECT COUNT(*)::text FROM comments c WHERE c.post_id = p.id AND c.is_hidden = FALSE) AS comment_count
        FROM posts p
        JOIN users u ON u.id = p.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        WHERE p.id = $1 AND p.is_hidden = FALSE`,
       [postId]
     );
@@ -252,6 +259,7 @@ export const communityRepository = {
       commentCount: parseInt(r.comment_count, 10),
       authorName: r.display_name,
       authorRoleCode: isRoleCode(r.role_code) ? r.role_code : undefined,
+      authorHellpowerScore: Number(r.hellpower_score ?? 0),
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     };
@@ -261,7 +269,8 @@ export const communityRepository = {
     userId: string,
     authorName: string,
     input: CreatePostInput,
-    authorRoleCode?: RoleCode
+    authorRoleCode?: RoleCode,
+    authorHellpowerScore?: number
   ): Promise<Post> {
     const pool = getPool();
     const now = new Date().toISOString();
@@ -280,6 +289,7 @@ export const communityRepository = {
         commentCount: 0,
         authorName,
         authorRoleCode,
+        authorHellpowerScore,
         createdAt: now,
         updatedAt: now,
       };
@@ -307,6 +317,7 @@ export const communityRepository = {
       commentCount: 0,
       authorName,
       authorRoleCode,
+      authorHellpowerScore,
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     };
@@ -355,9 +366,12 @@ export const communityRepository = {
       return mockComments.filter((c) => c.postId === postId && !c.isHidden);
     }
     const result = await pool.query(
-      `SELECT c.*, u.display_name AS author_name, r.code AS author_role_code FROM comments c
+      `SELECT c.*, u.display_name AS author_name, r.code AS author_role_code,
+              COALESCE(up.balance, 0)::int AS author_hellpower_score
+       FROM comments c
        JOIN users u ON u.id = c.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        WHERE c.post_id = $1 AND c.is_hidden = FALSE ORDER BY c.created_at ASC`,
       [postId]
     );
@@ -370,6 +384,7 @@ export const communityRepository = {
       isHidden: r.is_hidden,
       authorName: r.author_name,
       authorRoleCode: isRoleCode(r.author_role_code) ? r.author_role_code : undefined,
+      authorHellpowerScore: Number(r.author_hellpower_score ?? 0),
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     }));
@@ -380,7 +395,8 @@ export const communityRepository = {
     userId: string,
     authorName: string,
     input: CreateCommentInput,
-    authorRoleCode?: RoleCode
+    authorRoleCode?: RoleCode,
+    authorHellpowerScore?: number
   ): Promise<Comment> {
     const pool = getPool();
     const now = new Date().toISOString();
@@ -394,6 +410,7 @@ export const communityRepository = {
         isHidden: false,
         authorName,
         authorRoleCode,
+        authorHellpowerScore,
         createdAt: now,
         updatedAt: now,
       };
@@ -418,6 +435,7 @@ export const communityRepository = {
       isHidden: r.is_hidden,
       authorName,
       authorRoleCode,
+      authorHellpowerScore,
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     };
@@ -459,7 +477,11 @@ export const communityRepository = {
            SELECT r.code FROM users u
            JOIN roles r ON r.id = u.role_id
            WHERE u.id = comments.user_id
-         ) AS author_role_code`,
+         ) AS author_role_code,
+         (
+           SELECT COALESCE(up.balance, 0)::int FROM user_points up
+           WHERE up.user_id = comments.user_id
+         ) AS author_hellpower_score`,
       [input.content, commentId]
     );
     const r = result.rows[0];
@@ -472,6 +494,7 @@ export const communityRepository = {
       isHidden: r.is_hidden,
       authorName: r.author_name,
       authorRoleCode: isRoleCode(r.author_role_code) ? r.author_role_code : undefined,
+      authorHellpowerScore: Number(r.author_hellpower_score ?? 0),
       createdAt: r.created_at,
       updatedAt: r.updated_at,
     };
@@ -669,6 +692,7 @@ export const communityRepository = {
 
     const result = await pool.query(
       `SELECT mr.*, u.display_name AS author_name, r.code AS author_role_code,
+              COALESCE(up.balance, 0)::int AS author_hellpower_score,
               m.code AS linked_machine_code,
               (
                 SELECT i.id
@@ -686,6 +710,7 @@ export const communityRepository = {
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        LEFT JOIN machines m ON m.id = mr.linked_machine_id
        ${where}
        ORDER BY ${machineRequestSortSql(query.sort)}
@@ -747,6 +772,7 @@ export const communityRepository = {
 
     const requestResult = await pool.query(
       `SELECT mr.*, u.display_name AS author_name, r.code AS author_role_code,
+              COALESCE(up.balance, 0)::int AS author_hellpower_score,
               m.code AS linked_machine_code,
               ${
                 viewerId
@@ -764,6 +790,7 @@ export const communityRepository = {
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        LEFT JOIN machines m ON m.id = mr.linked_machine_id
        WHERE mr.id = $1
          AND (
@@ -792,14 +819,17 @@ export const communityRepository = {
         is_hidden: boolean;
         display_name: string | null;
         role_code: string | null;
+        hellpower_score: number;
         created_at: string;
         updated_at: string;
       }>(
         `SELECT c.id, c.request_id, c.user_id, c.parent_id, c.content, c.is_hidden,
-                c.created_at, c.updated_at, u.display_name, r.code AS role_code
+                c.created_at, c.updated_at, u.display_name, r.code AS role_code,
+                COALESCE(up.balance, 0)::int AS hellpower_score
          FROM machine_request_comments c
          JOIN users u ON u.id = c.user_id
          JOIN roles r ON r.id = u.role_id
+         LEFT JOIN user_points up ON up.user_id = u.id
          WHERE c.request_id = $1 AND c.is_hidden = FALSE
          ORDER BY c.created_at ASC`,
         [requestId]
@@ -816,6 +846,7 @@ export const communityRepository = {
       isHidden: c.is_hidden,
       authorName: c.display_name ?? undefined,
       authorRoleCode: isRoleCode(c.role_code) ? c.role_code : undefined,
+      authorHellpowerScore: Number(c.hellpower_score ?? 0),
       createdAt: c.created_at,
       updatedAt: c.updated_at,
     }));
@@ -892,7 +923,8 @@ export const communityRepository = {
     userId: string,
     authorName: string,
     input: CreateCommentInput,
-    authorRoleCode?: RoleCode
+    authorRoleCode?: RoleCode,
+    authorHellpowerScore?: number
   ) {
     const pool = getPool();
     if (!pool) {
@@ -908,6 +940,7 @@ export const communityRepository = {
         isHidden: false,
         authorName,
         authorRoleCode,
+        authorHellpowerScore,
         createdAt: now,
         updatedAt: now,
       };
@@ -942,16 +975,19 @@ export const communityRepository = {
       updated_at: string;
       display_name: string | null;
       role_code: string | null;
+      hellpower_score: number;
     }>(
       `WITH inserted AS (
          INSERT INTO machine_request_comments (request_id, user_id, parent_id, content)
          VALUES ($1, $2, $3, $4)
          RETURNING *
        )
-       SELECT i.*, u.display_name, r.code AS role_code
+       SELECT i.*, u.display_name, r.code AS role_code,
+              COALESCE(up.balance, 0)::int AS hellpower_score
        FROM inserted i
        JOIN users u ON u.id = i.user_id
-       JOIN roles r ON r.id = u.role_id`,
+       JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id`,
       [requestId, userId, input.parentId ?? null, input.content]
     );
     await pool.query(
@@ -969,6 +1005,7 @@ export const communityRepository = {
         isHidden: c.is_hidden,
         authorName: c.display_name ?? authorName,
         authorRoleCode: isRoleCode(c.role_code) ? c.role_code : authorRoleCode,
+        authorHellpowerScore: Number(c.hellpower_score ?? authorHellpowerScore ?? 0),
         createdAt: c.created_at,
         updatedAt: c.updated_at,
       } satisfies MachineRequestComment,
@@ -1023,7 +1060,8 @@ export const communityRepository = {
     authorName: string,
     input: CreateMachineRequestInput,
     images: ProcessedMachineRequestImage[],
-    authorRoleCode?: RoleCode
+    authorRoleCode?: RoleCode,
+    authorHellpowerScore?: number
   ): Promise<MachineRequest> {
     const pool = getPool();
     const now = new Date().toISOString();
@@ -1055,6 +1093,7 @@ export const communityRepository = {
         status: 'pending',
         authorName,
         authorRoleCode,
+        authorHellpowerScore,
         commercialUseConsent: true,
         gymChoiceMode: input.gymChoiceMode,
         gymName,
@@ -1125,6 +1164,7 @@ export const communityRepository = {
         status: r.status,
         authorName,
         authorRoleCode,
+        authorHellpowerScore,
         commercialUseConsent: true,
         gymChoiceMode: r.gym_choice_mode,
         gymName: r.gym_name,

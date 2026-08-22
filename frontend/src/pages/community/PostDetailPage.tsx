@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Role, hasMinRole, getRoleEmoji, type Comment } from '@machinefit/shared';
+import { Role, hasMinRole, getAuthorBadgeEmoji, type Comment } from '@machinefit/shared';
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { communityApi } from '@/api';
@@ -196,6 +196,7 @@ export function PostDetailPage() {
             className="comment-item__author"
             name={item.authorName}
             roleCode={item.authorRoleCode}
+            hellpowerScore={item.authorHellpowerScore}
           />
           <time className="comment-item__date" dateTime={item.createdAt}>
             {formatDateTime(item.createdAt)}
@@ -322,6 +323,7 @@ export function PostDetailPage() {
               className="post-detail__author"
               name={post.authorName}
               roleCode={post.authorRoleCode}
+              hellpowerScore={post.authorHellpowerScore}
             />
             <span className="post-detail__sep" aria-hidden>
               ·
@@ -410,7 +412,7 @@ export function PostDetailPage() {
               <div className="post-detail__replying">
                 <span>
                   {t('replyingTo', {
-                    name: `${getRoleEmoji(replyTarget.authorRoleCode)} ${replyTarget.authorName || '—'}`.trim(),
+                    name: `${replyTarget.authorName || '—'} ${getAuthorBadgeEmoji(replyTarget.authorRoleCode, replyTarget.authorHellpowerScore)}`.trim(),
                   })}
                 </span>
                 <button

@@ -172,6 +172,12 @@ export function MyPage() {
                   className="profile-card__email-value profile-card__power-link"
                   aria-busy={pointsBalanceLabel == null && !pointsQuery.isError ? true : undefined}
                 >
+                  {pointsQuery.data?.hellpower ? (
+                    <span className="profile-card__hellpower">
+                      <span aria-hidden="true">{pointsQuery.data.hellpower.emoji}</span>
+                      <span>{pointsQuery.data.hellpower.title}</span>
+                    </span>
+                  ) : null}
                   {pointsBalanceLabel == null && !pointsQuery.isError ? (
                     <span className="profile-card__power-skeleton" aria-hidden>
                       ···
@@ -182,6 +188,13 @@ export function MyPage() {
                       {t('points.unit')}
                     </>
                   )}
+                  {pointsQuery.data?.hellpower?.topPercent != null ? (
+                    <span className="profile-card__hellpower-meta">
+                      {t('points.hellpower.topPercent', {
+                        percent: pointsQuery.data.hellpower.topPercent,
+                      })}
+                    </span>
+                  ) : null}
                 </Link>
                 <PowerBox />
               </dd>

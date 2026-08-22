@@ -58,11 +58,24 @@
   border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
 }
 
-.points-hero__label,
-.points-hero__balance,
-.points-hero__lifetime {
+.points-hero__mark--emoji {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.points-hero__rank {
   position: relative;
-  margin: 0;
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.points-hero__meta {
+  position: relative;
+  margin: 0.35rem 0 0;
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
 }
 
 .points-hero__label {

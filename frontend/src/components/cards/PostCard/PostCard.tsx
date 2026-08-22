@@ -62,6 +62,7 @@ export function PostCard({ post, seq, showDelete, onDelete, isDeleting }: PostCa
             className="board-post-card__author"
             name={authorLabel(post)}
             roleCode={post.authorRoleCode}
+            hellpowerScore={post.authorHellpowerScore}
           />
           <time className="board-post-card__date" dateTime={post.createdAt}>
             {formatDate(post.createdAt)}

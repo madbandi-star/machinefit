@@ -273,7 +273,11 @@ export function MachineShowcaseDetailPage() {
               </div>
             )}
             <p className="showcase-detail__byline">
-              <AuthorWithRole name={post.authorName} roleCode={post.authorRoleCode} />
+              <AuthorWithRole
+                name={post.authorName}
+                roleCode={post.authorRoleCode}
+                hellpowerScore={post.authorHellpowerScore}
+              />
               <span aria-hidden>·</span>
               <time dateTime={post.createdAt}>
                 {formatPostedAt(post.createdAt, i18n.language)}
@@ -388,6 +392,7 @@ export function MachineShowcaseDetailPage() {
                         as="strong"
                         name={item.authorName}
                         roleCode={item.authorRoleCode}
+                        hellpowerScore={item.authorHellpowerScore}
                       />
                       <time dateTime={item.createdAt}>
                         {formatPostedAt(item.createdAt, i18n.language)}

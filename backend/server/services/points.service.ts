@@ -1,10 +1,14 @@
 import type {
+  HellpowerSummary,
   PointAwardResult,
   PointPolicy,
   PowerBoxClaimResult,
   PowerBoxStatus,
+  UserPointsSummary,
 } from '@machinefit/shared';
+import { getHellpowerLevel, Role } from '@machinefit/shared';
 import { pointsRepository } from '../repositories/points.repository.js';
+import { userRepository } from '../repositories/user.repository.js';
 import { logger } from '../utils/logger.js';
 import { AppError } from '../middlewares/error.middleware.js';
 
@@ -61,8 +65,29 @@ export const pointsService = {
     return pointsRepository.listPolicies();
   },
 
-  getSummary(userId: string) {
-    return pointsRepository.getSummary(userId);
+  /** Balance plus the MEMBER-only 헬창력 ladder snapshot (null for other roles). */
+  async getSummary(userId: string): Promise<UserPointsSummary> {
+    const [summary, user] = await Promise.all([
+      pointsRepository.getSummary(userId),
+      userRepository.findById(userId),
+    ]);
+    if (user?.roleCode !== Role.MEMBER) {
+      return { ...summary, hellpower: null };
+    }
+    return { ...summary, hellpower: await this.hellpowerLookup(summary.balance) };
+  },
+
+  /** Ladder + percentile for an arbitrary score (author badge popover). */
+  async hellpowerLookup(score: number): Promise<HellpowerSummary> {
+    const level = getHellpowerLevel(score);
+    const topPercent = await pointsRepository.getMemberTopPercent(score);
+    return {
+      level: level.level,
+      title: level.title,
+      emoji: level.emoji,
+      topPercent,
+      pointsToNext: level.pointsToNext,
+    };
   },
 
   listTransactions(userId: string, limit: number, offset: number) {

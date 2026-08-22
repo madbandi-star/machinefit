@@ -74,6 +74,7 @@ export function PointsPage() {
   const summary = summaryQuery.data;
   const balance = summary?.balance ?? 0;
   const earned = summary?.lifetimeEarned ?? 0;
+  const hellpower = summary?.hellpower ?? null;
   const hasHistory = items.length > 0;
   const hasQuery = debouncedQuery.trim().length > 0;
   const visibleCount = filteredItems.length;
@@ -83,14 +84,40 @@ export function PointsPage() {
       <div className="points-page">
         <header className="points-hero">
           <div className="points-hero__glow" aria-hidden />
-          <div className="points-hero__mark" aria-hidden>
-            <Icon name="flame" size={22} />
-          </div>
+          {hellpower ? (
+            <div className="points-hero__mark points-hero__mark--emoji" aria-hidden>
+              {hellpower.emoji}
+            </div>
+          ) : (
+            <div className="points-hero__mark" aria-hidden>
+              <Icon name="flame" size={22} />
+            </div>
+          )}
+          {hellpower ? (
+            <p className="points-hero__rank">
+              {t('points.hellpower.levelLabel', {
+                level: hellpower.level,
+                title: hellpower.title,
+              })}
+            </p>
+          ) : null}
           <p className="points-hero__label">{t('points.balanceLabel')}</p>
           <p className="points-hero__balance">
             <span className="points-hero__value">{balance.toLocaleString(locale)}</span>
             <span className="points-hero__unit">{unit}</span>
           </p>
+          {hellpower?.topPercent != null ? (
+            <p className="points-hero__meta">
+              {t('points.hellpower.topPercent', { percent: hellpower.topPercent })}
+            </p>
+          ) : null}
+          {hellpower?.pointsToNext != null ? (
+            <p className="points-hero__meta">
+              {t('points.hellpower.nextLevel', {
+                points: hellpower.pointsToNext.toLocaleString(locale),
+              })}
+            </p>
+          ) : null}
           <p className="points-hero__lifetime">
             {t('points.lifetime', { earned: earned.toLocaleString(locale) })}
           </p>

@@ -36,6 +36,7 @@ export interface AdminMachineRequestCommentPreview {
   requestId: string;
   authorName: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   content: string;
   createdAt: string;
 }
@@ -45,6 +46,8 @@ export interface AdminMachineRequestRequester {
   userId: string;
   authorName: string;
   authorRoleCode?: RoleCode;
+  /** MEMBER 헬창력 balance for badge emoji (hidden in UI). */
+  authorHellpowerScore?: number;
   description: string;
   gymChoiceMode?: MachineRequestGymChoiceMode;
   gymName?: string | null;

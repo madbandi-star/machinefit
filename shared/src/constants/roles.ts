@@ -53,11 +53,16 @@ export const ROLES = {
   admin: Role.ADMIN,
 } as const satisfies Record<RoleCode, RoleCode>;
 
-/** Role badge glyphs shown next to UGC author names. */
+/**
+ * Role badge glyphs next to UGC author names.
+ * MEMBER uses the 헬창력 30-level ladder (`getAuthorBadgeEmoji`) instead of this
+ * static glyph; `member` here is only a no-score fallback (🥚 = Lv1).
+ * Premium MUST stay ⚜️ — do not change.
+ */
 export const ROLE_EMOJI = {
   guest: '🧑‍🌾',
-  member: '⚔️',
-  premium_member: '🔱',
+  member: '🥚',
+  premium_member: '⚜️',
   vip_member: '👑',
   trainer: '🧙',
   owner: '🏰',

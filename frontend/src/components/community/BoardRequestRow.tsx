@@ -71,6 +71,7 @@ export function BoardRequestRow({ request, onWantThis, isVoting }: BoardRequestR
                   className="board-index-row__author"
                   name={request.authorName}
                   roleCode={request.authorRoleCode}
+                  hellpowerScore={request.authorHellpowerScore}
                 />
               ) : null}
               {gymLabel ? <span className="board-index-row__gym">{gymLabel}</span> : null}

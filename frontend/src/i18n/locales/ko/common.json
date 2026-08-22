@@ -2118,6 +2118,14 @@
     "emptySearch": "검색 결과가 없어요. 다른 단어로 다시 찾아 보세요.",
     "earnedToast": "+{{points}}Power 적립!",
     "unit": "Power",
+    "hellpower": {
+      "badgeAria": "헬창력 등급 {{title}}",
+      "roleBadgeAria": "권한 {{role}}",
+      "topPercent": "헬창력 상위 {{percent}}%",
+      "loadingRank": "순위 불러오는 중…",
+      "nextLevel": "다음 등급까지 {{points}}",
+      "levelLabel": "Lv.{{level}} {{title}}"
+    },
     "powerBox": {
       "openLabel": "파워박스 열기",
       "readyHint": "오늘 1회",

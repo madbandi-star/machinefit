@@ -1,5 +1,6 @@
 import type {
   AdminUserPointsDetail,
+  HellpowerSummary,
   PointAwardResult,
   PointClientTrackableAction,
   PointPolicy,
@@ -19,6 +20,10 @@ export const pointsApi = {
       '/points/me/ledger',
       { params }
     ),
+  hellpowerLookup: (score: number) =>
+    apiClient.get<ApiResponse<HellpowerSummary>>('/points/hellpower-lookup', {
+      params: { score },
+    }),
   track: (body: {
     actionCode: PointClientTrackableAction;
     referenceType?: string;

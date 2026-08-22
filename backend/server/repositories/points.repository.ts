@@ -192,6 +192,29 @@ export const pointsRepository = {
     };
   },
 
+  /**
+   * Top percentile of `score` among active MEMBER balances (1 = top 1%).
+   * Members without a `user_points` row count as balance 0.
+   * Returns null when there are no members to rank against.
+   */
+  async getMemberTopPercent(score: number): Promise<number | null> {
+    const pool = getPool();
+    if (!pool) return null;
+    const { rows } = await pool.query<{ total: string; above: string }>(
+      `SELECT COUNT(*)::text AS total,
+              COUNT(*) FILTER (WHERE COALESCE(up.balance, 0) > $1)::text AS above
+       FROM users u
+       JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
+       WHERE u.is_active = TRUE AND r.code = 'member'`,
+      [Math.max(0, Math.floor(Number(score) || 0))]
+    );
+    const total = Number(rows[0]?.total ?? 0);
+    if (!total) return null;
+    const above = Number(rows[0]?.above ?? 0);
+    return Math.max(1, Math.round((100 * above) / total));
+  },
+
   async listTransactions(
     userId: string,
     limit: number,

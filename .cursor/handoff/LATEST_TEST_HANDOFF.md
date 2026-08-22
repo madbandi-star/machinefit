@@ -1,30 +1,19 @@
-﻿# Test handoff — Author role emoji badges
+﻿# Test handoff — MEMBER 헬창력 30단 등급
 
 ## Summary
-게시글·댓글·대댓글 작성자 이름 옆에 권한 등급을 **이모지만** 표시합니다 (텍스트 등급명 없음).
+MEMBER 작성자만 헬창력 30단계 이모지를 이름 옆에 표시합니다. 클릭 시 칭호 + 상위% 팝오버. Premium은 **⚜️** 고정. 프로필/헬창력 페이지에 등급·점수·상위%·다음 등급을 표시합니다.
 
-매핑: 🧑‍🌾 게스트 · ⚔️ 회원 · 🔱 프리미엄 · 👑 VIP · 🧙 트레이너 · 🏰 오너 · 🔮 관리자
-
-## Git
-- branch: `main`
-- commit: `c948eb0d`
-
-## Changed surfaces
-- Free board list/detail + comments/replies
-- Photo board list/detail + comments/replies
-- Machine request list/detail + comments
-- Machine showcase detail + comments
-- Template share hub/detail + comments
+## Source of truth
+`shared/src/constants/hellpower-levels.ts` → `HELLPOWER_LEVELS` / `getHellpowerLevel` / `getAuthorBadgeEmoji`
 
 ## Fast checks
-- `shared/src/constants/roles.ts` has `ROLE_EMOJI`
-- `frontend/src/components/common/AuthorWithRole.tsx` uses `getRoleEmoji`
-- types expose `authorRoleCode`
+```bash
+npx tsx shared/src/constants/hellpower-levels.test.ts
+```
 
 ## As-is → To-be
-- **As-is:** 작성자 이름만 표시
-- **To-be:** `⚔️ Alice` 형태로 이모지 + 이름만 (등급 텍스트 없음)
+- **As-is:** member ⚔️, premium 🔱
+- **To-be:** member = 🥚…🌈 (점수 구간), premium = ⚜️, 게시판에 점수 숫자 숨김
 
 ## Deploy
-- Frontend Pages: success — https://github.com/madbandi-star/machinefit/actions/runs/32490596614
-- Backend Render: success — https://github.com/madbandi-star/machinefit/actions/runs/32490596179
+Frontend Pages + Render (shared/backend)

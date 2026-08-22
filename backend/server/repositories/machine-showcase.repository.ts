@@ -61,6 +61,7 @@ type PostRow = {
   updated_at: string;
   display_name: string | null;
   role_code: string | null;
+  hellpower_score: number | null;
   machine_code: string;
   machine_name: Record<string, string> | null;
   muscle_group: string | null;
@@ -115,6 +116,7 @@ function mapPost(row: PostRow, locale = 'ko', images?: MachineShowcaseImageMeta[
     userId: row.user_id,
     authorName: row.display_name ?? undefined,
     authorRoleCode: isRoleCode(row.role_code) ? row.role_code : undefined,
+    authorHellpowerScore: Number(row.hellpower_score ?? 0),
     machineId: row.machine_id,
     machineCode: row.machine_code,
     machineName:
@@ -148,6 +150,7 @@ const POST_FROM = `
   FROM machine_showcase_posts p
   JOIN users u ON u.id = p.user_id
   JOIN roles r ON r.id = u.role_id
+  LEFT JOIN user_points up ON up.user_id = u.id
   JOIN machines m ON m.id = p.machine_id
   LEFT JOIN brands b ON b.id = m.brand_id
   LEFT JOIN user_gyms ug ON ug.id = p.user_gym_id
@@ -169,6 +172,7 @@ const POST_SELECT = `
   p.view_count, p.like_count, p.comment_count, p.bookmark_count,
   p.created_at::text, p.updated_at::text,
   u.display_name, r.code AS role_code,
+  COALESCE(up.balance, 0)::int AS hellpower_score,
   m.code AS machine_code, m.name AS machine_name, m.muscle_group,
   b.code AS brand_code, b.name AS brand_name,
   ug.name AS user_gym_name,
@@ -386,14 +390,18 @@ export const machineShowcaseRepository = {
         content: string;
         display_name: string | null;
         role_code: string | null;
+        hellpower_score: number;
         created_at: string;
         updated_at: string;
       }>(
         `SELECT c.id::text, c.post_id::text, c.user_id::text, c.parent_id::text, c.content,
-                u.display_name, r.code AS role_code, c.created_at::text, c.updated_at::text
+                u.display_name, r.code AS role_code,
+                COALESCE(up.balance, 0)::int AS hellpower_score,
+                c.created_at::text, c.updated_at::text
          FROM machine_showcase_comments c
          JOIN users u ON u.id = c.user_id
          JOIN roles r ON r.id = u.role_id
+         LEFT JOIN user_points up ON up.user_id = u.id
          WHERE c.post_id = $1 AND c.deleted_at IS NULL AND c.is_hidden = FALSE
          ORDER BY c.created_at ASC`,
         [postId]
@@ -419,6 +427,7 @@ export const machineShowcaseRepository = {
       content: c.content,
       authorName: c.display_name ?? undefined,
       authorRoleCode: isRoleCode(c.role_code) ? c.role_code : undefined,
+      authorHellpowerScore: Number(c.hellpower_score ?? 0),
       createdAt: c.created_at,
       updatedAt: c.updated_at,
     }));
@@ -716,10 +725,16 @@ export const machineShowcaseRepository = {
       `UPDATE machine_showcase_posts SET comment_count = comment_count + 1 WHERE id = $1`,
       [postId]
     );
-    const name = await pool.query<{ display_name: string | null; role_code: string | null }>(
-      `SELECT u.display_name, r.code AS role_code
+    const name = await pool.query<{
+      display_name: string | null;
+      role_code: string | null;
+      hellpower_score: number;
+    }>(
+      `SELECT u.display_name, r.code AS role_code,
+              COALESCE(up.balance, 0)::int AS hellpower_score
        FROM users u
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        WHERE u.id = $1`,
       [userId]
     );
@@ -733,6 +748,7 @@ export const machineShowcaseRepository = {
       content: row.content,
       authorName: name.rows[0]?.display_name ?? undefined,
       authorRoleCode: isRoleCode(authorRoleCode) ? authorRoleCode : undefined,
+      authorHellpowerScore: Number(name.rows[0]?.hellpower_score ?? 0),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     } satisfies MachineShowcaseComment;

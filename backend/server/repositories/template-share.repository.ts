@@ -58,6 +58,7 @@ interface PostRow {
   updated_at: Date | string;
   author_name?: string | null;
   author_role_code?: string | null;
+  author_hellpower_score?: number | null;
   liked_by_me?: boolean | null;
   favorited_by_me?: boolean | null;
   downloaded_by_me?: boolean | null;
@@ -72,6 +73,7 @@ interface CommentRow {
   updated_at: Date | string;
   author_name?: string | null;
   author_role_code?: string | null;
+  author_hellpower_score?: number | null;
 }
 
 interface ReportRow {
@@ -88,7 +90,9 @@ interface ReportRow {
 
 const AUTHOR_NAME_SQL = `COALESCE(NULLIF(TRIM(u.display_name), ''), 'User')`;
 const AUTHOR_ROLE_SQL = `r.code`;
-const AUTHOR_ROLE_JOIN = `JOIN roles r ON r.id = u.role_id`;
+const AUTHOR_HELLPOWER_SQL = `COALESCE(up.balance, 0)::int`;
+const AUTHOR_JOIN = `JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id`;
 
 function toIso(value: Date | string): string {
   return typeof value === 'string' ? value : value.toISOString();
@@ -159,6 +163,7 @@ function mapListItem(row: PostRow): TemplateShareListItem {
     authorUserId: row.author_user_id,
     authorName: row.author_name?.trim() || 'User',
     authorRoleCode: isRoleCode(row.author_role_code) ? row.author_role_code : undefined,
+    authorHellpowerScore: Number(row.author_hellpower_score ?? 0),
     status: row.status as TemplateShareStatus,
     viewCount: toNum(row.view_count),
     downloadCount: toNum(row.download_count),
@@ -406,10 +411,11 @@ export const templateShareRepository = {
 
     const result = await pool.query<PostRow>(
       `SELECT p.*, ${AUTHOR_NAME_SQL} AS author_name,
-              ${AUTHOR_ROLE_SQL} AS author_role_code, ${flags.sql}
+              ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score, ${flags.sql}
        FROM template_share_posts p
        JOIN users u ON u.id = p.author_user_id
-       ${AUTHOR_ROLE_JOIN}
+       ${AUTHOR_JOIN}
        WHERE ${whereSql}
        ORDER BY ${sortSql(sort)}
        LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
@@ -437,10 +443,11 @@ export const templateShareRepository = {
 
     const result = await pool.query<PostRow>(
       `SELECT p.*, ${AUTHOR_NAME_SQL} AS author_name,
-              ${AUTHOR_ROLE_SQL} AS author_role_code, ${flags.sql}
+              ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score, ${flags.sql}
        FROM template_share_posts p
        JOIN users u ON u.id = p.author_user_id
-       ${AUTHOR_ROLE_JOIN}
+       ${AUTHOR_JOIN}
        WHERE p.id = $1${statusFilter}`,
       params
     );
@@ -491,13 +498,19 @@ export const templateShareRepository = {
     const pool = requirePool();
 
     const finish = async (row: PostRow): Promise<TemplateShareDetail> => {
-      const author = await pool.query<{ author_name: string; author_role_code: string | null }>(
-        `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
-         FROM users u ${AUTHOR_ROLE_JOIN} WHERE u.id = $1`,
+      const author = await pool.query<{
+        author_name: string;
+        author_role_code: string | null;
+        author_hellpower_score: number;
+      }>(
+        `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+                ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
+         FROM users u ${AUTHOR_JOIN} WHERE u.id = $1`,
         [userId]
       );
       row.author_name = author.rows[0]?.author_name ?? 'User';
       row.author_role_code = author.rows[0]?.author_role_code ?? null;
+      row.author_hellpower_score = author.rows[0]?.author_hellpower_score ?? 0;
       return withEnrichedItems(mapDetail(row));
     };
 
@@ -687,13 +700,19 @@ export const templateShareRepository = {
     }
     const row = result.rows[0];
     if (!row) return null;
-    const author = await pool.query<{ author_name: string; author_role_code: string | null }>(
-      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
-       FROM users u ${AUTHOR_ROLE_JOIN} WHERE u.id = $1`,
+    const author = await pool.query<{
+      author_name: string;
+      author_role_code: string | null;
+      author_hellpower_score: number;
+    }>(
+      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
+       FROM users u ${AUTHOR_JOIN} WHERE u.id = $1`,
       [userId]
     );
     row.author_name = author.rows[0]?.author_name ?? 'User';
     row.author_role_code = author.rows[0]?.author_role_code ?? null;
+    row.author_hellpower_score = author.rows[0]?.author_hellpower_score ?? 0;
     return withEnrichedItems(mapDetail(row));
   },
 
@@ -711,13 +730,19 @@ export const templateShareRepository = {
     );
     const row = result.rows[0];
     if (!row) return null;
-    const author = await pool.query<{ author_name: string; author_role_code: string | null }>(
-      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
-       FROM users u ${AUTHOR_ROLE_JOIN} WHERE u.id = $1`,
+    const author = await pool.query<{
+      author_name: string;
+      author_role_code: string | null;
+      author_hellpower_score: number;
+    }>(
+      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
+       FROM users u ${AUTHOR_JOIN} WHERE u.id = $1`,
       [row.author_user_id]
     );
     row.author_name = author.rows[0]?.author_name ?? 'User';
     row.author_role_code = author.rows[0]?.author_role_code ?? null;
+    row.author_hellpower_score = author.rows[0]?.author_hellpower_score ?? 0;
     return withEnrichedItems(mapDetail(row));
   },
 
@@ -748,10 +773,11 @@ export const templateShareRepository = {
     const listParams = [...params, query.pageSize, (query.page - 1) * query.pageSize];
 
     const result = await pool.query<PostRow>(
-      `SELECT p.*, ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
+      `SELECT p.*, ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
        FROM template_share_posts p
        JOIN users u ON u.id = p.author_user_id
-       ${AUTHOR_ROLE_JOIN}
+       ${AUTHOR_JOIN}
        WHERE ${whereSql}
        ORDER BY p.updated_at DESC
        LIMIT $${idx} OFFSET $${idx + 1}`,
@@ -1012,10 +1038,11 @@ export const templateShareRepository = {
     const pool = requirePool();
     const result = await pool.query<CommentRow>(
       `SELECT c.id, c.post_id, c.user_id, c.content, c.created_at, c.updated_at,
-              ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
+              ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
        FROM template_share_comments c
        JOIN users u ON u.id = c.user_id
-       ${AUTHOR_ROLE_JOIN}
+       ${AUTHOR_JOIN}
        WHERE c.post_id = $1 AND c.deleted_at IS NULL
        ORDER BY c.created_at ASC`,
       [postId]
@@ -1026,6 +1053,7 @@ export const templateShareRepository = {
       userId: row.user_id,
       authorName: row.author_name?.trim() || 'User',
       authorRoleCode: isRoleCode(row.author_role_code) ? row.author_role_code : undefined,
+      authorHellpowerScore: Number(row.author_hellpower_score ?? 0),
       content: row.content,
       createdAt: toIso(row.created_at),
       updatedAt: toIso(row.updated_at),
@@ -1060,9 +1088,14 @@ export const templateShareRepository = {
     );
     const row = result.rows[0];
     if (!row) throw new Error('Failed to create comment');
-    const author = await pool.query<{ author_name: string; author_role_code: string | null }>(
-      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
-       FROM users u ${AUTHOR_ROLE_JOIN} WHERE u.id = $1`,
+    const author = await pool.query<{
+      author_name: string;
+      author_role_code: string | null;
+      author_hellpower_score: number;
+    }>(
+      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
+       FROM users u ${AUTHOR_JOIN} WHERE u.id = $1`,
       [userId]
     );
     const authorRoleCode = author.rows[0]?.author_role_code;
@@ -1072,6 +1105,7 @@ export const templateShareRepository = {
       userId: row.user_id,
       authorName: author.rows[0]?.author_name ?? 'User',
       authorRoleCode: isRoleCode(authorRoleCode) ? authorRoleCode : undefined,
+      authorHellpowerScore: Number(author.rows[0]?.author_hellpower_score ?? 0),
       content: row.content,
       createdAt: toIso(row.created_at),
       updatedAt: toIso(row.updated_at),
@@ -1096,9 +1130,14 @@ export const templateShareRepository = {
     );
     const row = result.rows[0];
     if (!row) return null;
-    const author = await pool.query<{ author_name: string; author_role_code: string | null }>(
-      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code
-       FROM users u ${AUTHOR_ROLE_JOIN} WHERE u.id = $1`,
+    const author = await pool.query<{
+      author_name: string;
+      author_role_code: string | null;
+      author_hellpower_score: number;
+    }>(
+      `SELECT ${AUTHOR_NAME_SQL} AS author_name, ${AUTHOR_ROLE_SQL} AS author_role_code,
+              ${AUTHOR_HELLPOWER_SQL} AS author_hellpower_score
+       FROM users u ${AUTHOR_JOIN} WHERE u.id = $1`,
       [userId]
     );
     const authorRoleCode = author.rows[0]?.author_role_code;
@@ -1108,6 +1147,7 @@ export const templateShareRepository = {
       userId: row.user_id,
       authorName: author.rows[0]?.author_name ?? 'User',
       authorRoleCode: isRoleCode(authorRoleCode) ? authorRoleCode : undefined,
+      authorHellpowerScore: Number(author.rows[0]?.author_hellpower_score ?? 0),
       content: row.content,
       createdAt: toIso(row.created_at),
       updatedAt: toIso(row.updated_at),

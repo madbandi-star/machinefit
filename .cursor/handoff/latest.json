@@ -1,67 +1,49 @@
 ﻿{
-  "title": "Author role emoji badges on UGC",
-  "summary": "게시글·댓글·대댓글 작성자 이름 옆에 권한 등급을 텍스트 없이 이모지로만 표시합니다. API에 authorRoleCode를 추가했습니다.",
-  "git": { "branch": "main", "commit": "c948eb0d" },
+  "title": "MEMBER 헬창력 30단 등급 이모지",
+  "summary": "MEMBER만 헬창력 30단계 이모지를 작성자명 옆에 표시하고, 클릭 시 칭호+상위% 팝오버를 띄웁니다. Premium은 ⚜️ 고정. 프로필/헬창력 페이지에 등급 상세를 추가했습니다.",
+  "git": { "branch": "main", "commit": "pending" },
   "changedFiles": [
+    "shared/src/constants/hellpower-levels.ts",
+    "shared/src/constants/hellpower-levels.test.ts",
     "shared/src/constants/roles.ts",
+    "shared/src/types/points.types.ts",
     "shared/src/types/community.types.ts",
-    "shared/src/types/photo-board.types.ts",
-    "shared/src/types/machine-showcase.types.ts",
-    "shared/src/types/template-share.types.ts",
-    "shared/src/types/machine-request-admin.types.ts",
-    "backend/server/repositories/community.repository.ts",
-    "backend/server/repositories/photo-board.repository.ts",
-    "backend/server/repositories/machine-showcase.repository.ts",
-    "backend/server/repositories/template-share.repository.ts",
-    "backend/server/repositories/machine-request-admin.repository.ts",
+    "backend/server/repositories/*.ts",
+    "backend/server/services/points.service.ts",
     "backend/server/services/community.service.ts",
     "frontend/src/components/common/AuthorWithRole.tsx",
-    "frontend/src/components/cards/PostCard/PostCard.tsx",
-    "frontend/src/pages/community/PostDetailPage.tsx",
-    "frontend/src/pages/photo-board/PhotoBoardPage.tsx",
-    "frontend/src/pages/photo-board/PhotoPostDetailPage.tsx",
-    "frontend/src/pages/machine-request-board/MachineRequestBoardPage.tsx",
-    "frontend/src/pages/machine-request-board/MachineRequestDetailPage.tsx",
-    "frontend/src/pages/machine-showcase/MachineShowcaseDetailPage.tsx",
-    "frontend/src/pages/template-share/TemplateShareHubPage.tsx",
-    "frontend/src/pages/template-share/TemplateShareDetailPage.tsx",
-    "frontend/src/components/community/BoardRequestRow.tsx"
+    "frontend/src/pages/points/PointsPage.tsx",
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "자유게시판 목록/상세·댓글·대댓글 작성자 옆 이모지",
-    "포토보드·기구요청·쇼케이스·템플릿공유 동일",
-    "등급별: 게스트🧑‍🌾 회원⚔️ 프리미엄🔱 VIP👑 트레이너🧙 오너🏰 관리자🔮"
+    "MEMBER 작성자: 헬창력 구간별 이모지 (이름 옆, 점수 숫자 숨김)",
+    "이모지 탭 → 칭호 + 상위% 팝오버",
+    "premium ⚜️ / vip 👑 / trainer 🧙 / owner 🏰 / admin 🔮 / guest 🧑‍🌾",
+    "마이페이지·헬창력 페이지: 등급·점수·상위%·다음등급"
   ],
   "fastChecks": [
     {
-      "id": "role-emoji-map",
+      "id": "hellpower-ladder",
+      "type": "shell",
+      "command": "npx tsx shared/src/constants/hellpower-levels.test.ts"
+    },
+    {
+      "id": "premium-fleur",
       "type": "grep",
       "path": "shared/src/constants/roles.ts",
-      "pattern": "ROLE_EMOJI"
+      "pattern": "premium_member: '⚜️'"
     },
     {
-      "id": "author-with-role",
-      "type": "grep",
-      "path": "frontend/src/components/common/AuthorWithRole.tsx",
-      "pattern": "getRoleEmoji"
-    },
-    {
-      "id": "author-role-api",
+      "id": "author-hellpower-score",
       "type": "grep",
       "path": "shared/src/types/community.types.ts",
-      "pattern": "authorRoleCode"
+      "pattern": "authorHellpowerScore"
     }
   ],
   "productionChecks": [
-    "자유게시판 글/댓글에 권한 이모지 표시 (Pages + Render 배포 후)"
+    "자유게시판 MEMBER 글/댓글 이모지 + 팝오버 (Pages+Render 후)"
   ],
-  "deploy": {
-    "expected": "Frontend Pages + Render backend/shared",
-    "frontend": "https://github.com/madbandi-star/machinefit/actions/runs/32490596614",
-    "frontendStatus": "success",
-    "backend": "https://github.com/madbandi-star/machinefit/actions/runs/32490596179",
-    "backendStatus": "success"
-  },
-  "asIs": "작성자 이름만 표시",
-  "toBe": "작성자 이름 앞에 권한 이모지만 표시 (텍스트 등급명 없음)"
+  "deploy": { "expected": "Frontend Pages + Render backend/shared" },
+  "asIs": "모든 역할이 고정 ROLE_EMOJI (member=⚔️, premium=🔱)",
+  "toBe": "MEMBER만 헬창력 30단 이모지; premium=⚜️; 프로필에 등급 상세"
 }

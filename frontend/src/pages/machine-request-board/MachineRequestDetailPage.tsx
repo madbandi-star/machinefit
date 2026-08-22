@@ -269,7 +269,12 @@ export function MachineRequestDetailPage() {
         <div style={{ display: 'grid', gap: '0.35rem' }}>
           <div style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
             {t('photoAuthor')}:{' '}
-            <AuthorWithRole name={request.authorName} roleCode={request.authorRoleCode} /> ·{' '}
+            <AuthorWithRole
+              name={request.authorName}
+              roleCode={request.authorRoleCode}
+              hellpowerScore={request.authorHellpowerScore}
+            />{' '}
+            ·{' '}
             {t('status')}: {statusLabel}
             {gymLabel ? ` · ${t('requestGymLabel')}: ${gymLabel}` : ''}
           </div>
@@ -345,6 +350,7 @@ export function MachineRequestDetailPage() {
                   as="strong"
                   name={item.authorName}
                   roleCode={item.authorRoleCode}
+                  hellpowerScore={item.authorHellpowerScore}
                 />
                 <span>{new Date(item.createdAt).toLocaleString()}</span>
               </div>

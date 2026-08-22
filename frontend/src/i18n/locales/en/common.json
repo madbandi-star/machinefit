@@ -2168,6 +2168,14 @@
     "emptySearch": "No matching history. Try a different search.",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power",
+    "hellpower": {
+      "badgeAria": "Hellchang Power rank {{title}}",
+      "roleBadgeAria": "Role {{role}}",
+      "topPercent": "Top {{percent}}% Hellchang Power",
+      "loadingRank": "Loading rank…",
+      "nextLevel": "{{points}} to next rank",
+      "levelLabel": "Lv.{{level}} {{title}}"
+    },
     "powerBox": {
       "openLabel": "Open Power Box",
       "readyHint": "Once today",

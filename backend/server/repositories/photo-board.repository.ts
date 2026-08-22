@@ -52,6 +52,7 @@ type PostRow = {
   is_hidden: boolean;
   display_name: string | null;
   role_code: string | null;
+  hellpower_score: number | null;
   created_at: string;
   updated_at: string;
   liked_by_me?: boolean | null;
@@ -82,6 +83,7 @@ function mapPost(row: PostRow, tags: string[], cover?: PhotoPostImageMeta, image
     isHidden: row.is_hidden,
     authorName: row.display_name ?? undefined,
     authorRoleCode: isRoleCode(row.role_code) ? row.role_code : undefined,
+    authorHellpowerScore: Number(row.hellpower_score ?? 0),
     tags,
     coverImage: cover,
     images,
@@ -301,11 +303,13 @@ export const photoBoardRepository = {
       ),
       pool.query<PostRow>(
         `SELECT p.id, p.user_id, p.title, p.content, p.view_count, p.like_count, p.comment_count,
-                p.is_hidden, p.created_at, p.updated_at, u.display_name, r.code AS role_code
+                p.is_hidden, p.created_at, p.updated_at, u.display_name, r.code AS role_code,
+                COALESCE(up.balance, 0)::int AS hellpower_score
                 ${likedSelect}
          FROM photo_posts p
          JOIN users u ON u.id = p.user_id
          JOIN roles r ON r.id = u.role_id
+         LEFT JOIN user_points up ON up.user_id = u.id
          ${where}
          ORDER BY ${sortSql(query.sort)}
          LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
@@ -345,6 +349,7 @@ export const photoBoardRepository = {
     const postResult = await pool.query<PostRow>(
       `SELECT p.id, p.user_id, p.title, p.content, p.view_count, p.like_count, p.comment_count,
               p.is_hidden, p.created_at, p.updated_at, u.display_name, r.code AS role_code,
+              COALESCE(up.balance, 0)::int AS hellpower_score,
               ${
                 viewerId
                   ? `EXISTS (
@@ -356,6 +361,7 @@ export const photoBoardRepository = {
        FROM photo_posts p
        JOIN users u ON u.id = p.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        WHERE p.id = $1 AND p.is_hidden = FALSE`,
       viewerId ? [postId, viewerId] : [postId]
     );
@@ -380,14 +386,17 @@ export const photoBoardRepository = {
         is_hidden: boolean;
         display_name: string | null;
         role_code: string | null;
+        hellpower_score: number;
         created_at: string;
         updated_at: string;
       }>(
         `SELECT c.id, c.post_id, c.user_id, c.parent_id, c.content, c.is_hidden,
-                c.created_at, c.updated_at, u.display_name, r.code AS role_code
+                c.created_at, c.updated_at, u.display_name, r.code AS role_code,
+                COALESCE(up.balance, 0)::int AS hellpower_score
          FROM photo_post_comments c
          JOIN users u ON u.id = c.user_id
          JOIN roles r ON r.id = u.role_id
+         LEFT JOIN user_points up ON up.user_id = u.id
          WHERE c.post_id = $1 AND c.is_hidden = FALSE
          ORDER BY c.created_at ASC`,
         [postId]
@@ -404,6 +413,7 @@ export const photoBoardRepository = {
       isHidden: c.is_hidden,
       authorName: c.display_name ?? undefined,
       authorRoleCode: isRoleCode(c.role_code) ? c.role_code : undefined,
+      authorHellpowerScore: Number(c.hellpower_score ?? 0),
       createdAt: c.created_at,
       updatedAt: c.updated_at,
     }));
@@ -791,16 +801,19 @@ export const photoBoardRepository = {
       updated_at: string;
       display_name: string | null;
       role_code: string | null;
+      hellpower_score: number;
     }>(
       `WITH inserted AS (
          INSERT INTO photo_post_comments (post_id, user_id, parent_id, content)
          VALUES ($1, $2, $3, $4)
          RETURNING *
        )
-       SELECT i.*, u.display_name, r.code AS role_code
+       SELECT i.*, u.display_name, r.code AS role_code,
+              COALESCE(up.balance, 0)::int AS hellpower_score
        FROM inserted i
        JOIN users u ON u.id = i.user_id
-       JOIN roles r ON r.id = u.role_id`,
+       JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id`,
       [postId, userId, parentId, input.content]
     );
     await pool.query(`UPDATE photo_posts SET comment_count = comment_count + 1 WHERE id = $1`, [
@@ -817,6 +830,7 @@ export const photoBoardRepository = {
         isHidden: row.is_hidden,
         authorName: row.display_name ?? undefined,
         authorRoleCode: isRoleCode(row.role_code) ? row.role_code : undefined,
+        authorHellpowerScore: Number(row.hellpower_score ?? 0),
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       } satisfies PhotoPostComment,
@@ -860,7 +874,11 @@ export const photoBoardRepository = {
            SELECT r.code FROM users u
            JOIN roles r ON r.id = u.role_id
            WHERE u.id = photo_post_comments.user_id
-         ) AS role_code`,
+         ) AS role_code,
+         (
+           SELECT COALESCE(up.balance, 0)::int FROM user_points up
+           WHERE up.user_id = photo_post_comments.user_id
+         ) AS hellpower_score`,
       [input.content, commentId]
     );
     const updated = result.rows[0];
@@ -873,6 +891,7 @@ export const photoBoardRepository = {
       isHidden: updated.is_hidden,
       authorName: updated.display_name ?? undefined,
       authorRoleCode: isRoleCode(updated.role_code) ? updated.role_code : undefined,
+      authorHellpowerScore: Number(updated.hellpower_score ?? 0),
       createdAt: updated.created_at,
       updatedAt: updated.updated_at,
     };

@@ -31,6 +31,7 @@ export * from './workout-card.js';
 export * from './usage.js';
 export * from './free-plan-limits.js';
 export * from './points.js';
+export * from './hellpower-levels.js';
 export * from './push-consent.js';
 export * from './privacy-rights.js';
 export * from './workout-events.js';

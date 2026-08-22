@@ -581,6 +581,7 @@ export const machineRequestAdminRepository = {
       user_id: string;
       author_name: string;
       author_role_code: string | null;
+      author_hellpower_score: number;
       description: string;
       gym_choice_mode: string | null;
       gym_name: string | null;
@@ -597,6 +598,7 @@ export const machineRequestAdminRepository = {
       status: string;
     }>(
       `SELECT mr.id, mr.user_id, u.display_name AS author_name, r.code AS author_role_code,
+              COALESCE(up.balance, 0)::int AS author_hellpower_score,
               mr.description,
               mr.gym_choice_mode, mr.gym_name, mr.commercial_use_consent,
               mr.like_count, mr.comment_count, mr.view_count,
@@ -606,6 +608,7 @@ export const machineRequestAdminRepository = {
        FROM machine_requests mr
        JOIN users u ON u.id = mr.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        LEFT JOIN users au ON au.id = mr.assignee_user_id
        WHERE lower(trim(mr.brand_name)) = lower(trim($1))
          AND lower(trim(mr.machine_name)) = lower(trim($2))
@@ -643,6 +646,7 @@ export const machineRequestAdminRepository = {
         userId: r.user_id,
         authorName: r.author_name,
         authorRoleCode: isRoleCode(r.author_role_code) ? r.author_role_code : undefined,
+        authorHellpowerScore: Number(r.author_hellpower_score ?? 0),
         description: r.description,
         gymChoiceMode:
           (r.gym_choice_mode as AdminMachineRequestRequester['gymChoiceMode']) ?? undefined,
@@ -668,14 +672,17 @@ export const machineRequestAdminRepository = {
       request_id: string;
       author_name: string;
       author_role_code: string | null;
+      author_hellpower_score: number;
       content: string;
       created_at: string;
     }>(
       `SELECT c.id, c.request_id, u.display_name AS author_name, r.code AS author_role_code,
+              COALESCE(up.balance, 0)::int AS author_hellpower_score,
               c.content, c.created_at
        FROM machine_request_comments c
        JOIN users u ON u.id = c.user_id
        JOIN roles r ON r.id = u.role_id
+       LEFT JOIN user_points up ON up.user_id = u.id
        JOIN machine_requests mr ON mr.id = c.request_id
        WHERE lower(trim(mr.brand_name)) = lower(trim($1))
          AND lower(trim(mr.machine_name)) = lower(trim($2))
@@ -689,6 +696,7 @@ export const machineRequestAdminRepository = {
       requestId: c.request_id,
       authorName: c.author_name,
       authorRoleCode: isRoleCode(c.author_role_code) ? c.author_role_code : undefined,
+      authorHellpowerScore: Number(c.author_hellpower_score ?? 0),
       content: c.content,
       createdAt: c.created_at,
     }));

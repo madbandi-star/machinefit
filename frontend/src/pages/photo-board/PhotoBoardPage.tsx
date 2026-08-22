@@ -66,6 +66,7 @@ function PhotoCard({ post }: { post: PhotoPost }) {
             className="photo-card__author"
             name={post.authorName}
             roleCode={post.authorRoleCode}
+            hellpowerScore={post.authorHellpowerScore}
           />
           <span className="photo-card__stats">
             <span>♥ {post.likeCount}</span>

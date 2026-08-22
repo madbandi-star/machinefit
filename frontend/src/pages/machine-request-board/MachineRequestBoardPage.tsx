@@ -85,6 +85,7 @@ function RequestCard({ request }: { request: MachineRequest }) {
             className="photo-card__author"
             name={request.authorName}
             roleCode={request.authorRoleCode}
+            hellpowerScore={request.authorHellpowerScore}
           />
         </div>
       </div>

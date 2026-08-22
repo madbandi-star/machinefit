@@ -48,6 +48,8 @@ export interface MachineShowcasePost {
   userId: string;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  /** MEMBER 헬창력 balance for badge emoji (hidden in UI). */
+  authorHellpowerScore?: number;
   machineId: string;
   machineCode: string;
   machineName: string;
@@ -83,6 +85,7 @@ export interface MachineShowcaseComment {
   content: string;
   authorName?: string;
   authorRoleCode?: RoleCode;
+  authorHellpowerScore?: number;
   createdAt: string;
   updatedAt: string;
 }

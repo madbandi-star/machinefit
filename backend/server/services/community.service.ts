@@ -15,6 +15,7 @@ import {
   communityRepository,
   type ProcessedMachineRequestImage,
 } from '../repositories/community.repository.js';
+import { pointsRepository } from '../repositories/points.repository.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { complianceRepository } from '../repositories/compliance.repository.js';
 import { AppError } from '../middlewares/error.middleware.js';
@@ -68,6 +69,19 @@ async function processMachineRequestPhoto(buffer: Buffer): Promise<ProcessedMach
   }
 }
 
+/** Author fields for freshly created UGC — name, role badge, and 헬창력 score. */
+async function loadAuthorMeta(userId: string) {
+  const [user, points] = await Promise.all([
+    userRepository.findById(userId),
+    pointsRepository.getSummary(userId),
+  ]);
+  return {
+    displayName: user?.displayName ?? 'User',
+    roleCode: user?.roleCode,
+    hellpowerScore: points.balance,
+  };
+}
+
 export const communityService = {
   listPosts(boardType?: BoardType, page = 1, limit = 20) {
     return communityRepository.listPosts(boardType, page, limit);
@@ -82,12 +96,13 @@ export const communityService = {
 
   async createPost(userId: string, input: CreatePostInput) {
     assertSafeUgc(input.title, input.content);
-    const user = await userRepository.findById(userId);
+    const author = await loadAuthorMeta(userId);
     const post = await communityRepository.createPost(
       userId,
-      user?.displayName ?? 'User',
+      author.displayName,
       input,
-      user?.roleCode
+      author.roleCode,
+      author.hellpowerScore
     );
     awardPointsSafe({
       userId,
@@ -105,13 +120,14 @@ export const communityService = {
 
   async createComment(postId: string, userId: string, input: CreateCommentInput) {
     assertSafeUgc(input.content);
-    const user = await userRepository.findById(userId);
+    const author = await loadAuthorMeta(userId);
     const comment = await communityRepository.createComment(
       postId,
       userId,
-      user?.displayName ?? 'User',
+      author.displayName,
       input,
-      user?.roleCode
+      author.roleCode,
+      author.hellpowerScore
     );
     awardPointsSafe({
       userId,
@@ -185,13 +201,14 @@ export const communityService = {
     input: CreateCommentInput
   ) {
     assertSafeUgc(input.content);
-    const user = await userRepository.findById(userId);
+    const author = await loadAuthorMeta(userId);
     const result = await communityRepository.createMachineRequestComment(
       requestId,
       userId,
-      user?.displayName ?? 'User',
+      author.displayName,
       input,
-      user?.roleCode
+      author.roleCode,
+      author.hellpowerScore
     );
     if (result.authorId && result.authorId !== userId) {
       const isReply = Boolean(input.parentId);
@@ -280,13 +297,14 @@ export const communityService = {
       processed.push(await processMachineRequestPhoto(file.buffer));
     }
 
-    const user = await userRepository.findById(userId);
+    const author = await loadAuthorMeta(userId);
     return communityRepository.createMachineRequest(
       userId,
-      user?.displayName ?? 'User',
+      author.displayName,
       input,
       processed,
-      user?.roleCode
+      author.roleCode,
+      author.hellpowerScore
     );
   },
 
