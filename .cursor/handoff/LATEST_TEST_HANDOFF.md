@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: (push 후 latest.json 갱신)
+- commit: `e6d88f45786836358c1d04f33e6df40808a87d03`
 
 ## Changed files
 - `database/migrations/185_sync_std_assist_pullover_cable.sql`

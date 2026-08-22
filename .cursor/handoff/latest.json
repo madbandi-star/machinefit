@@ -3,7 +3,7 @@
   "summary": "공통 유형 STD_ASSISTED_PULLUP_DIP 이름을 「어시스트 풀업 / 딥」으로 고치고, 어시스트·풀오버·시티드 케이블 연동 브랜드 머신(각 29대)의 이름·근육군을 공통 설정(back/core/chest)으로 동기화. 프로덕션 DB에 migration 185 적용 완료.",
   "git": {
     "branch": "main",
-    "commit": "(pending)"
+    "commit": "e6d88f45786836358c1d04f33e6df40808a87d03"
   },
   "changedFiles": [
     "database/migrations/185_sync_std_assist_pullover_cable.sql",
