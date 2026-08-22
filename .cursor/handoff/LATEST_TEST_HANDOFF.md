@@ -6,7 +6,7 @@
 
 ## Git
 - branch: `main`
-- commit: (push 후 `latest.json` 갱신)
+- commit: `4088ecc7c63a9e0b1809ae29ac9bd1a23acf1ab8`
 
 ## Changed files
 - `scripts/upload-fw-covers.mjs` (+ color grading helper scripts)

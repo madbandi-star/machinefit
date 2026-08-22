@@ -3,7 +3,7 @@
   "summary": "프리웨이트 5도구 대표+부위(40) 커버 이미지를 after_change_300kb/신규 생성분으로 교체 업로드 완료. 앱 코드 변경 없이 machine_cover_images(FW_* only)와 upload 스크립트 추가.",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "4088ecc7c63a9e0b1809ae29ac9bd1a23acf1ab8"
   },
   "changedFiles": [
     "scripts/upload-fw-covers.mjs",
