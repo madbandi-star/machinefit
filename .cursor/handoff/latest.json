@@ -1,40 +1,28 @@
 {
-  "title": "Hellpower page RPG growth UI",
-  "summary": "? ??? ???? ??? ?? ???? ???. HERO·XP BAR·NEXT LEVEL?0? ??? ???? ????? ??. ??/API/DB ?? ?? ??(getHellpowerProgress? UI? ???).",
+  "title": "My Page: hide ID-change remaining + hellpower top%",
+  "summary": "Remove always-visible '??? ?? N/N? ??' beside Change (still shown while editing). Remove hellpower top-percent from My Page power row.",
   "git": {
     "branch": "main",
-    "commit": "ac79eb60114dbc81dc40f790af6c5ed9c1a61df0"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/constants/hellpower-levels.ts",
-    "shared/src/constants/hellpower-levels.test.ts",
-    "frontend/src/pages/points/PointsPage.tsx",
-    "frontend/src/pages/points/PointsPage.css",
-    "frontend/src/pages/points/HellpowerLadderSheet.tsx",
-    "frontend/src/pages/points/HellpowerLadderSheet.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json"
+    "frontend/src/components/my-page/MemberIdEditor/MemberIdEditor.tsx",
+    "frontend/src/pages/my-page/MyPage.tsx"
   ],
   "testFocus": [
-    "MEMBER: Points page shows hero emoji/Lv/title/score/range",
-    "XP bar fill + points to next; MAX at Lv.30",
-    "Ladder sheet highlights current level",
-    "Ledger emoji + today earned when ledger has today positives",
-    "Level-up dialog only when localStorage last level < current"
+    "?????: ??? ? [??] ??? ?? ?? ?? ??",
+    "[??] ?? ? ?? UI? ?? ?? ??",
+    "? ??? ? ?? '?? N%' ?? (??·???)"
   ],
   "fastChecks": [
-    "node --import tsx shared/src/constants/hellpower-levels.test.ts",
     "npm run typecheck --prefix frontend"
   ],
   "productionChecks": [
-    "After Pages + Render (shared used by API already): open /points as MEMBER"
+    "GitHub Pages ?? ? /my ??"
   ],
   "deploy": {
-    "frontend": "GitHub Pages via push to main",
-    "backend": "optional ? shared helper only; API already used getHellpowerLevel"
+    "expected": "Deploy Frontend success"
   },
-  "asIs": "Text-heavy points summary",
-  "toBe": "RPG-style growth screen with XP bar and ladder sheet"
+  "asIs": "?? ?? ? ?? ?? + ??? ??% ?? ??",
+  "toBe": "?? ??? ?? ???, ???? ??·???"
 }

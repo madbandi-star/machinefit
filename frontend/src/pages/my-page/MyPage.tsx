@@ -193,16 +193,6 @@ export function MyPage() {
                       {t('points.unit')}
                     </span>
                   )}
-                  {pointsQuery.data?.hellpower?.topPercent != null ? (
-                    <span className="profile-card__hellpower-meta">
-                      <span className="profile-card__power-sep" aria-hidden>
-                        ·
-                      </span>
-                      {t('points.hellpower.topPercent', {
-                        percent: pointsQuery.data.hellpower.topPercent,
-                      })}
-                    </span>
-                  ) : null}
                 </Link>
                 <PowerBox />
               </dd>

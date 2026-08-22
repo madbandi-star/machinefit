@@ -142,22 +142,14 @@ export function MemberIdEditor({
         <span className="profile-card__member-id-value">{displayName || '—'}</span>
         {displayName ? (
           canChange ? (
-            <>
-              <button
-                type="button"
-                className="profile-card__member-id-change"
-                onClick={openEditor}
-                aria-label={t('myPage.changeMemberIdAria')}
-              >
-                {t('myPage.changeMemberId')}
-              </button>
-              <span className="profile-card__member-id-remaining">
-                {t('myPage.memberIdChangesRemaining', {
-                  remaining,
-                  max: USERNAME_MAX_CHANGES,
-                })}
-              </span>
-            </>
+            <button
+              type="button"
+              className="profile-card__member-id-change"
+              onClick={openEditor}
+              aria-label={t('myPage.changeMemberIdAria')}
+            >
+              {t('myPage.changeMemberId')}
+            </button>
           ) : (
             <span className="profile-card__member-id-limit" role="status">
               {t('myPage.memberIdChangeExhausted', { max: USERNAME_MAX_CHANGES })}
