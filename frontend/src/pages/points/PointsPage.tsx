@@ -93,6 +93,7 @@ export function PointsPage() {
   const locale = i18n.language?.startsWith('ko') ? 'ko-KR' : i18n.language || 'en';
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebouncedValue(searchQuery, 200);
+  const [dateFilter, setDateFilter] = useState('');
   const [ladderOpen, setLadderOpen] = useState(false);
   const [barReady, setBarReady] = useState(false);
   const [levelUp, setLevelUp] = useState<{
@@ -113,9 +114,12 @@ export function PointsPage() {
   const items = ledgerQuery.data?.items ?? [];
   const filteredItems = useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((tx) => txSearchHaystack(tx, locale).includes(q));
-  }, [items, debouncedQuery, locale]);
+    return items.filter((tx) => {
+      if (dateFilter && seoulDateKey(tx.createdAt) !== dateFilter) return false;
+      if (q && !txSearchHaystack(tx, locale).includes(q)) return false;
+      return true;
+    });
+  }, [items, debouncedQuery, dateFilter, locale]);
 
   const summary = summaryQuery.data;
   const balance = summary?.balance ?? 0;
@@ -167,7 +171,7 @@ export function PointsPage() {
   }
 
   const hasHistory = items.length > 0;
-  const hasQuery = debouncedQuery.trim().length > 0;
+  const hasQuery = debouncedQuery.trim().length > 0 || dateFilter.length > 0;
   const visibleCount = filteredItems.length;
   const current = progress.current;
   const next = progress.next;
@@ -370,12 +374,40 @@ export function PointsPage() {
           </div>
 
           {hasHistory ? (
-            <div className="points-ledger__search">
-              <SearchBar
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder={t('points.searchPlaceholder')}
-              />
+            <div className="points-ledger__filters">
+              <div className="points-ledger__search">
+                <SearchBar
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder={t('points.searchPlaceholder')}
+                />
+              </div>
+              <div className="points-ledger__date">
+                <label className="points-ledger__date-label" htmlFor="points-ledger-date">
+                  {t('points.dateFilterLabel')}
+                </label>
+                <div className="points-ledger__date-row">
+                  <input
+                    id="points-ledger-date"
+                    className="input points-ledger__date-input"
+                    type="date"
+                    value={dateFilter}
+                    max={seoulDateKey()}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    aria-label={t('points.dateFilterAria')}
+                  />
+                  {dateFilter ? (
+                    <button
+                      type="button"
+                      className="points-ledger__date-clear"
+                      onClick={() => setDateFilter('')}
+                      aria-label={t('points.clearDateFilter')}
+                    >
+                      {t('points.clearDateFilter')}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
             </div>
           ) : null}
 
