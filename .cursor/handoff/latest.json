@@ -3,7 +3,7 @@
   "summary": "Always-visible caption under common-photo thumbs (공통 사진 · 실물과 다를 수 있음). First time a standard photo appears, show a one-time bottom dialog; dismiss stores machinefit.seenStandardImageHint.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "3e2b0317de2c0bc2de66466711b75fe7d28091a1"
   },
   "changedFiles": [
     "frontend/src/utils/standardMachineImageOnboarding.ts",
