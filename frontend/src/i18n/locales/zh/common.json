@@ -15,9 +15,9 @@
     "refresh": "刷新"
   },
   "network": {
-    "offlineSafe": "无网络 · 记录已安全保存在本机",
-    "syncing": "已恢复连接 · 正在同步记录",
-    "synced": "所有记录已保存"
+    "offlineSafe": "No internet · Your workout log is saved safely on this device",
+    "syncing": "Back online · Syncing workout logs",
+    "synced": "All workout logs are saved"
   },
   "emptyState": {
     "browseMachines": "浏览器械"
@@ -2120,6 +2120,14 @@
     "emptySearch": "没有匹配的记录，请换个关键词试试。",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power",
+    "hellpower": {
+      "badgeAria": "地狱力等级 {{title}}",
+      "roleBadgeAria": "权限 {{role}}",
+      "topPercent": "地狱力前 {{percent}}%",
+      "loadingRank": "正在加载排名…",
+      "nextLevel": "距下一等级 {{points}}",
+      "levelLabel": "Lv.{{level}} {{title}}"
+    },
     "powerBox": {
       "openLabel": "Open Power Box",
       "readyHint": "Once today",
@@ -2127,6 +2135,14 @@
       "nextHoursMinutes": "{{hours}}h {{minutes}}m until next POWER",
       "nextMinutes": "{{minutes}}m until next POWER",
       "claimFailed": "Couldn't open Power Box. Try again shortly."
+    },
+    "hellpower": {
+      "badgeAria": "Hellchang Power rank {{title}}",
+      "roleBadgeAria": "Role {{role}}",
+      "topPercent": "Top {{percent}}% Hellchang Power",
+      "loadingRank": "Loading rank…",
+      "nextLevel": "{{points}} to next rank",
+      "levelLabel": "Lv.{{level}} {{title}}"
     }
   },
   "qa": {
@@ -2254,11 +2270,6 @@
   "carousel": {
     "prev": "Scroll previous",
     "next": "Scroll next"
-  },
-  "network": {
-    "offlineSafe": "No internet · Your workout log is saved safely on this device",
-    "syncing": "Back online · Syncing workout logs",
-    "synced": "All workout logs are saved"
   },
   "timerHistory": {
     "title": "计时记录",

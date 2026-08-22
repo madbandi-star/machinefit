@@ -15,9 +15,9 @@
     "refresh": "再読み込み"
   },
   "network": {
-    "offlineSafe": "インターネット未接続 · 記録はこの端末に安全に保存されます",
-    "syncing": "接続復旧 · 記録を同期中",
-    "synced": "すべての記録が保存されました"
+    "offlineSafe": "No internet · Your workout log is saved safely on this device",
+    "syncing": "Back online · Syncing workout logs",
+    "synced": "All workout logs are saved"
   },
   "emptyState": {
     "browseMachines": "マシンを探す"
@@ -2120,6 +2120,14 @@
     "emptySearch": "一致する履歴がありません。別のキーワードで検索してください。",
     "earnedToast": "+{{points}}Power earned!",
     "unit": "Power",
+    "hellpower": {
+      "badgeAria": "ヘルパワー等級 {{title}}",
+      "roleBadgeAria": "権限 {{role}}",
+      "topPercent": "ヘルパワー上位 {{percent}}%",
+      "loadingRank": "順位を読み込み中…",
+      "nextLevel": "次の等級まで {{points}}",
+      "levelLabel": "Lv.{{level}} {{title}}"
+    },
     "powerBox": {
       "openLabel": "Open Power Box",
       "readyHint": "Once today",
@@ -2127,6 +2135,14 @@
       "nextHoursMinutes": "{{hours}}h {{minutes}}m until next POWER",
       "nextMinutes": "{{minutes}}m until next POWER",
       "claimFailed": "Couldn't open Power Box. Try again shortly."
+    },
+    "hellpower": {
+      "badgeAria": "Hellchang Power rank {{title}}",
+      "roleBadgeAria": "Role {{role}}",
+      "topPercent": "Top {{percent}}% Hellchang Power",
+      "loadingRank": "Loading rank…",
+      "nextLevel": "{{points}} to next rank",
+      "levelLabel": "Lv.{{level}} {{title}}"
     }
   },
   "qa": {
@@ -2254,11 +2270,6 @@
   "carousel": {
     "prev": "Scroll previous",
     "next": "Scroll next"
-  },
-  "network": {
-    "offlineSafe": "No internet · Your workout log is saved safely on this device",
-    "syncing": "Back online · Syncing workout logs",
-    "synced": "All workout logs are saved"
   },
   "timerHistory": {
     "title": "タイマー記録",
