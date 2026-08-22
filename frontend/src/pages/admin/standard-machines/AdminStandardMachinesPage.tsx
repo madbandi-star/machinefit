@@ -5,6 +5,7 @@ import axios from 'axios';
 import {
   TARGET_MUSCLE_GROUPS,
   type AdminStandardMachineUpsertInput,
+  type Brand,
   type StandardMachineImage,
   type StandardMachineType,
 } from '@machinefit/shared';
@@ -64,7 +65,10 @@ function isAllowedImage(file: File): boolean {
   return ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type.toLowerCase());
 }
 
-function toUpsertInput(form: FormState): AdminStandardMachineUpsertInput {
+function toUpsertInput(
+  form: FormState,
+  brandIds: string[]
+): AdminStandardMachineUpsertInput {
   const aliases = form.aliases
     .split(/[\n,]/)
     .map((s) => s.trim())
@@ -84,6 +88,7 @@ function toUpsertInput(form: FormState): AdminStandardMachineUpsertInput {
         : undefined,
     sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
     isActive: form.isActive,
+    brandIds: brandIds.length > 0 ? brandIds : undefined,
   };
 }
 
@@ -101,6 +106,10 @@ function fromType(item: StandardMachineType): FormState {
   };
 }
 
+function brandLabel(brand: Brand, locale: string): string {
+  return getLocalizedName(brand.name, locale, brand.code);
+}
+
 export function AdminStandardMachinesPage() {
   const { t, i18n } = useTranslation(['admin', 'machines', 'common']);
   const queryClient = useQueryClient();
@@ -116,6 +125,8 @@ export function AdminStandardMachinesPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<StandardMachineType | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [selectedBrandIds, setSelectedBrandIds] = useState<Set<string>>(() => new Set());
+  const [linkedBrandIds, setLinkedBrandIds] = useState<Set<string>>(() => new Set());
   const [pendingDelete, setPendingDelete] = useState<StandardMachineType | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
@@ -162,21 +173,52 @@ export function AdminStandardMachinesPage() {
     },
   });
 
+  const brandsQuery = useQuery({
+    queryKey: [...QUERY_KEYS.adminBrands, 'standard-machine-link'],
+    queryFn: async () => {
+      const res = await adminApi.listCatalogBrands({
+        limit: 100,
+        sort: 'name',
+        order: 'asc',
+        isActive: 'true',
+      });
+      return res.data.data.items;
+    },
+    enabled: formOpen,
+  });
+
+  const brands = brandsQuery.data ?? [];
+  const selectableBrandIds = useMemo(() => brands.map((b) => b.id), [brands]);
+  const selectedCount = selectedBrandIds.size;
+  const allSelected =
+    selectableBrandIds.length > 0 && selectableBrandIds.every((id) => selectedBrandIds.has(id));
+
   const invalidate = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: ['admin', 'standard-machines'] });
   }, [queryClient]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const input = toUpsertInput(form);
+      const input = toUpsertInput(form, [...selectedBrandIds]);
       if (editing) return adminApi.updateStandardMachine(editing.id, input);
       return adminApi.createStandardMachine(input);
     },
     onSuccess: async (res) => {
-      showToast(t('admin:standardMachines.saveSuccess'), 'success');
       const saved = res.data.data;
+      const linked = new Set(saved.linkedBrandIds ?? []);
       setEditing(saved);
       setForm(fromType(saved));
+      setLinkedBrandIds(linked);
+      setSelectedBrandIds(new Set(linked));
+      const newLinks = Math.max(0, (saved.machineCount ?? 0) - (editing?.machineCount ?? 0));
+      if (newLinks > 0) {
+        showToast(
+          t('admin:standardMachines.saveSuccessLinked', { count: newLinks }),
+          'success'
+        );
+      } else {
+        showToast(t('admin:standardMachines.saveSuccess'), 'success');
+      }
       await invalidate();
     },
     onError: (err) => {
@@ -277,6 +319,8 @@ export function AdminStandardMachinesPage() {
   const closeForm = useCallback(() => {
     if (formBusy) return;
     setFormOpen(false);
+    setSelectedBrandIds(new Set());
+    setLinkedBrandIds(new Set());
   }, [formBusy]);
 
   const dialogRef = useModalAccessibility({
@@ -289,13 +333,45 @@ export function AdminStandardMachinesPage() {
   function openCreate() {
     setEditing(null);
     setForm(EMPTY_FORM);
+    setSelectedBrandIds(new Set());
+    setLinkedBrandIds(new Set());
     setFormOpen(true);
   }
 
-  function openEdit(item: StandardMachineType) {
+  async function openEdit(item: StandardMachineType) {
     setEditing(item);
     setForm(fromType(item));
     setFormOpen(true);
+    try {
+      const res = await adminApi.getStandardMachine(item.id);
+      const detail = res.data.data;
+      const linked = new Set(detail.linkedBrandIds ?? []);
+      setEditing(detail);
+      setForm(fromType(detail));
+      setLinkedBrandIds(linked);
+      setSelectedBrandIds(new Set(linked));
+    } catch {
+      setLinkedBrandIds(new Set());
+      setSelectedBrandIds(new Set());
+    }
+  }
+
+  function toggleBrand(brandId: string) {
+    if (linkedBrandIds.has(brandId)) return;
+    setSelectedBrandIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(brandId)) next.delete(brandId);
+      else next.add(brandId);
+      return next;
+    });
+  }
+
+  function selectAllBrands() {
+    setSelectedBrandIds(new Set(selectableBrandIds));
+  }
+
+  function clearUnlinkedBrands() {
+    setSelectedBrandIds(new Set(linkedBrandIds));
   }
 
   function handleFiles(files: FileList | null) {
@@ -756,6 +832,81 @@ export function AdminStandardMachinesPage() {
                     <span>{t('admin:active')}</span>
                   </label>
                 </div>
+              </section>
+
+              <section className="admin-catalog-section">
+                <h4 className="admin-catalog-section__title">
+                  {t('admin:standardMachines.sectionBrands')}
+                </h4>
+                <p className="admin-catalog-section__note">
+                  {t('admin:standardMachines.brandLinkHint')}
+                </p>
+                <div className="asm-brand-toolbar">
+                  <span className="asm-brand-toolbar__count">
+                    {t('admin:standardMachines.brandSelectedCount', {
+                      selected: selectedCount,
+                      total: brands.length,
+                    })}
+                  </span>
+                  <div className="asm-brand-toolbar__actions">
+                    <button
+                      type="button"
+                      className="btn btn--sm btn--secondary"
+                      onClick={selectAllBrands}
+                      disabled={formBusy || brands.length === 0 || allSelected}
+                    >
+                      {t('admin:standardMachines.selectAllBrands')}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--sm btn--ghost"
+                      onClick={clearUnlinkedBrands}
+                      disabled={formBusy || selectedCount === linkedBrandIds.size}
+                    >
+                      {t('admin:standardMachines.clearBrandSelection')}
+                    </button>
+                  </div>
+                </div>
+                {brandsQuery.isLoading ? (
+                  <Skeleton count={4} height={28} />
+                ) : brands.length === 0 ? (
+                  <p className="admin-catalog-section__note">
+                    {t('admin:standardMachines.noBrands')}
+                  </p>
+                ) : (
+                  <div
+                    className="asm-brand-list"
+                    role="group"
+                    aria-label={t('admin:standardMachines.sectionBrands')}
+                  >
+                    {brands.map((brand) => {
+                      const checked = selectedBrandIds.has(brand.id);
+                      const alreadyLinked = linkedBrandIds.has(brand.id);
+                      return (
+                        <label
+                          key={brand.id}
+                          className={`asm-brand-item${alreadyLinked ? ' is-linked' : ''}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            disabled={formBusy || alreadyLinked}
+                            onChange={() => toggleBrand(brand.id)}
+                          />
+                          <span className="asm-brand-item__name">
+                            {brandLabel(brand, i18n.language)}
+                          </span>
+                          <span className="asm-brand-item__code">{brand.code}</span>
+                          {alreadyLinked ? (
+                            <span className="asm-brand-item__badge">
+                              {t('admin:standardMachines.alreadyLinked')}
+                            </span>
+                          ) : null}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </section>
 
               <section className="admin-catalog-section">

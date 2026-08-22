@@ -373,6 +373,81 @@
   gap: 0.3rem;
 }
 
+.asm-brand-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.asm-brand-toolbar__count {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--color-text-muted);
+}
+
+.asm-brand-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.asm-brand-list {
+  display: grid;
+  gap: 0.35rem;
+  max-height: 16rem;
+  overflow: auto;
+  padding: 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--admin-radius-sm, 8px);
+  background: color-mix(in srgb, var(--color-bg) 42%, var(--color-surface));
+}
+
+.asm-brand-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.4rem 0.45rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.asm-brand-item:hover {
+  background: color-mix(in srgb, var(--color-text) 5%, transparent);
+}
+
+.asm-brand-item.is-linked {
+  cursor: default;
+  opacity: 0.88;
+}
+
+.asm-brand-item__name {
+  min-width: 0;
+  font-size: 0.88rem;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asm-brand-item__code {
+  font-size: 0.72rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--color-text-muted);
+}
+
+.asm-brand-item__badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+}
+
 @media (max-width: 640px) {
   .asm-toolbar__actions {
     margin-left: 0;

@@ -314,6 +314,11 @@ export const adminApi = {
       params: { activeOnly: activeOnly ? 'true' : 'false' },
     }),
 
+  getStandardMachine: (id: string) =>
+    apiClient.get<ApiResponse<StandardMachineType>>(
+      `/admin/catalog/standard-machines/${encodeURIComponent(id)}`
+    ),
+
   createStandardMachine: (input: AdminStandardMachineUpsertInput) =>
     apiClient.post<ApiResponse<StandardMachineType>>('/admin/catalog/standard-machines', input),
 

@@ -30,6 +30,8 @@ export interface StandardMachineType {
   /** Primary representative image URL (cache-busted when versioned). */
   primaryImageUrl?: string;
   machineCount?: number;
+  /** Brand IDs already linked via machines.standard_type_id (detail/get only). */
+  linkedBrandIds?: string[];
   createdAt?: string;
   updatedAt?: string;
 }

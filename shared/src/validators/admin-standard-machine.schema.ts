@@ -60,6 +60,8 @@ export const adminStandardMachineUpsertSchema = z.object({
   aliases: z.array(z.string().min(1).max(120)).max(40).optional(),
   sortOrder: z.number().int().min(0).max(999999).optional().default(0),
   isActive: z.boolean().optional().default(true),
+  /** Brand IDs to create/link catalog machines for (additive; skips already linked). */
+  brandIds: z.array(z.string().uuid()).max(200).optional(),
 });
 
 export const adminStandardMachineImageMetaSchema = z.object({

@@ -83,7 +83,10 @@ function brandGalleryMediaUrl(imageId: string, kind: 'main' | 'thumb' = 'main'):
   return `${publicApiBase()}/media/machine-images/${encodeURIComponent(imageId)}/${kind}`;
 }
 
-function mapStandardType(row: StandardTypeRow): StandardMachineType {
+function mapStandardType(
+  row: StandardTypeRow,
+  linkedBrandIds?: string[]
+): StandardMachineType {
   const versionMatch = row.primary_image_url?.match(/[?&]v=(\d+)/);
   const version = versionMatch ? Number(versionMatch[1]) : undefined;
   return {
@@ -98,9 +101,98 @@ function mapStandardType(row: StandardTypeRow): StandardMachineType {
     isActive: row.is_active,
     primaryImageUrl: withCacheBust(row.primary_image_url ?? null, version ?? 0) ?? undefined,
     machineCount: row.machine_count != null ? Number(row.machine_count) : undefined,
+    linkedBrandIds,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
+}
+
+/** Idempotent fan-out: create brand machines linked to a standard type. */
+async function linkBrandsToStandardType(
+  typeId: string,
+  brandIds: string[]
+): Promise<number> {
+  const pool = getPool();
+  if (!pool) throw new AppError(503, 'DB_UNAVAILABLE', 'Database not configured');
+  const unique = Array.from(new Set(brandIds.map((id) => id.trim()).filter(Boolean)));
+  if (unique.length === 0) return 0;
+
+  const result = await pool.query<{ id: string }>(
+    `INSERT INTO machines (
+       brand_id, code, name, muscle_group, machine_type, description,
+       standard_type_id, sort_order, is_active,
+       has_seat, has_back_pad, has_foot_plate, has_handle
+     )
+     SELECT
+       b.id AS brand_id,
+       LEFT(b.code || '_' || regexp_replace(t.code, '^STD_', ''), 80) AS code,
+       jsonb_strip_nulls(
+         jsonb_build_object(
+           'ko',
+           trim(BOTH FROM concat_ws(
+             ' ',
+             NULLIF(trim(COALESCE(b.name->>'ko', '')), ''),
+             NULLIF(trim(COALESCE(t.name->>'ko', '')), '')
+           )),
+           'en',
+           trim(BOTH FROM concat_ws(
+             ' ',
+             NULLIF(trim(COALESCE(b.name->>'en', b.code)), ''),
+             NULLIF(trim(COALESCE(t.name->>'en', t.code)), '')
+           )),
+           'ja',
+           NULLIF(trim(BOTH FROM concat_ws(
+             ' ',
+             NULLIF(trim(COALESCE(b.name->>'ja', '')), ''),
+             NULLIF(trim(COALESCE(t.name->>'ja', '')), '')
+           )), ''),
+           'zh',
+           NULLIF(trim(BOTH FROM concat_ws(
+             ' ',
+             NULLIF(trim(COALESCE(b.name->>'zh', '')), ''),
+             NULLIF(trim(COALESCE(t.name->>'zh', '')), '')
+           )), '')
+         )
+       ) AS name,
+       t.primary_muscle_group AS muscle_group,
+       CASE
+         WHEN t.code = 'STD_SMITH_MACHINE' THEN 'smith'
+         WHEN t.code IN (
+           'STD_CABLE_CROSSOVER',
+           'STD_DUAL_ADJUSTABLE_PULLEY',
+           'STD_MULTI_JUNGLE_GYM',
+           'STD_SEATED_CABLE'
+         ) THEN 'cable'
+         WHEN t.code IN ('STD_POWER_RACK', 'STD_HALF_RACK', 'STD_BARBELL_RACK') THEN 'free_weight'
+         WHEN t.code LIKE '%PLATE_LOADED%'
+           OR t.code IN (
+             'STD_VIKING_PRESS',
+             'STD_STANDING_CHEST_PRESS',
+             'STD_MACHINE_PULLOVER',
+             'STD_PENDULUM_SQUAT'
+           ) THEN 'plate_loaded'
+         ELSE 'selectorized'
+       END AS machine_type,
+       t.description AS description,
+       t.id AS standard_type_id,
+       t.sort_order AS sort_order,
+       TRUE AS is_active,
+       TRUE AS has_seat,
+       FALSE AS has_back_pad,
+       FALSE AS has_foot_plate,
+       TRUE AS has_handle
+     FROM brands b
+     INNER JOIN standard_machine_types t ON t.id = $2
+     WHERE b.id = ANY($1::uuid[])
+       AND NOT EXISTS (
+         SELECT 1 FROM machines m
+         WHERE m.brand_id = b.id AND m.standard_type_id = t.id
+       )
+     ON CONFLICT (code) DO NOTHING
+     RETURNING id`,
+    [unique, typeId]
+  );
+  return result.rows.length;
 }
 
 function mapStandardImage(row: StandardImageRow): StandardMachineImage {
@@ -239,15 +331,25 @@ async function loadType(idOrCode: string): Promise<StandardMachineType | null> {
     `SELECT alias FROM standard_machine_aliases WHERE standard_type_id = $1 ORDER BY alias`,
     [row.id]
   );
+  const linked = await pool.query<{ brand_id: string }>(
+    `SELECT DISTINCT brand_id::text AS brand_id
+     FROM machines
+     WHERE standard_type_id = $1 AND brand_id IS NOT NULL
+     ORDER BY brand_id::text`,
+    [row.id]
+  );
 
-  return mapStandardType({
-    ...row,
-    muscle_groups:
-      muscles.rows.length > 0
-        ? muscles.rows.map((r) => r.muscle_group)
-        : [row.primary_muscle_group],
-    aliases: aliases.rows.map((r) => r.alias),
-  });
+  return mapStandardType(
+    {
+      ...row,
+      muscle_groups:
+        muscles.rows.length > 0
+          ? muscles.rows.map((r) => r.muscle_group)
+          : [row.primary_muscle_group],
+      aliases: aliases.rows.map((r) => r.alias),
+    },
+    linked.rows.map((r) => r.brand_id)
+  );
 }
 
 export const adminStandardMachineRepository = {
@@ -362,6 +464,9 @@ export const adminStandardMachineRepository = {
       const id = result.rows[0]!.id;
       await replaceMuscleGroups(id, input.primaryMuscleGroup, input.muscleGroups);
       await replaceAliases(id, input.aliases);
+      if (input.brandIds?.length) {
+        await linkBrandsToStandardType(id, input.brandIds);
+      }
       const created = await loadType(id);
       if (!created) throw new AppError(500, 'CREATE_FAILED', 'Standard machine create failed');
       return created;
@@ -403,6 +508,9 @@ export const adminStandardMachineRepository = {
       await replaceMuscleGroups(existing.id, input.primaryMuscleGroup, input.muscleGroups);
       if (input.aliases !== undefined) {
         await replaceAliases(existing.id, input.aliases);
+      }
+      if (input.brandIds?.length) {
+        await linkBrandsToStandardType(existing.id, input.brandIds);
       }
       const updated = await loadType(existing.id);
       if (!updated) throw new AppError(500, 'UPDATE_FAILED', 'Standard machine update failed');
