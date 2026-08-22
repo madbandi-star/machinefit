@@ -1,40 +1,29 @@
 {
-  "title": "Standard machine brand multi-select on create",
-  "summary": "Admin standard machine create/edit can select N brands (incl. select all) to fan-out link via machines.standard_type_id. Additive only.",
+  "title": "Hellpower ladder titles/emojis refresh",
+  "summary": "Update HELLPOWER_LEVELS emoji+title to lifestyle ladder; score thresholds unchanged.",
   "git": {
     "branch": "main",
-    "commit": "59352e019672e150ec3a263d32256b723cca4200"
+    "commit": "pending"
   },
   "changedFiles": [
-    "shared/src/validators/admin-standard-machine.schema.ts",
-    "shared/src/types/standard-machine.types.ts",
-    "backend/server/repositories/admin-standard-machine.repository.ts",
-    "frontend/src/pages/admin/standard-machines/AdminStandardMachinesPage.tsx",
-    "frontend/src/styles/admin-standard-machines.css",
-    "frontend/src/api/admin.api.ts",
-    "frontend/src/i18n/locales/ko/admin.json",
-    "frontend/src/i18n/locales/en/admin.json",
-    "frontend/src/i18n/locales/ja/admin.json",
-    "frontend/src/i18n/locales/zh/admin.json"
+    "shared/src/constants/hellpower-levels.ts",
+    "shared/src/constants/hellpower-levels.test.ts"
   ],
   "testFocus": [
-    "ê´€ë¦¬ì ê³µí†µë¨¸ì‹  ?±ë¡: ë¸Œëœ??ì²´í¬ + ?„ì²´ ? íƒ ???€????? íƒ ë¸Œëœ?œì— ê¸°êµ¬ ?ì„±",
-    "?´ë? ?°ê²°??ë¸Œëœ?œëŠ” ì²´í¬ ? ì?Â·?´ì œ ë¶ˆê?",
-    "ë¸Œëœ??ë¯¸ì„ ???€????ê¸°ì¡´ì²˜ëŸ¼ ?€?…ë§Œ ?ì„±",
-    "?˜ì •?ì„œ ì¶”ê? ë¸Œëœ?œë§Œ ?ˆë¡œ ?°ê²°"
+    "? ??? ??? ?? ???/??",
+    "?????·??? ??? ??",
+    "Lv.30 ?? ?? / ??"
   ],
   "fastChecks": [
-    "npm run build --prefix shared",
-    "npm run typecheck --prefix frontend",
-    "npm run typecheck --prefix backend"
+    "node --import tsx shared/src/constants/hellpower-levels.test.ts",
+    "npm run build --prefix shared"
   ],
   "productionChecks": [
-    "Render backend ?¬ë°°????ê´€ë¦¬ì /admin/standard-machines ?°ê²° ?•ì¸",
-    "Pages ë°°í¬ ??ê´€ë¦¬ì UI ë¸Œëœ???¹ì…˜ ?œì‹œ"
+    "Pages+Render ?? ? /points ??? ??"
   ],
   "deploy": {
-    "expected": "Deploy Frontend success; Render redeploy for shared/backend"
+    "expected": "Deploy Frontend + Backend success"
   },
-  "asIs": "ê³µí†µë¨¸ì‹  ?±ë¡ ??ë¸Œëœ???ë™ ?°ê²° ?†ìŒ",
-  "toBe": "?±ë¡/?˜ì • ??Nê°?ë¸Œëœ??? íƒ(?„ì²´ ? íƒ) ??ê¸°êµ¬ ??ª© ?ì„±Â·?°ê²°"
+  "asIs": "RPG ?? ?? ??/???",
+  "toBe": "??? ?? ??/??? (?? ??)"
 }

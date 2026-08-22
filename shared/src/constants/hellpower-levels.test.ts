@@ -15,17 +15,17 @@ const cases: Array<[number, number, string, string]> = [
   [1200, 4, '🐤', '수습생'],
   [1799, 4, '🐤', '수습생'],
   [1800, 5, '💪', '헬린이'],
-  [2500, 6, '🏋️', '수련생'],
-  [6500, 9, '🛡️', '기사'],
-  [8500, 10, '🐴', '기마기사'],
-  [17500, 13, '🐺', '전투영웅'],
-  [45000, 19, '🐘', '맹수왕'],
-  [50000, 20, '🐙', '심연군주'],
-  [60000, 21, '🐲', '고룡'],
-  [100000, 25, '👺', '사신'],
-  [120000, 26, '👾', '재앙'],
-  [200000, 29, '☄️', '천벌'],
-  [300000, 30, '🌈', '헬창의 신'],
+  [2500, 6, '🏃', '오운완러'],
+  [6500, 9, '🏋️', '쇠질 입문'],
+  [8500, 10, '💦', '땀내 나는 헬창'],
+  [17500, 13, '📈', '득근 중'],
+  [45000, 19, '🧳', '여행 가도 쇠질'],
+  [50000, 20, '🏠', '헬스장 상주자'],
+  [60000, 21, '🥇', 'PR 갱신자'],
+  [100000, 25, '⭐', '헬창 엘리트'],
+  [120000, 26, '💎', '헬창 마스터'],
+  [200000, 29, '🌌', '헬창의 경지'],
+  [300000, 30, '♾️', '헬창 만렙'],
 ];
 
 for (const [score, level, emoji, title] of cases) {
@@ -55,7 +55,7 @@ assert.equal(maxP.next, null);
 
 assert.equal(getAuthorBadgeEmoji(Role.GUEST), '🧑‍🌾');
 assert.equal(getAuthorBadgeEmoji(Role.MEMBER, 0), '🥚');
-assert.equal(getAuthorBadgeEmoji(Role.MEMBER, 17500), '🐺');
+assert.equal(getAuthorBadgeEmoji(Role.MEMBER, 17500), '📈');
 assert.equal(getAuthorBadgeEmoji(Role.PREMIUM_MEMBER), '⚜️');
 assert.equal(ROLE_EMOJI.premium_member, '⚜️');
 assert.equal(getAuthorBadgeEmoji(Role.VIP_MEMBER), '👑');
