@@ -3,7 +3,7 @@
   "summary": "Add native date picker filter on /points ledger; combine with text search. Seoul calendar day matching.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "9b00f8108a232a581f13145882ce08ae6f71e2a1"
   },
   "changedFiles": [
     "frontend/src/pages/points/PointsPage.tsx",
