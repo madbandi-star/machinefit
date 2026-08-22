@@ -1,32 +1,29 @@
 {
-  "title": "Sync assist/pullover/cable brand machines to common type",
-  "summary": "공통 유형 STD_ASSISTED_PULLUP_DIP 이름을 「어시스트 풀업 / 딥」으로 고치고, 어시스트·풀오버·시티드 케이블 연동 브랜드 머신(각 29대)의 이름·근육군을 공통 설정(back/core/chest)으로 동기화. 프로덕션 DB에 migration 185 적용 완료.",
+  "title": "Rename assisted pull-up/dip → 어시스트 풀업",
+  "summary": "STD_ASSISTED_PULLUP_DIP 공통·브랜드 표시명을 「어시스트 풀업 / 딥」→「어시스트 풀업」(en: Assisted Pull-Up)으로 변경. 근육군 back 유지. 프로덕션에 migration 186 적용 완료.",
   "git": {
     "branch": "main",
-    "commit": "e6d88f45786836358c1d04f33e6df40808a87d03"
+    "commit": "(pending)"
   },
   "changedFiles": [
-    "database/migrations/185_sync_std_assist_pullover_cable.sql",
-    "scripts/apply-185-sync-std.cjs",
+    "database/migrations/186_rename_assisted_pullup.sql",
+    "scripts/apply-186-rename-assisted-pullup.cjs",
     ".cursor/handoff/latest.json",
     ".cursor/handoff/LATEST_TEST_HANDOFF.md"
   ],
   "testFocus": [
-    "검색/브랜드 머신: 어시스트 풀업 / 딥 — 이름에 「/ 딥」 포함, 근육군 등(back) (전신 아님)",
-    "풀오버 — 코어(core), 브랜드명+풀오버",
-    "시티드 케이블 — 가슴(chest), 브랜드명+시티드 케이블",
-    "관리자 공통 머신: STD_ASSISTED_PULLUP_DIP 표시명 「어시스트 풀업 / 딥」"
+    "공통/브랜드: 이름 「어시스트 풀업」(「/ 딥」 없음)",
+    "근육군 등(back) 유지"
   ],
   "fastChecks": [
-    "node -e \"require('fs').accessSync('database/migrations/185_sync_std_assist_pullover_cable.sql')\""
+    "node -e \"require('fs').accessSync('database/migrations/186_rename_assisted_pullup.sql')\""
   ],
   "productionChecks": [
-    "API/검색에서 assisted pull-up/dip muscle_group=back, name contains 어시스트 풀업 / 딥",
-    "풀오버 muscle_group=core, 시티드 케이블=chest"
+    "검색/상세: 어시스트 풀업, muscle_group=back"
   ],
   "deploy": {
-    "note": "DB already applied via scripts/apply-185-sync-std.cjs; migration file for history. Frontend Pages no behavior change unless cached search."
+    "note": "DB already applied via scripts/apply-186-rename-assisted-pullup.cjs"
   },
-  "asIs": "공통은 「어시스트 풀업」+back인데 브랜드는 「…어시스트 풀업 / 딥」+전신; 풀오버/시티드케이블도 브랜드 전신",
-  "toBe": "공통 이름 「어시스트 풀업 / 딥」; 브랜드 3종이 공통 primary_muscle_group·이름 규칙과 일치"
+  "asIs": "어시스트 풀업 / 딥",
+  "toBe": "어시스트 풀업"
 }
