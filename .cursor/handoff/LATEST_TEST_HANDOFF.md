@@ -6,7 +6,7 @@
 
 ## Git
 - branch: `main`
-- commit: PENDING (push 후 갱신)
+- commit: `9782f5f7039848fb4707ec2f79cfab654162e9c3`
 
 ## Test focus
 1. `/my-page/points` 헬창력 내역 필터 카드

@@ -3,7 +3,7 @@
   "summary": "내 헬창력 내역 검색·날짜 필터 UI를 퀵칩(전체/오늘/어제/7일)+날짜선택·필터 초기화로 재구성. 계산/API 로직 변경 없음(클라이언트 필터만).",
   "git": {
     "branch": "main",
-    "commit": "PENDING"
+    "commit": "9782f5f7039848fb4707ec2f79cfab654162e9c3"
   },
   "changedFiles": [
     "frontend/src/pages/points/PointsPage.tsx",
