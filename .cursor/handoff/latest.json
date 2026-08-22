@@ -3,7 +3,7 @@
   "summary": "When a machine thumb uses a common/standard-type photo (/media/standard-machine-images/), show a small corner badge (공통) with a tooltip that it may differ from the brand’s real unit. Surfaces: home mini-cards, favorites list, records cards, search list.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "d2e2d0300f3ba913992dbfd9c1c0e423a7087602"
   },
   "changedFiles": [
     "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.tsx",
