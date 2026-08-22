@@ -85,7 +85,12 @@ function FortuneCardShell({
             <span aria-hidden>🔥</span> {t('fortune:title')}
           </span>
           {!expanded && peek ? (
-            <span className="home-fortune-card__peek">{peek}</span>
+            <>
+              <span className="home-fortune-card__peek-sep" aria-hidden>
+                ·
+              </span>
+              <span className="home-fortune-card__peek">{peek}</span>
+            </>
           ) : null}
         </span>
         <span className="home-fortune-card__fold" aria-hidden>
