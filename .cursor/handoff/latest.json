@@ -1,9 +1,9 @@
-ï»¿{
+{
   "title": "Merge common-photo caption into thumb badge",
-  "summary": "External caption removed. Thumb bottom bar now shows full text e.g. ê³µí†µ Â· ì‹¤ë¬¼ê³¼ ë‹¤ë¥¼ ìˆ˜ ìˆìŒ.",
+  "summary": "External caption removed. Thumb bottom bar now shows full text e.g. °øÅë ¡¤ ½Ç¹°°ú ´Ù¸¦ ¼ö ÀÖÀ½.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "fd3b65653b7875be6be08321bbd46e71c1c8ca6d"
   },
   "changedFiles": [
     "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.tsx",
@@ -18,7 +18,7 @@
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Standard-image thumbs show bottom bar text ê³µí†µ Â· ì‹¤ë¬¼ê³¼ ë‹¤ë¥¼ ìˆ˜ ìˆìŒ",
+    "Standard-image thumbs show bottom bar text °øÅë ¡¤ ½Ç¹°°ú ´Ù¸¦ ¼ö ÀÖÀ½",
     "No separate caption line under/outside the thumb"
   ],
   "fastChecks": [],
@@ -29,6 +29,6 @@
     "frontend": "GitHub Pages via push to main",
     "backend": "not required"
   },
-  "asIs": "Badge said ê³µí†µ; caption was outside the image",
+  "asIs": "Badge said °øÅë; caption was outside the image",
   "toBe": "Full notice inside image bottom badge bar"
 }
