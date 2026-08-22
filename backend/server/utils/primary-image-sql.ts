@@ -63,3 +63,25 @@ export function primaryImageCoalesceSql(machineAlias = 'm'): string {
     ${standardTypePrimaryImageSql(machineAlias)}
   ) AS primary_image_url`;
 }
+
+/**
+ * Muscle-aware cover first (e.g. free-weight history), then default cover → gallery → standard.
+ * `muscleExpr` is raw SQL (e.g. `r.target_muscle_group`).
+ */
+export function primaryImageCoalesceWithMuscleSql(
+  machineAlias = 'm',
+  muscleExpr = 'r.target_muscle_group'
+): string {
+  return `COALESCE(
+    (
+      SELECT ${versionedUrlSql('c')}
+      FROM machine_cover_images c
+      WHERE c.machine_id = ${machineAlias}.id
+        AND c.target_muscle_group IS NOT DISTINCT FROM ${muscleExpr}
+      LIMIT 1
+    ),
+    ${machineCoverPrimaryImageSql(machineAlias)},
+    ${brandGalleryPrimaryImageSql(machineAlias)},
+    ${standardTypePrimaryImageSql(machineAlias)}
+  ) AS primary_image_url`;
+}

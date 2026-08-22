@@ -1,6 +1,7 @@
 import type { Locale } from '@machinefit/shared';
 import { getPool } from '../config/database.js';
 import { pickLocalized } from '../utils/localize.util.js';
+import { primaryImageCoalesceWithMuscleSql } from '../utils/primary-image-sql.js';
 
 export interface HistoryItem {
   id: string;
@@ -126,32 +127,7 @@ export const historyRepository = {
       `SELECT h.id, h.gym_id, h.member_id, h.machine_id, h.recommendation_id, h.viewed_at,
               m.code AS machine_code, m.muscle_group, m.name AS machine_name,
               b.name AS brand_name,
-              COALESCE(
-                (
-                  SELECT CASE
-                    WHEN c.image_url IS NULL THEN NULL
-                    WHEN POSITION('?' IN c.image_url) > 0
-                      THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
-                    ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
-                  END
-                  FROM machine_cover_images c
-                  WHERE c.machine_id = m.id
-                    AND c.target_muscle_group IS NOT DISTINCT FROM r.target_muscle_group
-                  LIMIT 1
-                ),
-                (
-                  SELECT CASE
-                    WHEN c.image_url IS NULL THEN NULL
-                    WHEN POSITION('?' IN c.image_url) > 0
-                      THEN c.image_url || '&v=' || COALESCE(c.version, 0)::text
-                    ELSE c.image_url || '?v=' || COALESCE(c.version, 0)::text
-                  END
-                  FROM machine_cover_images c
-                  WHERE c.machine_id = m.id AND c.target_muscle_group IS NULL
-                  LIMIT 1
-                ),
-                mi.image_url
-              ) AS primary_image_url,
+              ${primaryImageCoalesceWithMuscleSql('m', 'r.target_muscle_group')},
               r.seat_position, r.back_pad_position, r.foot_position,
               r.handle_position, r.rom_setting, r.recommended_weight_kg,
               r.recommended_reps_min, r.recommended_reps_max,
@@ -160,13 +136,6 @@ export const historyRepository = {
        JOIN machines m ON m.id = h.machine_id
        LEFT JOIN brands b ON b.id = m.brand_id
        JOIN machine_recommendations r ON r.id = h.recommendation_id
-       LEFT JOIN LATERAL (
-         SELECT image_url
-         FROM machine_images
-         WHERE machine_id = m.id
-         ORDER BY is_primary DESC, sort_order ASC
-         LIMIT 1
-       ) mi ON TRUE
        WHERE (${visibilityParts.join(' OR ')})${sharedFilters}
        ORDER BY h.viewed_at DESC
        LIMIT $${params.length}`,

@@ -15,7 +15,7 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useUIStore } from '@/store/ui.store';
-import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
+import { machinePlaceholderUrl, resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
 import { shouldShowDefaultMachineMuscle, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import '@/styles/records.css';
@@ -211,7 +211,9 @@ export function FavoritesListPanel() {
             item.brandName,
             item.machineCode
           );
-          const imageUrl = resolveMachineImageUrl(item.machineCode, item.primaryImageUrl);
+          const imageUrl = resolveRecordMachineImageUrl(item.machineCode, {
+            primaryImageUrl: item.primaryImageUrl,
+          });
           const checked = selectedIds.has(item.id);
           const workoutDate = formatWorkoutDate(item.lastWorkoutLogDate, locale);
           const workoutTime = item.lastWorkoutAt

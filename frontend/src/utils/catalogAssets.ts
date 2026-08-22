@@ -232,7 +232,10 @@ export function resolveRecordMachineImageUrl(
   }
 
   const fromApiOrPackaged = resolveMachineImageUrl(machineCode, options?.primaryImageUrl);
-  if (fromApiOrPackaged) return fromApiOrPackaged;
+  const placeholder = machinePlaceholderUrl();
+  if (fromApiOrPackaged && fromApiOrPackaged !== placeholder) {
+    return fromApiOrPackaged;
+  }
 
   if (options?.targetMuscleGroup) {
     return machineCoverMediaUrl(machineCode, options.targetMuscleGroup);

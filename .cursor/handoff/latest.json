@@ -1,25 +1,34 @@
 ﻿{
-  "title": "Search recommend list: machine name only",
-  "summary": "검색 추천 머신 목록 제목에서 브랜드 접두어를 제거하고 기구명만 표시합니다. 브랜드 라벨은 하단에 그대로 둡니다.",
-  "git": { "branch": "main", "commit": "pending" },
+  "title": "Fix machine images on home/favorites/records",
+  "summary": "Favorites and recent-history APIs now resolve primary images via cover → gallery → standard_machine_images (same chain as machine list / workout cards). Favorites list panel uses resolveRecordMachineImageUrl so missing API images can fall through to cover media.",
+  "git": {
+    "branch": "main",
+    "commit": "pending"
+  },
   "changedFiles": [
-    "frontend/src/utils/freeWeightDisplay.ts",
-    "frontend/src/utils/freeWeightDisplay.test.ts",
-    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx"
+    "backend/server/repositories/favorite.repository.ts",
+    "backend/server/repositories/history.repository.ts",
+    "backend/server/utils/primary-image-sql.ts",
+    "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
+    "frontend/src/utils/catalogAssets.ts",
+    "frontend/src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
   ],
   "testFocus": [
-    "검색 → 추천 머신: '아스날 스트렝스 어브도미널' → '어브도미널'",
-    "브랜드 줄은 여전히 표시"
+    "Home: recent machines + favorites mini-cards show real photos when standard type has an image",
+    "Favorites view-all list thumbs match home",
+    "Records page HistoryRecordCard thumbs for machines without brand gallery/cover"
   ],
   "fastChecks": [
-    {
-      "id": "strip-brand",
-      "type": "shell",
-      "command": "cd frontend && npx vitest run src/utils/freeWeightDisplay.test.ts"
-    }
+    "cd frontend && npx vitest run src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
   ],
-  "productionChecks": [],
-  "deploy": { "expected": "Frontend Pages" },
-  "asIs": "추천 머신 제목이 브랜드+기구명",
-  "toBe": "제목은 기구명만, 브랜드는 하단 메타"
+  "productionChecks": [
+    "After Deploy Frontend success AND Render backend redeploy: open home favorites/recent and /favorites — thumbs should load standard images",
+    "Records page machine cards should show images for seeded standard-linked machines"
+  ],
+  "deploy": {
+    "frontend": "GitHub Pages via push to main",
+    "backend": "Render redeploy required (favorite/history SQL changed)"
+  },
+  "asIs": "Home favorites/recent and favorites list mostly showed placeholders; history/records often lacked standard-type image fallback",
+  "toBe": "Those surfaces use the shared primary-image COALESCE including standard_machine_images"
 }
