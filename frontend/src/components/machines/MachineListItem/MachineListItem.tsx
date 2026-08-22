@@ -15,7 +15,12 @@ import {
   stripBrandFromMachineName,
 } from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
-import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
+import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import {
+  isStandardMachineImageUrl,
+  machinePlaceholderUrl,
+  resolveMachineImageUrl,
+} from '@/utils/catalogAssets';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
 import { useAuthStore } from '@/store/auth.store';
 import { seedMachineDetailCache } from '@/utils/machineDetailCache';
@@ -132,6 +137,7 @@ export function MachineListItem({
   const brandOrType = brandName || typeLabel;
   const displayName = stripBrandFromMachineName(localizedName, brandName);
   const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
+  const showStandardImageBadge = isStandardMachineImageUrl(imageUrl);
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
   const detailParams = new URLSearchParams();
@@ -149,14 +155,17 @@ export function MachineListItem({
     <>
       <div className="machine-list-item__thumb">
         {imageUrl ? (
-          <SafeImage
-            src={imageUrl}
-            fallbackSrc={machinePlaceholderUrl()}
-            alt=""
-            loading="lazy"
-            width={72}
-            height={72}
-          />
+          <>
+            <SafeImage
+              src={imageUrl}
+              fallbackSrc={machinePlaceholderUrl()}
+              alt=""
+              loading="lazy"
+              width={72}
+              height={72}
+            />
+            {showStandardImageBadge ? <StandardMachineImageBadge /> : null}
+          </>
         ) : displayMuscle ? (
           <div className="machine-list-item__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={52} />

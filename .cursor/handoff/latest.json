@@ -1,40 +1,39 @@
 ﻿{
-  "title": "Fix machine images on home/favorites/records",
-  "summary": "Favorites and recent-history APIs now resolve primary images via cover → gallery → standard_machine_images (same chain as machine list / workout cards). Favorites list panel uses resolveRecordMachineImageUrl so missing API images can fall through to cover media.",
+  "title": "Standard image thumbnail badge",
+  "summary": "When a machine thumb uses a common/standard-type photo (/media/standard-machine-images/), show a small corner badge (공통) with a tooltip that it may differ from the brand’s real unit. Surfaces: home mini-cards, favorites list, records cards, search list.",
   "git": {
     "branch": "main",
-    "commit": "81dd178b90e10a2055f0ba345bff7ca3d2ea40fe"
+    "commit": "pending"
   },
   "changedFiles": [
-    "backend/server/repositories/favorite.repository.ts",
-    "backend/server/repositories/history.repository.ts",
-    "backend/server/utils/primary-image-sql.ts",
+    "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.tsx",
+    "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.css",
+    "frontend/src/components/home/MachineMiniCard/MachineMiniCard.tsx",
     "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
+    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
+    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
     "frontend/src/utils/catalogAssets.ts",
-    "frontend/src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
+    "frontend/src/utils/catalogAssets.resolveMachineImageUrl.test.ts",
+    "frontend/src/i18n/locales/ko/machines.json",
+    "frontend/src/i18n/locales/en/machines.json",
+    "frontend/src/i18n/locales/ja/machines.json",
+    "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Home: recent machines + favorites mini-cards show real photos when standard type has an image",
-    "Favorites view-all list thumbs match home",
-    "Records page HistoryRecordCard thumbs for machines without brand gallery/cover"
+    "Home favorites/recent: standard-image thumbs show 공통 badge",
+    "Favorites view-all and Records cards: same badge",
+    "Search list: brand machines with standard fallback show badge; brand-own photos do not"
   ],
   "fastChecks": [
     "cd frontend && npx vitest run src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
   ],
   "productionChecks": [
-    "After Deploy Frontend success AND Render backend redeploy: open home favorites/recent and /favorites — thumbs should load standard images",
-    "Records page machine cards should show images for seeded standard-linked machines"
+    "After Pages deploy: open home/favorites/records/search and confirm badge only on standard photos"
   ],
   "deploy": {
-    "frontend": {
-      "url": "https://github.com/madbandi-star/machinefit/actions/runs/32553407984",
-      "status": "success"
-    },
-    "backend": {
-      "url": "https://github.com/madbandi-star/machinefit/actions/runs/32553407986",
-      "status": "success"
-    }
+    "frontend": "GitHub Pages via push to main",
+    "backend": "not required"
   },
-  "asIs": "Home favorites/recent and favorites list mostly showed placeholders; history/records often lacked standard-type image fallback",
-  "toBe": "Those surfaces use the shared primary-image COALESCE including standard_machine_images"
+  "asIs": "No indication when thumb is a shared catalog photo",
+  "toBe": "공통 badge + tooltip on standard-type thumbs"
 }

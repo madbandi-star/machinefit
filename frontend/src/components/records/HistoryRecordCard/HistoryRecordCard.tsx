@@ -40,6 +40,7 @@ import {
 } from '@machinefit/shared';
 import { workoutCardApi, type FitRating } from '@/api';
 import { SafeImage } from '@/components/media/SafeImage';
+import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import {
@@ -49,7 +50,11 @@ import {
 import { useMachineFitFeedback } from '@/hooks/useMachineFitFeedback';
 import { useRecommendMachine } from '@/hooks/useRecommendMachine';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { machinePlaceholderUrl, resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
+import {
+  isStandardMachineImageUrl,
+  machinePlaceholderUrl,
+  resolveRecordMachineImageUrl,
+} from '@/utils/catalogAssets';
 import { formatHistoryDateHeader, formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import type { HistoryRecordCard as HistoryRecordCardData } from '@/utils/historyRecordsDisplay';
 import { useWorkoutLogSaved } from '@/hooks/useWorkoutLogSaved';
@@ -377,6 +382,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
     targetMuscleGroup: card.targetMuscleGroup,
     preferMuscleCover: isFreeWeightMachineCode(card.machineCode),
   });
+  const showStandardImageBadge = isStandardMachineImageUrl(machineImageUrl);
   const resolvedMuscleGroup =
     muscleGroup ??
     getHistoryMuscleGroup(card.machineCode, card.muscleGroup, card.targetMuscleGroup);
@@ -498,6 +504,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                   width={100}
                   height={100}
                 />
+                {showStandardImageBadge ? <StandardMachineImageBadge /> : null}
                 <span className="history-record-card__thumb-cue" aria-hidden>
                   <ChevronRight size={12} strokeWidth={2.6} />
                 </span>

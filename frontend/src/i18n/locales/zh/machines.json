@@ -18,6 +18,10 @@
   },
   "notFound": "Machine not found",
   "error": "Error",
+  "images": {
+    "standardBadge": "通用",
+    "standardHint": "机种通用图片，可能与该品牌实机不同。"
+  },
   "muscleGroups": {
     "back": "Back",
     "chest": "Chest",

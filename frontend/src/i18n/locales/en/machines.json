@@ -18,6 +18,10 @@
   },
   "notFound": "Machine not found",
   "error": "Error",
+  "images": {
+    "standardBadge": "Common",
+    "standardHint": "Shared catalog photo for this machine type — may differ from this brand’s unit."
+  },
   "muscleGroups": {
     "back": "Back",
     "chest": "Chest",

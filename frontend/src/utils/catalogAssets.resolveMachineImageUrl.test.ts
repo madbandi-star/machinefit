@@ -3,6 +3,7 @@ import {
   resolveMachineImageUrl,
   resolveRecordMachineImageUrl,
   machinePlaceholderUrl,
+  isStandardMachineImageUrl,
 } from './catalogAssets';
 
 describe('resolveMachineImageUrl', () => {
@@ -35,5 +36,21 @@ describe('resolveRecordMachineImageUrl', () => {
     const api =
       'https://machinefit.onrender.com/api/v1/media/standard-machine-images/abc/main?v=1';
     expect(resolveRecordMachineImageUrl('ANY_CODE', { primaryImageUrl: api })).toBe(api);
+  });
+});
+
+describe('isStandardMachineImageUrl', () => {
+  it('detects standard-machine media paths', () => {
+    expect(
+      isStandardMachineImageUrl(
+        'https://machinefit.onrender.com/api/v1/media/standard-machine-images/abc/main'
+      )
+    ).toBe(true);
+    expect(
+      isStandardMachineImageUrl(
+        'https://machinefit.onrender.com/api/v1/media/machine-covers/HS_LEG_PRESS/main'
+      )
+    ).toBe(false);
+    expect(isStandardMachineImageUrl(undefined)).toBe(false);
   });
 });

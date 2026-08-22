@@ -18,6 +18,10 @@
   },
   "notFound": "머신을 찾을 수 없습니다",
   "error": "오류",
+  "images": {
+    "standardBadge": "공통",
+    "standardHint": "공통 유형 사진입니다. 브랜드 실물과 다를 수 있어요."
+  },
   "muscleGroups": {
     "back": "등",
     "chest": "가슴",

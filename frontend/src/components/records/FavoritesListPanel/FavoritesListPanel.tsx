@@ -15,7 +15,12 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useUIStore } from '@/store/ui.store';
-import { machinePlaceholderUrl, resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
+import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import {
+  isStandardMachineImageUrl,
+  machinePlaceholderUrl,
+  resolveRecordMachineImageUrl,
+} from '@/utils/catalogAssets';
 import { shouldShowDefaultMachineMuscle, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { formatHistoryTime, normalizeDateKey } from '@/utils/historyDate';
 import '@/styles/records.css';
@@ -214,6 +219,7 @@ export function FavoritesListPanel() {
           const imageUrl = resolveRecordMachineImageUrl(item.machineCode, {
             primaryImageUrl: item.primaryImageUrl,
           });
+          const showStandardImageBadge = isStandardMachineImageUrl(imageUrl);
           const checked = selectedIds.has(item.id);
           const workoutDate = formatWorkoutDate(item.lastWorkoutLogDate, locale);
           const workoutTime = item.lastWorkoutAt
@@ -245,6 +251,7 @@ export function FavoritesListPanel() {
                     width={56}
                     height={56}
                   />
+                  {showStandardImageBadge ? <StandardMachineImageBadge /> : null}
                 </div>
                 <div className="favorite-row__main">
                   <MachineNameWithMuscle

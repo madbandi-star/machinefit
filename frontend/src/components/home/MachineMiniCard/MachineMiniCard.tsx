@@ -7,7 +7,12 @@ import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
-import { machinePlaceholderUrl, resolveRecordMachineImageUrl } from '@/utils/catalogAssets';
+import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import {
+  isStandardMachineImageUrl,
+  machinePlaceholderUrl,
+  resolveRecordMachineImageUrl,
+} from '@/utils/catalogAssets';
 import '@/styles/home.css';
 
 interface MachineMiniCardProps {
@@ -45,6 +50,7 @@ export function MachineMiniCard({
     targetMuscleGroup,
     preferMuscleCover: isFreeWeightMachineCode(machineCode),
   });
+  const showStandardImageBadge = isStandardMachineImageUrl(resolvedImageUrl);
 
   const to = recommendationId
     ? `${ROUTES.RECOMMEND_RESULT.replace(':machineCode', machineCode)}?id=${recommendationId}`
@@ -54,14 +60,17 @@ export function MachineMiniCard({
     <Link to={to} className="machine-mini-card">
       <div className="machine-mini-card__thumb">
         {resolvedImageUrl ? (
-          <SafeImage
-            src={resolvedImageUrl}
-            fallbackSrc={machinePlaceholderUrl()}
-            alt=""
-            loading="lazy"
-            width={136}
-            height={136}
-          />
+          <>
+            <SafeImage
+              src={resolvedImageUrl}
+              fallbackSrc={machinePlaceholderUrl()}
+              alt=""
+              loading="lazy"
+              width={136}
+              height={136}
+            />
+            {showStandardImageBadge ? <StandardMachineImageBadge /> : null}
+          </>
         ) : displayMuscle ? (
           <div className="machine-mini-card__muscle-icon" aria-hidden>
             <MuscleGroupIcon group={displayMuscle as MuscleGroup} size={44} />

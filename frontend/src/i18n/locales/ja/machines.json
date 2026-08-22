@@ -18,6 +18,10 @@
   },
   "notFound": "Machine not found",
   "error": "Error",
+  "images": {
+    "standardBadge": "共通",
+    "standardHint": "機種共通の写真です。ブランド実機と異なる場合があります。"
+  },
   "muscleGroups": {
     "back": "Back",
     "chest": "Chest",

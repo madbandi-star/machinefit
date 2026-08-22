@@ -246,3 +246,9 @@ export function resolveRecordMachineImageUrl(
 export function machinePlaceholderUrl(): string {
   return `${assetBase()}assets/machines/placeholder.svg`;
 }
+
+/** True when the resolved URL is a common/standard-type catalog photo (not brand-specific). */
+export function isStandardMachineImageUrl(url?: string | null): boolean {
+  if (!url) return false;
+  return /\/media\/standard-machine-images\//i.test(url);
+}
