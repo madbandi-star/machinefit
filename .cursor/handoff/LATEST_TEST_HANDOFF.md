@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: (pending)
+- commit: `f2e912c6da11be9db0f7f2144ee5df0076759119`
 
 ## Test focus
 1. 브랜드/검색 이름에 「45도」 없고 「45° 레그 프레스」

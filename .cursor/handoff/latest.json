@@ -3,7 +3,7 @@
   "summary": "공통 STD_45_LEG_PRESS는 이미 「45° 레그 프레스」. 연동 브랜드 29대 이름을 공통에 맞춰 45도→45°로 재생성. 프로덕션 migration 187 적용 완료.",
   "git": {
     "branch": "main",
-    "commit": "(pending)"
+    "commit": "f2e912c6da11be9db0f7f2144ee5df0076759119"
   },
   "changedFiles": [
     "database/migrations/187_rename_45_leg_press_degree.sql",
