@@ -1,43 +1,35 @@
 {
-  "title": "Free Weight cover images refresh",
-  "summary": "프리웨이트 5도구 대표+부위(40) 커버 이미지를 after_change_300kb/신규 생성분으로 교체 업로드 완료. 앱 코드 변경 없이 machine_cover_images(FW_* only)와 upload 스크립트 추가.",
+  "title": "Hellpower ledger filter UX",
+  "summary": "내 헬창력 내역 검색·날짜 필터 UI를 퀵칩(전체/오늘/어제/7일)+날짜선택·필터 초기화로 재구성. 계산/API 로직 변경 없음(클라이언트 필터만).",
   "git": {
     "branch": "main",
-    "commit": "4088ecc7c63a9e0b1809ae29ac9bd1a23acf1ab8"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "scripts/upload-fw-covers.mjs",
-    "scripts/advanced_color_grader.cjs",
-    "scripts/apply_final_color_correction.cjs",
-    "scripts/batch_color_grade.cjs",
-    "scripts/color_analysis.cjs",
-    "scripts/color_grading_core.cjs",
-    "scripts/evaluate_grading.cjs",
-    "scripts/inspect_crow_regions.cjs",
-    "scripts/test_colorizer.cjs",
-    "docs/assets/machinefit-exhibition-banner-750x120.jpg",
-    "frontend/public/sitemap.xml",
-    "docs/I18N_AUDIT_REPORT.json",
+    "frontend/src/pages/points/PointsPage.tsx",
+    "frontend/src/pages/points/PointsPage.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json",
     ".cursor/handoff/latest.json",
     ".cursor/handoff/LATEST_TEST_HANDOFF.md"
   ],
   "testFocus": [
-    "Admin → Machine Covers → brand FREE_WEIGHT: 5 tools each have default cover + 8 muscle variants",
-    "Confirm non-FW brand covers unchanged",
-    "Optional: open FW_BARBELL chest/back media URLs return 200"
+    "내 헬창력 → 헬창력 내역: 검색창 + 날짜 칩(전체/오늘/어제/7일/날짜선택)",
+    "필터 적용 시 건수 요약·필터 초기화",
+    "결과 0건일 때 초기화 버튼",
+    "모바일에서 칩 가로 스크롤·터치"
   ],
   "fastChecks": [
-    "node -e \"require('fs').accessSync('scripts/upload-fw-covers.mjs')\"",
-    "git show --stat --oneline -1"
+    "npm run typecheck --prefix frontend"
   ],
   "productionChecks": [
-    "https://machinefit.onrender.com/api/v1/media/machine-covers/FW_BARBELL/main",
-    "https://machinefit.onrender.com/api/v1/media/machine-covers/FW_DUMBBELL/chest/main",
-    "Admin machine-covers Free Weight filter: 5/5 heroes + 40/40 muscle slots"
+    "https://machine-fit.com/machinefit/my-page/points — ledger filter chips after Pages deploy"
   ],
   "deploy": {
-    "note": "FW cover binaries already uploaded to Supabase/DB. Push deploys scripts/sitemap only; Pages rebuild expected."
+    "note": "Frontend Pages only"
   },
-  "asIs": "프리웨이트 커버가 구버전/불일치 이미지거나 일부 슬롯이 오래된 상태",
-  "toBe": "FW_* 대표 5 + 부위 40 슬롯이 MachineFit 신규 톤 이미지로 채워짐; 타 브랜드 커버 0건 변경"
+  "asIs": "검색 + 네이티브 date input이 세로로 어색하게 분리, 해제 UX 약함",
+  "toBe": "통합 필터 카드 + 퀵 날짜 칩 + 캘린더 선택 + 활성 필터/초기화"
 }

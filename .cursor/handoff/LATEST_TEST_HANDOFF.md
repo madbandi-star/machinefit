@@ -1,35 +1,24 @@
-﻿# Test handoff — Free Weight cover images
+﻿# Test handoff — Hellpower ledger filter UX
 
 ## Summary
-프리웨이트(`FW_*`) 대표 5 + 부위 40 커버를 `after_change_300kb`/신규 생성 이미지로 교체 업로드 완료.  
-비-FW 브랜드/머신/커버는 변경 없음. 앱 런타임 로직 변경 없음(스크립트·sitemap·handoff 커밋).
+내 헬창력 페이지의 내역 검색·날짜 필터 UI/UX 개선.  
+텍스트 검색 + 날짜 퀵칩(전체/오늘/어제/7일) + 날짜 선택 + 필터 초기화. API/적립 로직 변경 없음.
 
 ## Git
 - branch: `main`
-- commit: `4088ecc7c63a9e0b1809ae29ac9bd1a23acf1ab8`
-
-## Changed files
-- `scripts/upload-fw-covers.mjs` (+ color grading helper scripts)
-- `docs/assets/machinefit-exhibition-banner-750x120.jpg`
-- `frontend/public/sitemap.xml`
-- `docs/I18N_AUDIT_REPORT.json`
-- `.cursor/handoff/*`
+- commit: PENDING (push 후 갱신)
 
 ## Test focus
-1. Admin → Machine Covers → brand **Free Weight**
-2. 바벨/케이블/덤벨/케틀벨/스미스: 대표 + 등·가슴·하체·어깨·이두·삼두·팔·코어 모두 표시
-3. 다른 브랜드 커버 이미지가 바뀌지 않았는지 스팟 체크
+1. `/my-page/points` 헬창력 내역 필터 카드
+2. 오늘/어제/7일/날짜선택 동작
+3. 검색+날짜 동시 적용, 초기화
+4. 결과 없음 → 필터 초기화 버튼
 
 ## Fast checks
 ```bash
-node -e "require('fs').accessSync('scripts/upload-fw-covers.mjs'); console.log('ok')"
-git show --stat --oneline -1
+npm run typecheck --prefix frontend
 ```
 
-## Production checks (covers already live)
-- `GET /api/v1/media/machine-covers/FW_BARBELL/main`
-- `GET /api/v1/media/machine-covers/FW_SMITH/legs/main`
-
 ## As-is → To-be
-- **As-is:** 프리웨이트 커버가 구버전/누락·불일치 가능
-- **To-be:** FW 5×(1+8)=45 슬롯 MachineFit 신규 톤으로 통일, 타 브랜드 0건 변경
+- **As-is:** 검색창 + 네이티브 date input 세로 배치, 해제 UX 빈약
+- **To-be:** 통합 필터 패널 + 퀵칩 + 캘린더 칩 + 건수/초기화

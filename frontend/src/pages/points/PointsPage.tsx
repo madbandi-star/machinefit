@@ -10,6 +10,7 @@ import {
 import { PageShell } from '@/components/layout/PageContainer/PageShell';
 import { Skeleton } from '@/components/feedback/Skeleton/Skeleton';
 import { SearchBar } from '@/components/navigation/SearchBar/SearchBar';
+import { Icon } from '@/components/icons/Icon';
 import { pointsApi } from '@/api/points.api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -17,6 +18,8 @@ import { HellpowerLadderSheet } from './HellpowerLadderSheet';
 import './PointsPage.css';
 
 const LAST_LEVEL_KEY = 'machinefit.lastHellpowerLevel';
+/** Sentinel for “last 7 Seoul calendar days including today”. */
+const DATE_WEEK = '__week__';
 
 function formatTxWhen(iso: string, locale: string): string {
   const d = new Date(iso);
@@ -28,6 +31,17 @@ function formatTxWhen(iso: string, locale: string): string {
     hour: '2-digit',
     minute: '2-digit',
   }).format(d);
+}
+
+function formatDayLabel(yyyyMmDd: string, locale: string): string {
+  const [y, m, d] = yyyyMmDd.split('-').map(Number);
+  if (!y || !m || !d) return yyyyMmDd;
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y, m - 1, d)));
 }
 
 function txSearchHaystack(tx: PointTransaction, locale: string): string {
@@ -52,6 +66,26 @@ function formatRange(row: Pick<HellpowerLevelDef, 'minScore' | 'maxScore'>, loca
 function seoulDateKey(isoOrNow?: string): string {
   const d = isoOrNow ? new Date(isoOrNow) : new Date();
   return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+}
+
+/** Shift a Seoul calendar day key by `delta` days (UTC-safe arithmetic on the key). */
+function seoulShiftDays(delta: number, fromKey = seoulDateKey()): string {
+  const [y, m, d] = fromKey.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + delta));
+  const yy = dt.getUTCFullYear();
+  const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getUTCDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+function matchesDateFilter(txKey: string, dateFilter: string): boolean {
+  if (!dateFilter) return true;
+  if (dateFilter === DATE_WEEK) {
+    const from = seoulShiftDays(-6);
+    const to = seoulDateKey();
+    return txKey >= from && txKey <= to;
+  }
+  return txKey === dateFilter;
 }
 
 function ledgerEmoji(actionCode: string | null, points: number): string {
@@ -112,14 +146,21 @@ export function PointsPage() {
   });
 
   const items = ledgerQuery.data?.items ?? [];
+  const todayKey = seoulDateKey();
+  const yesterdayKey = seoulShiftDays(-1, todayKey);
   const filteredItems = useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
     return items.filter((tx) => {
-      if (dateFilter && seoulDateKey(tx.createdAt) !== dateFilter) return false;
+      if (!matchesDateFilter(seoulDateKey(tx.createdAt), dateFilter)) return false;
       if (q && !txSearchHaystack(tx, locale).includes(q)) return false;
       return true;
     });
   }, [items, debouncedQuery, dateFilter, locale]);
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setDateFilter('');
+  };
 
   const summary = summaryQuery.data;
   const balance = summary?.balance ?? 0;
@@ -177,6 +218,20 @@ export function PointsPage() {
   const next = progress.next;
   const isMax = progress.isMaxLevel;
   const fillPct = Math.round((barReady ? progress.progressRatio : 0) * 1000) / 10;
+
+  const isCustomDay =
+    dateFilter.length > 0 &&
+    dateFilter !== DATE_WEEK &&
+    dateFilter !== todayKey &&
+    dateFilter !== yesterdayKey;
+
+  const dateChipActive = (chip: 'all' | 'today' | 'yesterday' | 'week' | 'custom') => {
+    if (chip === 'all') return !dateFilter;
+    if (chip === 'today') return dateFilter === todayKey;
+    if (chip === 'yesterday') return dateFilter === yesterdayKey;
+    if (chip === 'week') return dateFilter === DATE_WEEK;
+    return isCustomDay;
+  };
 
   return (
     <PageShell title={t('points.title')}>
@@ -382,32 +437,75 @@ export function PointsPage() {
                   placeholder={t('points.searchPlaceholder')}
                 />
               </div>
-              <div className="points-ledger__date">
-                <label className="points-ledger__date-label" htmlFor="points-ledger-date">
-                  {t('points.dateFilterLabel')}
-                </label>
-                <div className="points-ledger__date-row">
-                  <input
-                    id="points-ledger-date"
-                    className="input points-ledger__date-input"
-                    type="date"
-                    value={dateFilter}
-                    max={seoulDateKey()}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    aria-label={t('points.dateFilterAria')}
-                  />
-                  {dateFilter ? (
-                    <button
-                      type="button"
-                      className="points-ledger__date-clear"
-                      onClick={() => setDateFilter('')}
-                      aria-label={t('points.clearDateFilter')}
-                    >
-                      {t('points.clearDateFilter')}
-                    </button>
-                  ) : null}
+
+              <div className="points-ledger__date-tools" role="group" aria-label={t('points.dateFilterAria')}>
+                <div className="points-ledger__chips">
+                  <button
+                    type="button"
+                    className={`points-ledger__chip${dateChipActive('all') ? ' points-ledger__chip--active' : ''}`}
+                    aria-pressed={dateChipActive('all')}
+                    onClick={() => setDateFilter('')}
+                  >
+                    {t('points.dateChipAll')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`points-ledger__chip${dateChipActive('today') ? ' points-ledger__chip--active' : ''}`}
+                    aria-pressed={dateChipActive('today')}
+                    onClick={() => setDateFilter(todayKey)}
+                  >
+                    {t('points.dateChipToday')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`points-ledger__chip${dateChipActive('yesterday') ? ' points-ledger__chip--active' : ''}`}
+                    aria-pressed={dateChipActive('yesterday')}
+                    onClick={() => setDateFilter(yesterdayKey)}
+                  >
+                    {t('points.dateChipYesterday')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`points-ledger__chip${dateChipActive('week') ? ' points-ledger__chip--active' : ''}`}
+                    aria-pressed={dateChipActive('week')}
+                    onClick={() => setDateFilter(DATE_WEEK)}
+                  >
+                    {t('points.dateChipWeek')}
+                  </button>
+                  <label
+                    className={`points-ledger__chip points-ledger__chip--cal${
+                      dateChipActive('custom') ? ' points-ledger__chip--active' : ''
+                    }`}
+                  >
+                    <Icon name="calendar" size={15} aria-hidden />
+                    <span>
+                      {isCustomDay ? formatDayLabel(dateFilter, locale) : t('points.dateChipPick')}
+                    </span>
+                    <input
+                      className="points-ledger__cal-native"
+                      type="date"
+                      value={isCustomDay ? dateFilter : ''}
+                      max={todayKey}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v) setDateFilter(v);
+                      }}
+                      aria-label={t('points.dateFilterAria')}
+                    />
+                  </label>
                 </div>
               </div>
+
+              {hasQuery ? (
+                <div className="points-ledger__active">
+                  <p className="points-ledger__active-summary">
+                    {t('points.filterResult', { count: visibleCount, total: items.length })}
+                  </p>
+                  <button type="button" className="points-ledger__clear-all" onClick={clearFilters}>
+                    {t('points.clearFilters')}
+                  </button>
+                </div>
+              ) : null}
             </div>
           ) : null}
 
@@ -416,8 +514,11 @@ export function PointsPage() {
               <p className="points-empty__title">{t('points.empty')}</p>
             </div>
           ) : visibleCount === 0 ? (
-            <div className="points-empty" role="status">
+            <div className="points-empty points-empty--filter" role="status">
               <p className="points-empty__title">{t('points.emptySearch')}</p>
+              <button type="button" className="btn btn--secondary points-empty__reset" onClick={clearFilters}>
+                {t('points.clearFilters')}
+              </button>
             </div>
           ) : (
             <ul className="points-ledger__list">
