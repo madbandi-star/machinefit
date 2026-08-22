@@ -183,13 +183,21 @@ export function MyPage() {
                       ···
                     </span>
                   ) : (
-                    <>
+                    <span className="profile-card__power-score">
+                      {pointsQuery.data?.hellpower ? (
+                        <span className="profile-card__power-sep" aria-hidden>
+                          ·
+                        </span>
+                      ) : null}
                       {pointsBalanceLabel ?? '0'}
                       {t('points.unit')}
-                    </>
+                    </span>
                   )}
                   {pointsQuery.data?.hellpower?.topPercent != null ? (
                     <span className="profile-card__hellpower-meta">
+                      <span className="profile-card__power-sep" aria-hidden>
+                        ·
+                      </span>
                       {t('points.hellpower.topPercent', {
                         percent: pointsQuery.data.hellpower.topPercent,
                       })}
