@@ -57,7 +57,7 @@ export function stripBrandFromMachineName(
  * (e.g. Cybex vs Hammer Strength "레그 컬") stay distinguishable in records.
  * Free-weight labels stay equipment-only (muscle is appended separately).
  * Skips the prefix when the machine name already starts with the brand
- * (e.g. common equipment: "아스날 스트렝스 45도 레그 프레스").
+ * (e.g. common equipment: "아스날 스트렝스 45° 레그 프레스").
  */
 export function formatBrandedMachineLabel(
   machineName: string,

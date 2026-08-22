@@ -1,29 +1,31 @@
 {
-  "title": "Rename assisted pull-up/dip → 어시스트 풀업",
-  "summary": "STD_ASSISTED_PULLUP_DIP 공통·브랜드 표시명을 「어시스트 풀업 / 딥」→「어시스트 풀업」(en: Assisted Pull-Up)으로 변경. 근육군 back 유지. 프로덕션에 migration 186 적용 완료.",
+  "title": "Brand 45도 레그 프레스 → 45° 레그 프레스",
+  "summary": "공통 STD_45_LEG_PRESS는 이미 「45° 레그 프레스」. 연동 브랜드 29대 이름을 공통에 맞춰 45도→45°로 재생성. 프로덕션 migration 187 적용 완료.",
   "git": {
     "branch": "main",
-    "commit": "f321a4db487c3f89f6e611446c03ef597a0cde9a"
+    "commit": "(pending)"
   },
   "changedFiles": [
-    "database/migrations/186_rename_assisted_pullup.sql",
-    "scripts/apply-186-rename-assisted-pullup.cjs",
+    "database/migrations/187_rename_45_leg_press_degree.sql",
+    "scripts/apply-187-45-leg-press.cjs",
+    "frontend/src/utils/freeWeightDisplay.ts",
+    "frontend/src/utils/freeWeightDisplay.test.ts",
     ".cursor/handoff/latest.json",
     ".cursor/handoff/LATEST_TEST_HANDOFF.md"
   ],
   "testFocus": [
-    "공통/브랜드: 이름 「어시스트 풀업」(「/ 딥」 없음)",
-    "근육군 등(back) 유지"
+    "검색/브랜드: 「45° 레그 프레스」(「45도」 표기 없음)",
+    "공통 타입 이름 그대로 45°"
   ],
   "fastChecks": [
-    "node -e \"require('fs').accessSync('database/migrations/186_rename_assisted_pullup.sql')\""
+    "npm run test --prefix frontend -- --run src/utils/freeWeightDisplay.test.ts"
   ],
   "productionChecks": [
-    "검색/상세: 어시스트 풀업, muscle_group=back"
+    "브랜드 머신 이름에 45° 레그 프레스"
   ],
   "deploy": {
-    "note": "DB already applied via scripts/apply-186-rename-assisted-pullup.cjs"
+    "note": "DB applied; frontend test example string only"
   },
-  "asIs": "어시스트 풀업 / 딥",
-  "toBe": "어시스트 풀업"
+  "asIs": "브랜드 「…45도 레그 프레스」",
+  "toBe": "브랜드 「…45° 레그 프레스」"
 }

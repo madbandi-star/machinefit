@@ -12,12 +12,12 @@ describe('formatBrandedMachineLabel', () => {
 
   it('does not repeat brand when machine name already starts with it', () => {
     expect(
-      formatBrandedMachineLabel('아스날 스트렝스 45도 레그 프레스', '아스날 스트렝스')
-    ).toBe('아스날 스트렝스 45도 레그 프레스');
+      formatBrandedMachineLabel('아스날 스트렝스 45° 레그 프레스', '아스날 스트렝스')
+    ).toBe('아스날 스트렝스 45° 레그 프레스');
   });
 
   it('detects brand already present with middot separator', () => {
-    expect(machineNameIncludesBrand('아스날 스트렝스 · 45도 레그 프레스', '아스날 스트렝스')).toBe(
+    expect(machineNameIncludesBrand('아스날 스트렝스 · 45° 레그 프레스', '아스날 스트렝스')).toBe(
       true
     );
   });
