@@ -1,7 +1,7 @@
 ﻿{
   "title": "MEMBER 헬창력 30단 등급 이모지",
   "summary": "MEMBER만 헬창력 30단계 이모지를 작성자명 옆에 표시하고, 클릭 시 칭호+상위% 팝오버를 띄웁니다. Premium은 ⚜️ 고정. 프로필/헬창력 페이지에 등급 상세를 추가했습니다.",
-  "git": { "branch": "main", "commit": "pending" },
+  "git": { "branch": "main", "commit": "796c9803" },
   "changedFiles": [
     "shared/src/constants/hellpower-levels.ts",
     "shared/src/constants/hellpower-levels.test.ts",
