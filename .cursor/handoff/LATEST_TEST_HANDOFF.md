@@ -5,7 +5,7 @@
 
 ## Git
 - branch: `main`
-- commit: (push 후 갱신)
+- commit: `81dd178b`
 
 ## Changed files
 - `backend/server/repositories/favorite.repository.ts`

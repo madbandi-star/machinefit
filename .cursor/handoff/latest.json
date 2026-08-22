@@ -3,7 +3,7 @@
   "summary": "Favorites and recent-history APIs now resolve primary images via cover → gallery → standard_machine_images (same chain as machine list / workout cards). Favorites list panel uses resolveRecordMachineImageUrl so missing API images can fall through to cover media.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "81dd178b90e10a2055f0ba345bff7ca3d2ea40fe"
   },
   "changedFiles": [
     "backend/server/repositories/favorite.repository.ts",
