@@ -1,24 +1,35 @@
-﻿# Test handoff — Hellpower ledger filter UX
+﻿# Test handoff — Sync assist / pullover / seated cable to common type
 
 ## Summary
-내 헬창력 페이지의 내역 검색·날짜 필터 UI/UX 개선.  
-텍스트 검색 + 날짜 퀵칩(전체/오늘/어제/7일) + 날짜 선택 + 필터 초기화. API/적립 로직 변경 없음.
+공통 유형 `STD_ASSISTED_PULLUP_DIP` 표시명을 **어시스트 풀업 / 딥**으로 맞추고, 연동 브랜드 머신 3종(어시스트·풀오버·시티드 케이블)의 **이름·근육군**을 공통 머신 설정으로 동기화했습니다. 프로덕션 DB에는 migration 185를 이미 적용했습니다.
 
 ## Git
 - branch: `main`
-- commit: `9782f5f7039848fb4707ec2f79cfab654162e9c3`
+- commit: (push 후 latest.json 갱신)
+
+## Changed files
+- `database/migrations/185_sync_std_assist_pullover_cable.sql`
+- `scripts/apply-185-sync-std.cjs`
+- `.cursor/handoff/latest.json`
+- `.cursor/handoff/LATEST_TEST_HANDOFF.md`
 
 ## Test focus
-1. `/my-page/points` 헬창력 내역 필터 카드
-2. 오늘/어제/7일/날짜선택 동작
-3. 검색+날짜 동시 적용, 초기화
-4. 결과 없음 → 필터 초기화 버튼
+1. 브랜드 검색/상세: **어시스트 풀업 / 딥** — 이름에 `/ 딥`, 근육군 **등(back)** (전신 아님)
+2. **풀오버** — 코어(core)
+3. **시티드 케이블** — 가슴(chest)
+4. 관리자 공통 머신 목록: `STD_ASSISTED_PULLUP_DIP` → 「어시스트 풀업 / 딥」
 
 ## Fast checks
 ```bash
-npm run typecheck --prefix frontend
+node -e "require('fs').accessSync('database/migrations/185_sync_std_assist_pullover_cable.sql')"
 ```
 
+## Production checks
+- API/검색: assisted → `muscle_group=back`, name contains `어시스트 풀업 / 딥`
+- 풀오버=`core`, 시티드 케이블=`chest`
+
 ## As-is → To-be
-- **As-is:** 검색창 + 네이티브 date input 세로 배치, 해제 UX 빈약
-- **To-be:** 통합 필터 패널 + 퀵칩 + 캘린더 칩 + 건수/초기화
+| As-is | To-be |
+|-------|-------|
+| 공통 이름 「어시스트 풀업」, 브랜드 전신 | 공통·브랜드 「어시스트 풀업 / 딥」, back |
+| 풀오버/시티드케이블 브랜드 전신 | core / chest (공통 primary와 동일) |

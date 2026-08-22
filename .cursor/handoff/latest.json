@@ -1,35 +1,32 @@
 {
-  "title": "Hellpower ledger filter UX",
-  "summary": "내 헬창력 내역 검색·날짜 필터 UI를 퀵칩(전체/오늘/어제/7일)+날짜선택·필터 초기화로 재구성. 계산/API 로직 변경 없음(클라이언트 필터만).",
+  "title": "Sync assist/pullover/cable brand machines to common type",
+  "summary": "공통 유형 STD_ASSISTED_PULLUP_DIP 이름을 「어시스트 풀업 / 딥」으로 고치고, 어시스트·풀오버·시티드 케이블 연동 브랜드 머신(각 29대)의 이름·근육군을 공통 설정(back/core/chest)으로 동기화. 프로덕션 DB에 migration 185 적용 완료.",
   "git": {
     "branch": "main",
-    "commit": "9782f5f7039848fb4707ec2f79cfab654162e9c3"
+    "commit": "(pending)"
   },
   "changedFiles": [
-    "frontend/src/pages/points/PointsPage.tsx",
-    "frontend/src/pages/points/PointsPage.css",
-    "frontend/src/i18n/locales/ko/common.json",
-    "frontend/src/i18n/locales/en/common.json",
-    "frontend/src/i18n/locales/ja/common.json",
-    "frontend/src/i18n/locales/zh/common.json",
+    "database/migrations/185_sync_std_assist_pullover_cable.sql",
+    "scripts/apply-185-sync-std.cjs",
     ".cursor/handoff/latest.json",
     ".cursor/handoff/LATEST_TEST_HANDOFF.md"
   ],
   "testFocus": [
-    "내 헬창력 → 헬창력 내역: 검색창 + 날짜 칩(전체/오늘/어제/7일/날짜선택)",
-    "필터 적용 시 건수 요약·필터 초기화",
-    "결과 0건일 때 초기화 버튼",
-    "모바일에서 칩 가로 스크롤·터치"
+    "검색/브랜드 머신: 어시스트 풀업 / 딥 — 이름에 「/ 딥」 포함, 근육군 등(back) (전신 아님)",
+    "풀오버 — 코어(core), 브랜드명+풀오버",
+    "시티드 케이블 — 가슴(chest), 브랜드명+시티드 케이블",
+    "관리자 공통 머신: STD_ASSISTED_PULLUP_DIP 표시명 「어시스트 풀업 / 딥」"
   ],
   "fastChecks": [
-    "npm run typecheck --prefix frontend"
+    "node -e \"require('fs').accessSync('database/migrations/185_sync_std_assist_pullover_cable.sql')\""
   ],
   "productionChecks": [
-    "https://machine-fit.com/machinefit/my-page/points — ledger filter chips after Pages deploy"
+    "API/검색에서 assisted pull-up/dip muscle_group=back, name contains 어시스트 풀업 / 딥",
+    "풀오버 muscle_group=core, 시티드 케이블=chest"
   ],
   "deploy": {
-    "note": "Frontend Pages only"
+    "note": "DB already applied via scripts/apply-185-sync-std.cjs; migration file for history. Frontend Pages no behavior change unless cached search."
   },
-  "asIs": "검색 + 네이티브 date input이 세로로 어색하게 분리, 해제 UX 약함",
-  "toBe": "통합 필터 카드 + 퀵 날짜 칩 + 캘린더 선택 + 활성 필터/초기화"
+  "asIs": "공통은 「어시스트 풀업」+back인데 브랜드는 「…어시스트 풀업 / 딥」+전신; 풀오버/시티드케이블도 브랜드 전신",
+  "toBe": "공통 이름 「어시스트 풀업 / 딥」; 브랜드 3종이 공통 primary_muscle_group·이름 규칙과 일치"
 }
