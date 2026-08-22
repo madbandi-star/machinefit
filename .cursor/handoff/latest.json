@@ -1,29 +1,43 @@
 {
-  "title": "Hellpower ladder titles/emojis refresh",
-  "summary": "Update HELLPOWER_LEVELS emoji+title to lifestyle ladder; score thresholds unchanged.",
+  "title": "Free Weight cover images refresh",
+  "summary": "프리웨이트 5도구 대표+부위(40) 커버 이미지를 after_change_300kb/신규 생성분으로 교체 업로드 완료. 앱 코드 변경 없이 machine_cover_images(FW_* only)와 upload 스크립트 추가.",
   "git": {
     "branch": "main",
-    "commit": "090c4a153e9c9cc9e62f34eae3f8ad4992311e54"
+    "commit": "PENDING"
   },
   "changedFiles": [
-    "shared/src/constants/hellpower-levels.ts",
-    "shared/src/constants/hellpower-levels.test.ts"
+    "scripts/upload-fw-covers.mjs",
+    "scripts/advanced_color_grader.cjs",
+    "scripts/apply_final_color_correction.cjs",
+    "scripts/batch_color_grade.cjs",
+    "scripts/color_analysis.cjs",
+    "scripts/color_grading_core.cjs",
+    "scripts/evaluate_grading.cjs",
+    "scripts/inspect_crow_regions.cjs",
+    "scripts/test_colorizer.cjs",
+    "docs/assets/machinefit-exhibition-banner-750x120.jpg",
+    "frontend/public/sitemap.xml",
+    "docs/I18N_AUDIT_REPORT.json",
+    ".cursor/handoff/latest.json",
+    ".cursor/handoff/LATEST_TEST_HANDOFF.md"
   ],
   "testFocus": [
-    "? ??? ??? ?? ???/??",
-    "???????? ??? ??",
-    "Lv.30 ?? ?? / ??"
+    "Admin → Machine Covers → brand FREE_WEIGHT: 5 tools each have default cover + 8 muscle variants",
+    "Confirm non-FW brand covers unchanged",
+    "Optional: open FW_BARBELL chest/back media URLs return 200"
   ],
   "fastChecks": [
-    "node --import tsx shared/src/constants/hellpower-levels.test.ts",
-    "npm run build --prefix shared"
+    "node -e \"require('fs').accessSync('scripts/upload-fw-covers.mjs')\"",
+    "git show --stat --oneline -1"
   ],
   "productionChecks": [
-    "Pages+Render ?? ? /points ??? ??"
+    "https://machinefit.onrender.com/api/v1/media/machine-covers/FW_BARBELL/main",
+    "https://machinefit.onrender.com/api/v1/media/machine-covers/FW_DUMBBELL/chest/main",
+    "Admin machine-covers Free Weight filter: 5/5 heroes + 40/40 muscle slots"
   ],
   "deploy": {
-    "expected": "Deploy Frontend + Backend success"
+    "note": "FW cover binaries already uploaded to Supabase/DB. Push deploys scripts/sitemap only; Pages rebuild expected."
   },
-  "asIs": "RPG ?? ?? ??/???",
-  "toBe": "??? ?? ??/??? (?? ??)"
+  "asIs": "프리웨이트 커버가 구버전/불일치 이미지거나 일부 슬롯이 오래된 상태",
+  "toBe": "FW_* 대표 5 + 부위 40 슬롯이 MachineFit 신규 톤 이미지로 채워짐; 타 브랜드 커버 0건 변경"
 }
