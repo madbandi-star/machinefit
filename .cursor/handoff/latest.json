@@ -26,8 +26,14 @@
     "Records page machine cards should show images for seeded standard-linked machines"
   ],
   "deploy": {
-    "frontend": "GitHub Pages via push to main",
-    "backend": "Render redeploy required (favorite/history SQL changed)"
+    "frontend": {
+      "url": "https://github.com/madbandi-star/machinefit/actions/runs/32553407984",
+      "status": "success"
+    },
+    "backend": {
+      "url": "https://github.com/madbandi-star/machinefit/actions/runs/32553407986",
+      "status": "success"
+    }
   },
   "asIs": "Home favorites/recent and favorites list mostly showed placeholders; history/records often lacked standard-type image fallback",
   "toBe": "Those surfaces use the shared primary-image COALESCE including standard_machine_images"

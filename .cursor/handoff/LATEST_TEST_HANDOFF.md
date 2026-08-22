@@ -26,7 +26,8 @@ cd frontend && npx vitest run src/utils/catalogAssets.resolveMachineImageUrl.tes
 ```
 
 ## Production checks
-- Pages 배포 + **Render 백엔드 재배포** 후 확인 (SQL 변경)
+- Pages: https://github.com/madbandi-star/machinefit/actions/runs/32553407984 — **success**
+- Render: https://github.com/madbandi-star/machinefit/actions/runs/32553407986 — **success**
 - 홈 /favorites / 기록에서 placeholder 대신 실제 기구 사진
 
 ## As-is → To-be
