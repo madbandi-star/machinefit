@@ -20,7 +20,11 @@
   "error": "Error",
   "images": {
     "standardBadge": "通用",
-    "standardHint": "机种通用图片，可能与该品牌实机不同。"
+    "standardHint": "机种通用图片，可能与该品牌实机不同。",
+    "standardCaption": "通用照片 · 可能与实机不同",
+    "standardOnboardingTitle": "关于通用机种照片",
+    "standardOnboardingBody": "当前照片为机种通用图，可能与健身房实机外观不同。",
+    "standardOnboardingConfirm": "知道了"
   },
   "muscleGroups": {
     "back": "Back",

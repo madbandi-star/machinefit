@@ -19,6 +19,32 @@
   text-overflow: ellipsis;
 }
 
+.std-machine-image-caption {
+  margin: 0.2rem 0 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: var(--color-text-muted, #8b919c);
+}
+
+.machine-mini-card__thumb + .std-machine-image-caption {
+  margin: 0 0 0.28rem;
+  max-width: 8.5rem;
+}
+
+.favorite-row__main .std-machine-image-caption {
+  margin: 0.05rem 0 0.1rem;
+}
+
+.machine-list-item__body .std-machine-image-caption {
+  margin: 0.15rem 0 0;
+}
+
+.history-record-card__hero-aside .std-machine-image-caption {
+  margin: 0.15rem 0 0;
+}
+
 /* Ensure absolute badge anchors on known thumbs */
 .machine-mini-card__thumb,
 .favorite-row__thumb,

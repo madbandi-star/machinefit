@@ -15,7 +15,10 @@ import { useActiveGym } from '@/hooks/useActiveGym';
 import { useActiveMember } from '@/hooks/useActiveMember';
 import { useFavoritesList } from '@/hooks/useFavoritesList';
 import { useUIStore } from '@/store/ui.store';
-import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import {
+  StandardMachineImageBadge,
+  StandardMachineImageCaption,
+} from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
 import {
   isStandardMachineImageUrl,
   machinePlaceholderUrl,
@@ -262,6 +265,7 @@ export function FavoritesListPanel() {
                     iconSize={18}
                     labelClassName="favorite-row__name"
                   />
+                  {showStandardImageBadge ? <StandardMachineImageCaption /> : null}
                   <dl className="favorite-row__meta">
                     <div>
                       <dt>{t('machines:favorites.favoritedAt')}</dt>

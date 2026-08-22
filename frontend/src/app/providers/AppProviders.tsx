@@ -6,6 +6,7 @@ import { I18nProvider } from './I18nProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { Toast } from '@/components/feedback/Toast/Toast';
 import { PremiumUpgradeModalGlobal } from '@/components/premium/PremiumUpgradeModal/PremiumUpgradeModal';
+import { StandardMachineImageOnboarding } from '@/components/machines/StandardMachineImageOnboarding/StandardMachineImageOnboarding';
 import { ServiceUnavailableScreen } from '@/components/feedback/ServiceUnavailableScreen/ServiceUnavailableScreen';
 import { NetworkSyncBanner } from '@/components/network/NetworkSyncBanner';
 import { PremiumProvider } from '@/providers/PremiumProvider';
@@ -33,6 +34,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
               <NetworkSyncBanner />
               {children}
               <Toast />
+              <StandardMachineImageOnboarding />
               <PremiumUpgradeModalGlobal />
               <ServiceUnavailableScreen />
             </PremiumProvider>

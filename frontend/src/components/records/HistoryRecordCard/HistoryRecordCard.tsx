@@ -40,7 +40,10 @@ import {
 } from '@machinefit/shared';
 import { workoutCardApi, type FitRating } from '@/api';
 import { SafeImage } from '@/components/media/SafeImage';
-import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import {
+  StandardMachineImageBadge,
+  StandardMachineImageCaption,
+} from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
 import { FitFeedbackPanel } from '@/components/recommendation/FitFeedbackPanel/FitFeedbackPanel';
 import { RecommendationSettingsPanel } from '@/components/recommendation/RecommendationSettingsPanel/RecommendationSettingsPanel';
 import {
@@ -659,6 +662,7 @@ export const HistoryRecordCard = memo(function HistoryRecordCard({
                     />
                   </h2>
                 </Link>
+                {showStandardImageBadge ? <StandardMachineImageCaption /> : null}
 
                 <Link to={resultUrl} className="history-record-card__meta-link">
                   <div className="history-record-card__meta">

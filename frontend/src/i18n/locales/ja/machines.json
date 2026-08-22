@@ -20,7 +20,11 @@
   "error": "Error",
   "images": {
     "standardBadge": "共通",
-    "standardHint": "機種共通の写真です。ブランド実機と異なる場合があります。"
+    "standardHint": "機種共通の写真です。ブランド実機と異なる場合があります。",
+    "standardCaption": "共通写真 · 実機と異なる場合あり",
+    "standardOnboardingTitle": "共通写真について",
+    "standardOnboardingBody": "表示中の写真は機種共通のカタログ画像です。ジムの実機と見た目が異なる場合があります。",
+    "standardOnboardingConfirm": "了解"
   },
   "muscleGroups": {
     "back": "Back",

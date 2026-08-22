@@ -1,39 +1,42 @@
 ﻿{
-  "title": "Standard image thumbnail badge",
-  "summary": "When a machine thumb uses a common/standard-type photo (/media/standard-machine-images/), show a small corner badge (공통) with a tooltip that it may differ from the brand’s real unit. Surfaces: home mini-cards, favorites list, records cards, search list.",
+  "title": "Standard image caption + first-time onboarding",
+  "summary": "Always-visible caption under common-photo thumbs (공통 사진 · 실물과 다를 수 있음). First time a standard photo appears, show a one-time bottom dialog; dismiss stores machinefit.seenStandardImageHint.",
   "git": {
     "branch": "main",
-    "commit": "d2e2d0300f3ba913992dbfd9c1c0e423a7087602"
+    "commit": "pending"
   },
   "changedFiles": [
+    "frontend/src/utils/standardMachineImageOnboarding.ts",
+    "frontend/src/utils/standardMachineImageOnboarding.test.ts",
     "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.tsx",
     "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.css",
+    "frontend/src/components/machines/StandardMachineImageOnboarding/StandardMachineImageOnboarding.tsx",
+    "frontend/src/components/machines/StandardMachineImageOnboarding/StandardMachineImageOnboarding.css",
+    "frontend/src/app/providers/AppProviders.tsx",
     "frontend/src/components/home/MachineMiniCard/MachineMiniCard.tsx",
     "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
     "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
     "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
-    "frontend/src/utils/catalogAssets.ts",
-    "frontend/src/utils/catalogAssets.resolveMachineImageUrl.test.ts",
     "frontend/src/i18n/locales/ko/machines.json",
     "frontend/src/i18n/locales/en/machines.json",
     "frontend/src/i18n/locales/ja/machines.json",
     "frontend/src/i18n/locales/zh/machines.json"
   ],
   "testFocus": [
-    "Home favorites/recent: standard-image thumbs show 공통 badge",
-    "Favorites view-all and Records cards: same badge",
-    "Search list: brand machines with standard fallback show badge; brand-own photos do not"
+    "Clear localStorage key machinefit.seenStandardImageHint → open home/search with standard photo → dialog once",
+    "Caption visible under thumbs without long-press",
+    "Confirm dismiss → dialog never returns"
   ],
   "fastChecks": [
-    "cd frontend && npx vitest run src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
+    "cd frontend && npx vitest run src/utils/standardMachineImageOnboarding.test.ts src/utils/catalogAssets.resolveMachineImageUrl.test.ts"
   ],
   "productionChecks": [
-    "After Pages deploy: open home/favorites/records/search and confirm badge only on standard photos"
+    "After Pages deploy: first visit shows onboarding; caption always on standard thumbs"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
     "backend": "not required"
   },
-  "asIs": "No indication when thumb is a shared catalog photo",
-  "toBe": "공통 badge + tooltip on standard-type thumbs"
+  "asIs": "Badge only; tooltip needed long-press",
+  "toBe": "Always-visible caption + one-time onboarding dialog"
 }

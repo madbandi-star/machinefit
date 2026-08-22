@@ -7,7 +7,10 @@ import type { MuscleGroup } from '@/constants/muscle-groups';
 import { ROUTES } from '@/constants/routes';
 import { getHistoryMuscleGroup, formatFreeWeightRecordLabel, formatBrandedMachineLabel } from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
-import { StandardMachineImageBadge } from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
+import {
+  StandardMachineImageBadge,
+  StandardMachineImageCaption,
+} from '@/components/machines/StandardMachineImageBadge/StandardMachineImageBadge';
 import {
   isStandardMachineImageUrl,
   machinePlaceholderUrl,
@@ -79,6 +82,7 @@ export function MachineMiniCard({
           <div className="machine-mini-card__placeholder" aria-hidden />
         )}
       </div>
+      {showStandardImageBadge ? <StandardMachineImageCaption /> : null}
       <p className="machine-mini-card__name">
         {displayMuscle && !isFreeWeightMachineCode(machineCode) ? (
           <MachineNameWithMuscle
