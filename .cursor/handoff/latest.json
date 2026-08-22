@@ -3,7 +3,7 @@
   "summary": "Admin standard machine create/edit can select N brands (incl. select all) to fan-out link via machines.standard_type_id. Additive only.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "59352e019672e150ec3a263d32256b723cca4200"
   },
   "changedFiles": [
     "shared/src/validators/admin-standard-machine.schema.ts",
@@ -18,10 +18,10 @@
     "frontend/src/i18n/locales/zh/admin.json"
   ],
   "testFocus": [
-    "관리자 공통머신 등록: 브랜드 체크 + 전체 선택 후 저장 → 선택 브랜드에 기구 생성",
-    "이미 연결된 브랜드는 체크 유지·해제 불가",
-    "브랜드 미선택 저장 시 기존처럼 타입만 생성",
-    "수정에서 추가 브랜드만 새로 연결"
+    "관리자 공통머신 ?�록: 브랜??체크 + ?�체 ?�택 ???�?????�택 브랜?�에 기구 ?�성",
+    "?��? ?�결??브랜?�는 체크 ?��?·?�제 불�?",
+    "브랜??미선???�????기존처럼 ?�?�만 ?�성",
+    "?�정?�서 추�? 브랜?�만 ?�로 ?�결"
   ],
   "fastChecks": [
     "npm run build --prefix shared",
@@ -29,12 +29,12 @@
     "npm run typecheck --prefix backend"
   ],
   "productionChecks": [
-    "Render backend 재배포 후 관리자 /admin/standard-machines 연결 확인",
-    "Pages 배포 후 관리자 UI 브랜드 섹션 표시"
+    "Render backend ?�배????관리자 /admin/standard-machines ?�결 ?�인",
+    "Pages 배포 ??관리자 UI 브랜???�션 ?�시"
   ],
   "deploy": {
     "expected": "Deploy Frontend success; Render redeploy for shared/backend"
   },
-  "asIs": "공통머신 등록 시 브랜드 자동 연결 없음",
-  "toBe": "등록/수정 시 N개 브랜드 선택(전체 선택) → 기구 항목 생성·연결"
+  "asIs": "공통머신 ?�록 ??브랜???�동 ?�결 ?�음",
+  "toBe": "?�록/?�정 ??N�?브랜???�택(?�체 ?�택) ??기구 ??�� ?�성·?�결"
 }
