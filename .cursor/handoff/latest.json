@@ -3,7 +3,7 @@
   "summary": "Update HELLPOWER_LEVELS emoji+title to lifestyle ladder; score thresholds unchanged.",
   "git": {
     "branch": "main",
-    "commit": "pending"
+    "commit": "090c4a153e9c9cc9e62f34eae3f8ad4992311e54"
   },
   "changedFiles": [
     "shared/src/constants/hellpower-levels.ts",
@@ -11,7 +11,7 @@
   ],
   "testFocus": [
     "? ??? ??? ?? ???/??",
-    "?????·??? ??? ??",
+    "???????? ??? ??",
     "Lv.30 ?? ?? / ??"
   ],
   "fastChecks": [
