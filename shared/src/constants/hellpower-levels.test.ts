@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { Role, ROLE_EMOJI } from './roles.js';
-import { getAuthorBadgeEmoji, getHellpowerLevel } from './hellpower-levels.js';
+import {
+  getAuthorBadgeEmoji,
+  getHellpowerLevel,
+  getHellpowerProgress,
+} from './hellpower-levels.js';
 
 const cases: Array<[number, number, string, string]> = [
   [0, 1, '🥚', '알'],
@@ -9,6 +13,7 @@ const cases: Array<[number, number, string, string]> = [
   [699, 2, '🐣', '병아리'],
   [700, 3, '🐥', '초보자'],
   [1200, 4, '🐤', '수습생'],
+  [1799, 4, '🐤', '수습생'],
   [1800, 5, '💪', '헬린이'],
   [2500, 6, '🏋️', '수련생'],
   [6500, 9, '🛡️', '기사'],
@@ -34,6 +39,19 @@ assert.equal(getHellpowerLevel(17499).level, 12);
 assert.equal(getHellpowerLevel(17500).level, 13);
 assert.equal(getHellpowerLevel(17499).pointsToNext, 1);
 assert.equal(getHellpowerLevel(300000).pointsToNext, null);
+
+const p = getHellpowerProgress(18420);
+assert.equal(p.current.level, 13);
+assert.equal(p.progressInBand, 920);
+assert.equal(p.bandSize, 20999 - 17500 + 1);
+assert.equal(p.current.pointsToNext, 21000 - 18420);
+assert.equal(p.next?.level, 14);
+assert.ok(Math.abs(p.progressRatio - 920 / (20999 - 17500 + 1)) < 1e-9);
+
+const maxP = getHellpowerProgress(300000);
+assert.equal(maxP.isMaxLevel, true);
+assert.equal(maxP.progressRatio, 1);
+assert.equal(maxP.next, null);
 
 assert.equal(getAuthorBadgeEmoji(Role.GUEST), '🧑‍🌾');
 assert.equal(getAuthorBadgeEmoji(Role.MEMBER, 0), '🥚');

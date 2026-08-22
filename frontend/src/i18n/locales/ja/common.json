@@ -2126,7 +2126,20 @@
       "topPercent": "ヘルパワー上位 {{percent}}%",
       "loadingRank": "順位を読み込み中…",
       "nextLevel": "次の等級まで {{points}}",
-      "levelLabel": "Lv.{{level}} {{title}}"
+      "levelLabel": "Lv.{{level}} {{title}}",
+      "scoreLabel": "ヘルパワー",
+      "xpBarLabel": "レベル進捗",
+      "pointsToNext": "次のレベルまで {{points}} ヘルパワー",
+      "nextSection": "NEXT LEVEL",
+      "unlockAt": "{{points}} ヘルパワー",
+      "currentVsRemain": "現在 {{current}} → あと {{remain}}",
+      "maxLevel": "MAX LEVEL",
+      "ladderCta": "ヘルパワー等級表",
+      "ladderTitle": "ヘルパワー等級表",
+      "currentBadge": "現在",
+      "todayEarned": "今日の獲得",
+      "levelUpTitle": "LEVEL UP",
+      "levelUpConfirm": "OK"
     },
     "powerBox": {
       "openLabel": "Open Power Box",
@@ -2142,7 +2155,20 @@
       "topPercent": "Top {{percent}}% Hellchang Power",
       "loadingRank": "Loading rank…",
       "nextLevel": "{{points}} to next rank",
-      "levelLabel": "Lv.{{level}} {{title}}"
+      "levelLabel": "Lv.{{level}} {{title}}",
+      "scoreLabel": "Hellchang Power",
+      "xpBarLabel": "Level progress",
+      "pointsToNext": "{{points}} Hellchang Power to next level",
+      "nextSection": "NEXT LEVEL",
+      "unlockAt": "{{points}} Hellchang Power",
+      "currentVsRemain": "Now {{current}} → {{remain}} left",
+      "maxLevel": "MAX LEVEL",
+      "ladderCta": "Hellchang Power ranks",
+      "ladderTitle": "Hellchang Power ranks",
+      "currentBadge": "You",
+      "todayEarned": "Earned today",
+      "levelUpTitle": "LEVEL UP",
+      "levelUpConfirm": "Got it"
     }
   },
   "qa": {

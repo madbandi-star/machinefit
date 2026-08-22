@@ -2126,7 +2126,20 @@
       "topPercent": "地狱力前 {{percent}}%",
       "loadingRank": "正在加载排名…",
       "nextLevel": "距下一等级 {{points}}",
-      "levelLabel": "Lv.{{level}} {{title}}"
+      "levelLabel": "Lv.{{level}} {{title}}",
+      "scoreLabel": "地狱力",
+      "xpBarLabel": "升级进度",
+      "pointsToNext": "距下一级还差 {{points}} 地狱力",
+      "nextSection": "NEXT LEVEL",
+      "unlockAt": "{{points}} 地狱力",
+      "currentVsRemain": "当前 {{current}} → 还差 {{remain}}",
+      "maxLevel": "MAX LEVEL",
+      "ladderCta": "地狱力等级表",
+      "ladderTitle": "地狱力等级表",
+      "currentBadge": "当前",
+      "todayEarned": "今日获得",
+      "levelUpTitle": "LEVEL UP",
+      "levelUpConfirm": "知道了"
     },
     "powerBox": {
       "openLabel": "Open Power Box",
@@ -2142,7 +2155,20 @@
       "topPercent": "Top {{percent}}% Hellchang Power",
       "loadingRank": "Loading rank…",
       "nextLevel": "{{points}} to next rank",
-      "levelLabel": "Lv.{{level}} {{title}}"
+      "levelLabel": "Lv.{{level}} {{title}}",
+      "scoreLabel": "Hellchang Power",
+      "xpBarLabel": "Level progress",
+      "pointsToNext": "{{points}} Hellchang Power to next level",
+      "nextSection": "NEXT LEVEL",
+      "unlockAt": "{{points}} Hellchang Power",
+      "currentVsRemain": "Now {{current}} → {{remain}} left",
+      "maxLevel": "MAX LEVEL",
+      "ladderCta": "Hellchang Power ranks",
+      "ladderTitle": "Hellchang Power ranks",
+      "currentBadge": "You",
+      "todayEarned": "Earned today",
+      "levelUpTitle": "LEVEL UP",
+      "levelUpConfirm": "Got it"
     }
   },
   "qa": {

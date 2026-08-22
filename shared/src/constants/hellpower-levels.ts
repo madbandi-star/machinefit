@@ -20,6 +20,19 @@ export type HellpowerLevelInfo = HellpowerLevelDef & {
   pointsToNext: number | null;
 };
 
+export type HellpowerProgress = {
+  score: number;
+  current: HellpowerLevelInfo;
+  next: HellpowerLevelDef | null;
+  isMaxLevel: boolean;
+  /** Points earned inside the current band (score - minScore), capped. */
+  progressInBand: number;
+  /** Inclusive band width (maxScore - minScore + 1); null at max. */
+  bandSize: number | null;
+  /** 0–1 progress through the current band; 1 at max. */
+  progressRatio: number;
+};
+
 /** Canonical 30-step ladder — do not duplicate thresholds elsewhere. */
 export const HELLPOWER_LEVELS = [
   { level: 1, minScore: 0, maxScore: 299, emoji: '🥚', title: '알' },
@@ -77,6 +90,44 @@ export function getHellpowerLevel(score: number | null | undefined): HellpowerLe
     title: match.title,
     pointsToNext,
   };
+}
+
+/** Band progress for XP bar UI — does not change level thresholds. */
+export function getHellpowerProgress(score: number | null | undefined): HellpowerProgress {
+  const s = normalizeScore(score);
+  const current = getHellpowerLevel(s);
+  const next = HELLPOWER_LEVELS.find((row) => row.level === current.level + 1) ?? null;
+  const isMaxLevel = next == null || current.maxScore == null;
+
+  if (isMaxLevel) {
+    return {
+      score: s,
+      current,
+      next: null,
+      isMaxLevel: true,
+      progressInBand: 0,
+      bandSize: null,
+      progressRatio: 1,
+    };
+  }
+
+  const bandSize = current.maxScore! - current.minScore + 1;
+  const progressInBand = Math.min(bandSize, Math.max(0, s - current.minScore));
+  const progressRatio = Math.min(1, Math.max(0, progressInBand / bandSize));
+
+  return {
+    score: s,
+    current,
+    next,
+    isMaxLevel: false,
+    progressInBand,
+    bandSize,
+    progressRatio,
+  };
+}
+
+export function getHellpowerLevelByNumber(level: number): HellpowerLevelDef | null {
+  return HELLPOWER_LEVELS.find((row) => row.level === level) ?? null;
 }
 
 /**

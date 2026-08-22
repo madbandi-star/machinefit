@@ -2124,7 +2124,20 @@
       "topPercent": "헬창력 상위 {{percent}}%",
       "loadingRank": "순위 불러오는 중…",
       "nextLevel": "다음 등급까지 {{points}}",
-      "levelLabel": "Lv.{{level}} {{title}}"
+      "levelLabel": "Lv.{{level}} {{title}}",
+      "scoreLabel": "헬창력",
+      "xpBarLabel": "레벨업 진행도",
+      "pointsToNext": "다음 레벨까지 {{points}} 헬창력",
+      "nextSection": "NEXT LEVEL",
+      "unlockAt": "{{points}} 헬창력",
+      "currentVsRemain": "현재 {{current}} → {{remain}} 남음",
+      "maxLevel": "MAX LEVEL",
+      "ladderCta": "헬창력 등급표",
+      "ladderTitle": "헬창력 등급표",
+      "currentBadge": "현재",
+      "todayEarned": "오늘 획득",
+      "levelUpTitle": "LEVEL UP",
+      "levelUpConfirm": "확인"
     },
     "powerBox": {
       "openLabel": "파워박스 열기",

@@ -1,34 +1,40 @@
 {
-  "title": "Merge common-photo caption into thumb badge",
-  "summary": "External caption removed. Thumb bottom bar now shows full text e.g. °øÅë ¡¤ ½Ç¹°°ú ´Ù¸¦ ¼ö ÀÖÀ½.",
+  "title": "Hellpower page RPG growth UI",
+  "summary": "? ??? ???? ??? ?? ???? ???. HERO·XP BAR·NEXT LEVEL·30? ??? ??·?? ??·??? ??. ??/API/DB ?? ?? ??(getHellpowerProgress? UI? ???).",
   "git": {
     "branch": "main",
-    "commit": "fd3b65653b7875be6be08321bbd46e71c1c8ca6d"
+    "commit": "pending"
   },
   "changedFiles": [
-    "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.tsx",
-    "frontend/src/components/machines/StandardMachineImageBadge/StandardMachineImageBadge.css",
-    "frontend/src/components/home/MachineMiniCard/MachineMiniCard.tsx",
-    "frontend/src/components/records/FavoritesListPanel/FavoritesListPanel.tsx",
-    "frontend/src/components/records/HistoryRecordCard/HistoryRecordCard.tsx",
-    "frontend/src/components/machines/MachineListItem/MachineListItem.tsx",
-    "frontend/src/i18n/locales/ko/machines.json",
-    "frontend/src/i18n/locales/en/machines.json",
-    "frontend/src/i18n/locales/ja/machines.json",
-    "frontend/src/i18n/locales/zh/machines.json"
+    "shared/src/constants/hellpower-levels.ts",
+    "shared/src/constants/hellpower-levels.test.ts",
+    "frontend/src/pages/points/PointsPage.tsx",
+    "frontend/src/pages/points/PointsPage.css",
+    "frontend/src/pages/points/HellpowerLadderSheet.tsx",
+    "frontend/src/pages/points/HellpowerLadderSheet.css",
+    "frontend/src/i18n/locales/ko/common.json",
+    "frontend/src/i18n/locales/en/common.json",
+    "frontend/src/i18n/locales/ja/common.json",
+    "frontend/src/i18n/locales/zh/common.json"
   ],
   "testFocus": [
-    "Standard-image thumbs show bottom bar text °øÅë ¡¤ ½Ç¹°°ú ´Ù¸¦ ¼ö ÀÖÀ½",
-    "No separate caption line under/outside the thumb"
+    "MEMBER: Points page shows hero emoji/Lv/title/score/range",
+    "XP bar fill + points to next; MAX at Lv.30",
+    "Ladder sheet highlights current level",
+    "Ledger emoji + today earned when ledger has today positives",
+    "Level-up dialog only when localStorage last level < current"
   ],
-  "fastChecks": [],
+  "fastChecks": [
+    "node --import tsx shared/src/constants/hellpower-levels.test.ts",
+    "npm run typecheck --prefix frontend"
+  ],
   "productionChecks": [
-    "After Pages deploy: home/favorites/records/search thumbs"
+    "After Pages + Render (shared used by API already): open /points as MEMBER"
   ],
   "deploy": {
     "frontend": "GitHub Pages via push to main",
-    "backend": "not required"
+    "backend": "optional ? shared helper only; API already used getHellpowerLevel"
   },
-  "asIs": "Badge said °øÅë; caption was outside the image",
-  "toBe": "Full notice inside image bottom badge bar"
+  "asIs": "Text-heavy points summary",
+  "toBe": "RPG-style growth screen with XP bar and ladder sheet"
 }

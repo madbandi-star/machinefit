@@ -2174,7 +2174,20 @@
       "topPercent": "Top {{percent}}% Hellchang Power",
       "loadingRank": "Loading rank…",
       "nextLevel": "{{points}} to next rank",
-      "levelLabel": "Lv.{{level}} {{title}}"
+      "levelLabel": "Lv.{{level}} {{title}}",
+      "scoreLabel": "Hellchang Power",
+      "xpBarLabel": "Level progress",
+      "pointsToNext": "{{points}} Hellchang Power to next level",
+      "nextSection": "NEXT LEVEL",
+      "unlockAt": "{{points}} Hellchang Power",
+      "currentVsRemain": "Now {{current}} → {{remain}} left",
+      "maxLevel": "MAX LEVEL",
+      "ladderCta": "Hellchang Power ranks",
+      "ladderTitle": "Hellchang Power ranks",
+      "currentBadge": "You",
+      "todayEarned": "Earned today",
+      "levelUpTitle": "LEVEL UP",
+      "levelUpConfirm": "Got it"
     },
     "powerBox": {
       "openLabel": "Open Power Box",
