@@ -10,7 +10,10 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { queryClient } from '@/app/providers/QueryProvider';
 import { machineApi } from '@/api';
 import { getLocalizedName } from '@/utils/localizedName';
-import { shouldShowDefaultMachineMuscle } from '@/utils/freeWeightDisplay';
+import {
+  shouldShowDefaultMachineMuscle,
+  stripBrandFromMachineName,
+} from '@/utils/freeWeightDisplay';
 import { SafeImage } from '@/components/media/SafeImage';
 import { machinePlaceholderUrl, resolveMachineImageUrl } from '@/utils/catalogAssets';
 import { useFavoriteToggle } from '@/hooks/useFavoriteToggle';
@@ -127,6 +130,7 @@ export function MachineListItem({
     : null;
   const typeLabel = isFreeWeight ? t('machineTypes.free_weight') : null;
   const brandOrType = brandName || typeLabel;
+  const displayName = stripBrandFromMachineName(localizedName, brandName);
   const imageUrl = resolveMachineImageUrl(machine.code, machine.primaryImageUrl);
 
   const detailPath = ROUTES.MACHINE_DETAIL.replace(':machineCode', machine.code);
@@ -170,7 +174,7 @@ export function MachineListItem({
       </div>
       <div className="machine-list-item__body">
         <p className="machine-list-item__name">
-          <span className="machine-list-item__name-text">{localizedName}</span>
+          <span className="machine-list-item__name-text">{displayName}</span>
           {alreadyPlanned ? (
             <span className="machine-list-item__planned-badge">{t('history.planAlreadyAdded')}</span>
           ) : null}

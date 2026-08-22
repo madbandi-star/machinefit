@@ -1,19 +1,13 @@
-﻿# Test handoff — MEMBER 헬창력 30단 등급
+﻿# Test handoff — Search list machine name only
 
 ## Summary
-MEMBER 작성자만 헬창력 30단계 이모지를 이름 옆에 표시합니다. 클릭 시 칭호 + 상위% 팝오버. Premium은 **⚜️** 고정. 프로필/헬창력 페이지에 등급·점수·상위%·다음 등급을 표시합니다.
+검색 추천 머신 카드 제목에서 브랜드 접두어를 제거하고 기구명만 표시합니다.
 
-## Source of truth
-`shared/src/constants/hellpower-levels.ts` → `HELLPOWER_LEVELS` / `getHellpowerLevel` / `getAuthorBadgeEmoji`
-
-## Fast checks
+## Fast check
 ```bash
-npx tsx shared/src/constants/hellpower-levels.test.ts
+cd frontend && npx vitest run src/utils/freeWeightDisplay.test.ts
 ```
 
 ## As-is → To-be
-- **As-is:** member ⚔️, premium 🔱
-- **To-be:** member = 🥚…🌈 (점수 구간), premium = ⚜️, 게시판에 점수 숫자 숨김
-
-## Deploy
-Frontend Pages + Render (shared/backend)
+- **As-is:** 아스날 스트렝스 어브도미널
+- **To-be:** 어브도미널 (브랜드 줄은 유지)

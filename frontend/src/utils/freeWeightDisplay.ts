@@ -27,6 +27,32 @@ export function machineNameIncludesBrand(
 }
 
 /**
+ * Drop a leading brand prefix from catalog names that bake brand into `name`
+ * (e.g. "아스날 스트렝스 어브도미널" → "어브도미널"). Brand stays visible separately in list UI.
+ */
+export function stripBrandFromMachineName(
+  machineName: string,
+  brandName?: string | null
+): string {
+  const name = machineName.trim().replace(/\s+/g, ' ');
+  const brand = brandName?.trim().replace(/\s+/g, ' ');
+  if (!name || !brand) return name;
+  if (!machineNameIncludesBrand(name, brand)) return name;
+  if (normalizeLabelPart(name) === normalizeLabelPart(brand)) return name;
+
+  const nameLower = name.toLowerCase();
+  const brandLower = brand.toLowerCase();
+  const separators = [`${brandLower} · `, `${brandLower} ·`, `${brandLower}· `, `${brandLower}·`, `${brandLower} `];
+  for (const prefix of separators) {
+    if (nameLower.startsWith(prefix)) {
+      const rest = name.slice(prefix.length).trim();
+      return rest || name;
+    }
+  }
+  return name;
+}
+
+/**
  * Prefix brand for selectorized/plate machines so same-named models
  * (e.g. Cybex vs Hammer Strength "레그 컬") stay distinguishable in records.
  * Free-weight labels stay equipment-only (muscle is appended separately).
